@@ -4,7 +4,8 @@ import optparse
 import sys
 
 def main(argv=sys.argv, quiet=False):
-    pass
+    command = CrawlCrunchCommand(argv, quiet)
+    return command.run()
 
 class CrawlCrunchCommand(object):
     
@@ -20,7 +21,6 @@ class CrawlCrunchCommand(object):
         if not self.args:
             self.out('You must provide a destination directory')
             return 2
-        return 0
 
     def out(self, msg): # pragma: no cover
         if not self.quiet:
