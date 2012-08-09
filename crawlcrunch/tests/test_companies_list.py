@@ -15,6 +15,7 @@ class CompaniesListTests(unittest.TestCase):
     def test_list_creation(self):
         cl = self._make_one(DestinationPaths.dl_complete)
         cl.create_list()
+        cl.companies.sort()
         self.assertEqual(cl.companies, [ 'de-revolutione',
                                          'group-laurier',
                                          'hiconversion',
