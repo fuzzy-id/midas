@@ -53,6 +53,14 @@ class CrawlCrunchTests(unittest.TestCase):
                 "The directory 'non/existent/path' does not exist"))
         self.assertTrue(out.endswith("Please create it first."))
 
+    def test_dl_complete_runs(self):
+        here = os.path.abspath(os.path.dirname(__file__))
+        dl_complete = os.path.join(here, 
+                                   '..', 'destinations', 'dl_complete')
+        cmd = self._make_one(dl_complete)
+        result = cmd.run()
+        self.assertEqual(result, 0)
+
 class MainTests(unittest.TestCase):
 
     def test_missing_argument(self):
