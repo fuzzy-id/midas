@@ -2,4 +2,8 @@
 
 class CompaniesList(object):
     
-    pass
+    def __init__(self, destination):
+        self.destination = destination
+
+    def create_list(self):
+        pass
