@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import optparse
+import os.path
 import sys
 
 def main(argv=sys.argv, quiet=False):
@@ -20,6 +21,11 @@ class CrawlCrunchCommand(object):
     def run(self):
         if not self.args:
             self.out('You must provide a destination directory')
+            return 2
+        elif not os.path.isdir(self.args[0]):
+            self.out("The directory '{0}' does not exist!".format(
+                    self.args[0]))
+            self.out('Please create it first.')
             return 2
 
     def out(self, msg): # pragma: no cover
