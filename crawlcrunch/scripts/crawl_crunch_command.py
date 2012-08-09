@@ -4,6 +4,9 @@ import optparse
 import os.path
 import sys
 
+from crawlcrunch.companies import CompaniesList
+from crawlcrunch.crawler import Crawler
+
 def main(argv=sys.argv, quiet=False):
     command = CrawlCrunchCommand(argv, quiet)
     return command.run()
@@ -31,6 +34,15 @@ class CrawlCrunchCommand(object):
                     self.args[0]))
             self.out('Please, create it first.')
             return 2
+        basedir = os.path.expanduser(self.args[0])
+        basedir = os.path.abspath(basedir)
+        basedir = os.path.normpath(basedir)
+        cl = CompaniesList(basedir)
+        cl.create_list()
+        crawler = Crawler(cl)
+        crawler.start()
+        crawler.join()
+        return 0
 
     def out(self, msg): # pragma: no cover
         if not self.quiet:
