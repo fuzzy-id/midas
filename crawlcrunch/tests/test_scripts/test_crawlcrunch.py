@@ -5,6 +5,7 @@ from StringIO import StringIO
 import os.path
 
 from crawlcrunch.compat import unittest
+from crawlcrunch.tests import DestinationPaths
 
 class CrawlCrunchTests(unittest.TestCase):
 
@@ -54,9 +55,7 @@ class CrawlCrunchTests(unittest.TestCase):
         self.assertTrue(out.endswith("Please, create it first."))
 
     def test_dl_complete_runs(self):
-        here = os.path.abspath(os.path.dirname(__file__))
-        dl_complete = os.path.join(here, 
-                                   '..', 'destinations', 'dl_complete')
+        dl_complete = os.path.join(DestinationPaths.companies_empty)
         cmd = self._make_one(dl_complete)
         result = cmd.run()
         self.assertEqual(result, 0)
