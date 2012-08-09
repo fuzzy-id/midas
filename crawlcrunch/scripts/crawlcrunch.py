@@ -29,7 +29,7 @@ class CrawlCrunchCommand(object):
         elif not os.path.isdir(self.args[0]):
             self.out("The directory '{0}' does not exist!".format(
                     self.args[0]))
-            self.out('Please create it first.')
+            self.out('Please, create it first.')
             return 2
 
     def out(self, msg): # pragma: no cover
