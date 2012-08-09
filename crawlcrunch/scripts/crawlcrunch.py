@@ -19,8 +19,12 @@ class CrawlCrunchCommand(object):
         self.options, self.args = self.parser.parse_args(argv[1:])
 
     def run(self):
-        if not self.args:
+        if len(self.args) == 0:
             self.out('You must provide a destination directory')
+            return 2
+        elif len(self.args) > 1:
+            self.out(
+                'You must provide one destination directory, not {0}.'.format(len(self.args)))
             return 2
         elif not os.path.isdir(self.args[0]):
             self.out("The directory '{0}' does not exist!".format(

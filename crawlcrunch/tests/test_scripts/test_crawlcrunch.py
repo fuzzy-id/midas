@@ -30,7 +30,16 @@ class CrawlCrunchTests(unittest.TestCase):
         result = cmd.run()
         self.assertEqual(result, 2)
         out = self.out_.getvalue()
-        self.assertTrue(out.startswith('You must provide a destination directory'))
+        self.assertTrue(
+            out.startswith('You must provide a destination directory'))
+
+    def test_too_much_arguments(self):
+        cmd = self._make_one('one', 'two', )
+        result = cmd.run()
+        self.assertEqual(result, 2)
+        out = self.out_.getvalue()
+        self.assertTrue(
+            out.startswith('You must provide one destination directory, not 2'))
 
     def test_non_existent_path(self):
         cmd = self._make_one((os.path.join('non', 
