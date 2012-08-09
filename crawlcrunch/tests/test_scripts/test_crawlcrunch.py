@@ -29,3 +29,10 @@ class CrawlCrunchTests(unittest.TestCase):
         self.assertEqual(result, 2)
         out = self.out_.getvalue()
         self.assertTrue(out.startswith('You must provide a destination directory'))
+
+class MainTests(unittest.TestCase):
+
+    def test_missing_argument(self):
+        from crawlcrunch.scripts.crawlcrunch import main
+        result = main(['crawlcrunch'], quiet=True)
+        self.assertEqual(result, 2)
