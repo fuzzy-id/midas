@@ -15,7 +15,7 @@ class CrawlCrunchTests(unittest.TestCase):
         self.out_.write(msg)
 
     def _get_target_class(self):
-        from crawlcrunch.scripts.crawlcrunch import CrawlCrunchCommand
+        from crawlcrunch.scripts.crawl_crunch_command import CrawlCrunchCommand
         return CrawlCrunchCommand
 
     def _make_one(self, *args):
@@ -51,7 +51,7 @@ class CrawlCrunchTests(unittest.TestCase):
         self.assertTrue(
             out.startswith(
                 "The directory 'non/existent/path' does not exist"))
-        self.assertTrue(out.endswith("Please create it first."))
+        self.assertTrue(out.endswith("Please, create it first."))
 
     def test_dl_complete_runs(self):
         here = os.path.abspath(os.path.dirname(__file__))
@@ -64,6 +64,6 @@ class CrawlCrunchTests(unittest.TestCase):
 class MainTests(unittest.TestCase):
 
     def test_missing_argument(self):
-        from crawlcrunch.scripts.crawlcrunch import main
+        from crawlcrunch.scripts.crawl_crunch_command import main
         result = main(['crawlcrunch'], quiet=True)
         self.assertEqual(result, 2)
