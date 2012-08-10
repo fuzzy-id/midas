@@ -2,10 +2,9 @@
 
 import threading
 
-class Crawler(threading.Thread):
+class Crawler(object):
 
     def __init__(self, companies_list):
-        super(Crawler, self).__init__()
         self.companies = companies_list
 
     def run(self):

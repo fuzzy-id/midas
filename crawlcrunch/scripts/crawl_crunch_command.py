@@ -40,8 +40,7 @@ class CrawlCrunchCommand(object):
         cl = CompaniesList(basedir)
         cl.create_list()
         crawler = Crawler(cl)
-        crawler.start()
-        crawler.join()
+        crawler.run()
         return 0
 
     def out(self, msg): # pragma: no cover
