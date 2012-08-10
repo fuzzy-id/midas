@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from StringIO import StringIO
-
 import os.path
 
+from crawlcrunch.compat import StringIO
 from crawlcrunch.compat import unittest
 from crawlcrunch.tests import DestinationPaths
 

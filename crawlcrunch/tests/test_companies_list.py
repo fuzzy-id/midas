@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from StringIO import StringIO
 import json
 import os.path
 import shutil
@@ -9,6 +8,7 @@ import tempfile
 import mock
 
 from crawlcrunch.compat import GzipFile
+from crawlcrunch.compat import StringIO
 from crawlcrunch.compat import unittest
 from crawlcrunch.tests import DestinationPaths
 
@@ -57,16 +57,15 @@ class IntegrationTests(unittest.TestCase):
         json_buffer.seek(0)
         return json_buffer
 
-
-    @mock.patch('urllib2.urlopen')
+    @mock.patch('crawlcrunch.companies.url_open')
     def test_list_is_fetched_and_saved_when_not_present(self, 
-                                                        urlopen):
-        urlopen.return_value = self._make_json_buffer(
+                                                        url_open):
+        url_open.return_value = self._make_json_buffer(
             [{'permalink': 'foo'}, ])
         from crawlcrunch.companies import CompaniesList
         cl = CompaniesList(self.tmpd)
         cl.create_list()
-        urlopen.assert_called_once_with(
+        url_open.assert_called_once_with(
             'http://api.crunchbase.com/v/1/companies.js')
         companies_file = (os.path.join(self.tmpd, 
                                        'companies.json.gz'))

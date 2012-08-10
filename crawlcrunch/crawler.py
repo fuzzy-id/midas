@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import json
+import logging
 import threading
-import urllib2
 
 from crawlcrunch.compat import GzipFile
+from crawlcrunch.compat import url_open
 
 class Crawler(object):
 
@@ -35,11 +36,16 @@ class CompanyFetcher(threading.Thread):
         self.semaphore = semaphore
 
     def run(self):
-        content = urllib2.urlopen(self.query_url())
-        js = json.load(content)
-        with GzipFile(self.dst, 'wb') as fp:
-            json.dump(js, fp)
-        self.semaphore.release()
+        logging.info('Fetching company {0}'.format(self.company))
+        try:
+            content = url_open(self.query_url())
+            js = json.load(content)
+            with GzipFile(self.dst, 'wb') as fp:
+                json.dump(js, fp)
+        except Exception as e:
+            logging.exception(e)
+        finally:
+            self.semaphore.release()
 
     def query_url(self):
         return 'http://api.crunchbase.com/v/1/company/{0}.js'.format(

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from StringIO import StringIO
-
 import json
 import os.path
 import shutil
@@ -10,8 +8,9 @@ import threading
 
 import mock
 
-from crawlcrunch.compat import unittest
 from crawlcrunch.compat import GzipFile
+from crawlcrunch.compat import StringIO
+from crawlcrunch.compat import unittest
 
 class CompanyFetcherTests(unittest.TestCase):
 
@@ -27,6 +26,15 @@ class CompanyFetcherTests(unittest.TestCase):
         expected = 'http://api.crunchbase.com/v/1/company/facebook.js'
         self.assertEqual(cf.query_url(), expected)
 
+    @mock.patch('crawlcrunch.crawler.url_open')
+    def test_semaphore_is_released_on_error(self, urlopen):
+        urlopen.side_effect = Exception
+        semaphore = threading.Semaphore(1)
+        from crawlcrunch.crawler import CompanyFetcher
+        cf = CompanyFetcher('facebook', 'dump_file', semaphore)
+        cf.run()
+        self.assertTrue(semaphore.acquire(False))
+
 class IntegrationTests(unittest.TestCase):
 
     def setUp(self):
@@ -35,7 +43,7 @@ class IntegrationTests(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmpd)
 
-    @mock.patch('urllib2.urlopen')
+    @mock.patch('crawlcrunch.crawler.url_open')
     def test_only_company_fetcher(self, urlopen):
         content = StringIO()
         json.dump({'foo': 'bar'}, content)
@@ -53,7 +61,7 @@ class IntegrationTests(unittest.TestCase):
         with GzipFile(dump_file) as fp:
             self.assertEqual(json.load(fp), {'foo': 'bar'})
 
-    @mock.patch('urllib2.urlopen')
+    @mock.patch('crawlcrunch.crawler.url_open')
     def test_crawler_and_company_fetcher(self, urlopen):
         content = StringIO()
         json.dump({'foo': 'bar'}, content)

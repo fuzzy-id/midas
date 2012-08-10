@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import os.path
+
+logging.basicConfig(level=logging.WARNING)
 
 class DestinationPaths(object):
 

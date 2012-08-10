@@ -3,9 +3,9 @@
 import json
 import logging
 import os.path
-import urllib2
 
 from crawlcrunch.compat import GzipFile
+from crawlcrunch.compat import url_open
 
 class CompaniesList(object):
     
@@ -30,7 +30,8 @@ class CompaniesList(object):
                             '{0}.json.gz'.format(fname))
 
     def fetch_list(self):
-        content = urllib2.urlopen(
+        logging.info('Fetching the companies list.')
+        content = url_open(
             'http://api.crunchbase.com/v/1/companies.js')
         js = json.load(content)
         with GzipFile(self.companies_file, 'wb') as fp:

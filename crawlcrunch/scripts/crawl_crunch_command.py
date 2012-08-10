@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
+import logging
 import optparse
 import os.path
 import sys
@@ -37,6 +40,7 @@ class CrawlCrunchCommand(object):
         basedir = os.path.expanduser(self.args[0])
         basedir = os.path.abspath(basedir)
         basedir = os.path.normpath(basedir)
+        logging.basicConfig(level=logging.INFO)
         cl = CompaniesList(basedir)
         cl.create_list()
         crawler = Crawler(cl)
@@ -45,4 +49,4 @@ class CrawlCrunchCommand(object):
 
     def out(self, msg): # pragma: no cover
         if not self.quiet:
-            print msg
+            print(msg)
