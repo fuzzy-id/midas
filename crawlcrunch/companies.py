@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import json
+import logging
 import os.path
+import urllib2
 
 from crawlcrunch.compat import GzipFile
 
@@ -13,6 +15,8 @@ class CompaniesList(object):
         self.companies = None
 
     def create_list(self):
+        if not os.path.isfile(self.companies_file):
+            self.fetch_list()
         with GzipFile(os.path.join(self.companies_file)) as fp:
             companies_js = json.load(fp)
         self.companies = []
@@ -24,6 +28,13 @@ class CompaniesList(object):
     def expand_fname(self, fname):
         return os.path.join(self.destination, 
                             '{0}.json.gz'.format(fname))
+
+    def fetch_list(self):
+        content = urllib2.urlopen(
+            'http://api.crunchbase.com/v/1/companies.js')
+        js = json.load(content)
+        with GzipFile(self.companies_file, 'wb') as fp:
+            json.dump(js, fp)
 
     def __iter__(self):
         for company in self.companies:
