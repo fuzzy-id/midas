@@ -6,7 +6,7 @@ from setuptools import setup
 
 py_version = sys.version_info[:2]
 
-tests_require = []
+tests_require = ['mock', ]
 if py_version == (2, 6):
     tests_require.append('unittest2')
 
