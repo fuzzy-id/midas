@@ -24,3 +24,7 @@ class CompaniesList(object):
     def expand_fname(self, fname):
         return os.path.join(self.destination, 
                             '{0}.json.gz'.format(fname))
+
+    def __iter__(self):
+        for company in self.companies:
+            yield company
