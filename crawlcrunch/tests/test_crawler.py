@@ -13,15 +13,6 @@ import mock
 from crawlcrunch.compat import unittest
 from crawlcrunch.compat import GzipFile
 
-class CrawlerTests(unittest.TestCase):
-
-    def _get_target_class(self):
-        from crawlcrunch.crawler import Crawler
-        return Crawler
-
-    def _make_one(self, *args, **kwargs):
-        return self._get_target_class()(*args, **kwargs)
-
 class CompanyFetcherTests(unittest.TestCase):
 
     def _get_target_class(self):
@@ -45,7 +36,7 @@ class IntegrationTests(unittest.TestCase):
         shutil.rmtree(self.tmpd)
 
     @mock.patch('urllib2.urlopen')
-    def test_run_method(self, urlopen):
+    def test_only_company_fetcher(self, urlopen):
         content = StringIO()
         json.dump({'foo': 'bar'}, content)
         content.seek(0)
@@ -60,6 +51,24 @@ class IntegrationTests(unittest.TestCase):
             'http://api.crunchbase.com/v/1/company/facebook.js'
             )
         with GzipFile(dump_file) as fp:
+            self.assertEqual(json.load(fp), {'foo': 'bar'})
+
+    @mock.patch('urllib2.urlopen')
+    def test_crawler_and_company_fetcher(self, urlopen):
+        content = StringIO()
+        json.dump({'foo': 'bar'}, content)
+        content.seek(0)
+        urlopen.return_value = content
+        from crawlcrunch.crawler import Crawler
+        from crawlcrunch.companies import CompaniesList
+        cl = CompaniesList(self.tmpd)
+        cl.companies = ['facebook', ]
+        crawler = Crawler(cl)
+        crawler.crawl()
+        urlopen.assert_called_once_with(
+            'http://api.crunchbase.com/v/1/company/facebook.js'
+            )
+        with GzipFile(os.path.join(self.tmpd, 'facebook.json.gz')) as fp:
             self.assertEqual(json.load(fp), {'foo': 'bar'})
 
 if __name__ == '__main__': # pragma: no cover
