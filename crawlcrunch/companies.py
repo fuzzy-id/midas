@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import gzip
 import json
 import os.path
+
+from crawlcrunch.compat import GzipFile
 
 class CompaniesList(object):
     
@@ -12,7 +13,7 @@ class CompaniesList(object):
         self.companies = None
 
     def create_list(self):
-        with gzip.GzipFile(os.path.join(self.companies_file)) as fp:
+        with GzipFile(os.path.join(self.companies_file)) as fp:
             companies_js = json.load(fp)
         self.companies = []
         for company in companies_js:
