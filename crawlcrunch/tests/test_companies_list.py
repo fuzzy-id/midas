@@ -9,8 +9,8 @@ import mock
 
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import StringIO
-from crawlcrunch.compat import unittest
 from crawlcrunch.tests import DestinationPaths
+from crawlcrunch.tests import unittest
 
 class CompaniesListTests(unittest.TestCase):
 

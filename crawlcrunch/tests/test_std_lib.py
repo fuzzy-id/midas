@@ -2,7 +2,7 @@
 
 import threading
 
-from crawlcrunch.compat import unittest
+from crawlcrunch.tests import unittest
 
 class StdLibTests(unittest.TestCase):
 

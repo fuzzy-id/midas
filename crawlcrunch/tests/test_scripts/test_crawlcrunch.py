@@ -3,8 +3,8 @@
 import os.path
 
 from crawlcrunch.compat import StringIO
-from crawlcrunch.compat import unittest
 from crawlcrunch.tests import DestinationPaths
+from crawlcrunch.tests import unittest
 
 class CrawlCrunchTests(unittest.TestCase):
 
