@@ -40,7 +40,7 @@ class CrawlCrunchCommand(object):
         basedir = os.path.expanduser(self.args[0])
         basedir = os.path.abspath(basedir)
         basedir = os.path.normpath(basedir)
-        logging.basicConfig(level=logging.INFO)
+        logging.basicConfig(level=logging.DEBUG)
         cl = CompaniesList(basedir)
         cl.create_list()
         crawler = Crawler(cl)
