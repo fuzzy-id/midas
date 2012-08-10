@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from StringIO import StringIO
+
 from crawlcrunch.compat import unittest
 from crawlcrunch.tests import DestinationPaths
 
@@ -27,3 +29,9 @@ class CompaniesListTests(unittest.TestCase):
                                          'pivotshare',
                                          'vaporstream',
                                          ])
+
+    def test_companies_list_is_iterable(self):
+        cl = self._make_one('foo')
+        cl.companies = ['foo', 'bar']
+        result = list(cl)
+        self.assertEqual(result, ['foo', 'bar'])
