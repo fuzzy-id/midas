@@ -10,6 +10,7 @@ class Crawler(object):
 
     def __init__(self, companies_list, num_threads=20):
         self.companies = companies_list
+        self.num_threads = num_threads
         self.semaphore = threading.Semaphore(num_threads)
         self.threads = []
 
@@ -21,10 +22,14 @@ class Crawler(object):
                 self.companies.expand_fname(company),
                 self.semaphore)
             fetcher.start()
+        # Wait 'til all threads finished
+        for _ in range(self.num_threads):
+            self.semaphore.acquire()
 
 class CompanyFetcher(threading.Thread):
 
     def __init__(self, company, dst, semaphore):
+        super(CompanyFetcher, self).__init__()
         self.company = company
         self.dst = dst
         self.semaphore = semaphore
