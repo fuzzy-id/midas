@@ -17,6 +17,7 @@ setup(name='crawlcrunch',
       tests_require=tests_require,
       test_suite='crawlcrunch.tests',
       entry_points={
-        'console_scripts': ['crawlcrunch=crawlcrunch.scripts.crawlcrunch:main', ],
+        'console_scripts': 
+        ['crawlcrunch=crawlcrunch.scripts.crawl_crunch_command:main', ],
         },
       )
