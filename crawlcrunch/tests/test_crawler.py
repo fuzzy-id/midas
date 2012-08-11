@@ -29,6 +29,8 @@ class CompanyFetcherTests(unittest.TestCase):
     @mock.patch('crawlcrunch.crawler.url_open')
     def test_semaphore_is_released_on_error(self, urlopen):
         urlopen.side_effect = Exception
+        import logging
+        logging.root.setLevel(logging.CRITICAL)
         semaphore = threading.Semaphore(1)
         from crawlcrunch.crawler import CompanyFetcher
         cf = CompanyFetcher('facebook', 'dump_file', semaphore)
