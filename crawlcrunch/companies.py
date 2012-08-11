@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import json
-import logging
 import os.path
 
 from crawlcrunch import ZippedJsonFile
 from crawlcrunch import CrunchBaseFetcherBase
-from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import UserList
-from crawlcrunch.compat import url_open
 
 class CompaniesList(UserList, CrunchBaseFetcherBase):
     
@@ -20,7 +16,7 @@ class CompaniesList(UserList, CrunchBaseFetcherBase):
 
     def create_list(self):
         if not self.zipf.exists():
-            self.fetch_list()
+            self.zipf.dump(self.fetch())
         else:
             self.zipf.load()
         for company in self.zipf.data:
@@ -34,6 +30,3 @@ class CompaniesList(UserList, CrunchBaseFetcherBase):
 
     def query_url(self):
         return self.companies_list_url
-    
-    def fetch_list(self):
-        self.zipf.dump(self.fetch())
