@@ -5,14 +5,16 @@ import logging
 import os.path
 
 from crawlcrunch import ZippedJsonFile
+from crawlcrunch import CrunchBaseFetcherBase
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import UserList
 from crawlcrunch.compat import url_open
 
-class CompaniesList(UserList):
+class CompaniesList(UserList, CrunchBaseFetcherBase):
     
     def __init__(self, destination):
         super(CompaniesList, self).__init__()
+        self.name = 'the companies list'
         self.destination = destination
         self.zipf = ZippedJsonFile(self.expand_fname('companies'))
 
@@ -30,8 +32,8 @@ class CompaniesList(UserList):
         return os.path.join(self.destination, 
                             '{0}.json.gz'.format(fname))
 
+    def query_url(self):
+        return self.companies_list_url
+    
     def fetch_list(self):
-        logging.info('Fetching the companies list.')
-        content = url_open(
-            'http://api.crunchbase.com/v/1/companies.js')
-        self.zipf.dump(json.load(content))
+        self.zipf.dump(self.fetch())

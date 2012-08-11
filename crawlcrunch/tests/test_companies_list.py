@@ -57,7 +57,7 @@ class IntegrationTests(unittest.TestCase):
         json_buffer.seek(0)
         return json_buffer
 
-    @mock.patch('crawlcrunch.companies.url_open')
+    @mock.patch('crawlcrunch.url_open')
     def test_list_is_fetched_and_saved_when_not_present(self, 
                                                         url_open):
         url_open.return_value = self._make_json_buffer(
