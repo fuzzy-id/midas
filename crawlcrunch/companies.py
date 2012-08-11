@@ -13,14 +13,14 @@ class CompaniesList(UserList):
     def __init__(self, destination):
         super(CompaniesList, self).__init__()
         self.destination = destination
-        self.companies_file = ZippedJsonFile(self.expand_fname('companies'))
+        self.zipf = ZippedJsonFile(self.expand_fname('companies'))
 
     def create_list(self):
-        if not self.companies_file.exists():
+        if not self.zipf.exists():
             self.fetch_list()
         else:
-            self.companies_file.load()
-        for company in self.companies_file.data:
+            self.zipf.load()
+        for company in self.zipf.data:
             company_file = self.expand_fname(company['permalink'])
             if not os.path.isfile(company_file):
                 self.data.append(company['permalink'])
@@ -33,7 +33,7 @@ class CompaniesList(UserList):
         logging.info('Fetching the companies list.')
         content = url_open(
             'http://api.crunchbase.com/v/1/companies.js')
-        self.companies_file.dump(json.load(content))
+        self.zipf.dump(json.load(content))
 
 class ZippedJsonFile(object):
 
