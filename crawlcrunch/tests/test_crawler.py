@@ -26,7 +26,7 @@ class CompanyFetcherTests(unittest.TestCase):
         expected = 'http://api.crunchbase.com/v/1/company/facebook.js'
         self.assertEqual(cf.query_url(), expected)
 
-    @mock.patch('crawlcrunch.crawler.url_open')
+    @mock.patch('crawlcrunch.url_open')
     def test_semaphore_is_released_on_error(self, urlopen):
         urlopen.side_effect = Exception
         import logging
@@ -45,7 +45,7 @@ class IntegrationTests(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmpd)
 
-    @mock.patch('crawlcrunch.crawler.url_open')
+    @mock.patch('crawlcrunch.url_open')
     def test_only_company_fetcher(self, urlopen):
         content = StringIO()
         json.dump({'foo': 'bar'}, content)
@@ -63,7 +63,7 @@ class IntegrationTests(unittest.TestCase):
         with GzipFile(dump_file) as fp:
             self.assertEqual(json.load(fp), {'foo': 'bar'})
 
-    @mock.patch('crawlcrunch.crawler.url_open')
+    @mock.patch('crawlcrunch.url_open')
     def test_crawler_and_company_fetcher(self, urlopen):
         content = StringIO()
         json.dump({'foo': 'bar'}, content)

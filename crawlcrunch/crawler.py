@@ -5,6 +5,7 @@ import logging
 import threading
 
 from crawlcrunch import ZippedJsonFile
+from crawlcrunch import CrunchBaseFetcherBase
 from crawlcrunch.compat import url_open
 
 class Crawler(object):
@@ -27,25 +28,21 @@ class Crawler(object):
         for _ in range(self.num_threads):
             self.semaphore.acquire()
 
-class CompanyFetcher(threading.Thread):
+class CompanyFetcher(threading.Thread, CrunchBaseFetcherBase):
 
     def __init__(self, company, dst, semaphore):
         super(CompanyFetcher, self).__init__()
-        self.company = company
+        self.name = company
         self.zipf = ZippedJsonFile(dst)
         self.semaphore = semaphore
 
     def run(self):
-        logging.info('Fetching company {0}'.format(self.company))
         try:
-            content = url_open(self.query_url())
-            js = json.load(content)
-            self.zipf.dump(js)
+            self.zipf.dump(self.fetch())
         except Exception as e:
             logging.exception(e)
         finally:
             self.semaphore.release()
 
     def query_url(self):
-        return 'http://api.crunchbase.com/v/1/company/{0}.js'.format(
-            self.company)
+        return self.company_url_tpl.format(self.name)

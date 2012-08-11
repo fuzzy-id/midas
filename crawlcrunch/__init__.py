@@ -31,7 +31,7 @@ class CrunchBaseFetcherBase(object):
     crunchbase.
     """
     companies_list_url = 'http://api.crunchbase.com/v/1/companies.js'
-    company__url_tpl = 'http://api.crunchbase.com/v/1/company/{0}.js'
+    company_url_tpl = 'http://api.crunchbase.com/v/1/company/{0}.js'
 
     def query_url(self):
         raise NotImplementedError()
