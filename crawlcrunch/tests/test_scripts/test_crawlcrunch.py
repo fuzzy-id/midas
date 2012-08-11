@@ -54,8 +54,7 @@ class CrawlCrunchTests(unittest.TestCase):
         self.assertTrue(out.endswith("Please, create it first."))
 
     def test_dl_complete_runs(self):
-        dl_complete = os.path.join(DestinationPaths.companies_empty)
-        cmd = self._make_one(dl_complete)
+        cmd = self._make_one(DestinationPaths.companies_empty)
         result = cmd.run()
         self.assertEqual(result, 0)
 
@@ -65,3 +64,6 @@ class MainTests(unittest.TestCase):
         from crawlcrunch.scripts.crawl_crunch_command import main
         result = main(['crawlcrunch'], quiet=True)
         self.assertEqual(result, 2)
+
+if __name__ == '__main__': # pragma: no cover
+    unittest.main()

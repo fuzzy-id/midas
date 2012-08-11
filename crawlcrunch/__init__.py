@@ -40,3 +40,20 @@ class CrunchBaseFetcherBase(object):
         logging.info('Fetching {0}'.format(self.name))
         content = url_open(self.query_url())
         return json.load(content)
+
+class DestinationDir(object):
+
+    suffix = '.json.gz'
+
+    def __init__(self, path):
+        path = os.path.expanduser(path)
+        path = os.path.abspath(path)
+        path = os.path.normpath(path)
+        self.path = path
+
+    def exists(self):
+        return os.path.isdir(self.path)
+
+    def expand(self, fname):
+        return os.path.join(self.path, 
+                            '{0}{1}'.format(fname, self.suffix))

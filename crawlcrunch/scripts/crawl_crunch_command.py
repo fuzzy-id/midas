@@ -7,6 +7,7 @@ import optparse
 import os.path
 import sys
 
+from crawlcrunch import DestinationDir
 from crawlcrunch.companies import CompaniesList
 from crawlcrunch.crawler import Crawler
 
@@ -32,18 +33,16 @@ class CrawlCrunchCommand(object):
             self.out(
                 'You must provide one destination directory, not {0}.'.format(len(self.args)))
             return 2
-        elif not os.path.isdir(self.args[0]):
+        dst_dir = DestinationDir(self.args[0])
+        if not dst_dir.exists():
             self.out("The directory '{0}' does not exist!".format(
                     self.args[0]))
             self.out('Please, create it first.')
             return 2
-        basedir = os.path.expanduser(self.args[0])
-        basedir = os.path.abspath(basedir)
-        basedir = os.path.normpath(basedir)
         logging.basicConfig(level=logging.DEBUG)
-        cl = CompaniesList(basedir)
+        cl = CompaniesList(dst_dir)
         cl.create_list()
-        crawler = Crawler(cl)
+        crawler = Crawler(cl, dst_dir)
         crawler.crawl()
         return 0
 

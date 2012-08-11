@@ -8,6 +8,7 @@ import threading
 
 import mock
 
+from crawlcrunch import DestinationDir
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import StringIO
 from crawlcrunch.tests import unittest
@@ -71,9 +72,10 @@ class IntegrationTests(unittest.TestCase):
         urlopen.return_value = content
         from crawlcrunch.crawler import Crawler
         from crawlcrunch.companies import CompaniesList
-        cl = CompaniesList(self.tmpd)
+        dst_dir = DestinationDir(self.tmpd)
+        cl = CompaniesList(dst_dir)
         cl.data.append('facebook')
-        crawler = Crawler(cl)
+        crawler = Crawler(cl, dst_dir)
         crawler.crawl()
         urlopen.assert_called_once_with(
             'http://api.crunchbase.com/v/1/company/facebook.js'
