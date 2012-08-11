@@ -4,7 +4,7 @@ import json
 import logging
 import threading
 
-from crawlcrunch.compat import GzipFile
+from crawlcrunch import ZippedJsonFile
 from crawlcrunch.compat import url_open
 
 class Crawler(object):
@@ -32,7 +32,7 @@ class CompanyFetcher(threading.Thread):
     def __init__(self, company, dst, semaphore):
         super(CompanyFetcher, self).__init__()
         self.company = company
-        self.dst = dst
+        self.zipf = ZippedJsonFile(dst)
         self.semaphore = semaphore
 
     def run(self):
@@ -40,8 +40,7 @@ class CompanyFetcher(threading.Thread):
         try:
             content = url_open(self.query_url())
             js = json.load(content)
-            with GzipFile(self.dst, 'wb') as fp:
-                json.dump(js, fp)
+            self.zipf.dump(js)
         except Exception as e:
             logging.exception(e)
         finally:
