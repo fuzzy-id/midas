@@ -3,10 +3,10 @@
 import os.path
 
 from crawlcrunch import ZippedJsonFile
-from crawlcrunch import CrunchBaseFetcherBase
+from crawlcrunch import CrunchBaseFetcherMixin
 from crawlcrunch.compat import UserList
 
-class CompaniesList(UserList, CrunchBaseFetcherBase):
+class CompaniesList(UserList, CrunchBaseFetcherMixin):
     
     def __init__(self, dst_dir):
         super(CompaniesList, self).__init__()

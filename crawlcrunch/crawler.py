@@ -5,7 +5,7 @@ import logging
 import threading
 
 from crawlcrunch import ZippedJsonFile
-from crawlcrunch import CrunchBaseFetcherBase
+from crawlcrunch import CrunchBaseFetcherMixin
 from crawlcrunch.compat import url_open
 
 class Crawler(object):
@@ -29,7 +29,7 @@ class Crawler(object):
         for _ in range(self.num_threads):
             self.semaphore.acquire()
 
-class CompanyFetcher(threading.Thread, CrunchBaseFetcherBase):
+class CompanyFetcher(threading.Thread, CrunchBaseFetcherMixin):
 
     def __init__(self, company, dst, semaphore):
         super(CompanyFetcher, self).__init__()

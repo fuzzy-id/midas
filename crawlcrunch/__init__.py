@@ -26,7 +26,7 @@ class ZippedJsonFile(object):
         with GzipFile(self.path, 'wb') as fp:
             json.dump(self.data, fp)
 
-class CrunchBaseFetcherBase(object):
+class CrunchBaseFetcherMixin(object):
     """ A base class that sums up the general ways to fetch data from
     crunchbase.
     """
