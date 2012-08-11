@@ -24,13 +24,13 @@ class CompaniesListTests(unittest.TestCase):
     def test_list_creation_when_all_companies_files_present(self):
         cl = self._make_one(DestinationPaths.companies_empty)
         cl.create_list()
-        self.assertEqual(cl.companies, [])
+        self.assertEqual(cl, [])
 
     def test_list_creation_when_companies_missing(self):
         cl = self._make_one(DestinationPaths.no_companies)
         cl.create_list()
-        cl.companies.sort()
-        self.assertEqual(cl.companies, [ 'de-revolutione',
+        cl.sort()
+        self.assertEqual(cl, [ 'de-revolutione',
                                          'group-laurier',
                                          'hiconversion',
                                          'pivotshare',
@@ -39,7 +39,7 @@ class CompaniesListTests(unittest.TestCase):
 
     def test_companies_list_is_iterable(self):
         cl = self._make_one('foo')
-        cl.companies = ['foo', 'bar']
+        cl.data = ['foo', 'bar']
         result = list(cl)
         self.assertEqual(result, ['foo', 'bar'])
 

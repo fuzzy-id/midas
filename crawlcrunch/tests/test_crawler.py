@@ -70,7 +70,7 @@ class IntegrationTests(unittest.TestCase):
         from crawlcrunch.crawler import Crawler
         from crawlcrunch.companies import CompaniesList
         cl = CompaniesList(self.tmpd)
-        cl.companies = ['facebook', ]
+        cl.data.append('facebook')
         crawler = Crawler(cl)
         crawler.crawl()
         urlopen.assert_called_once_with(

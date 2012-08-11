@@ -32,3 +32,8 @@ if PY3: # pragma: no cover
     from urllib.request import urlopen as url_open
 else:
     from urllib2 import urlopen as url_open
+
+if PY3: # pragma: no cover
+    from collections import UserList
+else:
+    from UserList import UserList
