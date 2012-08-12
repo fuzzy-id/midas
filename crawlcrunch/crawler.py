@@ -4,8 +4,8 @@ import json
 import logging
 import threading
 
-from crawlcrunch import ZippedJsonFile
-from crawlcrunch import CrunchBaseFetcherMixin
+from crawlcrunch.model import ZippedJsonFile
+from crawlcrunch.model import CrunchBaseFetcherMixin
 from crawlcrunch.compat import url_open
 
 class Crawler(object):

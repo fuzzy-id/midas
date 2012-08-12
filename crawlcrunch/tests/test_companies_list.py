@@ -7,7 +7,7 @@ import tempfile
 
 import mock
 
-from crawlcrunch import LocalFilesDir
+from crawlcrunch.model import LocalFilesDir
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import StringIO
 from crawlcrunch.tests import DestinationPaths
@@ -60,7 +60,7 @@ class IntegrationTests(unittest.TestCase):
         json_buffer.seek(0)
         return json_buffer
 
-    @mock.patch('crawlcrunch.url_open')
+    @mock.patch('crawlcrunch.model.url_open')
     def test_list_is_fetched_and_saved_when_not_present(self, 
                                                         url_open):
         url_open.return_value = self._make_json_buffer(

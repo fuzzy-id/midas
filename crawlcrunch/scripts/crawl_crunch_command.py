@@ -7,7 +7,7 @@ import optparse
 import os.path
 import sys
 
-from crawlcrunch import LocalFilesDir
+from crawlcrunch.model import LocalFilesDir
 from crawlcrunch.model import CompaniesList
 from crawlcrunch.crawler import Crawler
 
