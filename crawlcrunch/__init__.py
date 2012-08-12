@@ -41,7 +41,7 @@ class CrunchBaseFetcherMixin(object):
         content = url_open(self.query_url())
         return json.load(content)
 
-class DestinationDir(object):
+class LocalFilesDir(object):
 
     suffix = '.json.gz'
 
@@ -57,3 +57,12 @@ class DestinationDir(object):
     def expand(self, fname):
         return os.path.join(self.path, 
                             '{0}{1}'.format(fname, self.suffix))
+
+    def get_local_object(self, name):
+        fname = self.expand(name)
+        return ZippedJsonFile(fname)
+
+    def get_local_data(self, name):
+        obj = self.get_local_object(name)
+        obj.load()
+        return obj.data
