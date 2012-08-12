@@ -8,21 +8,26 @@ from crawlcrunch.compat import UserList
 
 class CompaniesList(UserList, CrunchBaseFetcherMixin):
     
-    def __init__(self, local_data):
+    def __init__(self, root):
         super(CompaniesList, self).__init__()
         self.name = 'the companies list'
-        self.local_data = local_data
-        self.zipf = self.local_data.get_object('companies')
+        self.root = root
+        self.local_data = self.root.get_object('companies')
+    
+    def load(self):
+        self.local_data.load()
+        self.data = [ company['permalink'] 
+                      for company in self.local_data.data ]
 
-    def create_list(self):
-        if not self.zipf.exists():
-            self.zipf.dump(self.fetch())
-        else:
-            self.zipf.load()
-        for company in self.zipf.data:
-            company_file = self.local_data.expand(company['permalink'])
-            if not os.path.isfile(company_file):
-                self.data.append(company['permalink'])
+    def update(self):
+        self.local_data.dump(self.fetch())
+        self.load()
+
+    def not_local(self):
+        for company_name in self:
+            company = self.root.get(company_name)
+            if not company.is_local():
+                yield company_name
 
     def query_url(self):
         return self.companies_list_url

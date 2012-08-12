@@ -24,14 +24,22 @@ class LocalFilesDir(object):
         return os.path.join(self.path, 
                             '{0}{1}'.format(fname, self.suffix))
 
+    def get(self, name):
+        local_file = self.get_object(name)
+        return Company(name, local_file)
+
     def get_object(self, name):
         fname = self.expand(name)
         return ZippedJsonFile(fname)
 
-    def get_data(self, name):
-        obj = self.get_object(name)
-        obj.load()
-        return obj.data
+class Company(object):
+    
+    def __init__(self, name, local_data):
+        self.name = name
+        self.local_data = local_data
+    
+    def is_local(self):
+        return self.local_data.exists()
 
 class ZippedJsonFile(object):
 

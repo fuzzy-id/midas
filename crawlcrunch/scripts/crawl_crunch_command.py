@@ -41,7 +41,7 @@ class CrawlCrunchCommand(object):
             return 2
         logging.basicConfig(level=logging.DEBUG)
         cl = CompaniesList(local_data)
-        cl.create_list()
+        cl.load()
         crawler = Crawler(cl, local_data)
         crawler.crawl()
         return 0

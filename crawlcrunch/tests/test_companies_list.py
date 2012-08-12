@@ -25,13 +25,13 @@ class CompaniesListTests(unittest.TestCase):
     def test_list_creation_when_all_companies_files_present(self):
         cl = self._make_one(LocalFilesDir(
                 DestinationPaths.companies_empty))
-        cl.create_list()
-        self.assertEqual(cl, [])
+        cl.load()
+        self.assertEqual(list(cl.not_local()), [])
 
     def test_list_creation_when_companies_missing(self):
         cl = self._make_one(
             LocalFilesDir(DestinationPaths.no_companies))
-        cl.create_list()
+        cl.load()
         cl.sort()
         self.assertEqual(cl, [ 'de-revolutione',
                                'group-laurier',
@@ -67,7 +67,7 @@ class IntegrationTests(unittest.TestCase):
             [{'permalink': 'foo'}, ])
         from crawlcrunch.companies import CompaniesList
         cl = CompaniesList(LocalFilesDir(self.tmpd))
-        cl.create_list()
+        cl.update()
         url_open.assert_called_once_with(
             'http://api.crunchbase.com/v/1/companies.js')
         companies_file = (os.path.join(self.tmpd, 

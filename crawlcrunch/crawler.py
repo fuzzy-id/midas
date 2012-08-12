@@ -18,7 +18,7 @@ class Crawler(object):
         self.threads = []
 
     def crawl(self):
-        for company in self.companies:
+        for company in self.companies.not_local():
             self.semaphore.acquire()
             fetcher = CompanyFetcher(
                 company, 
