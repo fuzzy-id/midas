@@ -4,11 +4,9 @@ from __future__ import print_function
 
 import logging
 import optparse
-import os.path
 import sys
 
 from crawlcrunch.model import LocalFilesDir
-from crawlcrunch.model import CompaniesList
 from crawlcrunch.crawler import Crawler
 
 def main(argv=sys.argv, quiet=False):
@@ -33,6 +31,7 @@ class CCUpdateCommand(object):
             self.out(
                 'You must provide one destination directory, not {0}.'.format(len(self.args)))
             return 2
+
         root = LocalFilesDir(self.args[0])
         if not root.exists():
             self.out("The directory '{0}' does not exist!".format(
@@ -40,9 +39,7 @@ class CCUpdateCommand(object):
             self.out('Please, create it first.')
             return 2
         logging.basicConfig(level=logging.DEBUG)
-        cl = root.get('companies')
-        cl.load()
-        crawler = Crawler(cl, root)
+        crawler = Crawler(root)
         crawler.crawl()
         return 0
 
