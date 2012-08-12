@@ -7,6 +7,32 @@ import os.path
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import url_open
 
+class LocalFilesDir(object):
+
+    suffix = '.json.gz'
+
+    def __init__(self, path):
+        path = os.path.expanduser(path)
+        path = os.path.abspath(path)
+        path = os.path.normpath(path)
+        self.path = path
+
+    def exists(self):
+        return os.path.isdir(self.path)
+
+    def expand(self, fname):
+        return os.path.join(self.path, 
+                            '{0}{1}'.format(fname, self.suffix))
+
+    def get_object(self, name):
+        fname = self.expand(name)
+        return ZippedJsonFile(fname)
+
+    def get_data(self, name):
+        obj = self.get_object(name)
+        obj.load()
+        return obj.data
+
 class ZippedJsonFile(object):
 
     def __init__(self, path):
@@ -40,29 +66,3 @@ class CrunchBaseFetcherMixin(object):
         logging.info('Fetching {0}'.format(self.name))
         content = url_open(self.query_url())
         return json.load(content)
-
-class LocalFilesDir(object):
-
-    suffix = '.json.gz'
-
-    def __init__(self, path):
-        path = os.path.expanduser(path)
-        path = os.path.abspath(path)
-        path = os.path.normpath(path)
-        self.path = path
-
-    def exists(self):
-        return os.path.isdir(self.path)
-
-    def expand(self, fname):
-        return os.path.join(self.path, 
-                            '{0}{1}'.format(fname, self.suffix))
-
-    def get_object(self, name):
-        fname = self.expand(name)
-        return ZippedJsonFile(fname)
-
-    def get_data(self, name):
-        obj = self.get_object(name)
-        obj.load()
-        return obj.data
