@@ -28,6 +28,18 @@ class LocalFilesDirTests(unittest.TestCase):
         root = self._make_one('foo')
         self.assertIs(root.get('companies'), root.get('companies'))
 
+class CompanyTests(unittest.TestCase):
+
+    def _make_one(self, path, name):
+        from crawlcrunch.model import LocalFilesDir
+        root = LocalFilesDir(path)
+        return root.get(name)
+
+    def test_url_generation(self):
+        company = self._make_one('foo', 'facebook')
+        expected = 'http://api.crunchbase.com/v/1/company/facebook.js'
+        self.assertEqual(company.query_url(), expected)
+
 class CompanyListTests(unittest.TestCase):
 
     def _make_one(self, path):
