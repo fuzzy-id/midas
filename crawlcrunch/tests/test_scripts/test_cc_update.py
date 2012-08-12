@@ -79,12 +79,23 @@ class IntegrationTests(unittest.TestCase):
         from crawlcrunch.scripts.cc_update import CCUpdateCommand
         return CCUpdateCommand(['cc_update', path])
 
+    def _make_json_buffer(self, obj):
+        buf = StringIO()
+        json.dump(obj, buf)
+        buf.seek(0)
+        return buf
+
+    def _prepare_url_open(self, url_open, return_dict):
+        def side_effect(url):
+            return self._make_json_buffer(return_dict[url])
+        url_open.side_effect = side_effect
+
     @mock.patch('crawlcrunch.model.url_open')
     def test_on_empty_companies_list(self, url_open):
-        content = StringIO()
-        json.dump([], content)
-        content.seek(0)
-        url_open.return_value = content
+        url_return = {
+            'http://api.crunchbase.com/v/1/companies.js': [],
+            }
+        self._prepare_url_open(url_open, url_return)
         cmd = self._make_one(self.tmpd)
         result = cmd.run()
         self.assertEqual(result, 0)
@@ -98,6 +109,48 @@ class IntegrationTests(unittest.TestCase):
         self.assertTrue(os.path.isfile(companies_file))
         with GzipFile(companies_file) as fp:
             self.assertEqual(json.load(fp), [])
+
+    @mock.patch('crawlcrunch.model.url_open')
+    def test_on_companies_list_with_elements(self, url_open):
+        self._prepare_url_open(url_open, {
+                'http://api.crunchbase.com/v/1/companies.js': [ 
+                    {'permalink': 'foo', },
+                    {'permalink': 'bar', }, ],
+                'http://api.crunchbase.com/v/1/company/foo.js': [
+                    'some_foo',
+                    ],
+                'http://api.crunchbase.com/v/1/company/bar.js': [
+                    'some_bar',
+                    ],
+                })
+        cmd = self._make_one(self.tmpd)
+        result = cmd.run()
+        self.assertEqual(result, 0)
+        url_open.assert_called_with(
+            'http://api.crunchbase.com/v/1/companies.js'
+            )
+        url_open.assert_called_with(
+            'http://api.crunchbase.com/v/1/company/foo.js'
+            )
+        url_open.assert_called_with(
+            'http://api.crunchbase.com/v/1/company/bar.js'
+            )
+        listing = os.listdir(self.tmpd)
+        self.assertEqual(listing, ['bar.json.gz',
+                                   'companies.json.gz', 
+                                   'foo.json.gz',
+                                   ])
+
+        with GzipFile(os.path.join(self.tmpd,
+                                   'companies.json.gz')) as fp:
+            self.assertEqual(json.load(fp), [{'permalink': 'foo'},
+                                             {'permalink': 'bar'}])
+        with GzipFile(os.path.join(self.tmpd,
+                                   'bar.json.gz')) as fp:
+            self.assertEqual(json.load(fp), 'some_bar')
+        with GzipFile(os.path.join(self.tmpd,
+                                   'foo.json.gz')) as fp:
+            self.assertEqual(json.load(fp), 'some_foo')
 
 if __name__ == '__main__': # pragma: no cover
     unittest.main()
