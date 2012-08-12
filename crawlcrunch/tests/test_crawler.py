@@ -8,7 +8,7 @@ import threading
 
 import mock
 
-from crawlcrunch import DestinationDir
+from crawlcrunch import LocalFilesDir
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import StringIO
 from crawlcrunch.tests import unittest
@@ -72,7 +72,7 @@ class IntegrationTests(unittest.TestCase):
         urlopen.return_value = content
         from crawlcrunch.crawler import Crawler
         from crawlcrunch.companies import CompaniesList
-        dst_dir = DestinationDir(self.tmpd)
+        dst_dir = LocalFilesDir(self.tmpd)
         cl = CompaniesList(dst_dir)
         cl.data.append('facebook')
         crawler = Crawler(cl, dst_dir)

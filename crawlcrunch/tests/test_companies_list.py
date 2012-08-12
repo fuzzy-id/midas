@@ -7,7 +7,7 @@ import tempfile
 
 import mock
 
-from crawlcrunch import DestinationDir
+from crawlcrunch import LocalFilesDir
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import StringIO
 from crawlcrunch.tests import DestinationPaths
@@ -23,14 +23,14 @@ class CompaniesListTests(unittest.TestCase):
         return self._get_target_class()(*args, **kwargs)
 
     def test_list_creation_when_all_companies_files_present(self):
-        cl = self._make_one(DestinationDir(
+        cl = self._make_one(LocalFilesDir(
                 DestinationPaths.companies_empty))
         cl.create_list()
         self.assertEqual(cl, [])
 
     def test_list_creation_when_companies_missing(self):
         cl = self._make_one(
-            DestinationDir(DestinationPaths.no_companies))
+            LocalFilesDir(DestinationPaths.no_companies))
         cl.create_list()
         cl.sort()
         self.assertEqual(cl, [ 'de-revolutione',
@@ -41,7 +41,7 @@ class CompaniesListTests(unittest.TestCase):
                                ])
 
     def test_companies_list_is_iterable(self):
-        cl = self._make_one(DestinationDir('foo'))
+        cl = self._make_one(LocalFilesDir('foo'))
         cl.data = ['foo', 'bar']
         result = list(cl)
         self.assertEqual(result, ['foo', 'bar'])
@@ -66,7 +66,7 @@ class IntegrationTests(unittest.TestCase):
         url_open.return_value = self._make_json_buffer(
             [{'permalink': 'foo'}, ])
         from crawlcrunch.companies import CompaniesList
-        cl = CompaniesList(DestinationDir(self.tmpd))
+        cl = CompaniesList(LocalFilesDir(self.tmpd))
         cl.create_list()
         url_open.assert_called_once_with(
             'http://api.crunchbase.com/v/1/companies.js')
