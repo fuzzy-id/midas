@@ -10,9 +10,9 @@ from crawlcrunch.compat import url_open
 
 class Crawler(object):
 
-    def __init__(self, companies_list, dst_dir, num_threads=20):
-        self.companies = companies_list
-        self.dst_dir = dst_dir
+    def __init__(self, root, num_threads=20):
+        self.companies = root.get('companies')
+        self.root = root
         self.num_threads = num_threads
         self.semaphore = threading.Semaphore(num_threads)
         self.threads = []
@@ -22,7 +22,7 @@ class Crawler(object):
             self.semaphore.acquire()
             fetcher = CompanyFetcher(
                 company, 
-                self.dst_dir.expand(company),
+                self.root.expand(company),
                 self.semaphore)
             fetcher.start()
         # Wait 'til all threads finished
