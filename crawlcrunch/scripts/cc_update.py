@@ -12,10 +12,10 @@ from crawlcrunch.model import CompaniesList
 from crawlcrunch.crawler import Crawler
 
 def main(argv=sys.argv, quiet=False):
-    command = CrawlCrunchCommand(argv, quiet)
+    command = CCUpdateCommand(argv, quiet)
     return command.run()
 
-class CrawlCrunchCommand(object):
+class CCUpdateCommand(object):
     
     description = "Crawl the companies information from crunchbase.com"
     usage = "usage: %prog [options] dest_dir"

@@ -15,8 +15,8 @@ class CrawlCrunchTests(unittest.TestCase):
         self.out_.write(msg)
 
     def _get_target_class(self):
-        from crawlcrunch.scripts.crawl_crunch_command import CrawlCrunchCommand
-        return CrawlCrunchCommand
+        from crawlcrunch.scripts.cc_update import CCUpdateCommand
+        return CCUpdateCommand
 
     def _make_one(self, *args):
         effargs = ['crawlcrunch', ]
@@ -61,8 +61,8 @@ class CrawlCrunchTests(unittest.TestCase):
 class MainTests(unittest.TestCase):
 
     def test_missing_argument(self):
-        from crawlcrunch.scripts.crawl_crunch_command import main
-        result = main(['crawlcrunch'], quiet=True)
+        from crawlcrunch.scripts.cc_update import main
+        result = main(['cc_update'], quiet=True)
         self.assertEqual(result, 2)
 
 if __name__ == '__main__': # pragma: no cover
