@@ -41,28 +41,6 @@ class LocalFilesDir(object):
         fname = self.expand(name)
         return ZippedJsonFile(fname)
 
-class Node(object):
-    """ Defines the interface to access data, both locally and network
-    data.
-    """ 
-    
-    def __init__(self, local_data, name):
-        self.local_data = local_data
-        self.name = name
-
-    def load(self): # pragma: no cover
-        raise NotImplementedError()
-
-    def update(self):
-        self.local_data.dump(self.fetch())
-        self.load()
-
-    def is_local(self):
-        return self.local_data.exists()
-
-class Company(Node):
-    pass
-
 class ZippedJsonFile(object):
     """ Implements access to local stored data, which is realized via
     compressed (gzipped) JSON files.
@@ -99,6 +77,30 @@ class CrunchBaseFetcherMixin(object):
         logging.info('Fetching {0}'.format(self.name))
         content = url_open(self.query_url())
         return json.load(content)
+
+class Node(object):
+    """ Defines the interface to access data, both locally and network
+    data.
+    """ 
+    
+    def __init__(self, local_data, name):
+        self.local_data = local_data
+        self.name = name
+
+    def load(self): # pragma: no cover
+        raise NotImplementedError()
+
+    def update(self):
+        self.local_data.dump(self.fetch())
+        self.load()
+
+    def is_local(self):
+        return self.local_data.exists()
+
+class Company(Node, CrunchBaseFetcherMixin):
+
+    def query_url(self):
+        return self.company_url_tpl.format(self.name)
 
 class CompanyList(UserList, Node, CrunchBaseFetcherMixin):
 
