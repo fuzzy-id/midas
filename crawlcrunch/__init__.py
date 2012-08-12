@@ -33,7 +33,7 @@ class CrunchBaseFetcherMixin(object):
     companies_list_url = 'http://api.crunchbase.com/v/1/companies.js'
     company_url_tpl = 'http://api.crunchbase.com/v/1/company/{0}.js'
 
-    def query_url(self):
+    def query_url(self): # pragma: no cover
         raise NotImplementedError()
 
     def fetch(self):
