@@ -8,33 +8,21 @@ import threading
 
 import mock
 
-from crawlcrunch.model import LocalFilesDir
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import StringIO
 from crawlcrunch.tests import unittest
 
 class CompanyFetcherTests(unittest.TestCase):
 
-    def _get_target_class(self):
-        from crawlcrunch.crawler import CompanyFetcher
-        return CompanyFetcher
-
-    def _make_one(self, *args, **kwargs):
-        return self._get_target_class()(*args, **kwargs)
-
-    def test_url_generation(self):
-        cf = self._make_one('facebook', 'dst', threading.Semaphore(1))
-        expected = 'http://api.crunchbase.com/v/1/company/facebook.js'
-        self.assertEqual(cf.query_url(), expected)
-
-    @mock.patch('crawlcrunch.model.url_open')
-    def test_semaphore_is_released_on_error(self, urlopen):
-        urlopen.side_effect = Exception
+    def test_semaphore_is_released_on_error(self):
         import logging
         logging.root.setLevel(logging.CRITICAL)
         semaphore = threading.Semaphore(1)
+        class DummyCompany(object):
+            def update(self):
+                raise Exception()
         from crawlcrunch.crawler import CompanyFetcher
-        cf = CompanyFetcher('facebook', 'dump_file', semaphore)
+        cf = CompanyFetcher(DummyCompany(), semaphore)
         cf.run()
         self.assertTrue(semaphore.acquire(False))
 
@@ -52,10 +40,11 @@ class IntegrationTests(unittest.TestCase):
         json.dump({'foo': 'bar'}, content)
         content.seek(0)
         urlopen.return_value = content
-        dump_file = os.path.join(self.tmpd, 'dump.json.gz')
+        dump_file = os.path.join(self.tmpd, 'facebook.json.gz')
         from crawlcrunch.crawler import CompanyFetcher
-        cf = CompanyFetcher('facebook', 
-                            dump_file,
+        from crawlcrunch.model import LocalFilesDir
+        root = LocalFilesDir(self.tmpd)
+        cf = CompanyFetcher(root.get('facebook'),
                             threading.Semaphore(1))
         cf.run()
         urlopen.assert_called_once_with(
@@ -71,7 +60,7 @@ class IntegrationTests(unittest.TestCase):
         content.seek(0)
         urlopen.return_value = content
         from crawlcrunch.crawler import Crawler
-        from crawlcrunch.model import CompaniesList
+        from crawlcrunch.model import LocalFilesDir
         root = LocalFilesDir(self.tmpd)
         cl = root.get('companies')
         cl.data.append('facebook')
