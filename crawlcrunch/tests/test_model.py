@@ -24,6 +24,10 @@ class LocalFilesDirTests(unittest.TestCase):
         from crawlcrunch.model import CompanyList
         self.assertIsInstance(companies, CompanyList)
 
+    def test_nodes_are_not_created_twice(self):
+        root = self._make_one('foo')
+        self.assertIs(root.get('companies'), root.get('companies'))
+
 class CompanyListTests(unittest.TestCase):
 
     def _make_one(self, path):
