@@ -7,7 +7,7 @@ import optparse
 import sys
 
 from crawlcrunch.model import LocalFilesDir
-from crawlcrunch.crawler import Crawler
+from crawlcrunch.crawler import Updater
 
 def main(argv=sys.argv, quiet=False):
     command = CCUpdateCommand(argv, quiet)
@@ -39,8 +39,8 @@ class CCUpdateCommand(object):
             self.out('Please, create it first.')
             return 2
         logging.basicConfig(level=logging.DEBUG)
-        crawler = Crawler(root)
-        crawler.crawl()
+        updater = Updater(root)
+        updater.run()
         return 0
 
     def out(self, msg): # pragma: no cover
