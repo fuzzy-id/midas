@@ -16,7 +16,7 @@ from crawlcrunch.tests import unittest
 class CompaniesListTests(unittest.TestCase):
 
     def _get_target_class(self):
-        from crawlcrunch.companies import CompaniesList
+        from crawlcrunch.model import CompaniesList
         return CompaniesList
 
     def _make_one(self, *args, **kwargs):
@@ -65,7 +65,7 @@ class IntegrationTests(unittest.TestCase):
                                                         url_open):
         url_open.return_value = self._make_json_buffer(
             [{'permalink': 'foo'}, ])
-        from crawlcrunch.companies import CompaniesList
+        from crawlcrunch.model import CompaniesList
         cl = CompaniesList(LocalFilesDir(self.tmpd))
         cl.update()
         url_open.assert_called_once_with(

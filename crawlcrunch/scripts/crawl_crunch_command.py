@@ -8,7 +8,7 @@ import os.path
 import sys
 
 from crawlcrunch import LocalFilesDir
-from crawlcrunch.companies import CompaniesList
+from crawlcrunch.model import CompaniesList
 from crawlcrunch.crawler import Crawler
 
 def main(argv=sys.argv, quiet=False):

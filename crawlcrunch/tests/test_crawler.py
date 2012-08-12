@@ -71,7 +71,7 @@ class IntegrationTests(unittest.TestCase):
         content.seek(0)
         urlopen.return_value = content
         from crawlcrunch.crawler import Crawler
-        from crawlcrunch.companies import CompaniesList
+        from crawlcrunch.model import CompaniesList
         dst_dir = LocalFilesDir(self.tmpd)
         cl = CompaniesList(dst_dir)
         cl.data.append('facebook')
