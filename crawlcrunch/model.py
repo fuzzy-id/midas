@@ -122,5 +122,3 @@ class CompanyList(UserList, Node, CrunchBaseFetcherMixin):
 
     def query_url(self):
         return self.companies_list_url
-
-CompaniesList = CompanyList

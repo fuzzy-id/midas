@@ -86,7 +86,7 @@ class IntegrationTests(unittest.TestCase):
                                                         url_open):
         url_open.return_value = self._make_json_buffer(
             [{'permalink': 'foo'}, ])
-        from crawlcrunch.model import CompaniesList
+        from crawlcrunch.model import CompanyList
         root = self._make_one(self.tmpd)
         companies = root.get('companies')
         companies.update()
