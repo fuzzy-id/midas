@@ -21,29 +21,24 @@ class Crawler(object):
         for company in self.companies.not_local():
             self.semaphore.acquire()
             fetcher = CompanyFetcher(
-                company, 
-                self.root.expand(company),
+                self.root.get(company),
                 self.semaphore)
             fetcher.start()
         # Wait 'til all threads finished
         for _ in range(self.num_threads):
             self.semaphore.acquire()
 
-class CompanyFetcher(threading.Thread, CrunchBaseFetcherMixin):
+class CompanyFetcher(threading.Thread):
 
-    def __init__(self, company, dst, semaphore):
+    def __init__(self, company, semaphore):
         super(CompanyFetcher, self).__init__()
-        self.name = company
-        self.zipf = ZippedJsonFile(dst)
+        self.company = company
         self.semaphore = semaphore
 
     def run(self):
         try:
-            self.zipf.dump(self.fetch())
+            self.company.update()
         except Exception as e:
             logging.exception(e)
         finally:
             self.semaphore.release()
-
-    def query_url(self):
-        return self.company_url_tpl.format(self.name)
