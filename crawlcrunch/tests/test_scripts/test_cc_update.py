@@ -9,6 +9,7 @@ import tempfile
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import StringIO
 from crawlcrunch.tests import DestinationPaths
+from crawlcrunch.tests import prepare_url_open
 from crawlcrunch.tests import unittest
 
 import mock
@@ -79,23 +80,12 @@ class IntegrationTests(unittest.TestCase):
         from crawlcrunch.scripts.cc_update import CCUpdateCommand
         return CCUpdateCommand(['cc_update', path])
 
-    def _make_json_buffer(self, obj):
-        buf = StringIO()
-        json.dump(obj, buf)
-        buf.seek(0)
-        return buf
-
-    def _prepare_url_open(self, url_open, return_dict):
-        def side_effect(url):
-            return self._make_json_buffer(return_dict[url])
-        url_open.side_effect = side_effect
-
     @mock.patch('crawlcrunch.model.url_open')
     def test_on_empty_companies_list(self, url_open):
         url_return = {
             'http://api.crunchbase.com/v/1/companies.js': [],
             }
-        self._prepare_url_open(url_open, url_return)
+        prepare_url_open(url_open, url_return)
         cmd = self._make_one(self.tmpd)
         result = cmd.run()
         self.assertEqual(result, 0)
@@ -112,7 +102,7 @@ class IntegrationTests(unittest.TestCase):
 
     @mock.patch('crawlcrunch.model.url_open')
     def test_on_companies_list_with_elements(self, url_open):
-        self._prepare_url_open(url_open, {
+        prepare_url_open(url_open, {
                 'http://api.crunchbase.com/v/1/companies.js': [ 
                     {'permalink': 'foo', },
                     {'permalink': 'bar', }, ],
@@ -127,15 +117,10 @@ class IntegrationTests(unittest.TestCase):
         result = cmd.run()
         self.assertEqual(result, 0)
         url_open.assert_called_with(
-            'http://api.crunchbase.com/v/1/companies.js'
-            )
-        url_open.assert_called_with(
-            'http://api.crunchbase.com/v/1/company/foo.js'
-            )
-        url_open.assert_called_with(
             'http://api.crunchbase.com/v/1/company/bar.js'
             )
         listing = os.listdir(self.tmpd)
+        listing.sort()
         self.assertEqual(listing, ['bar.json.gz',
                                    'companies.json.gz', 
                                    'foo.json.gz',
@@ -147,10 +132,10 @@ class IntegrationTests(unittest.TestCase):
                                              {'permalink': 'bar'}])
         with GzipFile(os.path.join(self.tmpd,
                                    'bar.json.gz')) as fp:
-            self.assertEqual(json.load(fp), 'some_bar')
+            self.assertEqual(json.load(fp), ['some_bar', ])
         with GzipFile(os.path.join(self.tmpd,
                                    'foo.json.gz')) as fp:
-            self.assertEqual(json.load(fp), 'some_foo')
+            self.assertEqual(json.load(fp), ['some_foo', ])
 
 if __name__ == '__main__': # pragma: no cover
     unittest.main()

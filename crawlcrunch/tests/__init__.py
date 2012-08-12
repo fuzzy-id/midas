@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import json
 import logging
 import mock
 import os.path
 import sys
+
+from crawlcrunch.compat import StringIO
 
 py_version = sys.version_info[:2]
 
@@ -39,3 +42,15 @@ class DestinationPaths(object):
     destinations = os.path.join(here, 'destinations')
     companies_empty = os.path.join(destinations, 'companies_empty')
     no_companies = os.path.join(destinations, 'no_companies')
+
+def _make_json_buffer(obj):
+    buf = StringIO()
+    json.dump(obj, buf)
+    buf.seek(0)
+    return buf
+
+def prepare_url_open(url_open, return_dict):
+    def side_effect(url):
+        return _make_json_buffer(return_dict[url])
+    url_open.side_effect = side_effect
+

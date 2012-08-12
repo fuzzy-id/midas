@@ -99,6 +99,10 @@ class Node(object):
 
 class Company(Node, CrunchBaseFetcherMixin):
 
+    def load(self):
+        self.local_data.load()
+        self.data = self.local_data.data
+
     def query_url(self):
         return self.company_url_tpl.format(self.name)
 

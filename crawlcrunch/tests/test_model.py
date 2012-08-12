@@ -8,6 +8,7 @@ import tempfile
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import StringIO
 from crawlcrunch.tests import DestinationPaths
+from crawlcrunch.tests import prepare_url_open
 from crawlcrunch.tests import unittest
 
 import mock
@@ -39,6 +40,22 @@ class CompanyTests(unittest.TestCase):
         company = self._make_one('foo', 'facebook')
         expected = 'http://api.crunchbase.com/v/1/company/facebook.js'
         self.assertEqual(company.query_url(), expected)
+
+    @mock.patch('crawlcrunch.model.url_open')
+    def test_update(self, url_open):
+        foo_url = 'http://api.crunchbase.com/v/1/company/foo.js'
+        prepare_url_open(url_open, {
+                foo_url: {'foo': 'bar', },
+                } )
+        from crawlcrunch.model import ZippedJsonFile
+        from crawlcrunch.model import Company
+        with tempfile.NamedTemporaryFile() as fp:
+            local_data = ZippedJsonFile(fp.name)
+            company = Company(local_data, 'foo')
+            company.update()
+        self.assertEqual(local_data.data, {'foo': 'bar'})
+        self.assertEqual(company.data, {'foo': 'bar'})
+        url_open.assert_called_once_with(foo_url)
 
 class CompanyListTests(unittest.TestCase):
 
