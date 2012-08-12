@@ -75,7 +75,7 @@ class IntegrationTests(unittest.TestCase):
         root = LocalFilesDir(self.tmpd)
         cl = root.get('companies')
         cl.data.append('facebook')
-        crawler = Crawler(cl, root)
+        crawler = Crawler(root)
         crawler.crawl()
         urlopen.assert_called_once_with(
             'http://api.crunchbase.com/v/1/company/facebook.js'
