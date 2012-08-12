@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import json
 import logging
 import threading
-
-from crawlcrunch.model import ZippedJsonFile
-from crawlcrunch.model import CrunchBaseFetcherMixin
-from crawlcrunch.compat import url_open
 
 class Crawler(object):
 
@@ -15,7 +10,6 @@ class Crawler(object):
         self.root = root
         self.num_threads = num_threads
         self.semaphore = threading.Semaphore(num_threads)
-        self.threads = []
 
     def crawl(self):
         for company in self.companies.not_local():
