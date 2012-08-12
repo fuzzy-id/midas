@@ -33,16 +33,16 @@ class CrawlCrunchCommand(object):
             self.out(
                 'You must provide one destination directory, not {0}.'.format(len(self.args)))
             return 2
-        local_data = LocalFilesDir(self.args[0])
-        if not local_data.exists():
+        root = LocalFilesDir(self.args[0])
+        if not root.exists():
             self.out("The directory '{0}' does not exist!".format(
                     self.args[0]))
             self.out('Please, create it first.')
             return 2
         logging.basicConfig(level=logging.DEBUG)
-        cl = CompaniesList(local_data)
+        cl = root.get('companies')
         cl.load()
-        crawler = Crawler(cl, local_data)
+        crawler = Crawler(cl, root)
         crawler.crawl()
         return 0
 

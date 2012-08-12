@@ -72,10 +72,10 @@ class IntegrationTests(unittest.TestCase):
         urlopen.return_value = content
         from crawlcrunch.crawler import Crawler
         from crawlcrunch.model import CompaniesList
-        dst_dir = LocalFilesDir(self.tmpd)
-        cl = CompaniesList(dst_dir)
+        root = LocalFilesDir(self.tmpd)
+        cl = root.get('companies')
         cl.data.append('facebook')
-        crawler = Crawler(cl, dst_dir)
+        crawler = Crawler(cl, root)
         crawler.crawl()
         urlopen.assert_called_once_with(
             'http://api.crunchbase.com/v/1/company/facebook.js'
