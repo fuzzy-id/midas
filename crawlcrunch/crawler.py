@@ -43,7 +43,7 @@ class CompanyFetcher(threading.Thread):
                 logging.exception(e)
         except Exception as e:
             logging.critical('{0}: An exception occured'.format(
-                    self.company_name))
+                    self.company.name))
             logging.exception(e)
         finally:
             self.semaphore.release()
