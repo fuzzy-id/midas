@@ -11,7 +11,7 @@ if py_version == (2, 6):
     tests_require.append('unittest2')
 
 setup(name='crawlcrunch',
-      version='0.1dev1',
+      version='0.1',
       description='Crawl crunchbase.com for companies information.',
       author='Thomas Bach',
       tests_require=tests_require,
