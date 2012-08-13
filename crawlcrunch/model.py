@@ -79,8 +79,9 @@ class CrunchBaseFetcherMixin(object):
         content = response.read()
         s = content.decode('utf-8')
         # Some companies have [TAB] in theire description *sigh*
-        valid_s = s.replace('\x0b', '\\n')
-        return json.loads(valid_s)
+        s = s.replace('\x0b', '\\n')
+        s = s.replace('\x14', '')
+        return json.loads(s)
 
 class Node(object):
     """ Defines the interface to access data, both locally and network

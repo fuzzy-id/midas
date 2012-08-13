@@ -60,8 +60,8 @@ class CompanyTests(unittest.TestCase):
         url_open.assert_called_once_with(foo_url)
 
     @mock.patch('crawlcrunch.model.url_open')
-    def test_tab_in_response(self, urlopen):
-        buf = BytesIO(b'["foo", "ba\x0b"]')
+    def test_control_chars_in_response(self, urlopen):
+        buf = BytesIO(b'["fo\x14", "ba\x0b"]')
         buf.seek(0)
         urlopen.return_value = buf
         from crawlcrunch.model import ZippedJsonFile
@@ -70,7 +70,7 @@ class CompanyTests(unittest.TestCase):
             local_data = ZippedJsonFile(fp.name)
             company = Company(local_data, 'foo')
             company.update()
-        self.assertEqual(local_data.data, ['foo', 'ba\n'])
+        self.assertEqual(local_data.data, ['fo', 'ba\n'])
 
 class CompanyListTests(unittest.TestCase):
 
