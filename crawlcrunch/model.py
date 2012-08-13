@@ -77,7 +77,10 @@ class CrunchBaseFetcherMixin(object):
         logging.info('Fetching {0}'.format(self.name))
         response = url_open(self.query_url())
         content = response.read()
-        return json.loads(content.decode('utf-8'))
+        s = content.decode('utf-8')
+        # Some companies have [TAB] in theire description *sigh*
+        valid_s = s.replace('\x0b', '\\n')
+        return json.loads(valid_s)
 
 class Node(object):
     """ Defines the interface to access data, both locally and network

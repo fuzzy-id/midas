@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from io import BytesIO
+
 import json
 import os.path
 import shutil
@@ -56,6 +58,19 @@ class CompanyTests(unittest.TestCase):
         self.assertEqual(local_data.data, {'foo': 'bar'})
         self.assertEqual(company.data, {'foo': 'bar'})
         url_open.assert_called_once_with(foo_url)
+
+    @mock.patch('crawlcrunch.model.url_open')
+    def test_tab_in_response(self, urlopen):
+        buf = BytesIO(b'["foo", "ba\x0b"]')
+        buf.seek(0)
+        urlopen.return_value = buf
+        from crawlcrunch.model import ZippedJsonFile
+        from crawlcrunch.model import Company
+        with tempfile.NamedTemporaryFile() as fp:
+            local_data = ZippedJsonFile(fp.name)
+            company = Company(local_data, 'foo')
+            company.update()
+        self.assertEqual(local_data.data, ['foo', 'ba\n'])
 
 class CompanyListTests(unittest.TestCase):
 
