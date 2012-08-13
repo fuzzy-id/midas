@@ -78,9 +78,11 @@ class CrunchBaseFetcherMixin(object):
         response = url_open(self.query_url())
         content = response.read()
         s = content.decode('utf-8')
-        # Some companies have [TAB] in theire description *sigh*
-        s = s.replace('\x0b', '\\n')
-        s = s.replace('\x14', '')
+        # Some companies have control chars in theire description
+        # *sigh*
+        to_replace = ('\x0b', '\x14', '\x12')
+        for r in to_replace:
+            s = s.replace(r, '')
         return json.loads(s)
 
 class Node(object):
