@@ -31,6 +31,7 @@ class CompanyFetcherTests(unittest.TestCase):
         logging.root.setLevel(logging.CRITICAL)
         semaphore = threading.Semaphore(1)
         class DummyCompany(object):
+            name = 'dummy'
             def update(self):
                 raise Exception()
         from crawlcrunch.crawler import CompanyFetcher
