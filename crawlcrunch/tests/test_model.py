@@ -92,23 +92,18 @@ class IntegrationTests(unittest.TestCase):
         from crawlcrunch.model import LocalFilesDir
         return LocalFilesDir(path)
 
-    def _make_json_buffer(self, content):
-        json_buffer = StringIO()
-        json.dump(content, json_buffer)
-        json_buffer.seek(0)
-        return json_buffer
-
     @mock.patch('crawlcrunch.model.url_open')
     def test_list_is_fetched_and_saved_when_not_present(self, 
                                                         url_open):
-        url_open.return_value = self._make_json_buffer(
-            [{'permalink': 'foo'}, ])
+        url = 'http://api.crunchbase.com/v/1/companies.js'
+        prepare_url_open(url_open, {
+                url: [{'permalink': 'foo'}, ],
+                })
         from crawlcrunch.model import CompanyList
         root = self._make_one(self.tmpd)
         companies = root.get('companies')
         companies.update()
-        url_open.assert_called_once_with(
-            'http://api.crunchbase.com/v/1/companies.js')
+        url_open.assert_called_once_with(url)
         companies_file = (os.path.join(self.tmpd, 
                                        'companies.json.gz'))
         self.assertTrue(os.path.isfile(companies_file))

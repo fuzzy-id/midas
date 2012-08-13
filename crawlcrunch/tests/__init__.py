@@ -7,6 +7,7 @@ import os.path
 import sys
 
 from crawlcrunch.compat import StringIO
+from crawlcrunch.compat import comp_bytes
 
 py_version = sys.version_info[:2]
 
@@ -44,8 +45,10 @@ class DestinationPaths(object):
     no_companies = os.path.join(destinations, 'no_companies')
 
 def _make_json_buffer(obj):
-    buf = StringIO()
-    json.dump(obj, buf)
+    from io import BytesIO
+    js = json.dumps(obj)
+    b = comp_bytes(js, 'utf-8')
+    buf = BytesIO(b)
     buf.seek(0)
     return buf
 

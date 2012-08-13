@@ -75,8 +75,9 @@ class CrunchBaseFetcherMixin(object):
 
     def fetch(self):
         logging.info('Fetching {0}'.format(self.name))
-        content = url_open(self.query_url())
-        return json.load(content)
+        response = url_open(self.query_url())
+        content = response.read()
+        return json.loads(content.decode('utf-8'))
 
 class Node(object):
     """ Defines the interface to access data, both locally and network
