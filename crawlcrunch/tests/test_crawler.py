@@ -26,7 +26,8 @@ class UpdaterTests(unittest.TestCase):
 
 class CompanyFetcherTests(unittest.TestCase):
 
-    def test_semaphore_is_released_on_error(self):
+    @mock.patch('logging.critical')
+    def test_semaphore_is_released_on_error(self, critical):
         import logging
         logging.root.setLevel(logging.CRITICAL)
         semaphore = threading.Semaphore(1)
@@ -38,6 +39,7 @@ class CompanyFetcherTests(unittest.TestCase):
         cf = CompanyFetcher(DummyCompany(), semaphore)
         cf.run()
         self.assertTrue(semaphore.acquire(False))
+        critical.assert_called_once()
 
     @mock.patch('logging.critical')
     def test_404_is_properly_handled(self, critical):
