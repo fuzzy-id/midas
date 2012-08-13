@@ -21,9 +21,6 @@ class LocalFilesDir(object):
         self.path = path
         self.nodes = {}
 
-    def exists(self):
-        return os.path.isdir(self.path)
-
     def expand(self, fname):
         return os.path.join(self.path, 
                             '{0}{1}'.format(fname, self.suffix))
