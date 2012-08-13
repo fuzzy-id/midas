@@ -9,6 +9,7 @@ import threading
 import mock
 
 from crawlcrunch.compat import GzipFile
+from crawlcrunch.compat import HTTPError
 from crawlcrunch.compat import StringIO
 from crawlcrunch.tests import unittest
 from crawlcrunch.tests import prepare_url_open
@@ -35,6 +36,32 @@ class CompanyFetcherTests(unittest.TestCase):
         from crawlcrunch.crawler import CompanyFetcher
         cf = CompanyFetcher(DummyCompany(), semaphore)
         cf.run()
+        self.assertTrue(semaphore.acquire(False))
+
+    @mock.patch('logging.critical')
+    def test_404_is_properly_handled(self, critical):
+        class DummyCompany(object):
+            name = 'foo'
+            def update(self):
+                raise HTTPError(None, 404, 'Not Found', None, None)
+        semaphore = threading.Semaphore(1)
+        from crawlcrunch.crawler import CompanyFetcher
+        cf = CompanyFetcher(DummyCompany(), semaphore)
+        cf.run()
+        critical.assert_called_once_with("foo: Got 404")
+        self.assertTrue(semaphore.acquire(False))
+
+    @mock.patch('logging.exception')
+    def test_not_404_is_logged(self, exc):
+        class DummyCompany(object):
+            name = 'foo'
+            def update(self):
+                raise HTTPError(None, 400, None, None, None)
+        semaphore = threading.Semaphore(1)
+        from crawlcrunch.crawler import CompanyFetcher
+        cf = CompanyFetcher(DummyCompany(), semaphore)
+        cf.run()
+        exc.assert_called_once()
         self.assertTrue(semaphore.acquire(False))
 
 class IntegrationTests(unittest.TestCase):

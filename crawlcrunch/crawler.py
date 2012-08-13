@@ -3,6 +3,8 @@
 import logging
 import threading
 
+from crawlcrunch.compat import HTTPError
+
 class Updater(object):
 
     def __init__(self, root, num_threads=20):
@@ -33,6 +35,12 @@ class CompanyFetcher(threading.Thread):
     def run(self):
         try:
             self.company.update()
+        except HTTPError as e:
+            if e.code == 404:
+                logging.critical(
+                    '{0}: Got 404'.format(self.company.name))
+            else:
+                logging.exception(e)
         except Exception as e:
             logging.exception(e)
         finally:
