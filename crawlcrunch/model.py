@@ -80,7 +80,14 @@ class CrunchBaseFetcherMixin(object):
         s = content.decode('utf-8')
         # Some companies have control chars in theire description
         # *sigh*
-        to_replace = ('\x0b', '\x14', '\x12')
+        to_replace = ('\x00',
+                      '\x03', 
+                      '\x0b',
+                      '\x12', 
+                      '\x14', 
+                      '\x1d',
+                      '\x1f', 
+                      )
         for r in to_replace:
             s = s.replace(r, '')
         return json.loads(s)
