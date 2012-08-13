@@ -42,7 +42,7 @@ class CompanyFetcher(threading.Thread):
             else:
                 logging.exception(e)
         except Exception as e:
-            logging.critical('{0}: A exception occured'.format(
+            logging.critical('{0}: An exception occured'.format(
                     self.company_name))
             logging.exception(e)
         finally:
