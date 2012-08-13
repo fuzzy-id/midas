@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import json
 import threading
 
 from crawlcrunch.tests import unittest
@@ -12,6 +13,14 @@ class StdLibTests(unittest.TestCase):
         self.assertFalse(semaphore.acquire(False))
         semaphore.release()
         self.assertTrue(semaphore.acquire(False))
+
+    def test_json_load_on_empty_str(self):
+        with self.assertRaises(ValueError):
+            json.loads('')
+        with self.assertRaises(ValueError):
+            json.loads(' ')
+        with self.assertRaises(TypeError):
+            json.loads(None)
         
 class MockTests(unittest.TestCase):
 
