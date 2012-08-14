@@ -29,7 +29,7 @@ def merge_type_descr(a, b):
     elif type(a) is not type(b):
         raise TypeError(
             'Not the same type, {0!r} and {1!r}'.format(a, b))
-    elif a in (dict, list, str, int, float):
+    elif a in (dict, list, str, int, float, comp_unicode):
         return a
     elif isinstance(a, dict):
         result = {}
