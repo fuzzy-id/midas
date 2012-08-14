@@ -35,3 +35,7 @@ class DetermineTypeTests(unittest.TestCase):
                                     'bar': []}})
         self.assertEqual(result, {'bar': {'foo': None,
                                           'bar': []}})
+
+    def test_not_implemented_class(self):
+        with self.assertRaises(NotImplementedError):
+            self._run(object())
