@@ -43,3 +43,42 @@ class DetermineTypeTests(unittest.TestCase):
     def test_not_implemented_class(self):
         with self.assertRaises(NotImplementedError):
             self._run(object())
+
+class MergeTypeDescriptionTests(unittest.TestCase):
+
+    def _run(self, a, b):
+        from crawlcrunch.helper import merge_type_descr
+        return merge_type_descr(a, b)
+
+    def test_a_type_wins_none(self):
+        result = self._run(None, list)
+        self.assertEqual(result, list)
+        result = self._run(list, None)
+        self.assertEqual(result, list)
+
+    def test_same_dictionaries(self):
+        result = self._run({'foo': dict}, {'foo': dict})
+        self.assertEqual(result, {'foo': dict})
+
+    def test_more_specific_type_in_dict_wins(self):
+        result = self._run({'foo': None}, {'foo': list})
+        self.assertEqual(result, {'foo': list})
+        result = self._run({'foo': list}, {'foo': None})
+        self.assertEqual(result, {'foo': list})
+
+    def test_different_keys_raise_error(self):
+        with self.assertRaises(ValueError):
+            self._run({'foo': int}, {'foo': int, 'bar': str})
+        with self.assertRaises(ValueError):
+            self._run({'foo': int, 'bar': str}, {'foo': int})
+
+    def test_different_objects_raise_error(self):
+        with self.assertRaises(TypeError):
+            self._run(list(), dict())
+        
+    def test_not_implemented_class(self):
+        with self.assertRaises(NotImplementedError):
+            self._run(object(), object())
+
+if __name__ == '__main__': # pragma: no cover
+    unittest.main()
