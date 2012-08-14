@@ -1,10 +1,12 @@
+from crawlcrunch.compat import comp_unicode
+
 def determine_type(obj):
     """ Recursively queries a type and returns a map of the object
     with the named fields and their types.
     """ 
     if obj is None:
         return None
-    elif isinstance(obj, str):
+    elif isinstance(obj, str) or isinstance(obj, comp_unicode):
         return str
     elif isinstance(obj, int):
         return int

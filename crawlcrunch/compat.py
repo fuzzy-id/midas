@@ -34,6 +34,11 @@ else:
     comp_bytes = (lambda a, _: bytes(a))
 
 if PY3: # pragma: no cover
+    comp_unicode = str
+else:
+    comp_unicode = unicode
+
+if PY3: # pragma: no cover
     from urllib.request import urlopen as url_open
 else:
     from urllib2 import urlopen as url_open

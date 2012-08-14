@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from crawlcrunch.compat import comp_unicode
 from crawlcrunch.tests import unittest
 
 class DetermineTypeTests(unittest.TestCase):
@@ -15,6 +16,10 @@ class DetermineTypeTests(unittest.TestCase):
     def test_empty_list(self):
         result = self._run([])
         self.assertEqual(result, [])
+
+    def test_unicode(self):
+        result = self._run(comp_unicode('foo'))
+        self.assertEqual(result, str)
 
     def test_none(self):
         result = self._run(None)
