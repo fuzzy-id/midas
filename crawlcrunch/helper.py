@@ -15,7 +15,7 @@ def determine_description(root, access_function):
         company.load()
         try:
             new_descr = determine_type_flat(access_function(company))
-            print('Mering with {0}'.format(company.name))
+            print('Merging with {0}'.format(company.name))
             descr = merge_type_descr(new_descr, descr)
         except Exception as e:
             print('Got an exception: {0!s}'.format(e))
