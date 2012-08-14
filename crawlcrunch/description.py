@@ -4,7 +4,7 @@ returned by the crunchbase API.
 """
 
 # This is the main dict returned when querying for a company
-def main_access(company):
+def access_company(company):
     return company.data
 
 COMPANY = {u'acquisition': dict,
@@ -47,3 +47,7 @@ COMPANY = {u'acquisition': dict,
            u'twitter_username': str,
            u'updated_at': str,
            u'video_embeds': list}
+
+# acquisition 
+def access_company_acquisition(company):
+    return company.data['acquisition']
