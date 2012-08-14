@@ -35,6 +35,10 @@ class DetermineTypeTests(unittest.TestCase):
         self.assertEqual(result, {'bar': list,
                                   'foo': list})
 
+    def test_dict_with_none(self):
+        result = self._run({'foo': None})
+        self.assertEqual(result, {'foo': None})
+
     def test_nested_dicts(self):
         result = self._run({'bar': {'foo': None,
                                     'bar': []}})

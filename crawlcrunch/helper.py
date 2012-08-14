@@ -10,7 +10,7 @@ def determine_type_flat(obj):
     if t is list:
         return list(map(type, obj))
     elif t is dict:
-        return dict(( (k, type(obj[k]))
+        return dict(( (k, determine_simple_type(obj[k]))
                       for k in obj.keys() ))
     else:
         return t
