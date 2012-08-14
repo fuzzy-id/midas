@@ -1,8 +1,8 @@
 from crawlcrunch.compat import comp_unicode
 
-def determine_type(obj):
-    """ Recursively queries a type and returns a map of the object
-    with the named fields and their types.
+def determine_type_flat(obj):
+    """ Queries a type and returns a map of the object with the named
+    fields and their types.
     """ 
     if obj is None:
         return None
@@ -13,8 +13,8 @@ def determine_type(obj):
     elif isinstance(obj, float):
         return float
     elif isinstance(obj, list):
-        return list(map(determine_type, obj))
+        return list(map(type, obj))
     elif isinstance(obj, dict):
-        return dict(( (k, determine_type(obj[k]))
+        return dict(( (k, type(obj[k]))
                       for k in obj.keys() ))
     raise NotImplementedError('Unknown type {0!r}'.format(obj))
