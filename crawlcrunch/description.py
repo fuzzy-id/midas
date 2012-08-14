@@ -6,61 +6,84 @@ returned by the crunchbase API.
 # This is the main dict returned when querying for a company
 def access_company(company):
     return company.data
-
-COMPANY = {u'acquisition': dict,
-           u'acquisitions': list,
-           u'alias_list': str,
-           u'blog_feed_url': str,
-           u'blog_url': str,
-           u'category_code': str,
-           u'competitions': list,
-           u'created_at': str,
-           u'crunchbase_url': str,
-           u'deadpooled_day': int,
-           u'deadpooled_month': int,
-           u'deadpooled_url': str,
-           u'deadpooled_year': int,
-           u'description': str,
-           u'email_address': str,
-           u'external_links': list,
-           u'founded_day': int,
-           u'founded_month': int,
-           u'founded_year': int,
-           u'funding_rounds': list,
-           u'homepage_url': str,
-           u'image': dict,
-           u'investments': list,
-           u'ipo': dict,
-           u'milestones': list,
-           u'name': str,
-           u'number_of_employees': int,
-           u'offices': list,
-           u'overview': str,
-           u'permalink': str,
-           u'phone_number': str,
-           u'products': list,
-           u'providerships': list,
-           u'relationships': list,
-           u'screenshots': list,
-           u'tag_list': str,
-           u'total_money_raised': str,
-           u'twitter_username': str,
-           u'updated_at': str,
-           u'video_embeds': list}
+COMPANY = {'acquisition': dict,
+           'acquisitions': list,
+           'alias_list': str,
+           'blog_feed_url': str,
+           'blog_url': str,
+           'category_code': str,
+           'competitions': list,
+           'created_at': str,
+           'crunchbase_url': str,
+           'deadpooled_day': int,
+           'deadpooled_month': int,
+           'deadpooled_url': str,
+           'deadpooled_year': int,
+           'description': str,
+           'email_address': str,
+           'external_links': list,
+           'founded_day': int,
+           'founded_month': int,
+           'founded_year': int,
+           'funding_rounds': list,
+           'homepage_url': str,
+           'image': dict,
+           'investments': list,
+           'ipo': dict,
+           'milestones': list,
+           'name': str,
+           'number_of_employees': int,
+           'offices': list,
+           'overview': str,
+           'permalink': str,
+           'phone_number': str,
+           'products': list,
+           'providerships': list,
+           'relationships': list,
+           'screenshots': list,
+           'tag_list': str,
+           'total_money_raised': str,
+           'twitter_username': str,
+           'updated_at': str,
+           'video_embeds': list}
 
 # acquisition 
 def access_company_acquisition(company):
     return company.data['acquisition']
-ACQUISITION = {u'acquired_day': int,
-               u'acquired_month': int,
-               u'acquired_year': int,
-               u'acquiring_company': dict,
-               u'price_amount': float,
-               u'price_currency_code': str,
-               u'source_description': str,
-               u'source_url': str,
-               u'term_code': str}
+ACQUISITION = {'acquired_day': int,
+               'acquired_month': int,
+               'acquired_year': int,
+               'acquiring_company': dict,
+               'price_amount': float,
+               'price_currency_code': str,
+               'source_description': str,
+               'source_url': str,
+               'term_code': str}
+
+# acquisitions -> acquiring_company
+def c_acquisitions_acquiring_company(company):
+    if company.data['acquisition'] is not None:
+        return company.data['acquisition']['acquiring_company']
+ACQUISITIONS_ACQUIRING_COMPANY = {'image': dict, # the same as image further down
+                                  'name': str,
+                                  'permalink': str}
 
 # acquisitions
 def access_company_acquisitions(company):
     return company.data['acquisitions']
+
+# image
+def access_company_image(company):
+    return company.data['image']
+IMAGE = {'attribution': None, 
+         'available_sizes': list}
+
+# ipo
+def access_company_image(company):
+    return company.data['ipo']
+IPO = {'pub_day': int,
+       'pub_month': int,
+       'pub_year': int,
+       'stock_symbol': str,
+       'valuation_amount': float,
+       'valuation_currency_code': str}
