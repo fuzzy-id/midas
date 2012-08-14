@@ -6,6 +6,16 @@ def determine_type_flat(obj):
     """ Queries a type and returns a map of the object with the named
     fields and their types.
     """ 
+    t = determine_simple_type(obj)
+    if t is list:
+        return list(map(type, obj))
+    elif t is dict:
+        return dict(( (k, type(obj[k]))
+                      for k in obj.keys() ))
+    else:
+        return t
+
+def determine_simple_type(obj):
     if obj is None:
         return None
     elif isinstance(obj, str) or isinstance(obj, comp_unicode):
@@ -14,11 +24,10 @@ def determine_type_flat(obj):
         return int
     elif isinstance(obj, float):
         return float
-    elif isinstance(obj, list):
-        return list(map(type, obj))
     elif isinstance(obj, dict):
-        return dict(( (k, type(obj[k]))
-                      for k in obj.keys() ))
+        return dict
+    elif isinstance(obj, list):
+        return list
     raise NotImplementedError('Unknown type {0!r}'.format(obj))
 
 def merge_type_descr(a, b):
@@ -29,7 +38,7 @@ def merge_type_descr(a, b):
     elif type(a) is not type(b):
         raise TypeError(
             'Not the same type, {0!r} and {1!r}'.format(a, b))
-    elif a in (dict, list, str, int, float, comp_unicode):
+    elif a in (dict, list, str, int, float):
         return a
     elif isinstance(a, dict):
         result = {}
