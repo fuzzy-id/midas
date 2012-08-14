@@ -143,5 +143,11 @@ class CompanyList(UserList, Node, CrunchBaseFetcherMixin):
             if not company.is_local():
                 yield company_name
 
+    def list_local(self):
+        for company_name in self:
+            company = self.root.get(company_name)
+            if company.is_local():
+                yield company_name
+
     def query_url(self):
         return self.companies_list_url
