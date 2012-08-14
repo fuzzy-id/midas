@@ -5,7 +5,7 @@ returned by the crunchbase API.
 
 # This is the main dict returned when querying for a company
 def main_access(company):
-    return comany.data
+    return company.data
 
 COMPANY = {u'acquisition': dict,
            u'acquisitions': list,
