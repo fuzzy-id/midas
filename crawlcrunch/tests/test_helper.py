@@ -84,5 +84,19 @@ class MergeTypeDescriptionTests(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             self._run(object(), object())
 
+    def test_empty_list(self):
+        result = self._run([], [])
+        self.assertEqual(result, [])
+
+    def test_tuple(self):
+        result = self._run([int, int], [])
+        self.assertEqual(result, [int, int])
+        result = self._run([], [int, int])
+        self.assertEqual(result, [int, int])
+
+    def test_list(self):
+        result = self._run([str, str], [str, str, str])
+        self.assertEqual(result, [str])
+
 if __name__ == '__main__': # pragma: no cover
     unittest.main()

@@ -71,4 +71,13 @@ def merge_type_descr(a, b):
         for k in a.keys():
             result[k] = merge_type_descr(a[k], b[k])
         return result
+    elif isinstance(a, list):
+        # First we'll assume that the list is actually a tupel
+        if len(a) == 0:
+            return b
+        elif len(b) == 0:
+            return a
+        elif len(a) == len(b):
+            return a
+        # The next assumption is: it is actually a list!
     raise NotImplementedError('Unknown type {0!r}'.format(a))
