@@ -1,6 +1,26 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 from crawlcrunch.compat import comp_unicode
+
+def determine_main_type(root):
+    companies = root.get('companies')
+    companies.load()
+    company = root.get(companies[0])
+    company.load()
+    descr = determine_type_flat(company.data)
+    for company_name in companies:
+        company = root.get(company_name)
+        company.load()
+        try:
+            new_descr = determine_type_flat(company.data)
+            print('Mering with {0}'.format(company.name))
+            descr = merge_type_descr(new_descr, descr)
+        except Exception as e:
+            print('Got an exception: {0!s}'.format(e))
+            return descr
+    return descr
 
 def determine_type_flat(obj):
     """ Queries a type and returns a map of the object with the named
