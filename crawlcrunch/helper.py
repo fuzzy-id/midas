@@ -13,5 +13,6 @@ def determine_type(obj):
     elif isinstance(obj, list):
         return list(map(determine_type, obj))
     elif isinstance(obj, dict):
-        return { k: determine_type(obj[k]) for k in obj.keys() }
+        return dict(( (k, determine_type(obj[k]))
+                      for k in obj.keys() ))
     raise NotImplemented('Unknown type {0!r}'.format(obj))
