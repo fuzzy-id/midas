@@ -51,8 +51,9 @@ class ZippedJsonFile(object):
         return os.path.isfile(self.path)
 
     def load(self):
-        with GzipFile(self.path, 'rb') as fp:
-            self.data = json.load(fp)
+        if self.data is None:
+            with GzipFile(self.path, 'rb') as fp:
+                self.data = json.load(fp)
 
     def dump(self, data=None):
         if data is not None:
