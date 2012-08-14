@@ -51,3 +51,16 @@ COMPANY = {u'acquisition': dict,
 # acquisition 
 def access_company_acquisition(company):
     return company.data['acquisition']
+ACQUISITION = {u'acquired_day': int,
+               u'acquired_month': int,
+               u'acquired_year': int,
+               u'acquiring_company': dict,
+               u'price_amount': float,
+               u'price_currency_code': str,
+               u'source_description': str,
+               u'source_url': str,
+               u'term_code': str}
+
+# acquisitions
+def access_company_acquisitions(company):
+    return company.data['acquisitions']
