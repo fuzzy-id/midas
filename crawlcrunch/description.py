@@ -7,6 +7,7 @@ def make_root_acces(root):
     def access_func(company_name):
         company = root.get(company_name)
         return company.data
+    return access_func
 
 # This is the main dict returned when querying for a company
 def c(company):
