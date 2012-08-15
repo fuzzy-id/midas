@@ -71,6 +71,11 @@ ACQUISITIONS_ACQUIRING_COMPANY = {'image': dict, # the same as image further dow
 # acquisitions
 def c_acquisitions(company):
     return company.data['acquisitions']
+ACQUISITIONS=[dict]
+
+def c_acquisitions_d(company):
+    if company.data['acquisitions'] is not None:
+        return company.data['acquisitions'][0]
 
 # image
 def c_image(company):
