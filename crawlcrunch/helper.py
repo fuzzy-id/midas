@@ -37,52 +37,51 @@ class ModelCreator(object):
             return self._children[name]
         raise AttributeError(name)
 
+class Model(object):
 
-def determine_description(root, access_function):
-    companies = root.get('companies')
-    companies.load()
-    company = root.get(companies[0])
-    company.load()
-    descr = determine_type_flat(access_function(company))
-    for company_name in companies.list_local():
-        company = root.get(company_name)
-        company.load()
-        try:
-            new_descr = determine_type_flat(access_function(company))
-            print('Merging with {0}'.format(company.name))
-            descr = merge_type_descr(new_descr, descr)
-        except Exception as e:
-            print('Got an exception: {0!s}'.format(e))
-            return descr
-    return descr
+    def __init__(self, m):
+        self._m = m
+        
+    def __repr__(self):
+        return 'Model( {0!r} )'.format(self._m)
 
-def determine_type_flat(obj):
-    """ Queries a type and returns a map of the object with the named
-    fields and their types.
-    """ 
-    t = determine_simple_type(obj)
-    if t is list:
-        return list(map(type, obj))
-    elif t is dict:
-        return dict(( (k, determine_simple_type(obj[k]))
-                      for k in obj.keys() ))
-    else:
-        return t
+    def __str__(self):
+        return str(self._m)
 
-def determine_simple_type(obj):
-    if obj is None:
-        return None
-    elif isinstance(obj, str) or isinstance(obj, comp_unicode):
-        return str
-    elif isinstance(obj, int):
-        return int
-    elif isinstance(obj, float):
-        return float
-    elif isinstance(obj, dict):
-        return dict
-    elif isinstance(obj, list):
-        return list
-    raise NotImplementedError('Unknown type {0!r}'.format(obj))
+    def __eq__(self, other):
+        return self._m == other._m
+
+    def merge(self, other):
+        return merge_type_descr(self._m, other._m)
+
+    @classmethod
+    def create_model(cls, obj):
+        """ Queries a type and returns a map of the object with the
+        named fields and their types.
+        """ 
+        t = cls._determine_simple_type(obj)
+        if t is list:
+            return cls(list(map(cls._determine_simple_type, obj)))
+        elif t is dict:
+            return cls(dict(( (k, cls._determine_simple_type(obj[k]))
+                                for k in obj.keys() )))
+        return cls(t)
+
+    @classmethod
+    def _determine_simple_type(cls, obj):
+        if obj is None:
+            return None
+        elif isinstance(obj, str) or isinstance(obj, comp_unicode):
+            return str
+        elif isinstance(obj, int):
+            return int
+        elif isinstance(obj, float):
+            return float
+        elif isinstance(obj, dict):
+            return dict
+        elif isinstance(obj, list):
+            return list
+        raise NotImplementedError('Unknown type {0!r}'.format(obj))
 
 def merge_type_descr(a, b):
     if a is None:
