@@ -3,11 +3,13 @@
 from crawlcrunch.compat import comp_unicode
 from crawlcrunch.tests import unittest
 
+
 class BaseModelTests(unittest.TestCase):
 
     def _make_model(self, m):
         from crawlcrunch.helper import Model
         return Model(m)
+
 
 class ModelTests(BaseModelTests):
 
@@ -31,9 +33,10 @@ class ModelTests(BaseModelTests):
         result = str(self._make_model(str))
         expected = str(str)
         self.assertEqual(result, expected)
-        
+
     def test_equality_with_other_instance(self):
         self.assertFalse(self._make_model(str) == str)
+
 
 class ModelCreationTests(BaseModelTests):
 
@@ -70,7 +73,7 @@ class ModelCreationTests(BaseModelTests):
         result = self._run({'bar': ['foo', 8, 99.45],
                             'foo': []})
         expected = self._make_model({'bar': list,
-                                   'foo': list})
+                                     'foo': list})
         self.assertEqual(result, expected)
 
     def test_dict_with_none(self):
@@ -87,6 +90,7 @@ class ModelCreationTests(BaseModelTests):
     def test_not_implemented_class(self):
         with self.assertRaises(NotImplementedError):
             self._run(object())
+
 
 class MergeModelTests(BaseModelTests):
 
@@ -122,7 +126,7 @@ class MergeModelTests(BaseModelTests):
     def test_different_objects_raise_error(self):
         with self.assertRaises(TypeError):
             self._run(list(), dict())
-        
+
     def test_not_implemented_class(self):
         with self.assertRaises(NotImplementedError):
             self._run(object(), object())
@@ -142,6 +146,7 @@ class MergeModelTests(BaseModelTests):
         result = self._run([str, str], [str, str, str])
         self.assertEqual(result, self._make_model([str]))
 
+
 class ModelCreatorTests(BaseModelTests):
 
     def _make_one(self, obj_iter, root_access=(lambda x: x)):
@@ -159,7 +164,7 @@ class ModelCreatorTests(BaseModelTests):
                              {'foo': 'some'}))
         mc.run()
         self.assertEqual(mc.root, self._make_model({'foo': str}))
-    
+
     def test_simple_list(self):
         mc = self._make_one((['foo', 'bar'], ['soot']))
         mc.run()
@@ -214,5 +219,5 @@ class ModelCreatorTests(BaseModelTests):
         self.assertEqual(mc.root, self._make_model([list]))
         self.assertEqual(mc.root.list, self._make_model([int, int]))
 
-if __name__ == '__main__': # pragma: no cover
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

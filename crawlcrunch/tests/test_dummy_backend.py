@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from crawlcrunch.tests import unittest
 
+
 class DummyRootTests(unittest.TestCase):
 
     def _make_one(self):

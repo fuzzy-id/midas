@@ -15,6 +15,7 @@ from crawlcrunch.tests import unittest
 
 import mock
 
+
 class LocalFilesDirTests(unittest.TestCase):
 
     def _make_one(self, path):
@@ -31,6 +32,7 @@ class LocalFilesDirTests(unittest.TestCase):
         root = self._make_one('foo')
         self.assertIs(root.get('companies'), root.get('companies'))
 
+
 class CompanyTests(unittest.TestCase):
 
     def _make_one(self, path, name):
@@ -46,9 +48,8 @@ class CompanyTests(unittest.TestCase):
     @mock.patch('crawlcrunch.model.url_open')
     def test_update(self, url_open):
         foo_url = 'http://api.crunchbase.com/v/1/company/foo.js'
-        prepare_url_open(url_open, {
-                foo_url: {'foo': 'bar', },
-                } )
+        prepare_url_open(url_open,
+                         {foo_url: {'foo': 'bar', }})
         from crawlcrunch.model import ZippedJsonFile
         from crawlcrunch.model import Company
         with tempfile.NamedTemporaryFile() as fp:
@@ -72,6 +73,7 @@ class CompanyTests(unittest.TestCase):
             company.update()
         self.assertEqual(local_data.data, ['fo', 'ba'])
 
+
 class CompanyListTests(unittest.TestCase):
 
     def _make_one(self, path):
@@ -88,18 +90,19 @@ class CompanyListTests(unittest.TestCase):
         cl = self._make_one(DestinationPaths.no_companies)
         cl.load()
         cl.sort()
-        self.assertEqual(cl, [ 'de-revolutione',
-                               'group-laurier',
-                               'hiconversion',
-                               'pivotshare',
-                               'vaporstream',
-                               ])
+        self.assertEqual(cl, ['de-revolutione',
+                              'group-laurier',
+                              'hiconversion',
+                              'pivotshare',
+                              'vaporstream',
+                              ])
+
 
 class IntegrationTests(unittest.TestCase):
 
     def setUp(self):
         self.tmpd = tempfile.mkdtemp()
-    
+
     def tearDown(self):
         shutil.rmtree(self.tmpd)
 
@@ -108,20 +111,19 @@ class IntegrationTests(unittest.TestCase):
         return LocalFilesDir(path)
 
     @mock.patch('crawlcrunch.model.url_open')
-    def test_list_is_fetched_and_saved_when_not_present(self, 
+    def test_list_is_fetched_and_saved_when_not_present(self,
                                                         url_open):
         url = 'http://api.crunchbase.com/v/1/companies.js'
-        prepare_url_open(url_open, {
-                url: [{'permalink': 'foo'}, ],
-                })
+        prepare_url_open(url_open,
+                         {url: [{'permalink': 'foo'}]})
         from crawlcrunch.model import CompanyList
         root = self._make_one(self.tmpd)
         companies = root.get('companies')
         companies.update()
         url_open.assert_called_once_with(url)
-        companies_file = (os.path.join(self.tmpd, 
+        companies_file = (os.path.join(self.tmpd,
                                        'companies.json.gz'))
         self.assertTrue(os.path.isfile(companies_file))
         with GzipFile(companies_file) as fp:
-            self.assertEqual(json.load(fp), 
+            self.assertEqual(json.load(fp),
                              [{'permalink': 'foo'}, ])

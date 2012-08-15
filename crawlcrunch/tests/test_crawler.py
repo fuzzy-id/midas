@@ -14,6 +14,7 @@ from crawlcrunch.compat import StringIO
 from crawlcrunch.tests import unittest
 from crawlcrunch.tests import prepare_url_open
 
+
 class UpdaterTests(unittest.TestCase):
 
     def test_update_on_companies_list_is_called(self):
@@ -24,6 +25,7 @@ class UpdaterTests(unittest.TestCase):
         updater.run()
         root.get('companies').update.assert_called_once_with()
 
+
 class CompanyFetcherTests(unittest.TestCase):
 
     @mock.patch('logging.critical')
@@ -31,10 +33,14 @@ class CompanyFetcherTests(unittest.TestCase):
         import logging
         logging.root.setLevel(logging.CRITICAL)
         semaphore = threading.Semaphore(1)
+
         class DummyCompany(object):
+
             name = 'dummy'
+
             def update(self):
                 raise Exception()
+
         from crawlcrunch.crawler import CompanyFetcher
         cf = CompanyFetcher(DummyCompany(), semaphore)
         cf.run()
@@ -43,10 +49,14 @@ class CompanyFetcherTests(unittest.TestCase):
 
     @mock.patch('logging.critical')
     def test_404_is_properly_handled(self, critical):
+
         class DummyCompany(object):
+
             name = 'foo'
+
             def update(self):
                 raise HTTPError(None, 404, 'Not Found', None, None)
+
         semaphore = threading.Semaphore(1)
         from crawlcrunch.crawler import CompanyFetcher
         cf = CompanyFetcher(DummyCompany(), semaphore)
@@ -58,6 +68,7 @@ class CompanyFetcherTests(unittest.TestCase):
     def test_not_404_is_logged(self, exc):
         class DummyCompany(object):
             name = 'foo'
+
             def update(self):
                 raise HTTPError(None, 400, None, None, None)
         semaphore = threading.Semaphore(1)
@@ -66,6 +77,7 @@ class CompanyFetcherTests(unittest.TestCase):
         cf.run()
         exc.assert_called_once()
         self.assertTrue(semaphore.acquire(False))
+
 
 class IntegrationTests(unittest.TestCase):
 
@@ -101,5 +113,5 @@ class IntegrationTests(unittest.TestCase):
         fb = root.get('facebook')
         fb.update.assert_called_once_with()
 
-if __name__ == '__main__': # pragma: no cover
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

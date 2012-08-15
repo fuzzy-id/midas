@@ -5,6 +5,7 @@ import threading
 
 from crawlcrunch.tests import unittest
 
+
 class StdLibTests(unittest.TestCase):
 
     def test_semaphore_behaviour(self):
@@ -21,7 +22,8 @@ class StdLibTests(unittest.TestCase):
             json.loads(' ')
         with self.assertRaises(TypeError):
             json.loads(None)
-        
+
+
 class MockTests(unittest.TestCase):
 
     def test_setting_return_values(self):
