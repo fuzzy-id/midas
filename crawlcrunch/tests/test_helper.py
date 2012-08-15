@@ -165,6 +165,16 @@ class ModelCreatorTests(BaseModelTests):
         mc.run()
         self.assertEqual(mc.root, self._make_model([str]))
 
+    def test_empty_lists(self):
+        mc = self._make_one(([], [], []))
+        mc.run()
+        self.assertEqual(mc.root, self._make_model([]))
+
+    def test_mostly_empty_lists(self):
+        mc = self._make_one(([], [8], []))
+        mc.run()
+        self.assertEqual(mc.root, self._make_model([int]))
+
     def test_composed_obj_w_list(self):
         mc = self._make_one(({'foo': ['some', 'other']},
                              {'foo': ['one']},
@@ -191,7 +201,8 @@ class ModelCreatorTests(BaseModelTests):
 
     def test_lists_with_dicts_inside(self):
         mc = self._make_one(([{'foo': None}, {'foo': 8}],
-                               [{'foo': 70}], ))
+                             [{'foo': 70}],
+                             []))
         mc.run()
         self.assertEqual(mc.root, self._make_model([dict]))
         self.assertEqual(mc.root.list, self._make_model({'foo': int}))

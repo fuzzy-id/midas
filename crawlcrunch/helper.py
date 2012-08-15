@@ -28,7 +28,9 @@ class ModelCreator(object):
                     sub = ModelCreator(self.objs, func)
                     sub.run()
                     setattr(self.root, k, sub.root)
-        elif self.root.type() is list and self.root[0] is dict:
+        elif (self.root.type() is list
+              and len(self.root) > 0
+              and self.root[0] is dict):
             func = self.make_access_function(0)
             sub = ModelCreator(self.objs, func)
             sub.run()
@@ -39,7 +41,11 @@ class ModelCreator(object):
         def func(o):
             old_attr = self.access(o)
             if old_attr is not None:
-                return old_attr[attribute]
+                if type(old_attr) is list:
+                    if len(old_attr) > 0:
+                        return old_attr[0]
+                else:
+                    return old_attr[attribute]
         return func
 
 class Model(object):
@@ -66,6 +72,9 @@ class Model(object):
 
     def __getitem__(self, name):
         return self._m[name]
+
+    def __len__(self):
+        return len(self._m)
 
     def pprint(self):
         pprint.pprint(self._m)
