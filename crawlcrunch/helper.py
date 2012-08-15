@@ -2,6 +2,8 @@
 
 from __future__ import print_function
 
+import pprint
+
 from crawlcrunch.compat import comp_unicode
 
 class ModelCreator(object):
@@ -58,6 +60,9 @@ class Model(object):
 
     def __getitem__(self, name):
         return self._m[name]
+
+    def pprint(self):
+        pprint.pprint(self._m)
 
     @classmethod
     def create_model(cls, obj):
