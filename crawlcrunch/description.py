@@ -3,8 +3,10 @@
 returned by the crunchbase API.
 """
 
-def root_acces(comapny):
-    return company.data
+def make_root_acces(root):
+    def access_func(company_name):
+        company = root.get(company_name)
+        return company.data
 
 # This is the main dict returned when querying for a company
 def c(company):
