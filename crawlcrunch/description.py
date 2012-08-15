@@ -3,6 +3,9 @@
 returned by the crunchbase API.
 """
 
+def root_acces(comapny):
+    return company.data
+
 # This is the main dict returned when querying for a company
 def c(company):
     return company.data
