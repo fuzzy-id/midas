@@ -22,6 +22,19 @@ class ModelTests(BaseModelTests):
         setattr(a, 'foo', b)
         self.assertIs(a.foo, b)
 
+    def test_repr(self):
+        result = repr(self._make_model(str))
+        expected = 'Model( ' + str(str) + ' )'
+        self.assertEqual(result, expected)
+
+    def test_str(self):
+        result = str(self._make_model(str))
+        expected = str(str)
+        self.assertEqual(result, expected)
+        
+    def test_equality_with_other_instance(self):
+        self.assertFalse(self._make_model(str) == str)
+
 class ModelCreationTests(BaseModelTests):
 
     def _run(self, obj):
@@ -119,10 +132,10 @@ class MergeModelTests(BaseModelTests):
         self.assertEqual(result, self._make_model([]))
 
     def test_tuple(self):
-        result = self._run([int, int], [])
-        expected = self._make_model([int, int])
+        result = self._run([float, float], [])
+        expected = self._make_model([float, float])
         self.assertEqual(result, expected)
-        result = self._run([], [int, int])
+        result = self._run([], [float, float])
         self.assertEqual(result, expected)
 
     def test_list(self):
