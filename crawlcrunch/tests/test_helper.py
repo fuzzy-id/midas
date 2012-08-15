@@ -207,5 +207,12 @@ class ModelCreatorTests(BaseModelTests):
         self.assertEqual(mc.root, self._make_model([dict]))
         self.assertEqual(mc.root.list, self._make_model({'foo': int}))
 
+    def test_list_with_lists_inside(self):
+        mc = self._make_one(([[8, 9], [90, 0]],
+                             [], [[1, 2]]))
+        mc.run()
+        self.assertEqual(mc.root, self._make_model([list]))
+        self.assertEqual(mc.root.list, self._make_model([int, int]))
+
 if __name__ == '__main__': # pragma: no cover
     unittest.main()

@@ -30,7 +30,8 @@ class ModelCreator(object):
                     setattr(self.root, k, sub.root)
         elif (self.root.type() is list
               and len(self.root) > 0
-              and self.root[0] is dict):
+              and (self.root[0] is dict
+                   or self.root[0] is list)):
             func = self.make_access_function(0)
             sub = ModelCreator(self.objs, func)
             sub.run()
