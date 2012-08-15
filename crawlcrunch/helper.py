@@ -28,6 +28,12 @@ class ModelCreator(object):
                     sub = ModelCreator(self.objs, func)
                     sub.run()
                     setattr(self.root, k, sub.root)
+        elif self.root.type() is list and self.root[0] is dict:
+            func = self.make_access_function(0)
+            sub = ModelCreator(self.objs, func)
+            sub.run()
+            setattr(self.root, 'list', sub.root)
+            
 
     def make_access_function(self, attribute):
         def func(o):

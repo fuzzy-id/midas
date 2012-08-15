@@ -189,5 +189,12 @@ class ModelCreatorTests(BaseModelTests):
         self.assertEqual(mc.root, self._make_model({'foo': list}))
         self.assertEqual(mc.root.foo, self._make_model([int, int]))
 
+    def test_lists_with_dicts_inside(self):
+        mc = self._make_one(([{'foo': None}, {'foo': 8}],
+                               [{'foo': 70}], ))
+        mc.run()
+        self.assertEqual(mc.root, self._make_model([dict]))
+        self.assertEqual(mc.root.list, self._make_model({'foo': int}))
+
 if __name__ == '__main__': # pragma: no cover
     unittest.main()
