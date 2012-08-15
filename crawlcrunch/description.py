@@ -4,7 +4,7 @@ returned by the crunchbase API.
 """
 
 # This is the main dict returned when querying for a company
-def access_company(company):
+def c(company):
     return company.data
 COMPANY = {'acquisition': dict,
            'acquisitions': list,
@@ -48,7 +48,7 @@ COMPANY = {'acquisition': dict,
            'video_embeds': list}
 
 # acquisition 
-def access_company_acquisition(company):
+def c_acquisition(company):
     return company.data['acquisition']
 ACQUISITION = {'acquired_day': int,
                'acquired_month': int,
@@ -69,17 +69,17 @@ ACQUISITIONS_ACQUIRING_COMPANY = {'image': dict, # the same as image further dow
                                   'permalink': str}
 
 # acquisitions
-def access_company_acquisitions(company):
+def c_acquisitions(company):
     return company.data['acquisitions']
 
 # image
-def access_company_image(company):
+def c_image(company):
     return company.data['image']
 IMAGE = {'attribution': None, 
          'available_sizes': list}
 
 # ipo
-def access_company_image(company):
+def c_ipo(company):
     return company.data['ipo']
 IPO = {'pub_day': int,
        'pub_month': int,
