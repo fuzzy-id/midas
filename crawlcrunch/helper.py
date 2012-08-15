@@ -80,4 +80,11 @@ def merge_type_descr(a, b):
         elif len(a) == len(b):
             return a
         # The next assumption is: it is actually a list!
+        # Hence, all the objects should be of the same type
+        t = a[0]
+        for i in a + b:
+            if i is not t:
+                raise ValueError(
+                    'Differing types: {0} is no {1}.'.format(i, t))
+        return [t]
     raise NotImplementedError('Unknown type {0!r}'.format(a))
