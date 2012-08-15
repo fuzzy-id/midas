@@ -75,7 +75,8 @@ ACQUISITIONS=[dict]
 
 def c_acquisitions_d(company):
     if company.data['acquisitions'] is not None:
-        return company.data['acquisitions'][0]
+        if len(company.data['acquisitions']) > 0:
+            return company.data['acquisitions'][0]
 
 # image
 def c_image(company):
