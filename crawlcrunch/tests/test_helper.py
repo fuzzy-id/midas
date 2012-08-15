@@ -143,7 +143,7 @@ class ModelCreatorTests(unittest.TestCase):
                              {'foo': None}))
         mc.run()
         self.assertEqual(mc.root, {'foo': list})
-        self.assertEqual(mc.foo, [int, int]})
+        self.assertEqual(mc.foo, [int, int])
 
 if __name__ == '__main__': # pragma: no cover
     unittest.main()
