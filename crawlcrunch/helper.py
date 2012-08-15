@@ -49,10 +49,12 @@ class Model(object):
         return str(self._m)
 
     def __eq__(self, other):
-        return self._m == other._m
+        if isinstance(other, Model):
+            return self._m == other._m
+        return False
 
     def merge(self, other):
-        return merge_type_descr(self._m, other._m)
+        return Model(merge_type_descr(self._m, other._m))
 
     @classmethod
     def create_model(cls, obj):

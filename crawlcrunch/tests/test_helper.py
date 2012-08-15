@@ -3,11 +3,13 @@
 from crawlcrunch.compat import comp_unicode
 from crawlcrunch.tests import unittest
 
-class ModelTests(unittest.TestCase):
+class BaseModelTests(unittest.TestCase):
 
     def _make_one(self, m):
         from crawlcrunch.helper import Model
         return Model(m)
+
+class ModelTests(BaseModelTests):
 
     def test_equalitiy(self):
         a = self._make_one([])
@@ -20,11 +22,7 @@ class ModelTests(unittest.TestCase):
         a.c = b
         self.assertIs(a.c, b)
 
-class ModelCreationTests(unittest.TestCase):
-
-    def _make_one(self, m):
-        from crawlcrunch.helper import Model
-        return Model(m)
+class ModelCreationTests(BaseModelTests):
 
     def _run(self, obj):
         from crawlcrunch.helper import Model
@@ -79,63 +77,60 @@ class ModelCreationTests(unittest.TestCase):
 
 class MergeModelTests(unittest.TestCase):
 
-    def _run(self, a, b):
+    def _make_one(self, m):
         from crawlcrunch.helper import Model
-        m_a = Model(a)
-        return m_a.merge(Model(b))
+        return Model(m)
 
-    @unittest.skip
+    def _run(self, a, b):
+        m_a = self._make_one(a)
+        return m_a.merge(self._make_one(b))
+
     def test_a_type_wins_none(self):
-        result = self._run(None, [])
-        self.assertEqual(result, list)
-        result = self._run([], None)
-        self.assertEqual(result, list)
+        result = self._run(None, list)
+        self.assertEqual(result, self._make_one(list))
+        result = self._run(list, None)
+        self.assertEqual(result, self._make_one(list))
 
-    @unittest.skip
     def test_same_dictionaries(self):
         result = self._run({'foo': dict}, {'foo': dict})
-        self.assertEqual(result, {'foo': dict})
+        expected = self._make_one({'foo': dict})
+        self.assertEqual(result, expected)
 
-    @unittest.skip
     def test_more_specific_type_in_dict_wins(self):
         result = self._run({'foo': None}, {'foo': list})
-        self.assertEqual(result, {'foo': list})
+        expected = self._make_one({'foo': list})
+        self.assertEqual(result, expected)
         result = self._run({'foo': list}, {'foo': None})
-        self.assertEqual(result, {'foo': list})
+        self.assertEqual(result, expected)
 
-    @unittest.skip
     def test_different_keys_raise_error(self):
         with self.assertRaises(ValueError):
             self._run({'foo': int}, {'foo': int, 'bar': str})
         with self.assertRaises(ValueError):
             self._run({'foo': int, 'bar': str}, {'foo': int})
 
-    @unittest.skip
     def test_different_objects_raise_error(self):
         with self.assertRaises(TypeError):
             self._run(list(), dict())
         
-    @unittest.skip
     def test_not_implemented_class(self):
         with self.assertRaises(NotImplementedError):
             self._run(object(), object())
 
-    @unittest.skip
     def test_empty_list(self):
         result = self._run([], [])
-        self.assertEqual(result, [])
+        self.assertEqual(result, self._make_one([]))
 
-    @unittest.skip
     def test_tuple(self):
         result = self._run([int, int], [])
-        self.assertEqual(result, [int, int])
+        expected = self._make_one([int, int])
+        self.assertEqual(result, expected)
         result = self._run([], [int, int])
-        self.assertEqual(result, [int, int])
+        self.assertEqual(result, expected)
 
-    @unittest.skip
     def test_list(self):
         result = self._run([str, str], [str, str, str])
-        self.assertEqual(result, [str])
+        self.assertEqual(result, self._make_one([str]))
 
 @unittest.skip
 class ModelCreatorTests(unittest.TestCase):
