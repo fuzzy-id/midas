@@ -5,22 +5,22 @@ from crawlcrunch.tests import unittest
 
 class BaseModelTests(unittest.TestCase):
 
-    def _make_one(self, m):
+    def _make_model(self, m):
         from crawlcrunch.helper import Model
         return Model(m)
 
 class ModelTests(BaseModelTests):
 
     def test_equalitiy(self):
-        a = self._make_one([])
-        b = self._make_one([])
+        a = self._make_model([])
+        b = self._make_model([])
         self.assertTrue(a == b)
 
     def test_dynamic_attributes(self):
-        a = self._make_one([])
-        b = self._make_one([])
-        a.c = b
-        self.assertIs(a.c, b)
+        a = self._make_model({'foo': list})
+        b = self._make_model([int])
+        setattr(a, 'foo', b)
+        self.assertIs(a.foo, b)
 
 class ModelCreationTests(BaseModelTests):
 
@@ -30,75 +30,72 @@ class ModelCreationTests(BaseModelTests):
 
     def test_empty_dict(self):
         result = self._run({})
-        expected = self._make_one({})
+        expected = self._make_model({})
         self.assertEqual(result, expected)
 
     def test_empty_list(self):
         result = self._run([])
-        expected = self._make_one([])
+        expected = self._make_model([])
         self.assertEqual(result, expected)
 
     def test_unicode(self):
         result = self._run(comp_unicode('foo'))
-        expected = self._make_one(str)
+        expected = self._make_model(str)
         self.assertEqual(result, expected)
 
     def test_none(self):
         result = self._run(None)
-        expected = self._make_one(None)
+        expected = self._make_model(None)
         self.assertEqual(result, expected)
 
     def test_simple_dict(self):
         result = self._run({'foo': 'bar', })
-        expected = self._make_one({'foo': str, })
+        expected = self._make_model({'foo': str, })
         self.assertEqual(result, expected)
 
     def test_dict_with_list(self):
         result = self._run({'bar': ['foo', 8, 99.45],
                             'foo': []})
-        expected = self._make_one({'bar': list,
+        expected = self._make_model({'bar': list,
                                    'foo': list})
         self.assertEqual(result, expected)
 
     def test_dict_with_none(self):
         result = self._run({'foo': None})
-        expected = self._make_one({'foo': None})
+        expected = self._make_model({'foo': None})
         self.assertEqual(result, expected)
 
     def test_nested_dicts(self):
         result = self._run({'bar': {'foo': None,
                                     'bar': []}})
-        expected = self._make_one({'bar': dict})
+        expected = self._make_model({'bar': dict})
         self.assertEqual(result, expected)
 
     def test_not_implemented_class(self):
         with self.assertRaises(NotImplementedError):
             self._run(object())
 
-class MergeModelTests(unittest.TestCase):
-
-    def _make_one(self, m):
-        from crawlcrunch.helper import Model
-        return Model(m)
+class MergeModelTests(BaseModelTests):
 
     def _run(self, a, b):
-        m_a = self._make_one(a)
-        return m_a.merge(self._make_one(b))
+        m_a = self._make_model(a)
+        m_a.merge(self._make_model(b))
+        return m_a
 
     def test_a_type_wins_none(self):
         result = self._run(None, list)
-        self.assertEqual(result, self._make_one(list))
+        self.assertEqual(result, self._make_model(list))
         result = self._run(list, None)
-        self.assertEqual(result, self._make_one(list))
+        self.assertEqual(result, self._make_model(list))
 
     def test_same_dictionaries(self):
         result = self._run({'foo': dict}, {'foo': dict})
-        expected = self._make_one({'foo': dict})
+        expected = self._make_model({'foo': dict})
         self.assertEqual(result, expected)
 
     def test_more_specific_type_in_dict_wins(self):
         result = self._run({'foo': None}, {'foo': list})
-        expected = self._make_one({'foo': list})
+        expected = self._make_model({'foo': list})
         self.assertEqual(result, expected)
         result = self._run({'foo': list}, {'foo': None})
         self.assertEqual(result, expected)
@@ -119,21 +116,20 @@ class MergeModelTests(unittest.TestCase):
 
     def test_empty_list(self):
         result = self._run([], [])
-        self.assertEqual(result, self._make_one([]))
+        self.assertEqual(result, self._make_model([]))
 
     def test_tuple(self):
         result = self._run([int, int], [])
-        expected = self._make_one([int, int])
+        expected = self._make_model([int, int])
         self.assertEqual(result, expected)
         result = self._run([], [int, int])
         self.assertEqual(result, expected)
 
     def test_list(self):
         result = self._run([str, str], [str, str, str])
-        self.assertEqual(result, self._make_one([str]))
+        self.assertEqual(result, self._make_model([str]))
 
-@unittest.skip
-class ModelCreatorTests(unittest.TestCase):
+class ModelCreatorTests(BaseModelTests):
 
     def _make_one(self, obj_iter, root_access=(lambda x: x)):
         from crawlcrunch.helper import ModelCreator
@@ -149,36 +145,36 @@ class ModelCreatorTests(unittest.TestCase):
         mc = self._make_one(({'foo': 'bar'},
                              {'foo': 'some'}))
         mc.run()
-        self.assertEqual(mc.root, {'foo': str})
+        self.assertEqual(mc.root, self._make_model({'foo': str}))
     
     def test_simple_list(self):
         mc = self._make_one((['foo', 'bar'], ['soot']))
         mc.run()
-        self.assertEqual(mc.root, [str])
+        self.assertEqual(mc.root, self._make_model([str]))
 
     def test_composed_obj_w_list(self):
         mc = self._make_one(({'foo': ['some', 'other']},
                              {'foo': ['one']},
                              {'foo': None}))
         mc.run()
-        self.assertEqual(mc.root, {'foo': list})
-        self.assertEqual(mc.foo, [str])
+        self.assertEqual(mc.root, self._make_model({'foo': list}))
+        self.assertEqual(mc.root.foo, self._make_model([str]))
 
     def test_composed_obj_w_dict(self):
         mc = self._make_one(({'foo': {'bar': 'other'}},
                              {'foo': {'bar': None}},
                              {'foo': None}))
         mc.run()
-        self.assertEqual(mc.root, {'foo': dict})
-        self.assertEqual(mc.foo, {'bar': str})
+        self.assertEqual(mc.root, self._make_model({'foo': dict}))
+        self.assertEqual(mc.root.foo, self._make_model({'bar': str}))
 
     def test_composed_obj_w_tuple(self):
         mc = self._make_one(({'foo': [8, 10]},
                              {'foo': []},
                              {'foo': None}))
         mc.run()
-        self.assertEqual(mc.root, {'foo': list})
-        self.assertEqual(mc.foo, [int, int])
+        self.assertEqual(mc.root, self._make_model({'foo': list}))
+        self.assertEqual(mc.root.foo, self._make_model([int, int]))
 
 if __name__ == '__main__': # pragma: no cover
     unittest.main()

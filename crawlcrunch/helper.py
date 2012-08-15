@@ -10,20 +10,22 @@ class ModelCreator(object):
         self.access = access
         self.objs = objs
         self.root = None
-        self._children = {}
 
     def run(self):
-        for obj in self.objs:
+        obj_iter = iter(self.objs)
+        attr = self.access(next(obj_iter))
+        self.root = Model.create_model(attr)
+        for obj in obj_iter:
             attr = self.access(obj)
-            new_descr = determine_type_flat(attr)
-            self.root = merge_type_descr(self.root, new_descr)
-        if type(self.root) is dict:
+            new_descr = Model.create_model(attr)
+            self.root.merge(new_descr)
+        if self.root.type() is dict:
             for k in self.root:
                 if self.root[k] in (dict, list, ):
                     func = self.make_access_function(k)
                     sub = ModelCreator(self.objs, func)
                     sub.run()
-                    self._children[k] = sub.root
+                    setattr(self.root, k, sub.root)
 
     def make_access_function(self, attribute):
         def func(o):
@@ -31,11 +33,6 @@ class ModelCreator(object):
             if old_attr is not None:
                 return old_attr[attribute]
         return func
-
-    def __getattr__(self, name):
-        if name in self._children:
-            return self._children[name]
-        raise AttributeError(name)
 
 class Model(object):
 
@@ -52,6 +49,15 @@ class Model(object):
         if isinstance(other, Model):
             return self._m == other._m
         return False
+
+    def type(self):
+        return type(self._m)
+
+    def __iter__(self):
+        return iter(self._m)
+
+    def __getitem__(self, name):
+        return self._m[name]
 
     @classmethod
     def create_model(cls, obj):
@@ -83,7 +89,7 @@ class Model(object):
         raise NotImplementedError('Unknown type {0!r}'.format(obj))
 
     def merge(self, other):
-        return Model(self.merge_type_descr(self._m, other._m))
+        self._m = self.merge_type_descr(self._m, other._m)
 
     @classmethod
     def merge_type_descr(cls, a, b):
