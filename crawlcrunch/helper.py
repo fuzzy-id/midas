@@ -4,6 +4,40 @@ from __future__ import print_function
 
 from crawlcrunch.compat import comp_unicode
 
+class ModelCreator(object):
+
+    def __init__(self, objs, access):
+        self.access = access
+        self.objs = objs
+        self.root = None
+        self._children = {}
+
+    def run(self):
+        for obj in self.objs:
+            attr = self.access(obj)
+            new_descr = determine_type_flat(attr)
+            self.root = merge_type_descr(self.root, new_descr)
+        if type(self.root) is dict:
+            for k in self.root:
+                if self.root[k] in (dict, list, ):
+                    func = self.make_access_function(k)
+                    sub = ModelCreator(self.objs, func)
+                    sub.run()
+                    self._children[k] = sub.root
+
+    def make_access_function(self, attribute):
+        def func(o):
+            old_attr = self.access(o)
+            if old_attr is not None:
+                return old_attr[attribute]
+        return func
+
+    def __getattr__(self, name):
+        if name in self._children:
+            return self._children[name]
+        raise AttributeError(name)
+
+
 def determine_description(root, access_function):
     companies = root.get('companies')
     companies.load()

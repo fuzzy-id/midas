@@ -98,5 +98,52 @@ class MergeTypeDescriptionTests(unittest.TestCase):
         result = self._run([str, str], [str, str, str])
         self.assertEqual(result, [str])
 
+class ModelCreatorTests(unittest.TestCase):
+
+    def _make_one(self, obj_iter, root_access=(lambda x: x)):
+        from crawlcrunch.helper import ModelCreator
+        return ModelCreator(obj_iter, root_access)
+
+    def test_make_access_function(self):
+        mc = self._make_one(None)
+        func = mc.make_access_function('foo')
+        result = func({'foo': ['some', 'bar']})
+        self.assertEqual(result, ['some', 'bar'])
+
+    def test_simple_dict(self):
+        mc = self._make_one(({'foo': 'bar'},
+                             {'foo': 'some'}))
+        mc.run()
+        self.assertEqual(mc.root, {'foo': str})
+    
+    def test_simple_list(self):
+        mc = self._make_one((['foo', 'bar'], ['soot']))
+        mc.run()
+        self.assertEqual(mc.root, [str])
+
+    def test_composed_obj_w_list(self):
+        mc = self._make_one(({'foo': ['some', 'other']},
+                             {'foo': ['one']},
+                             {'foo': None}))
+        mc.run()
+        self.assertEqual(mc.root, {'foo': list})
+        self.assertEqual(mc.foo, [str])
+
+    def test_composed_obj_w_dict(self):
+        mc = self._make_one(({'foo': {'bar': 'other'}},
+                             {'foo': {'bar': None}},
+                             {'foo': None}))
+        mc.run()
+        self.assertEqual(mc.root, {'foo': dict})
+        self.assertEqual(mc.foo, {'bar': str})
+
+    def test_composed_obj_w_tuple(self):
+        mc = self._make_one(({'foo': [8, 10]},
+                             {'foo': []},
+                             {'foo': None}))
+        mc.run()
+        self.assertEqual(mc.root, {'foo': list})
+        self.assertEqual(mc.foo, [int, int]})
+
 if __name__ == '__main__': # pragma: no cover
     unittest.main()
