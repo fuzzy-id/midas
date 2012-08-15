@@ -53,9 +53,6 @@ class Model(object):
             return self._m == other._m
         return False
 
-    def merge(self, other):
-        return Model(merge_type_descr(self._m, other._m))
-
     @classmethod
     def create_model(cls, obj):
         """ Queries a type and returns a map of the object with the
@@ -85,41 +82,45 @@ class Model(object):
             return list
         raise NotImplementedError('Unknown type {0!r}'.format(obj))
 
-def merge_type_descr(a, b):
-    if a is None:
-        return b
-    elif b is None:
-        return a
-    elif type(a) is not type(b):
-        raise TypeError(
-            'Not the same type, {0!r} and {1!r}'.format(a, b))
-    elif a in (dict, list, str, int, float):
-        return a
-    elif isinstance(a, dict):
-        result = {}
-        a_keys = set(a.keys())
-        b_keys = set(b.keys())
-        diff = a_keys.difference(b_keys).union(b_keys.difference(a_keys))
-        if len(diff) != 0:
-            raise ValueError(
-                'Found additional indices: {0}'.format(diff))
-        for k in a.keys():
-            result[k] = merge_type_descr(a[k], b[k])
-        return result
-    elif isinstance(a, list):
-        # First we'll assume that the list is actually a tupel
-        if len(a) == 0:
+    def merge(self, other):
+        return Model(self.merge_type_descr(self._m, other._m))
+
+    @classmethod
+    def merge_type_descr(cls, a, b):
+        if a is None:
             return b
-        elif len(b) == 0:
+        elif b is None:
             return a
-        elif len(a) == len(b):
+        elif type(a) is not type(b):
+            raise TypeError(
+                'Not the same type, {0!r} and {1!r}'.format(a, b))
+        elif a in (dict, list, str, int, float):
             return a
-        # The next assumption is: it is actually a list!
-        # Hence, all the objects should be of the same type
-        t = a[0]
-        for i in a + b:
-            if i is not t:
+        elif isinstance(a, dict):
+            result = {}
+            a_keys = set(a.keys())
+            b_keys = set(b.keys())
+            diff = a_keys.difference(b_keys).union(b_keys.difference(a_keys))
+            if len(diff) != 0:
                 raise ValueError(
-                    'Differing types: {0} is no {1}.'.format(i, t))
-        return [t]
-    raise NotImplementedError('Unknown type {0!r}'.format(a))
+                    'Found additional indices: {0}'.format(diff))
+            for k in a.keys():
+                result[k] = cls.merge_type_descr(a[k], b[k])
+            return result
+        elif isinstance(a, list):
+            # First we'll assume that the list is actually a tupel
+            if len(a) == 0:
+                return b
+            elif len(b) == 0:
+                return a
+            elif len(a) == len(b):
+                return a
+            # The next assumption is: it is actually a list!
+            # Hence, all the objects should be of the same type
+            t = a[0]
+            for i in a + b:
+                if i is not t:
+                    raise ValueError(
+                        'Differing types: {0} is no {1}.'.format(i, t))
+            return [t]
+        raise NotImplementedError('Unknown type {0!r}'.format(a))
