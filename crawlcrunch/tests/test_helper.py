@@ -43,109 +43,109 @@ class ModelTests(BaseModelTests):
 
 class ModelCreationTests(BaseModelTests):
 
-    def _run(self, obj):
+    def _create_model(self, obj):
         return self._get_target_class().create_model(obj)
 
     def test_empty_dict(self):
-        result = self._run({})
+        result = self._create_model({})
         expected = self._make_model({})
         self.assertEqual(result, expected)
 
     def test_empty_list(self):
-        result = self._run([])
+        result = self._create_model([])
         expected = self._make_model([])
         self.assertEqual(result, expected)
 
     def test_unicode(self):
-        result = self._run(comp_unicode('foo'))
+        result = self._create_model(comp_unicode('foo'))
         expected = self._make_model(str)
         self.assertEqual(result, expected)
 
     def test_none(self):
-        result = self._run(None)
+        result = self._create_model(None)
         expected = self._make_model(None)
         self.assertEqual(result, expected)
 
     def test_simple_dict(self):
-        result = self._run({'foo': 'bar', })
+        result = self._create_model({'foo': 'bar', })
         expected = self._make_model({'foo': str, })
         self.assertEqual(result, expected)
 
     def test_dict_with_list(self):
-        result = self._run({'bar': ['foo', 8, 99.45],
+        result = self._create_model({'bar': ['foo', 8, 99.45],
                             'foo': []})
         expected = self._make_model({'bar': list,
                                      'foo': list})
         self.assertEqual(result, expected)
 
     def test_dict_with_none(self):
-        result = self._run({'foo': None})
+        result = self._create_model({'foo': None})
         expected = self._make_model({'foo': None})
         self.assertEqual(result, expected)
 
     def test_nested_dicts(self):
-        result = self._run({'bar': {'foo': None,
+        result = self._create_model({'bar': {'foo': None,
                                     'bar': []}})
         expected = self._make_model({'bar': dict})
         self.assertEqual(result, expected)
 
     def test_not_implemented_class(self):
         with self.assertRaises(NotImplementedError):
-            self._run(object())
+            self._create_model(object())
 
 
 class MergeModelTests(BaseModelTests):
 
-    def _run(self, a, b):
+    def _merge_models(self, a, b):
         m_a = self._make_model(a)
         m_a.merge(self._make_model(b))
         return m_a
 
     def test_a_type_wins_none(self):
-        result = self._run(None, list)
+        result = self._merge_models(None, list)
         self.assertEqual(result, self._make_model(list))
-        result = self._run(list, None)
+        result = self._merge_models(list, None)
         self.assertEqual(result, self._make_model(list))
 
     def test_same_dictionaries(self):
-        result = self._run({'foo': dict}, {'foo': dict})
+        result = self._merge_models({'foo': dict}, {'foo': dict})
         expected = self._make_model({'foo': dict})
         self.assertEqual(result, expected)
 
     def test_more_specific_type_in_dict_wins(self):
-        result = self._run({'foo': None}, {'foo': list})
+        result = self._merge_models({'foo': None}, {'foo': list})
         expected = self._make_model({'foo': list})
         self.assertEqual(result, expected)
-        result = self._run({'foo': list}, {'foo': None})
+        result = self._merge_models({'foo': list}, {'foo': None})
         self.assertEqual(result, expected)
 
     def test_different_keys_raise_error(self):
         with self.assertRaises(ValueError):
-            self._run({'foo': int}, {'foo': int, 'bar': str})
+            self._merge_models({'foo': int}, {'foo': int, 'bar': str})
         with self.assertRaises(ValueError):
-            self._run({'foo': int, 'bar': str}, {'foo': int})
+            self._merge_models({'foo': int, 'bar': str}, {'foo': int})
 
     def test_different_objects_raise_error(self):
         with self.assertRaises(TypeError):
-            self._run(list(), dict())
+            self._merge_models(list(), dict())
 
     def test_not_implemented_class(self):
         with self.assertRaises(NotImplementedError):
-            self._run(object(), object())
+            self._merge_models(object(), object())
 
     def test_empty_list(self):
-        result = self._run([], [])
+        result = self._merge_models([], [])
         self.assertEqual(result, self._make_model([]))
 
     def test_tuple(self):
-        result = self._run([float, float], [])
+        result = self._merge_models([float, float], [])
         expected = self._make_model([float, float])
         self.assertEqual(result, expected)
-        result = self._run([], [float, float])
+        result = self._merge_models([], [float, float])
         self.assertEqual(result, expected)
 
     def test_list(self):
-        result = self._run([str, str], [str, str, str])
+        result = self._merge_models([str, str], [str, str, str])
         self.assertEqual(result, self._make_model([str]))
 
 
