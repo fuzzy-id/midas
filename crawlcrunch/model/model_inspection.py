@@ -7,7 +7,7 @@ import pprint
 from crawlcrunch.compat import comp_unicode
 
 
-class ModelCreator(object):
+class ModelInspector(object):
 
     def __init__(self, objs, access):
         self.access = access
@@ -26,7 +26,7 @@ class ModelCreator(object):
             for k in self.root:
                 if self.root[k] in (dict, list, ):
                     func = self.make_access_function(k)
-                    sub = ModelCreator(self.objs, func)
+                    sub = ModelInspector(self.objs, func)
                     sub.run()
                     setattr(self.root, k, sub.root)
         elif (self.root.type() is list
@@ -34,7 +34,7 @@ class ModelCreator(object):
               and (self.root[0] is dict
                    or self.root[0] is list)):
             func = self.make_access_function(0)
-            sub = ModelCreator(self.objs, func)
+            sub = ModelInspector(self.objs, func)
             sub.run()
             setattr(self.root, 'list', sub.root)
 
