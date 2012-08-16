@@ -6,6 +6,7 @@ import pprint
 
 from crawlcrunch.compat import comp_unicode
 
+
 class ModelCreator(object):
 
     def __init__(self, objs, access):
@@ -36,7 +37,6 @@ class ModelCreator(object):
             sub = ModelCreator(self.objs, func)
             sub.run()
             setattr(self.root, 'list', sub.root)
-            
 
     def make_access_function(self, attribute):
         def func(o):
@@ -49,11 +49,12 @@ class ModelCreator(object):
                     return old_attr[attribute]
         return func
 
+
 class Model(object):
 
     def __init__(self, m):
         self._m = m
-        
+
     def __repr__(self):
         return 'Model( {0!r} )'.format(self._m)
 
@@ -84,13 +85,13 @@ class Model(object):
     def create_model(cls, obj):
         """ Queries a type and returns a map of the object with the
         named fields and their types.
-        """ 
+        """
         t = cls._determine_simple_type(obj)
         if t is list:
             return cls(list(map(cls._determine_simple_type, obj)))
         elif t is dict:
-            return cls(dict(( (k, cls._determine_simple_type(obj[k]))
-                                for k in obj.keys() )))
+            return cls(dict(((k, cls._determine_simple_type(obj[k]))
+                             for k in obj.keys())))
         return cls(t)
 
     @classmethod

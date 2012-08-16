@@ -8,9 +8,10 @@ from crawlcrunch.compat import UserList
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import url_open
 
+
 class LocalFilesDir(object):
     """ This is the root object of all data traversal.
-    """ 
+    """
 
     suffix = '.json.gz'
 
@@ -22,7 +23,7 @@ class LocalFilesDir(object):
         self.nodes = {}
 
     def expand(self, fname):
-        return os.path.join(self.path, 
+        return os.path.join(self.path,
                             '{0}{1}'.format(fname, self.suffix))
 
     def get(self, name):
@@ -37,6 +38,7 @@ class LocalFilesDir(object):
     def get_local_data(self, name):
         fname = self.expand(name)
         return ZippedJsonFile(fname)
+
 
 class ZippedJsonFile(object):
     """ Implements access to local stored data, which is realized via
@@ -61,24 +63,25 @@ class ZippedJsonFile(object):
         with GzipFile(self.path, 'wb') as fp:
             json.dump(self.data, fp)
 
+
 class CrunchBaseFetcherMixin(object):
     """ A mixin that sums up the general way to fetch data from
     crunchbase.
     """
     to_replace = ('\x00',
-                  '\x03', 
+                  '\x03',
                   '\x0b',
                   '\x0e',
-                  '\x12', 
-                  '\x14', 
+                  '\x12',
+                  '\x14',
                   '\x1d',
                   '\x1e',
-                  '\x1f', 
+                  '\x1f',
                   )
     companies_list_url = 'http://api.crunchbase.com/v/1/companies.js'
     company_url_tpl = 'http://api.crunchbase.com/v/1/company/{0}.js'
 
-    def query_url(self): # pragma: no cover
+    def query_url(self):  # pragma: no cover
         raise NotImplementedError()
 
     @classmethod
@@ -97,16 +100,17 @@ class CrunchBaseFetcherMixin(object):
         s = self.replace_control_chars(s)
         return json.loads(s)
 
+
 class Node(object):
     """ Defines the interface to access data, both locally and network
     data.
-    """ 
-    
+    """
+
     def __init__(self, local_data, name):
         self.local_data = local_data
         self.name = name
 
-    def load(self): # pragma: no cover
+    def load(self):  # pragma: no cover
         raise NotImplementedError()
 
     def update(self):
@@ -115,6 +119,7 @@ class Node(object):
 
     def is_local(self):
         return self.local_data.exists()
+
 
 class Company(Node, CrunchBaseFetcherMixin):
 
@@ -125,17 +130,18 @@ class Company(Node, CrunchBaseFetcherMixin):
     def query_url(self):
         return self.company_url_tpl.format(self.name)
 
+
 class CompanyList(UserList, Node, CrunchBaseFetcherMixin):
 
     def __init__(self, root, local_data, name='companies'):
         UserList.__init__(self)
         Node.__init__(self, local_data, name)
         self.root = root
-    
+
     def load(self):
         self.local_data.load()
-        self.data = [ company['permalink'] 
-                      for company in self.local_data.data ]
+        self.data = [company['permalink']
+                     for company in self.local_data.data]
 
     def not_local(self):
         for company_name in self:

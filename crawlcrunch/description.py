@@ -5,19 +5,20 @@ returned by the crunchbase API.
 
 from crawlcrunch.helper import Model
 
+
 def make_root_acces(root):
     def access_func(company_name):
         company = root.get(company_name)
         return company.data
     return access_func
 
-IMAGE = Model({'attribution': None, 
+IMAGE = Model({'attribution': None,
                'available_sizes': list})
 # TODO: this is not resolved properly:
 IMAGE.available_sizes = Model([list, list, list])
 
-COMPANY = Model({'permalink': str, 
-                 'name': str, 
+COMPANY = Model({'permalink': str,
+                 'name': str,
                  'image': dict})
 COMPANY.image = IMAGE
 
@@ -94,14 +95,14 @@ ROOT.acquisitions.list = Model(
 ROOT.acquisitions.list.company = COMPANY
 
 ROOT.competitions = Model([dict])
-ROOT.competitions.list = Model( 
-    {'competitor': dict} )
+ROOT.competitions.list = Model(
+    {'competitor': dict})
 ROOT.competitions.list.competitor = COMPANY
 
 ROOT.external_links = Model([dict])
 ROOT.external_links.list = Model(
     {'external_url': str,
-     'title': str} )
+     'title': str})
 
 ROOT.funding_rounds = Model([dict])
 ROOT.funding_rounds.list = Model(
@@ -113,7 +114,7 @@ ROOT.funding_rounds.list = Model(
      'raised_currency_code': str,
      'round_code': str,
      'source_description': str,
-     'source_url': str} )
+     'source_url': str})
 
 ROOT.funding_rounds.list.investments = Model([dict])
 ROOT.funding_rounds.list.investments.list = Model(
@@ -127,7 +128,7 @@ ROOT.funding_rounds.list.investments.list.person = PERSON
 ROOT.image = IMAGE
 ROOT.investments = Model([dict])
 ROOT.investments.list = Model(
-    {'funding_round': dict} )
+    {'funding_round': dict})
 
 ROOT.investments.list.funding_round = Model(
     {'company': dict,
@@ -138,7 +139,7 @@ ROOT.investments.list.funding_round = Model(
      'raised_currency_code': str,
      'round_code': str,
      'source_description': str,
-     'source_url': str} )
+     'source_url': str})
 ROOT.investments.list.funding_round.company = COMPANY
 
 ROOT.ipo = Model(
@@ -162,10 +163,10 @@ ROOT.milestones.list = Model(
      'stoned_month': int,
      'stoned_value': None,
      'stoned_value_type': None,
-     'stoned_year': int} )
+     'stoned_year': int})
 ROOT.milestones.list.stoneable = Model(
-    {'permalink': str, 
-     'name': str} )
+    {'permalink': str,
+     'name': str})
 
 ROOT.offices = Model([dict])
 ROOT.offices.list = Model({'address1': str,
@@ -180,22 +181,22 @@ ROOT.offices.list = Model({'address1': str,
 
 ROOT.products = Model([dict])
 ROOT.products.list = Model(
-    {'image': dict, 
-     'name': str, 
-     'permalink': str} )
+    {'image': dict,
+     'name': str,
+     'permalink': str})
 ROOT.products.list.image = IMAGE
 
 ROOT.providerships = Model([dict])
-ROOT.providerships.list = Model( 
-    {'is_past': int, 
-     'provider': dict, 
-     'title': str} )
+ROOT.providerships.list = Model(
+    {'is_past': int,
+     'provider': dict,
+     'title': str})
 
 ROOT.providerships.list.provider = COMPANY
 
 ROOT.relationships = Model([dict])
-ROOT.relationships.list = Model({'is_past': int, 
-                                 'person': dict, 
+ROOT.relationships.list = Model({'is_past': int,
+                                 'person': dict,
                                  'title': str})
 ROOT.relationships.list.person = PERSON
 
@@ -204,5 +205,5 @@ ROOT.screenshots.list = IMAGE
 
 ROOT.screenshots.video_embeds = Model([dict])
 ROOT.screenshots.video_embeds.list = Model(
-    {'embed_code': str, 
-     'description': str} )
+    {'embed_code': str,
+     'description': str})

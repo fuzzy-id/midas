@@ -5,6 +5,7 @@ import threading
 
 from crawlcrunch.compat import HTTPError
 
+
 class Updater(object):
 
     def __init__(self, root, num_threads=20):
@@ -25,6 +26,7 @@ class Updater(object):
         for _ in range(self.num_threads):
             self.semaphore.acquire()
 
+
 class CompanyFetcher(threading.Thread):
 
     def __init__(self, company, semaphore):
@@ -42,8 +44,8 @@ class CompanyFetcher(threading.Thread):
             else:
                 logging.exception(e)
         except Exception as e:
-            logging.critical('{0}: An exception occured'.format(
-                    self.company.name))
+            logging.critical(
+                '{0}: An exception occured'.format(self.company.name))
             logging.exception(e)
         finally:
             self.semaphore.release()
