@@ -7,7 +7,7 @@ from crawlcrunch.tests import unittest
 class BaseModelTests(unittest.TestCase):
 
     def _make_model(self, m):
-        from crawlcrunch.helper import Model
+        from crawlcrunch.model.helper import Model
         return Model(m)
 
 
@@ -41,7 +41,7 @@ class ModelTests(BaseModelTests):
 class ModelCreationTests(BaseModelTests):
 
     def _run(self, obj):
-        from crawlcrunch.helper import Model
+        from crawlcrunch.model.helper import Model
         return Model.create_model(obj)
 
     def test_empty_dict(self):
@@ -150,7 +150,7 @@ class MergeModelTests(BaseModelTests):
 class ModelCreatorTests(BaseModelTests):
 
     def _make_one(self, obj_iter, root_access=(lambda x: x)):
-        from crawlcrunch.helper import ModelCreator
+        from crawlcrunch.model.helper import ModelCreator
         return ModelCreator(obj_iter, root_access)
 
     def test_make_access_function(self):
