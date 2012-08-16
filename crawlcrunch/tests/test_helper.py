@@ -6,9 +6,12 @@ from crawlcrunch.tests import unittest
 
 class BaseModelTests(unittest.TestCase):
 
-    def _make_model(self, m):
+    def _get_target_class(self):
         from crawlcrunch.model.helper import Model
-        return Model(m)
+        return Model
+
+    def _make_model(self, m):
+        return self._get_target_class()(m)
 
 
 class ModelTests(BaseModelTests):
@@ -41,8 +44,7 @@ class ModelTests(BaseModelTests):
 class ModelCreationTests(BaseModelTests):
 
     def _run(self, obj):
-        from crawlcrunch.model.helper import Model
-        return Model.create_model(obj)
+        return self._get_target_class().create_model(obj)
 
     def test_empty_dict(self):
         result = self._run({})
