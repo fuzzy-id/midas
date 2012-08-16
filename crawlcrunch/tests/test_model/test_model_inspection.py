@@ -7,7 +7,7 @@ from crawlcrunch.tests import unittest
 class BaseModelTests(unittest.TestCase):
 
     def _get_target_class(self):
-        from crawlcrunch.model.helper import Model
+        from crawlcrunch.model.model_inspection import Model
         return Model
 
     def _make_model(self, m):
@@ -41,7 +41,7 @@ class ModelTests(BaseModelTests):
         self.assertFalse(self._make_model(str) == str)
 
 
-class ModelCreationTests(BaseModelTests):
+class CreateModelTests(BaseModelTests):
 
     def _create_model(self, obj):
         return self._get_target_class().create_model(obj)
@@ -73,7 +73,7 @@ class ModelCreationTests(BaseModelTests):
 
     def test_dict_with_list(self):
         result = self._create_model({'bar': ['foo', 8, 99.45],
-                            'foo': []})
+                                     'foo': []})
         expected = self._make_model({'bar': list,
                                      'foo': list})
         self.assertEqual(result, expected)
@@ -85,7 +85,7 @@ class ModelCreationTests(BaseModelTests):
 
     def test_nested_dicts(self):
         result = self._create_model({'bar': {'foo': None,
-                                    'bar': []}})
+                                             'bar': []}})
         expected = self._make_model({'bar': dict})
         self.assertEqual(result, expected)
 
@@ -149,11 +149,14 @@ class MergeModelTests(BaseModelTests):
         self.assertEqual(result, self._make_model([str]))
 
 
-class ModelCreatorTests(BaseModelTests):
+class ModelInspectorTests(BaseModelTests):
+
+    def __get_target_class(self):
+        from crawlcrunch.model.model_inspection import ModelInspector
+        return ModelInspector
 
     def _make_one(self, obj_iter, root_access=(lambda x: x)):
-        from crawlcrunch.model.helper import ModelCreator
-        return ModelCreator(obj_iter, root_access)
+        return self.__get_target_class()(obj_iter, root_access)
 
     def test_make_access_function(self):
         mc = self._make_one(None)
