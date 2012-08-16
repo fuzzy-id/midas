@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy import Column
+from sqlalchemy import Float
+from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import backref
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm import sessionmaker
 
 
 Base = declarative_base()
+Session = sessionmaker()
 
-class Image(Base):
-    __tablename__ = 'images'
-
-    id = Column(Integer, primary_key=True)
-    available_sizes = Column(String)  # dump the json string of that one
 
 class Company(Base):
     __tablename__ = 'companies'
@@ -45,7 +44,8 @@ class Company(Base):
     total_money_raised = Column(String)
     twitter_username = Column(String)
     updated_at = Column(String)
-    funding_rounds = relationship('Funding', backref='user')
+    funding_rounds = relationship('FundingRound', 
+                                  backref='user')
     # 'acquisiton': dict,
     # 'acquisitions': list,
     # 'competitions': list,
@@ -61,8 +61,9 @@ class Company(Base):
     # 'screenshots': list,
     # 'video_embeds': list
 
-class Funding(Base):
-    __tablename__ = 'fundings'
+
+class FundingRound(Base):
+    __tablename__ = 'funding_rounds'
     
     id = Column(Integer, primary_key=True)
     company_id = Column(Integer, ForeignKey('companies.id'))
@@ -75,4 +76,3 @@ class Funding(Base):
     source_description = Column(String)
     source_url = Column(String)
     # 'investments': list,
-    
