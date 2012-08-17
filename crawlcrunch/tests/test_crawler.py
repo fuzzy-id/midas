@@ -87,13 +87,13 @@ class IntegrationTests(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmpd)
 
-    @mock.patch('crawlcrunch.model.url_open')
+    @mock.patch('crawlcrunch.model.local_files.url_open')
     def test_only_company_fetcher(self, urlopen):
         url = 'http://api.crunchbase.com/v/1/company/facebook.js'
         prepare_url_open(urlopen, {url: {'foo': 'bar'}, })
         dump_file = os.path.join(self.tmpd, 'facebook.json.gz')
         from crawlcrunch.crawler import CompanyFetcher
-        from crawlcrunch.model import LocalFilesDir
+        from crawlcrunch.model.local_files import LocalFilesDir
         root = LocalFilesDir(self.tmpd)
         cf = CompanyFetcher(root.get('facebook'),
                             threading.Semaphore(1))

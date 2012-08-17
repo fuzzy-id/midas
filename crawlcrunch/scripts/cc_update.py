@@ -7,7 +7,7 @@ import optparse
 import sys
 
 from crawlcrunch.crawler import Updater
-from crawlcrunch.model import LocalFilesDir
+from crawlcrunch.model.local_files import LocalFilesDir
 from crawlcrunch.scripts import CCBaseCommand
 
 def main(argv=sys.argv, quiet=False):

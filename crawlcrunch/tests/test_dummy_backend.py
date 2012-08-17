@@ -10,18 +10,18 @@ class DummyRootTests(unittest.TestCase):
 
     def test_root_is_instance_of_local_files_dir_class(self):
         root = self._make_one()
-        from crawlcrunch.model import LocalFilesDir
+        from crawlcrunch.model.local_files import LocalFilesDir
         self.assertIsInstance(root, LocalFilesDir)
 
     def test_get_companies_returns_instance_of_company_list(self):
         root = self._make_one()
-        from crawlcrunch.model import CompanyList
+        from crawlcrunch.model.local_files import CompanyList
         self.assertIsInstance(root.get('companies'), CompanyList)
 
     def test_get_a_company_returns_instance_of_company(self):
         root = self._make_one()
         company = root.get('facebook')
-        from crawlcrunch.model import Company
+        from crawlcrunch.model.local_files import Company
         self.assertIsInstance(company, Company)
 
     def test_getting_the_same_company_returns_same_instance(self):

@@ -22,7 +22,7 @@ logging.basicConfig(level=logging.WARNING)
 class DummyRoot(mock.Mock):
 
     def __init__(self, path=None):
-        from crawlcrunch.model import LocalFilesDir
+        from crawlcrunch.model.local_files import LocalFilesDir
         mock.Mock.__init__(self, spec=LocalFilesDir)
         self.nodes = {}
         self.get = mock.Mock(side_effect=self._dummy_get)
@@ -30,10 +30,10 @@ class DummyRoot(mock.Mock):
     def _dummy_get(self, name):
         if self.nodes.get(name, None) is None:
             if name == 'companies':
-                from crawlcrunch.model import CompanyList
+                from crawlcrunch.model.local_files import CompanyList
                 m = mock.Mock(spec=CompanyList)
             else:
-                from crawlcrunch.model import Company
+                from crawlcrunch.model.local_files import Company
                 m = mock.Mock(spec=Company)
             self.nodes[name] = m
         return self.nodes[name]

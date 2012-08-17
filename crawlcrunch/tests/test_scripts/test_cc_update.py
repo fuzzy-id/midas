@@ -86,7 +86,7 @@ class IntegrationTests(unittest.TestCase):
         from crawlcrunch.scripts.cc_update import CCUpdateCommand
         return CCUpdateCommand(['cc_update', path])
 
-    @mock.patch('crawlcrunch.model.url_open')
+    @mock.patch('crawlcrunch.model.local_files.url_open')
     def test_on_empty_companies_list(self, url_open):
         url_return = (
             {'http://api.crunchbase.com/v/1/companies.js': []})
@@ -104,7 +104,7 @@ class IntegrationTests(unittest.TestCase):
         with GzipFile(companies_file) as fp:
             self.assertEqual(json.load(fp), [])
 
-    @mock.patch('crawlcrunch.model.url_open')
+    @mock.patch('crawlcrunch.model.local_files.url_open')
     def test_on_companies_list_with_elements(self, url_open):
         prepare_url_open(
             url_open,
