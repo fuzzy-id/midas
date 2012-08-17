@@ -1,0 +1,16 @@
+
+* CrawlCrunch
+
+This is rather a collection of helpful tools I used to fetch data from
+tho CrunchBase.com API. It is not complete as I only needed the
+companies and from these only the funding rounds.
+
+Anyways, the code is written so that it should be very easy to get
+more data fields of the companies and no so difficult to fetch other
+data then companies.
+
+The code is tested to run on Python 2.6, 2.7 and 3.2.
+
+If you intend to work with the tools I provide here, please contact me
+so that I can provide further information. As for now, I am too lazy
+to document properly how to use this stuff. :)
