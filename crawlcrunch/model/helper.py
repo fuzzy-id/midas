@@ -81,3 +81,4 @@ def push_companies_from_files_to_db(companies, root, session):  # pragma: no cov
         company.load()  # this never hurts as data is cached
         db_company = local_file_company_to_db_model(company.local_data.data)
         session.add(db_company)
+        session.flush()
