@@ -53,13 +53,6 @@ COMPANY_DATA = {'acquisition': {},
 
 class LocalFileCompanyToDbModelTests(unittest.TestCase):
 
-    def _make_company(self, data):
-        from crawlcrunch.model.local_files import ZippedJsonFile
-        local_data = ZippedJsonFile('foo')
-        local_data.data = data
-        from crawlcrunch.model.local_files import Company as LocalCompany
-        local = LocalCompany(local_data, 'dummy')
-
     def test_company_creation(self):
         from crawlcrunch.model.helper import local_file_company_to_db_model
         result = local_file_company_to_db_model(COMPANY_DATA)
