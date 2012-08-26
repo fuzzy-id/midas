@@ -90,13 +90,17 @@ class CompanyListTests(unittest.TestCase):
         cl = self._make_one(DestinationPaths.no_companies)
         cl.load()
         cl.sort()
-        self.assertEqual(cl, ['de-revolutione',
-                              'group-laurier',
-                              'hiconversion',
-                              'pivotshare',
-                              'vaporstream',
-                              ])
+        expected = ['de-revolutione', 'group-laurier',
+                    'hiconversion', 'pivotshare', 'vaporstream']
+        self.assertEqual(cl, expected)
 
+    def test_local_list_when_companies_missing(self):
+        cl = self._make_one(DestinationPaths.companies_empty)
+        cl.load()
+        cl.sort()
+        expected = ['de-revolutione', 'group-laurier',
+                    'hiconversion', 'pivotshare', 'vaporstream']
+        self.assertEqual(list(cl.list_local()), expected)
 
 class IntegrationTests(unittest.TestCase):
 

@@ -78,7 +78,7 @@ class Model(object):
     def __len__(self):
         return len(self._m)
 
-    def pprint(self):
+    def pprint(self):  # pragma: no cover
         pprint.pprint(self._m)
 
     @classmethod

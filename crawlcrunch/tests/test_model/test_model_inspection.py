@@ -148,6 +148,10 @@ class MergeModelTests(BaseModelTests):
         result = self._merge_models([str, str], [str, str, str])
         self.assertEqual(result, self._make_model([str]))
 
+    def test_list_with_different_objects(self):
+        with self.assertRaises(ValueError):
+            self._merge_models([int], [int, float])
+
 
 class ModelInspectorTests(BaseModelTests):
 
@@ -202,12 +206,12 @@ class ModelInspectorTests(BaseModelTests):
         self.assertEqual(mc.root.foo, self._make_model({'bar': str}))
 
     def test_composed_obj_w_tuple(self):
-        mc = self._make_one(({'foo': [8, 10]},
+        mc = self._make_one(({'foo': [8.7, 10]},
                              {'foo': []},
                              {'foo': None}))
         mc.run()
         self.assertEqual(mc.root, self._make_model({'foo': list}))
-        self.assertEqual(mc.root.foo, self._make_model([int, int]))
+        self.assertEqual(mc.root.foo, self._make_model([float, int]))
 
     def test_lists_with_dicts_inside(self):
         mc = self._make_one(([{'foo': None}, {'foo': 8}],
