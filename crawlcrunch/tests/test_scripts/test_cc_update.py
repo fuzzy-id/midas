@@ -138,5 +138,6 @@ class IntegrationTests(unittest.TestCase):
                                    'foo.json.gz')) as fp:
             self.assertEqual(json.load(fp), ['some_foo', ])
 
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
