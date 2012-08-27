@@ -4,6 +4,7 @@ import json
 import os
 import os.path
 import shutil
+import sys
 import tempfile
 
 from crawlcrunch.compat import GzipFile
@@ -15,13 +16,14 @@ from crawlcrunch.tests import unittest
 import mock
 
 
-class CrawlCrunchTests(unittest.TestCase):
+class ArgumentParserTests(unittest.TestCase):
 
     def setUp(self):
-        self.out_ = StringIO()
+        self._old_err = sys.stderr
+        sys.stderr = StringIO()
 
-    def out(self, msg):
-        self.out_.write(msg)
+    def tearDown(self):
+        sys.stderr = self._old_err
 
     def _get_target_class(self):
         from crawlcrunch.scripts.cc_update import CCUpdateCommand
@@ -31,47 +33,45 @@ class CrawlCrunchTests(unittest.TestCase):
         effargs = ['crawlcrunch', ]
         effargs.extend(args)
         cmd = self._get_target_class()(effargs)
-        cmd.out = self.out
         return cmd
 
     def test_missing_argument(self):
-        cmd = self._make_one()
-        result = cmd.run()
-        self.assertEqual(result, 2)
-        out = self.out_.getvalue()
-        self.assertTrue(
-            out.startswith('You must provide a destination directory'))
+        with self.assertRaises(SystemExit):
+            self._make_one()
 
     def test_too_much_arguments(self):
-        cmd = self._make_one('one', 'two', )
-        result = cmd.run()
-        self.assertEqual(result, 2)
-        out = self.out_.getvalue()
-        self.assertTrue(out.startswith(''.join(('You must ',
-                                                'provide one ',
-                                                'destination ',
-                                                'directory, ',
-                                                'not 2'))))
+        with self.assertRaises(SystemExit) as e:
+            cmd = self._make_one('one', 'two', )
+            self.assertEqual(e.status, 2)
 
     def test_non_existent_path(self):
-        cmd = self._make_one((os.path.join('non',
-                                           'existent',
-                                           'path', )))
-        result = cmd.run()
-        self.assertEqual(result, 2)
-        out = self.out_.getvalue()
+        with self.assertRaises(SystemExit) as e:
+            dst = os.path.join('non', 'existent', 'path', )
+            cmd = self._make_one(dst)
+            self.assertEqual(e.status, 2)
+        err = sys.stderr.getvalue()
         self.assertTrue(
-            out.startswith(
-                "The directory 'non/existent/path' does not exist"))
-        self.assertTrue(out.endswith("Please, create it first."))
+            err.endswith(
+                "the directory 'non/existent/path' does not exist\n"\
+                    .format(dst)))
 
 
 class MainTests(unittest.TestCase):
 
+    def setUp(self):
+        self._old_err = sys.stderr
+        sys.stderr = StringIO()
+
+    def tearDown(self):
+        sys.stderr = self._old_err
+
     def test_missing_argument(self):
         from crawlcrunch.scripts.cc_update import main
-        result = main(['cc_update'], quiet=True)
-        self.assertEqual(result, 2)
+        with self.assertRaises(SystemExit) as e:
+            main(['cc_update'], quiet=True)
+            self.assertEqual(e.status, 2)
+        err = sys.stderr.getvalue()
+        self.assertTrue(err.endswith('too few arguments\n'))
 
 
 class IntegrationTests(unittest.TestCase):
