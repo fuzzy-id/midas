@@ -17,7 +17,7 @@ def main(argv=sys.argv):
 class CheckDirectory(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
-        if not os.path.isdir(values):
+        if not namespace.sql and not os.path.isdir(values):
             parser.error("the directory '{0}' does not exist".format(
                     values))
         setattr(namespace, self.dest, values)
@@ -37,14 +37,17 @@ database.
                         default=[logging.getLevelName('INFO')])
     parser.add_argument('-q', '--quiet', dest='verbosity', action='append_const',
                         const=10, help='be quiet, can be given multiple times')
+    parser.add_argument('--sql', action='store_true', default=False,
+                        help='update a sql database')
 
     def __init__(self, argv):
         self.args = self.parser.parse_args(argv[1:])
         self.args.verbosity = sum(self.args.verbosity)
 
     def run(self):
-        root = LocalFilesDir(self.args.location)
         logging.basicConfig(level=self.args.verbosity)
+        if not self.args.sql:
+            root = LocalFilesDir(self.args.location)
         updater = Updater(root)
         updater.run()
         return 0
