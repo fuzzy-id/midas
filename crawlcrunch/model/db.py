@@ -48,8 +48,9 @@ class Company(Base):
     total_money_raised = Column(String)
     twitter_username = Column(String)
     updated_at = Column(DateTime)
+
     funding_rounds = relationship('FundingRound', 
-                                  backref='user')
+                                  backref='company')
     # 'acquisiton': dict,
     # 'acquisitions': list,
     # 'competitions': list,
