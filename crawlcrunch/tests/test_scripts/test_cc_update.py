@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import logging
 import os
 import os.path
 import shutil
@@ -9,6 +10,7 @@ import tempfile
 
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import StringIO
+from crawlcrunch.tests import EXAMPLES_PATH
 from crawlcrunch.tests import prepare_url_open
 from crawlcrunch.tests import unittest
 
@@ -31,7 +33,7 @@ class ArgumentParserTests(unittest.TestCase):
     def _make_one(self, *args):
         effargs = ['crawlcrunch', ]
         effargs.extend(args)
-        self._get_target_class()(effargs)
+        return self._get_target_class()(effargs)
 
     def test_missing_argument(self):
         with self.assertRaises(SystemExit):
@@ -55,6 +57,19 @@ class ArgumentParserTests(unittest.TestCase):
                 "the directory 'non/existent/path' does not exist\n"\
                     .format(dst)))
 
+    def test_quiet_flags(self):
+        cmd = self._make_one('-v', EXAMPLES_PATH['company_files_empty'])
+        self.assertEqual(cmd.args.verbosity, logging.getLevelName('DEBUG'))
+        cmd = self._make_one(EXAMPLES_PATH['company_files_empty'])
+        self.assertEqual(cmd.args.verbosity, logging.getLevelName('INFO'))
+        cmd = self._make_one('-q', EXAMPLES_PATH['company_files_empty'])
+        self.assertEqual(cmd.args.verbosity, logging.getLevelName('WARNING'))
+        cmd = self._make_one('-qq', EXAMPLES_PATH['company_files_empty'])
+        self.assertEqual(cmd.args.verbosity, logging.getLevelName('ERROR'))
+        cmd = self._make_one('-qqq', EXAMPLES_PATH['company_files_empty'])
+        self.assertEqual(cmd.args.verbosity, logging.getLevelName('CRITICAL'))
+        cmd = self._make_one('-qqvq', EXAMPLES_PATH['company_files_empty'])
+        self.assertEqual(cmd.args.verbosity, logging.getLevelName('ERROR'))
 
 class MainTests(unittest.TestCase):
 
@@ -68,7 +83,7 @@ class MainTests(unittest.TestCase):
     def test_missing_argument(self):
         from crawlcrunch.scripts.cc_update import main
         with self.assertRaises(SystemExit) as cm:
-            main(['cc_update'], quiet=True)
+            main(['cc_update'])
         self.assertEqual(cm.exception.code, 2)
         err = sys.stderr.getvalue()
         self.assertTrue(err.endswith('too few arguments\n'))
@@ -91,8 +106,8 @@ class IntegrationTests(unittest.TestCase):
         url_return = (
             {'http://api.crunchbase.com/v/1/companies.js': []})
         prepare_url_open(url_open, url_return)
-        cmd = self._make_one(self.tmpd)
-        result = cmd.run()
+        from crawlcrunch.scripts.cc_update import main
+        result = main(['cc_update', '-q', self.tmpd])
         self.assertEqual(result, 0)
         url_open.assert_called_once_with(
             'http://api.crunchbase.com/v/1/companies.js')
