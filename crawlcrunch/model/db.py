@@ -50,7 +50,8 @@ class Company(Base):
     updated_at = Column(DateTime)
 
     funding_rounds = relationship('FundingRound', 
-                                  backref='company')
+                                  backref='company',
+                                  cascade='all, delete, delete-orphan')
     # 'acquisiton': dict,
     # 'acquisitions': list,
     # 'competitions': list,
