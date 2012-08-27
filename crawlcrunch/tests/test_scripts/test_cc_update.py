@@ -107,7 +107,7 @@ class IntegrationTests(unittest.TestCase):
             {'http://api.crunchbase.com/v/1/companies.js': []})
         prepare_url_open(url_open, url_return)
         from crawlcrunch.scripts.cc_update import main
-        result = main(['cc_update', '-q', self.tmpd])
+        result = main(['cc_update', '-qqq', self.tmpd])
         self.assertEqual(result, 0)
         url_open.assert_called_once_with(
             'http://api.crunchbase.com/v/1/companies.js')
