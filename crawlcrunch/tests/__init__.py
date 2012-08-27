@@ -38,14 +38,12 @@ class DummyRoot(mock.Mock):
             self.nodes[name] = m
         return self.nodes[name]
 
+__here__ = os.path.abspath(os.path.dirname(__file__))
+__test_examples__ = os.path.join(__here__, 'destinations')
 
-class DestinationPaths(object):
-
-    here = os.path.abspath(os.path.dirname(__file__))
-    destinations = os.path.join(here, 'destinations')
-    companies_empty = os.path.join(destinations, 'companies_empty')
-    no_companies = os.path.join(destinations, 'no_companies')
-
+EXAMPLES_PATH = {
+    'company_files_empty': os.path.join(__test_examples__, 'company_files_empty'),
+    'no_company_files': os.path.join(__test_examples__, 'no_company_files') }
 
 def _make_json_buffer(obj):
     from io import BytesIO

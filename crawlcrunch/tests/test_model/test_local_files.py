@@ -9,7 +9,7 @@ import tempfile
 
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import StringIO
-from crawlcrunch.tests import DestinationPaths
+from crawlcrunch.tests import EXAMPLES_PATH
 from crawlcrunch.tests import prepare_url_open
 from crawlcrunch.tests import unittest
 
@@ -82,12 +82,12 @@ class CompanyListTests(unittest.TestCase):
         return root.get('companies')
 
     def test_list_creation_when_all_companies_files_present(self):
-        cl = self._make_one(DestinationPaths.companies_empty)
+        cl = self._make_one(EXAMPLES_PATH['company_files_empty'])
         cl.load()
         self.assertEqual(list(cl.not_local()), [])
 
     def test_list_creation_when_companies_missing(self):
-        cl = self._make_one(DestinationPaths.no_companies)
+        cl = self._make_one(EXAMPLES_PATH['no_company_files'])
         cl.load()
         cl.sort()
         expected = ['de-revolutione', 'group-laurier',
@@ -95,7 +95,7 @@ class CompanyListTests(unittest.TestCase):
         self.assertEqual(cl, expected)
 
     def test_local_list_when_companies_missing(self):
-        cl = self._make_one(DestinationPaths.companies_empty)
+        cl = self._make_one(EXAMPLES_PATH['company_files_empty'])
         cl.load()
         cl.sort()
         expected = ['de-revolutione', 'group-laurier',

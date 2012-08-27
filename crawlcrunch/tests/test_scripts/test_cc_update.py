@@ -9,7 +9,6 @@ import tempfile
 
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import StringIO
-from crawlcrunch.tests import DestinationPaths
 from crawlcrunch.tests import prepare_url_open
 from crawlcrunch.tests import unittest
 
