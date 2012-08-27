@@ -34,7 +34,7 @@ database.
                         help='the location to save the crawled data')
     parser.add_argument('-v', '--verbose', dest='verbosity', action='append_const',
                         const=-10, help='be verbose, can be given multiple times',
-                        default=[20])
+                        default=[logging.getLevelName('INFO')])
     parser.add_argument('-q', '--quiet', dest='verbosity', action='append_const',
                         const=10, help='be quiet, can be given multiple times')
 
