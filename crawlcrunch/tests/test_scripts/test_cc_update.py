@@ -121,26 +121,23 @@ class IntegrationTests(unittest.TestCase):
 
     @mock.patch('crawlcrunch.model.local_files.url_open')
     def test_on_companies_list_with_elements(self, url_open):
-        prepare_url_open(
-            url_open,
-            {'http://api.crunchbase.com/v/1/companies.js': (
-                    [{'permalink': 'foo', },
-                     {'permalink': 'bar', }]),
-             'http://api.crunchbase.com/v/1/company/foo.js': (
-                    ['some_foo']),
-             'http://api.crunchbase.com/v/1/company/bar.js': (
-                    ['some_bar'])})
+        companies_url = 'http://api.crunchbase.com/v/1/companies.js'
+        foo_url = 'http://api.crunchbase.com/v/1/company/foo.js'
+        bar_url = 'http://api.crunchbase.com/v/1/company/bar.js'
+        prepare_url_open(url_open,
+                         {companies_url: [{'permalink': 'foo', },
+                                          {'permalink': 'bar', }],
+                          foo_url: ['some_foo'],
+                          bar_url: ['some_bar']})
         cmd = self._make_one(self.tmpd)
         result = cmd.run()
         self.assertEqual(result, 0)
-        url_open.assert_called_with(
-            'http://api.crunchbase.com/v/1/company/bar.js')
+        url_open.assert_called_with(bar_url)
         listing = os.listdir(self.tmpd)
         listing.sort()
         self.assertEqual(listing, ['bar.json.gz',
                                    'companies.json.gz',
-                                   'foo.json.gz',
-                                   ])
+                                   'foo.json.gz'])
 
         with GzipFile(os.path.join(self.tmpd,
                                    'companies.json.gz')) as fp:
