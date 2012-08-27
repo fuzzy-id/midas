@@ -44,7 +44,7 @@ database.
 
     def run(self):
         root = LocalFilesDir(self.args.location)
-        logging.basicConfig(level=logging.DEBUG)
+        logging.basicConfig(level=self.args.verbosity)
         updater = Updater(root)
         updater.run()
         return 0
