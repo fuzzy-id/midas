@@ -71,6 +71,11 @@ class ArgumentParserTests(unittest.TestCase):
         cmd = self._make_one('-qqvq', EXAMPLES_PATH['company_files_empty'])
         self.assertEqual(cmd.args.verbosity, logging.getLevelName('ERROR'))
 
+    def test_passing_in_db_uri(self):
+        cmd = self._make_one('--sql', 'sqlite:///:memory:')
+        self.assertEqual(cmd.args.location, 'sqlite:///:memory:')
+
+
 class MainTests(unittest.TestCase):
 
     def setUp(self):
