@@ -32,23 +32,24 @@ class ArgumentParserTests(unittest.TestCase):
     def _make_one(self, *args):
         effargs = ['crawlcrunch', ]
         effargs.extend(args)
-        cmd = self._get_target_class()(effargs)
-        return cmd
+        self._get_target_class()(effargs)
 
     def test_missing_argument(self):
         with self.assertRaises(SystemExit):
             self._make_one()
 
     def test_too_much_arguments(self):
-        with self.assertRaises(SystemExit) as e:
+        with self.assertRaises(SystemExit) as cm:
             cmd = self._make_one('one', 'two', )
-            self.assertEqual(e.status, 2)
+        e = cm.exception
+        self.assertEqual(e.code, 2)
 
     def test_non_existent_path(self):
-        with self.assertRaises(SystemExit) as e:
-            dst = os.path.join('non', 'existent', 'path', )
-            cmd = self._make_one(dst)
-            self.assertEqual(e.status, 2)
+        dst = os.path.join('non', 'existent', 'path', )
+        with self.assertRaises(SystemExit) as cm:
+            self._make_one(dst)
+        e = cm.exception
+        self.assertEqual(e.code, 2)
         err = sys.stderr.getvalue()
         self.assertTrue(
             err.endswith(
@@ -67,9 +68,9 @@ class MainTests(unittest.TestCase):
 
     def test_missing_argument(self):
         from crawlcrunch.scripts.cc_update import main
-        with self.assertRaises(SystemExit) as e:
+        with self.assertRaises(SystemExit) as cm:
             main(['cc_update'], quiet=True)
-            self.assertEqual(e.status, 2)
+        self.assertEqual(cm.exception.code, 2)
         err = sys.stderr.getvalue()
         self.assertTrue(err.endswith('too few arguments\n'))
 
