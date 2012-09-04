@@ -75,17 +75,11 @@ class CrunchBaseFetcherMixin(object):
         return json.loads(s)
 
 
-class Node(object):
-    """ Defines the interface to access data, both locally and network
-    data.
-    """
+class Company(CrunchBaseFetcherMixin):
 
     def __init__(self, local_data, name):
         self.local_data = local_data
         self.name = name
-
-    def load(self):  # pragma: no cover
-        raise NotImplementedError()
 
     def update(self):
         self.local_data.dump(self.fetch())
@@ -93,9 +87,6 @@ class Node(object):
 
     def is_local(self):
         return self.local_data.exists()
-
-
-class Company(Node, CrunchBaseFetcherMixin):
 
     def load(self):
         self.local_data.load()
