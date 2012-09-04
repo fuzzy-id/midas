@@ -19,7 +19,7 @@ class LocalFilesRoot(object):
     def get(self, name):
         if name == 'companies':
             return CompanyList(self, self.path)
-        raise ValueError("No such class '{0}".format(name))
+        raise ValueError("No such class '{0}'".format(name))
 
 
 class ZippedJsonFile(object):
