@@ -57,7 +57,7 @@ class ArgumentParserTests(unittest.TestCase):
                 "the directory 'non/existent/path' does not exist\n"\
                     .format(dst)))
 
-    def test_quiet_flags(self):
+    def test_verboseness_quietness_flags(self):
         cmd = self._make_one('-v', EXAMPLES_PATH['company_files_empty'])
         self.assertEqual(cmd.args.verbosity, logging.getLevelName('DEBUG'))
         cmd = self._make_one(EXAMPLES_PATH['company_files_empty'])
