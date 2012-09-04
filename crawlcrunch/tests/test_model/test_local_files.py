@@ -10,6 +10,7 @@ import tempfile
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import StringIO
 from crawlcrunch.tests import EXAMPLES_PATH
+from crawlcrunch.tests import DummyRoot
 from crawlcrunch.tests import prepare_url_open
 from crawlcrunch.tests import unittest
 
@@ -73,27 +74,15 @@ class CompanyTests(unittest.TestCase):
 class CompanyListTests(unittest.TestCase):
 
     def _make_one(self, path):
-        from crawlcrunch.model.local_files import LocalFilesRoot
-        root = LocalFilesRoot(path)
-        return root.get('companies')
+        from crawlcrunch.model.local_files import CompanyList
+        return CompanyList(DummyRoot(), path)
 
     def test_list_creation_when_all_companies_files_present(self):
         cl = self._make_one(EXAMPLES_PATH['company_files_empty'])
-        cl.load()
         self.assertEqual(list(cl.list_not_local()), [])
 
-    def test_list_creation_when_companies_missing(self):
-        cl = self._make_one(EXAMPLES_PATH['no_company_files'])
-        cl.load()
-        result = list(cl.list_not_local())
-        result.sort()
-        expected = ['de-revolutione', 'group-laurier',
-                    'hiconversion', 'pivotshare', 'vaporstream']
-        self.assertEqual(result, expected)
-
-    def test_local_list_when_companies_missing(self):
+    def test_local_list_when_company_files_empty(self):
         cl = self._make_one(EXAMPLES_PATH['company_files_empty'])
-        cl.load()
         result = list(cl.list_local())
         result.sort()
         expected = ['de-revolutione', 'group-laurier',
@@ -123,9 +112,3 @@ class IntegrationTests(unittest.TestCase):
         companies = root.get('companies')
         companies.update()
         url_open.assert_called_once_with(url)
-        companies_file = (os.path.join(self.tmpd,
-                                       'companies.json.gz'))
-        self.assertTrue(os.path.isfile(companies_file))
-        with GzipFile(companies_file) as fp:
-            self.assertEqual(json.load(fp),
-                             [{'permalink': 'foo'}, ])
