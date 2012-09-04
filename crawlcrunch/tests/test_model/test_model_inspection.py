@@ -7,7 +7,7 @@ from crawlcrunch.tests import unittest
 class BaseModelTests(unittest.TestCase):
 
     def _get_target_class(self):
-        from crawlcrunch.model.model_inspection import Model
+        from crawlcrunch.model.inspection import Model
         return Model
 
     def _make_model(self, m):
@@ -156,7 +156,7 @@ class MergeModelTests(BaseModelTests):
 class ModelInspectorTests(BaseModelTests):
 
     def __get_target_class(self):
-        from crawlcrunch.model.model_inspection import ModelInspector
+        from crawlcrunch.model.inspection import ModelInspector
         return ModelInspector
 
     def _make_one(self, obj_iter, root_access=(lambda x: x)):
