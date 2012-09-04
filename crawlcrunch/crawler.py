@@ -19,7 +19,7 @@ class Updater(object):
         for company in self.companies.list_not_local():
             self.semaphore.acquire()
             fetcher = CompanyFetcher(
-                self.root.get(company),
+                self.companies.get(company),
                 self.semaphore)
             fetcher.start()
         # Wait 'til all threads finished
