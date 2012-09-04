@@ -8,7 +8,7 @@ import os.path
 import sys
 
 from crawlcrunch.crawler import Updater
-from crawlcrunch.model.local_files import LocalFilesDir
+from crawlcrunch.model.local_files import LocalFilesRoot
 
 def main(argv=sys.argv):
     command = CCUpdateCommand(argv)
@@ -53,7 +53,7 @@ database.
     def run(self):
         logging.basicConfig(level=self.args.verbosity)
         if not self.args.sql:
-            root = LocalFilesDir(self.args.location)
+            root = LocalFilesRoot(self.args.location)
         updater = Updater(root)
         updater.run()
         return 0

@@ -9,7 +9,7 @@ from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import url_open
 
 
-class LocalFilesDir(object):
+class LocalFilesRoot(object):
     """ This is the root object of all data traversal.
     """
 
