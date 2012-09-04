@@ -74,11 +74,11 @@ class IntegrationTests(unittest.TestCase):
 
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_company_fetcher_and_company_list(self, urlopen):
+        from crawlcrunch.crawler import CompanyFetcher
+        from crawlcrunch.model.local_files import CompanyList
         url = 'http://api.crunchbase.com/v/1/company/facebook.js'
         prepare_url_open(urlopen, {url: {'foo': 'bar'}, })
         dump_file = os.path.join(self.tmpd, 'facebook.json.gz')
-        from crawlcrunch.crawler import CompanyFetcher
-        from crawlcrunch.model.local_files import CompanyList
         cl = CompanyList(DummyRoot(), self.tmpd)
         cf = CompanyFetcher(cl.get('facebook'),
                             threading.Semaphore(1))
@@ -88,9 +88,9 @@ class IntegrationTests(unittest.TestCase):
             self.assertEqual(json.load(fp), {'foo': 'bar'})
 
     def test_crawler_and_company_fetcher_play_together(self):
+        from crawlcrunch.crawler import Updater
         cl = DummyCompanyList()
         cl.list_not_local.return_value = ['facebook', ]
-        from crawlcrunch.crawler import Updater
         crawler = Updater(cl)
         crawler.run()
         fb = cl.get.assert_called_once_with('facebook')
