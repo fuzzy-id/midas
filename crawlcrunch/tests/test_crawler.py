@@ -105,7 +105,7 @@ class IntegrationTests(unittest.TestCase):
     def test_crawler_and_company_fetcher_play_together(self):
         from crawlcrunch.tests import DummyRoot
         root = DummyRoot()
-        root.get('companies').not_local.return_value = ['facebook', ]
+        root.get('companies').list_not_local.return_value = ['facebook', ]
         from crawlcrunch.crawler import Updater
         crawler = Updater(root)
         crawler.run()

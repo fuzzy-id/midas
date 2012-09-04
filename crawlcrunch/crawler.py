@@ -16,7 +16,7 @@ class Updater(object):
 
     def run(self):
         self.companies.update()
-        for company in self.companies.not_local():
+        for company in self.companies.list_not_local():
             self.semaphore.acquire()
             fetcher = CompanyFetcher(
                 self.root.get(company),

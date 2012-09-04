@@ -137,7 +137,7 @@ class CompanyList(Node, CrunchBaseFetcherMixin):
         self._nodes = dict((company['permalink'], None)
                            for company in self.local_data.data)
 
-    def not_local(self):
+    def list_not_local(self):
         for company_name in self._nodes:
             company = self.root.get(company_name)
             if not company.is_local():
