@@ -39,12 +39,12 @@ class Fetcher(threading.Thread):
         except HTTPError as e:
             if e.code == 404:
                 logging.critical(
-                    '{0}: Got 404'.format(self.inst.name))
+                    '{0}: Got 404'.format(self.inst))
             else:
                 logging.exception(e)
         except Exception as e:
             logging.critical(
-                '{0}: An exception occured'.format(self.inst.name))
+                '{0}: An exception occured'.format(self.inst))
             logging.exception(e)
         finally:
             self.semaphore.release()
