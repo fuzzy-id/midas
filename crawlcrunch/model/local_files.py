@@ -20,20 +20,17 @@ class LocalFilesRoot(object):
         path = os.path.abspath(path)
         path = os.path.normpath(path)
         self.path = path
-        self.nodes = {}
 
     def expand(self, fname):
         return os.path.join(self.path,
                             '{0}{1}'.format(fname, self.suffix))
 
     def get(self, name):
-        if self.nodes.get(name, None) is None:
-            local_data = self.get_local_data(name)
-            if name == 'companies':
-                self.nodes[name] = CompanyList(self, local_data)
-            else:
-                self.nodes[name] = Company(local_data, name)
-        return self.nodes[name]
+        local_data = self.get_local_data(name)
+        if name == 'companies':
+            return CompanyList(self, local_data)
+        else:
+            return Company(local_data, name)
 
     def get_local_data(self, name):
         fname = self.expand(name)
