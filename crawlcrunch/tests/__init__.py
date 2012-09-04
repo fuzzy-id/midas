@@ -22,8 +22,8 @@ logging.basicConfig(level=logging.WARNING)
 class DummyRoot(mock.Mock):
 
     def __init__(self, path=None):
-        from crawlcrunch.model.local_files import LocalFilesDir
-        mock.Mock.__init__(self, spec=LocalFilesDir)
+        from crawlcrunch.model.local_files import LocalFilesRoot
+        mock.Mock.__init__(self, spec=LocalFilesRoot)
         self.nodes = {}
         self.get = mock.Mock(side_effect=self._dummy_get)
 

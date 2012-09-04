@@ -93,8 +93,8 @@ class IntegrationTests(unittest.TestCase):
         prepare_url_open(urlopen, {url: {'foo': 'bar'}, })
         dump_file = os.path.join(self.tmpd, 'facebook.json.gz')
         from crawlcrunch.crawler import CompanyFetcher
-        from crawlcrunch.model.local_files import LocalFilesDir
-        root = LocalFilesDir(self.tmpd)
+        from crawlcrunch.model.local_files import LocalFilesRoot
+        root = LocalFilesRoot(self.tmpd)
         cf = CompanyFetcher(root.get('facebook'),
                             threading.Semaphore(1))
         cf.run()

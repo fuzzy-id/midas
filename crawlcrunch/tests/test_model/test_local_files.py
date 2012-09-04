@@ -16,11 +16,11 @@ from crawlcrunch.tests import unittest
 import mock
 
 
-class LocalFilesDirTests(unittest.TestCase):
+class LocalFilesRootTests(unittest.TestCase):
 
     def _make_one(self, path):
-        from crawlcrunch.model.local_files import LocalFilesDir
-        return LocalFilesDir(path)
+        from crawlcrunch.model.local_files import LocalFilesRoot
+        return LocalFilesRoot(path)
 
     def test_companies_list_creation(self):
         root = self._make_one('foo')
@@ -36,8 +36,8 @@ class LocalFilesDirTests(unittest.TestCase):
 class CompanyTests(unittest.TestCase):
 
     def _make_one(self, path, name):
-        from crawlcrunch.model.local_files import LocalFilesDir
-        root = LocalFilesDir(path)
+        from crawlcrunch.model.local_files import LocalFilesRoot
+        root = LocalFilesRoot(path)
         return root.get(name)
 
     def test_url_generation(self):
@@ -77,8 +77,8 @@ class CompanyTests(unittest.TestCase):
 class CompanyListTests(unittest.TestCase):
 
     def _make_one(self, path):
-        from crawlcrunch.model.local_files import LocalFilesDir
-        root = LocalFilesDir(path)
+        from crawlcrunch.model.local_files import LocalFilesRoot
+        root = LocalFilesRoot(path)
         return root.get('companies')
 
     def test_list_creation_when_all_companies_files_present(self):
@@ -111,8 +111,8 @@ class IntegrationTests(unittest.TestCase):
         shutil.rmtree(self.tmpd)
 
     def _make_one(self, path):
-        from crawlcrunch.model.local_files import LocalFilesDir
-        return LocalFilesDir(path)
+        from crawlcrunch.model.local_files import LocalFilesRoot
+        return LocalFilesRoot(path)
 
     @mock.patch('crawlcrunch.model.local_files.url_open')
     def test_list_is_fetched_and_saved_when_not_present(self,
