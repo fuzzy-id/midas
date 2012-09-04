@@ -3,6 +3,7 @@
 from io import BytesIO
 
 import json
+import os
 import os.path
 import shutil
 import tempfile
@@ -100,3 +101,25 @@ class CompanyListTests(unittest.TestCase):
         cl = self._make_one(None)
         cl.update()
         urlopen.assert_called_once_with(url)
+
+class ZippedJsonFileTests(unittest.TestCase):
+
+    def setUp(self):
+        self.tmpd = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpd)
+
+    def _make_one(self, path):
+        from crawlcrunch.model.local_files import ZippedJsonFile
+        return ZippedJsonFile(path)
+
+    def test_dump_and_load(self):
+        data = {'foo': ['bar', 'baz']}
+        dump_file = os.path.join(self.tmpd, 'dump.json.gz')
+        zjf = self._make_one(dump_file)
+        zjf.dump(data)
+        del zjf
+        zjf = self._make_one(dump_file)
+        zjf.load()
+        self.assertEqual(zjf.data, data)
