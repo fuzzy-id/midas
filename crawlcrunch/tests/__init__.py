@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from io import BytesIO
 import json
 import logging
 import mock
@@ -20,10 +21,12 @@ logging.basicConfig(level=logging.WARNING)
 
 __here__ = os.path.abspath(os.path.dirname(__file__))
 __test_examples__ = os.path.join(__here__, 'destinations')
-
 EXAMPLES_PATH = {
-    'company_files_empty': os.path.join(__test_examples__, 'company_files_empty'),
-    'no_company_files': os.path.join(__test_examples__, 'no_company_files') }
+    'company_files_empty': os.path.join(__test_examples__, 
+                                        'company_files_empty'),
+    'no_company_files': os.path.join(__test_examples__, 
+                                     'no_company_files') }
+
 
 class DummyRoot(mock.Mock):
 
@@ -40,14 +43,11 @@ class DummyRoot(mock.Mock):
 
 
 def _make_json_buffer(obj):
-    from io import BytesIO
-    js = json.dumps(obj)
-    b = comp_bytes(js, 'utf-8')
-    buf = BytesIO(b)
+    buf = BytesIO(comp_bytes(json.dumps(obj), 'utf-8'))
     buf.seek(0)
     return buf
 
-def prepare_url_open(url_open, return_dict):
+def prepare_url_open(urlopen, return_dict):
     def side_effect(url):
         return _make_json_buffer(return_dict[url])
-    url_open.side_effect = side_effect
+    urlopen.side_effect = side_effect
