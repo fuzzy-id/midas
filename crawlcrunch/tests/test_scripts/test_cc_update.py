@@ -49,8 +49,7 @@ class ArgumentParserTests(unittest.TestCase):
         e = cm.exception
         self.assertEqual(e.code, 2)
         err = sys.stderr.getvalue()
-        self.assertTrue(
-            err.endswith(
+        self.assertTrue(err.endswith(
                 "the directory 'non/existent/path' does not exist\n"\
                     .format(dst)))
 
@@ -106,26 +105,28 @@ class IntegrationTests(unittest.TestCase):
         from crawlcrunch.scripts.cc_update import CCUpdateCommand
         return CCUpdateCommand(['cc_update', path])
 
-    def test_with_wrong_class(self):
+    def _test_it(self, *args):
         from crawlcrunch.scripts.cc_update import main
+        effargs = ['cc_update']
+        effargs.extend(*args)
+        return main(effargs)
+
+    def test_with_wrong_class(self):
         with self.assertRaises(ValueError) as cm:
-            main(['cc_update', '-qqq', self.tmpd, 'no_such_class'])
+            self._test_it(('-qqq', self.tmpd, 'no_such_class'))
         e = cm.exception
         self.assertEqual(len(e.args), 1)
         self.assertTrue(e.args[0].endswith("'no_such_class'"))
 
     @mock.patch('crawlcrunch.compat.urlopen')
-    def test_on_empty_companies_list(self, url_open):
+    def test_on_empty_companies_list(self, urlopen):
         url_return = (
             {'http://api.crunchbase.com/v/1/companies.js': []})
-        prepare_url_open(url_open, url_return)
-        from crawlcrunch.scripts.cc_update import main
-        result = main(['cc_update', '-qqq', self.tmpd])
-        self.assertEqual(result, 0)
-        url_open.assert_called_once_with(
+        prepare_url_open(urlopen, url_return)
+        self.assertEqual(self._test_it(['-qqq', self.tmpd]), 0)
+        urlopen.assert_called_once_with(
             'http://api.crunchbase.com/v/1/companies.js')
-        listing = os.listdir(self.tmpd)
-        self.assertEqual(listing, [])
+        self.assertEqual(os.listdir(self.tmpd), [])
 
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_on_companies_list_with_elements(self, url_open):
