@@ -42,15 +42,18 @@ class CompanyFetcherTests(unittest.TestCase):
         import logging
         logging.root.setLevel(cls._old_log_level)
 
+    def _test_it(self, company):
+        from crawlcrunch.crawler import CompanyFetcher
+        semaphore = threading.Semaphore(1)
+        cf = CompanyFetcher(company, semaphore)
+        cf.run()
+        return cf, semaphore
+
     @mock.patch('logging.critical')
     def test_semaphore_is_released_on_error(self, critical):
-        semaphore = threading.Semaphore(1)
         dc = DummyCompany()
         dc.update.side_effect = Exception()
-
-        from crawlcrunch.crawler import CompanyFetcher
-        cf = CompanyFetcher(dc, semaphore)
-        cf.run()
+        _, semaphore = self._test_it(dc)
         self.assertTrue(semaphore.acquire(False))
         critical.assert_called_once()
 
@@ -58,25 +61,16 @@ class CompanyFetcherTests(unittest.TestCase):
     def test_404_is_properly_handled(self, critical):
         dc = DummyCompany()
         dc.update.side_effect = HTTPError(None, 404, 'Not Found', None, None)
-        semaphore = threading.Semaphore(1)
-        from crawlcrunch.crawler import CompanyFetcher
-        cf = CompanyFetcher(dc, semaphore)
-        cf.run()
+        _, semaphore = self._test_it(dc)
         critical.assert_has_calls([])
         critical.assert_called_once_with("dummy_company: Got 404")
         self.assertTrue(semaphore.acquire(False))
 
     @mock.patch('logging.exception')
     def test_not_404_is_logged(self, exc):
-        class DummyCompany(object):
-            name = 'foo'
-
-            def update(self):
-                raise HTTPError(None, 400, None, None, None)
-        semaphore = threading.Semaphore(1)
-        from crawlcrunch.crawler import CompanyFetcher
-        cf = CompanyFetcher(DummyCompany(), semaphore)
-        cf.run()
+        dc = DummyCompany()
+        dc.side_effect = HTTPError(None, 400, None, None, None)
+        _, semaphore = self._test_it(dc)
         exc.assert_called_once()
         self.assertTrue(semaphore.acquire(False))
 
