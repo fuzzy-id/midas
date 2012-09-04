@@ -26,14 +26,11 @@ class ArgumentParserTests(unittest.TestCase):
     def tearDown(self):
         sys.stderr = self._old_err
 
-    def _get_target_class(self):
-        from crawlcrunch.scripts.cc_update import CCUpdateCommand
-        return CCUpdateCommand
-
     def _make_one(self, *args):
+        from crawlcrunch.scripts.cc_update import CCUpdateCommand
         effargs = ['crawlcrunch', ]
         effargs.extend(args)
-        return self._get_target_class()(effargs)
+        return CCUpdateCommand(effargs)
 
     def test_defaults(self):
         cmd = self._make_one('.')
