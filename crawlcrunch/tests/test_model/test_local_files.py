@@ -40,30 +40,30 @@ class CompanyTests(unittest.TestCase):
         expected = 'http://api.crunchbase.com/v/1/company/facebook.js'
         self.assertEqual(company.query_url(), expected)
 
-    @mock.patch('crawlcrunch.compat.urlopen')
-    def test_update(self, url_open):
-        foo_url = 'http://api.crunchbase.com/v/1/company/foo.js'
-        prepare_url_open(url_open,
-                         {foo_url: {'foo': 'bar', }})
+    def _make_update(self):
         from crawlcrunch.model.local_files import ZippedJsonFile
         with tempfile.NamedTemporaryFile() as fp:
             local_data = ZippedJsonFile(fp.name)
             company = self._make_one(local_data, 'foo')
             company.update()
+        return local_data, company
+
+    @mock.patch('crawlcrunch.compat.urlopen')
+    def test_update(self, urlopen):
+        foo_url = 'http://api.crunchbase.com/v/1/company/foo.js'
+        prepare_url_open(urlopen,
+                         {foo_url: {'foo': 'bar', }})
+        local_data, company = self._make_update()
         self.assertEqual(local_data.data, {'foo': 'bar'})
         self.assertEqual(company.data, {'foo': 'bar'})
-        url_open.assert_called_once_with(foo_url)
+        urlopen.assert_called_once_with(foo_url)
 
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_control_chars_in_response(self, urlopen):
         buf = BytesIO(b'["\x12fo\x14", "ba\x0b"]')
         buf.seek(0)
         urlopen.return_value = buf
-        from crawlcrunch.model.local_files import ZippedJsonFile
-        with tempfile.NamedTemporaryFile() as fp:
-            local_data = ZippedJsonFile(fp.name)
-            company = self._make_one(local_data, 'foo')
-            company.update()
+        local_data, company = self._make_update()
         self.assertEqual(local_data.data, ['fo', 'ba'])
 
 
@@ -105,12 +105,12 @@ class IntegrationTests(unittest.TestCase):
         return LocalFilesRoot(path)
 
     @mock.patch('crawlcrunch.compat.urlopen')
-    def test_list_is_fetched_when_not_present(self, url_open):
+    def test_list_is_fetched_when_not_present(self, urlopen):
         url = 'http://api.crunchbase.com/v/1/companies.js'
-        prepare_url_open(url_open,
+        prepare_url_open(urlopen,
                          {url: [{'permalink': 'foo'}]})
         from crawlcrunch.model.local_files import CompanyList
         root = self._make_one(self.tmpd)
         companies = root.get('companies')
         companies.update()
-        url_open.assert_called_once_with(url)
+        urlopen.assert_called_once_with(url)
