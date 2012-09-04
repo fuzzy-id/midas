@@ -32,13 +32,19 @@ database.
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('location', action=CheckDirectory,
                         help='the location to save the crawled data')
-    parser.add_argument('-v', '--verbose', dest='verbosity', action='append_const',
-                        const=-10, help='be verbose, can be given multiple times',
+    parser.add_argument('classes', nargs='*', metavar='CLASS',
+                        default=['companies'],
+                        help="""update CLASS, available classes are:
+'companies'; all available classes are updated by default""")
+    parser.add_argument('-v', '--verbose', dest='verbosity', 
+                        action='append_const', const=-10, 
+                        help='be verbose, can be given multiple times',
                         default=[logging.getLevelName('INFO')])
-    parser.add_argument('-q', '--quiet', dest='verbosity', action='append_const',
-                        const=10, help='be quiet, can be given multiple times')
+    parser.add_argument('-q', '--quiet', dest='verbosity', 
+                        action='append_const', const=10,
+                        help='be quiet, can be given multiple times')
     parser.add_argument('--sql', action='store_true', default=False,
-                        help='update a sql database')
+                        help='update a sql database, create it if not existent')
 
     def __init__(self, argv):
         self.args = self.parser.parse_args(argv[1:])
