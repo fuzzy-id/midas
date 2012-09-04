@@ -29,12 +29,12 @@ class UpdaterTests(unittest.TestCase):
         dcl.update.assert_called_once_with()
 
 
-class CompanyFetcherTests(unittest.TestCase):
+class FetcherTests(unittest.TestCase):
 
     def _test_it(self, company):
-        from crawlcrunch.crawler import CompanyFetcher
+        from crawlcrunch.crawler import Fetcher
         semaphore = threading.Semaphore(1)
-        cf = CompanyFetcher(company, semaphore)
+        cf = Fetcher(company, semaphore)
         cf.run()
         return cf, semaphore
 
@@ -74,13 +74,13 @@ class IntegrationTests(unittest.TestCase):
 
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_company_fetcher_and_company_list(self, urlopen):
-        from crawlcrunch.crawler import CompanyFetcher
+        from crawlcrunch.crawler import Fetcher
         from crawlcrunch.model.local_files import CompanyList
         url = 'http://api.crunchbase.com/v/1/company/facebook.js'
         prepare_url_open(urlopen, {url: {'foo': 'bar'}, })
         dump_file = os.path.join(self.tmpd, 'facebook.json.gz')
         cl = CompanyList(DummyRoot(), self.tmpd)
-        cf = CompanyFetcher(cl.get('facebook'),
+        cf = Fetcher(cl.get('facebook'),
                             threading.Semaphore(1))
         cf.run()
         urlopen.assert_called_once_with(url)

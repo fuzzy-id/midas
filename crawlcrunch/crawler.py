@@ -17,7 +17,7 @@ class Updater(object):
         self.inst_list.update()
         for inst in self.inst_list.list_not_local():
             self.semaphore.acquire()
-            fetcher = CompanyFetcher(
+            fetcher = Fetcher(
                 self.inst_list.get(inst),
                 self.semaphore)
             fetcher.start()
@@ -26,25 +26,25 @@ class Updater(object):
             self.semaphore.acquire()
 
 
-class CompanyFetcher(threading.Thread):
+class Fetcher(threading.Thread):
 
-    def __init__(self, company, semaphore):
-        super(CompanyFetcher, self).__init__()
-        self.company = company
+    def __init__(self, inst, semaphore):
+        super(Fetcher, self).__init__()
+        self.inst = inst
         self.semaphore = semaphore
 
     def run(self):
         try:
-            self.company.update()
+            self.inst.update()
         except HTTPError as e:
             if e.code == 404:
                 logging.critical(
-                    '{0}: Got 404'.format(self.company.name))
+                    '{0}: Got 404'.format(self.inst.name))
             else:
                 logging.exception(e)
         except Exception as e:
             logging.critical(
-                '{0}: An exception occured'.format(self.company.name))
+                '{0}: An exception occured'.format(self.inst.name))
             logging.exception(e)
         finally:
             self.semaphore.release()
