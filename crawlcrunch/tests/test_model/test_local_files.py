@@ -32,10 +32,9 @@ class LocalFilesRootTests(unittest.TestCase):
 
 class CompanyTests(unittest.TestCase):
 
-    def _make_one(self, path, name):
-        from crawlcrunch.model.local_files import LocalFilesRoot
-        root = LocalFilesRoot(path)
-        return root.get(name)
+    def _make_one(self, local_data, name):
+        from crawlcrunch.model.local_files import Company
+        return Company(local_data, name)
 
     def test_url_generation(self):
         company = self._make_one('foo', 'facebook')
@@ -88,6 +87,12 @@ class CompanyListTests(unittest.TestCase):
         expected = ['de-revolutione', 'group-laurier',
                     'hiconversion', 'pivotshare', 'vaporstream']
         self.assertEqual(result, expected)
+
+    def test_get(self):
+        cl = self._make_one(EXAMPLES_PATH['company_files_empty'])
+        result = cl.get('de-revolutione')
+        from crawlcrunch.model.local_files import Company
+        self.assertIsInstance(result, Company)
 
 
 class IntegrationTests(unittest.TestCase):
