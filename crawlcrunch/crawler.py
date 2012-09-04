@@ -9,16 +9,16 @@ from crawlcrunch.compat import HTTPError
 class Updater(object):
 
     def __init__(self, inst_list, num_threads=20):
-        self.companies = inst_list
+        self.inst_list = inst_list
         self.num_threads = num_threads
         self.semaphore = threading.Semaphore(num_threads)
 
     def run(self):
-        self.companies.update()
-        for company in self.companies.list_not_local():
+        self.inst_list.update()
+        for inst in self.inst_list.list_not_local():
             self.semaphore.acquire()
             fetcher = CompanyFetcher(
-                self.companies.get(company),
+                self.inst_list.get(inst),
                 self.semaphore)
             fetcher.start()
         # Wait 'til all threads finished
