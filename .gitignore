@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+
+.coverage
+.tox/
+crawlcrunch.egg-info/
+*-py2.6.egg/
+*-py2.7.egg/
+*-py3.2.egg/
