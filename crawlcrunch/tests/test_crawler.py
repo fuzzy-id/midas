@@ -22,11 +22,11 @@ class UpdaterTests(unittest.TestCase):
 
     def test_update_on_companies_list_is_called(self):
         from crawlcrunch.crawler import Updater
-        root = mock.MagicMock()
-        root.not_local.return_value = []
-        updater = Updater(root)
+        dcl = DummyCompanyList()
+        dcl.list_not_local.return_value = []
+        updater = Updater(dcl)
         updater.run()
-        root.update.assert_called_once_with()
+        dcl.update.assert_called_once_with()
 
 
 class CompanyFetcherTests(unittest.TestCase):
