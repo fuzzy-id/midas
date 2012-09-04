@@ -49,6 +49,9 @@ class Company(CrunchBaseFetcherMixin):
         self.local_data = local_data
         self.name = name
 
+    def __str__(self):
+        return 'Company( {0} )'.format(self.name)
+
     def update(self):
         self.local_data.dump(self.fetch())
         self.load()
