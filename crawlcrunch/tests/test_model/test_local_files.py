@@ -88,15 +88,11 @@ class CompanyListTests(unittest.TestCase):
         self.assertIsInstance(result, Company)
         self.assertEqual(result.name, 'de-revolutione')
 
-
-class IntegrationTests(unittest.TestCase):
-
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_list_is_fetched_when_not_present(self, urlopen):
         url = 'http://api.crunchbase.com/v/1/companies.js'
         prepare_url_open(urlopen,
                          {url: [{'permalink': 'foo'}]})
-        from crawlcrunch.model.local_files import CompanyList
-        companies = CompanyList(DummyRoot(), None)
-        companies.update()
+        cl = self._make_one(None)
+        cl.update()
         urlopen.assert_called_once_with(url)
