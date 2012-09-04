@@ -11,8 +11,9 @@ import mock
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import HTTPError
 from crawlcrunch.compat import StringIO
-from crawlcrunch.tests import unittest
+from crawlcrunch.tests import DummyRoot
 from crawlcrunch.tests import prepare_url_open
+from crawlcrunch.tests import unittest
 
 
 class UpdaterTests(unittest.TestCase):
@@ -93,9 +94,9 @@ class IntegrationTests(unittest.TestCase):
         prepare_url_open(urlopen, {url: {'foo': 'bar'}, })
         dump_file = os.path.join(self.tmpd, 'facebook.json.gz')
         from crawlcrunch.crawler import CompanyFetcher
-        from crawlcrunch.model.local_files import LocalFilesRoot
-        root = LocalFilesRoot(self.tmpd)
-        cf = CompanyFetcher(root.get('facebook'),
+        from crawlcrunch.model.local_files import CompanyList
+        cl = CompanyList(DummyRoot(), self.tmpd)
+        cf = CompanyFetcher(cl.get('facebook'),
                             threading.Semaphore(1))
         cf.run()
         urlopen.assert_called_once_with(url)
@@ -105,12 +106,13 @@ class IntegrationTests(unittest.TestCase):
     def test_crawler_and_company_fetcher_play_together(self):
         from crawlcrunch.tests import DummyRoot
         root = DummyRoot()
-        root.get('companies').list_not_local.return_value = ['facebook', ]
+        cl = root.get('companies')
+        cl.list_not_local.return_value = ['facebook', ]
         from crawlcrunch.crawler import Updater
         crawler = Updater(root)
         crawler.run()
-        fb = root.get.assert_called_with('facebook')
-        fb = root.get('facebook')
+        fb = cl.get.assert_called_with('facebook')
+        fb = cl.get('facebook')
         fb.update.assert_called_once_with()
 
 if __name__ == '__main__':  # pragma: no cover
