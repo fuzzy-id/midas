@@ -52,7 +52,7 @@ class FetcherTests(unittest.TestCase):
         dc.update.side_effect = HTTPError(None, 404, 'Not Found', None, None)
         _, semaphore = self._test_it(dc)
         critical.assert_has_calls([])
-        critical.assert_called_once_with("dummy_company: Got 404")
+        critical.assert_called_once()
         self.assertTrue(semaphore.acquire(False))
 
     @mock.patch('logging.exception')
