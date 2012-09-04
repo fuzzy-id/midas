@@ -115,6 +115,12 @@ class IntegrationTests(unittest.TestCase):
         from crawlcrunch.scripts.cc_update import CCUpdateCommand
         return CCUpdateCommand(['cc_update', path])
 
+    def test_with_wrong_class(self):
+        from crawlcrunch.scripts.cc_update import main
+        with self.assertRaises(ValueError) as cm:
+            main(['cc_update', '-qqq', self.tmpd, 'no_such_class'])
+        self.assertTrue(cm.exception.endswith("'no_such_class'"))
+
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_on_empty_companies_list(self, url_open):
         url_return = (
