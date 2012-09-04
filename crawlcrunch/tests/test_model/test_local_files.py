@@ -63,7 +63,7 @@ class CompanyTests(unittest.TestCase):
         buf = BytesIO(b'["\x12fo\x14", "ba\x0b"]')
         buf.seek(0)
         urlopen.return_value = buf
-        local_data, company = self._make_update()
+        local_data, _ = self._make_update()
         self.assertEqual(local_data.data, ['fo', 'ba'])
 
 
