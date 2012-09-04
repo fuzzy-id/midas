@@ -13,25 +13,13 @@ class LocalFilesRoot(object):
     """ This is the root object of all data traversal.
     """
 
-    suffix = '.json.gz'
-
     def __init__(self, path):
         self.path = path
-
-    def expand(self, fname):
-        return os.path.join(self.path,
-                            '{0}{1}'.format(fname, self.suffix))
 
     def get(self, name):
         if name == 'companies':
             return CompanyList(self, self.path)
-        else:
-            local_data = self.get_local_data(name)
-            return Company(local_data, name)
-
-    def get_local_data(self, name):
-        fname = self.expand(name)
-        return ZippedJsonFile(fname)
+        raise ValueError("No such class '{0}".format(name))
 
 
 class ZippedJsonFile(object):
@@ -128,6 +116,7 @@ class Company(Node, CrunchBaseFetcherMixin):
 class CompanyList(CrunchBaseFetcherMixin):
 
     name='companies'
+    suffix = '.json.gz'
 
     def __init__(self, root, path):
         self.root = root
@@ -136,19 +125,28 @@ class CompanyList(CrunchBaseFetcherMixin):
 
     def list_not_local(self):
         for company_name in self._remote_nodes:
-            company = self.root.get(company_name)
+            company = self.get(company_name)
             if not company.is_local():
                 yield company_name
 
     def list_local(self):
         for company_file in os.listdir(self.path):
             company_name = company_file.split('.')[0]
-            company = self.root.get(company_name)
+            company = self.get(company_name)
             if company.is_local():
                 yield company_name
 
-    def get(self, company):
-        return self.root.get(company)
+    def get(self, company_name):
+        local_data = self.get_local_data(company_name)
+        return Company(local_data, company_name)
+
+    def expand(self, fname):
+        return os.path.join(self.path,
+                            '{0}{1}'.format(fname, self.suffix))
+
+    def get_local_data(self, name):
+        fname = self.expand(name)
+        return ZippedJsonFile(fname)
 
     def query_url(self):
         return self.companies_list_url
