@@ -11,6 +11,8 @@ import mock
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import HTTPError
 from crawlcrunch.compat import StringIO
+from crawlcrunch.tests import DummyCompany
+from crawlcrunch.tests import DummyCompanyList
 from crawlcrunch.tests import DummyRoot
 from crawlcrunch.tests import prepare_url_open
 from crawlcrunch.tests import unittest
@@ -34,16 +36,11 @@ class CompanyFetcherTests(unittest.TestCase):
         import logging
         logging.root.setLevel(logging.CRITICAL)
         semaphore = threading.Semaphore(1)
-
-        class DummyCompany(object):
-
-            name = 'dummy'
-
-            def update(self):
-                raise Exception()
+        dc = DummyCompany()
+        dc.update().side_effect = Exception()
 
         from crawlcrunch.crawler import CompanyFetcher
-        cf = CompanyFetcher(DummyCompany(), semaphore)
+        cf = CompanyFetcher(dc, semaphore)
         cf.run()
         self.assertTrue(semaphore.acquire(False))
         critical.assert_called_once()
@@ -104,14 +101,12 @@ class IntegrationTests(unittest.TestCase):
             self.assertEqual(json.load(fp), {'foo': 'bar'})
 
     def test_crawler_and_company_fetcher_play_together(self):
-        from crawlcrunch.tests import DummyRoot
-        root = DummyRoot()
-        cl = root.get('companies')
+        cl = DummyCompanyList()
         cl.list_not_local.return_value = ['facebook', ]
         from crawlcrunch.crawler import Updater
         crawler = Updater(cl)
         crawler.run()
-        fb = cl.get.assert_called_with('facebook')
+        fb = cl.get.assert_called_once_with('facebook')
         fb = cl.get('facebook')
         fb.update.assert_called_once_with()
 
