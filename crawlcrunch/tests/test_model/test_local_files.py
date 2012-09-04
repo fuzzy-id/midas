@@ -24,10 +24,9 @@ class LocalFilesRootTests(unittest.TestCase):
         return LocalFilesRoot(path)
 
     def test_companies_list_creation(self):
-        root = self._make_one('foo')
-        companies = root.get('companies')
         from crawlcrunch.model.local_files import CompanyList
-        self.assertIsInstance(companies, CompanyList)
+        root = self._make_one('foo')
+        self.assertIsInstance(root.get('companies'), CompanyList)
 
 
 class CompanyTests(unittest.TestCase):
