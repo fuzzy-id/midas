@@ -108,12 +108,12 @@ class IntegrationTests(unittest.TestCase):
     def _test_it(self, *args):
         from crawlcrunch.scripts.cc_update import main
         effargs = ['cc_update']
-        effargs.extend(*args)
+        effargs.extend(args)
         return main(effargs)
 
     def test_with_wrong_class(self):
         with self.assertRaises(ValueError) as cm:
-            self._test_it(('-qqq', self.tmpd, 'no_such_class'))
+            self._test_it('-qqq', self.tmpd, 'no_such_class')
         e = cm.exception
         self.assertEqual(len(e.args), 1)
         self.assertTrue(e.args[0].endswith("'no_such_class'"))
@@ -123,7 +123,7 @@ class IntegrationTests(unittest.TestCase):
         url_return = (
             {'http://api.crunchbase.com/v/1/companies.js': []})
         prepare_url_open(urlopen, url_return)
-        self.assertEqual(self._test_it(['-qqq', self.tmpd]), 0)
+        self.assertEqual(self._test_it('-qqq', self.tmpd), 0)
         urlopen.assert_called_once_with(
             'http://api.crunchbase.com/v/1/companies.js')
         self.assertEqual(os.listdir(self.tmpd), [])
