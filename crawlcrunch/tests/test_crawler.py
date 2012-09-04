@@ -60,6 +60,7 @@ class FetcherTests(unittest.TestCase):
         dc = DummyCompany()
         dc.update.side_effect = HTTPError(None, 400, None, None, None)
         _, semaphore = self._test_it(dc)
+        dc.update.assert_called_once()
         exc.assert_called_once()
         self.assertTrue(semaphore.acquire(False))
 
