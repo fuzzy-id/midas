@@ -86,19 +86,10 @@ class CompanyListTests(unittest.TestCase):
         result = cl.get('de-revolutione')
         from crawlcrunch.model.local_files import Company
         self.assertIsInstance(result, Company)
+        self.assertEqual(result.name, 'de-revolutione')
 
 
 class IntegrationTests(unittest.TestCase):
-
-    def setUp(self):
-        self.tmpd = tempfile.mkdtemp()
-
-    def tearDown(self):
-        shutil.rmtree(self.tmpd)
-
-    def _make_one(self, path):
-        from crawlcrunch.model.local_files import LocalFilesRoot
-        return LocalFilesRoot(path)
 
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_list_is_fetched_when_not_present(self, urlopen):
@@ -106,7 +97,6 @@ class IntegrationTests(unittest.TestCase):
         prepare_url_open(urlopen,
                          {url: [{'permalink': 'foo'}]})
         from crawlcrunch.model.local_files import CompanyList
-        root = self._make_one(self.tmpd)
-        companies = root.get('companies')
+        companies = CompanyList(DummyRoot(), None)
         companies.update()
         urlopen.assert_called_once_with(url)
