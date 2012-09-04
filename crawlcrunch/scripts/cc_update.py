@@ -54,6 +54,8 @@ database.
         logging.basicConfig(level=self.args.verbosity)
         if not self.args.sql:
             root = LocalFilesRoot(self.args.location)
-        updater = Updater(root)
-        updater.run()
+        for cls_name in self.args.classes:
+            cls_inst = root.get(cls_name)
+            updater = Updater(cls_inst)
+            updater.run()
         return 0
