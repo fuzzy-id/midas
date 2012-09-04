@@ -4,7 +4,6 @@ import json
 import logging
 import os.path
 
-from crawlcrunch.compat import UserList
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import url_open
 
