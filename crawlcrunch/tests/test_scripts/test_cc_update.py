@@ -84,14 +84,25 @@ class MainTests(unittest.TestCase):
     def tearDown(self):
         sys.stderr = self._old_err
 
-    def test_missing_argument(self):
+    def _test_it(self, *args):
         from crawlcrunch.scripts.cc_update import main
+        effargs = ['cc_update']
+        effargs.extend(args)
+        return main(effargs)
+
+    def test_missing_argument(self):
         with self.assertRaises(SystemExit) as cm:
-            main(['cc_update'])
+            self._test_it()
         self.assertEqual(cm.exception.code, 2)
         err = sys.stderr.getvalue()
         self.assertTrue(err.endswith('too few arguments\n'))
 
+    def test_with_wrong_class(self):
+        with self.assertRaises(ValueError) as cm:
+            self._test_it('-qqq', '.', 'no_such_class')
+        e = cm.exception
+        self.assertEqual(len(e.args), 1)
+        self.assertTrue(e.args[0].endswith("'no_such_class'"))
 
 class IntegrationTests(unittest.TestCase):
 
@@ -106,13 +117,6 @@ class IntegrationTests(unittest.TestCase):
         effargs = ['cc_update']
         effargs.extend(args)
         return main(effargs)
-
-    def test_with_wrong_class(self):
-        with self.assertRaises(ValueError) as cm:
-            self._test_it('-qqq', self.tmpd, 'no_such_class')
-        e = cm.exception
-        self.assertEqual(len(e.args), 1)
-        self.assertTrue(e.args[0].endswith("'no_such_class'"))
 
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_on_empty_companies_list(self, urlopen):
