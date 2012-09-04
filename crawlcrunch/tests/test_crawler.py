@@ -31,13 +31,22 @@ class UpdaterTests(unittest.TestCase):
 
 class CompanyFetcherTests(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        import logging
+        cls._old_log_level = logging.root.getEffectiveLevel()
+        logging.root.setLevel(logging.CRITICAL)
+
+    @classmethod
+    def tearDownClass(cls):
+        import logging
+        logging.root.setLevel(cls._old_log_level)
+
     @mock.patch('logging.critical')
     def test_semaphore_is_released_on_error(self, critical):
-        import logging
-        logging.root.setLevel(logging.CRITICAL)
         semaphore = threading.Semaphore(1)
         dc = DummyCompany()
-        dc.update().side_effect = Exception()
+        dc.update.side_effect = Exception()
 
         from crawlcrunch.crawler import CompanyFetcher
         cf = CompanyFetcher(dc, semaphore)
@@ -47,19 +56,14 @@ class CompanyFetcherTests(unittest.TestCase):
 
     @mock.patch('logging.critical')
     def test_404_is_properly_handled(self, critical):
-
-        class DummyCompany(object):
-
-            name = 'foo'
-
-            def update(self):
-                raise HTTPError(None, 404, 'Not Found', None, None)
-
+        dc = DummyCompany()
+        dc.update.side_effect = HTTPError(None, 404, 'Not Found', None, None)
         semaphore = threading.Semaphore(1)
         from crawlcrunch.crawler import CompanyFetcher
-        cf = CompanyFetcher(DummyCompany(), semaphore)
+        cf = CompanyFetcher(dc, semaphore)
         cf.run()
-        critical.assert_called_once_with("foo: Got 404")
+        critical.assert_has_calls([])
+        critical.assert_called_once_with("dummy_company: Got 404")
         self.assertTrue(semaphore.acquire(False))
 
     @mock.patch('logging.exception')
