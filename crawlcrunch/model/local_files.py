@@ -5,7 +5,8 @@ import logging
 import os.path
 
 from crawlcrunch.compat import GzipFile
-from crawlcrunch.compat import url_open
+
+import crawlcrunch.compat
 
 
 class LocalFilesRoot(object):
@@ -65,7 +66,7 @@ class CrunchBaseFetcherMixin(object):
 
     def fetch(self):
         logging.info('Fetching {0}'.format(self.name))
-        response = url_open(self.query_url())
+        response = crawlcrunch.compat.urlopen(self.query_url())
         content = response.read()
         s = content.decode('utf-8')
         # Some companies have control chars in theire description

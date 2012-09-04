@@ -115,7 +115,7 @@ class IntegrationTests(unittest.TestCase):
         from crawlcrunch.scripts.cc_update import CCUpdateCommand
         return CCUpdateCommand(['cc_update', path])
 
-    @mock.patch('crawlcrunch.model.local_files.url_open')
+    @mock.patch('crawlcrunch.compat.urlopen')
     def test_on_empty_companies_list(self, url_open):
         url_return = (
             {'http://api.crunchbase.com/v/1/companies.js': []})
@@ -128,7 +128,7 @@ class IntegrationTests(unittest.TestCase):
         listing = os.listdir(self.tmpd)
         self.assertEqual(listing, [])
 
-    @mock.patch('crawlcrunch.model.local_files.url_open')
+    @mock.patch('crawlcrunch.compat.urlopen')
     def test_on_companies_list_with_elements(self, url_open):
         companies_url = 'http://api.crunchbase.com/v/1/companies.js'
         foo_url = 'http://api.crunchbase.com/v/1/company/foo.js'

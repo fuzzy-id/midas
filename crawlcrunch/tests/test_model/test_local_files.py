@@ -41,7 +41,7 @@ class CompanyTests(unittest.TestCase):
         expected = 'http://api.crunchbase.com/v/1/company/facebook.js'
         self.assertEqual(company.query_url(), expected)
 
-    @mock.patch('crawlcrunch.model.local_files.url_open')
+    @mock.patch('crawlcrunch.compat.urlopen')
     def test_update(self, url_open):
         foo_url = 'http://api.crunchbase.com/v/1/company/foo.js'
         prepare_url_open(url_open,
@@ -55,7 +55,7 @@ class CompanyTests(unittest.TestCase):
         self.assertEqual(company.data, {'foo': 'bar'})
         url_open.assert_called_once_with(foo_url)
 
-    @mock.patch('crawlcrunch.model.local_files.url_open')
+    @mock.patch('crawlcrunch.compat.urlopen')
     def test_control_chars_in_response(self, urlopen):
         buf = BytesIO(b'["\x12fo\x14", "ba\x0b"]')
         buf.seek(0)
@@ -105,7 +105,7 @@ class IntegrationTests(unittest.TestCase):
         from crawlcrunch.model.local_files import LocalFilesRoot
         return LocalFilesRoot(path)
 
-    @mock.patch('crawlcrunch.model.local_files.url_open')
+    @mock.patch('crawlcrunch.compat.urlopen')
     def test_list_is_fetched_when_not_present(self, url_open):
         url = 'http://api.crunchbase.com/v/1/companies.js'
         prepare_url_open(url_open,

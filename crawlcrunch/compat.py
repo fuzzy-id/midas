@@ -50,9 +50,9 @@ else:
     comp_unicode = unicode
 
 if PY3:  # pragma: no cover
-    from urllib.request import urlopen as url_open
+    from urllib.request import urlopen
 else:
-    from urllib2 import urlopen as url_open
+    from urllib2 import urlopen
 
 if PY3:  # pragma: no cover
     from urllib.error import HTTPError

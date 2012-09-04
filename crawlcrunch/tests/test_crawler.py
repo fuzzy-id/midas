@@ -88,7 +88,7 @@ class IntegrationTests(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmpd)
 
-    @mock.patch('crawlcrunch.model.local_files.url_open')
+    @mock.patch('crawlcrunch.compat.urlopen')
     def test_only_company_fetcher(self, urlopen):
         url = 'http://api.crunchbase.com/v/1/company/facebook.js'
         prepare_url_open(urlopen, {url: {'foo': 'bar'}, })
