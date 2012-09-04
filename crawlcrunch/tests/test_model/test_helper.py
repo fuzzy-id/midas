@@ -55,9 +55,9 @@ class LocalFileCompanyToDbModelTests(unittest.TestCase):
 
     def test_company_creation(self):
         from crawlcrunch.model.helper import local_file_company_to_db_model
-        result = local_file_company_to_db_model(COMPANY_DATA)
         from crawlcrunch.model.db import Company
         from crawlcrunch.model.db import FundingRound
+        result = local_file_company_to_db_model(COMPANY_DATA)
         self.assertIsInstance(result, Company)
         self.assertIsInstance(result.funding_rounds[0], FundingRound)
         self.assertEqual(result.updated_at, 'today')
