@@ -48,6 +48,10 @@ class CompanyTests(unittest.TestCase):
             company.update()
         return local_data, company
 
+    def test_str(self):
+        c = self._make_one(None, 'foo')
+        self.assertEqual(str(c), 'Company( foo )')
+
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_update(self, urlopen):
         foo_url = 'http://api.crunchbase.com/v/1/company/foo.js'
