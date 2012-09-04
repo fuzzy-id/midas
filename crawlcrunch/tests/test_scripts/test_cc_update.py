@@ -101,10 +101,6 @@ class IntegrationTests(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmpd)
 
-    def _make_one(self, path):
-        from crawlcrunch.scripts.cc_update import CCUpdateCommand
-        return CCUpdateCommand(['cc_update', path])
-
     def _test_it(self, *args):
         from crawlcrunch.scripts.cc_update import main
         effargs = ['cc_update']
@@ -129,24 +125,21 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(os.listdir(self.tmpd), [])
 
     @mock.patch('crawlcrunch.compat.urlopen')
-    def test_on_companies_list_with_elements(self, url_open):
+    def test_on_companies_list_with_elements(self, urlopen):
         companies_url = 'http://api.crunchbase.com/v/1/companies.js'
         foo_url = 'http://api.crunchbase.com/v/1/company/foo.js'
         bar_url = 'http://api.crunchbase.com/v/1/company/bar.js'
-        prepare_url_open(url_open,
+        prepare_url_open(urlopen,
                          {companies_url: [{'permalink': 'foo', },
                                           {'permalink': 'bar', }],
                           foo_url: ['some_foo'],
                           bar_url: ['some_bar']})
-        cmd = self._make_one(self.tmpd)
-        result = cmd.run()
-        self.assertEqual(result, 0)
-        url_open.assert_called_with(bar_url)
+        self.assertEqual(self._test_it('-qqq', self.tmpd), 0)
+        urlopen.assert_called_with(bar_url)
         listing = os.listdir(self.tmpd)
         listing.sort()
         self.assertEqual(listing, ['bar.json.gz',
                                    'foo.json.gz'])
-
         with GzipFile(os.path.join(self.tmpd,
                                    'bar.json.gz')) as fp:
             self.assertEqual(json.load(fp), ['some_bar', ])
