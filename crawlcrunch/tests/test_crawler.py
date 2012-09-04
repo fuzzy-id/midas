@@ -21,10 +21,10 @@ class UpdaterTests(unittest.TestCase):
     def test_update_on_companies_list_is_called(self):
         from crawlcrunch.crawler import Updater
         root = mock.MagicMock()
-        root.get('companies').not_local.return_value = []
+        root.not_local.return_value = []
         updater = Updater(root)
         updater.run()
-        root.get('companies').update.assert_called_once_with()
+        root.update.assert_called_once_with()
 
 
 class CompanyFetcherTests(unittest.TestCase):
@@ -109,7 +109,7 @@ class IntegrationTests(unittest.TestCase):
         cl = root.get('companies')
         cl.list_not_local.return_value = ['facebook', ]
         from crawlcrunch.crawler import Updater
-        crawler = Updater(root)
+        crawler = Updater(cl)
         crawler.run()
         fb = cl.get.assert_called_with('facebook')
         fb = cl.get('facebook')
