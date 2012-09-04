@@ -73,7 +73,7 @@ class IntegrationTests(unittest.TestCase):
         shutil.rmtree(self.tmpd)
 
     @mock.patch('crawlcrunch.compat.urlopen')
-    def test_only_company_fetcher(self, urlopen):
+    def test_company_fetcher_and_company_list(self, urlopen):
         url = 'http://api.crunchbase.com/v/1/company/facebook.js'
         prepare_url_open(urlopen, {url: {'foo': 'bar'}, })
         dump_file = os.path.join(self.tmpd, 'facebook.json.gz')
