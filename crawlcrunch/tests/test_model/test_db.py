@@ -23,7 +23,7 @@ class FundingTests(unittest.TestCase):
     def _make_one(self, *args, **kwargs):
         return self._get_target_class()(*args, **kwargs)
 
-    def test_session_tests(self):
+    def test_id_gets_generated(self):
         f = self._make_one()
         self.assertIsNone(f.id)
         self.assertIsNone(f.funded_day)
