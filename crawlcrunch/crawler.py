@@ -8,9 +8,8 @@ from crawlcrunch.compat import HTTPError
 
 class Updater(object):
 
-    def __init__(self, root, num_threads=20):
-        self.companies = root.get('companies')
-        self.root = root
+    def __init__(self, inst_list, num_threads=20):
+        self.companies = inst_list
         self.num_threads = num_threads
         self.semaphore = threading.Semaphore(num_threads)
 
