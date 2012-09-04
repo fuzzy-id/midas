@@ -47,10 +47,9 @@ class CompanyTests(unittest.TestCase):
         prepare_url_open(url_open,
                          {foo_url: {'foo': 'bar', }})
         from crawlcrunch.model.local_files import ZippedJsonFile
-        from crawlcrunch.model.local_files import Company
         with tempfile.NamedTemporaryFile() as fp:
             local_data = ZippedJsonFile(fp.name)
-            company = Company(local_data, 'foo')
+            company = self._make_one(local_data, 'foo')
             company.update()
         self.assertEqual(local_data.data, {'foo': 'bar'})
         self.assertEqual(company.data, {'foo': 'bar'})
@@ -62,10 +61,9 @@ class CompanyTests(unittest.TestCase):
         buf.seek(0)
         urlopen.return_value = buf
         from crawlcrunch.model.local_files import ZippedJsonFile
-        from crawlcrunch.model.local_files import Company
         with tempfile.NamedTemporaryFile() as fp:
             local_data = ZippedJsonFile(fp.name)
-            company = Company(local_data, 'foo')
+            company = self._make_one(local_data, 'foo')
             company.update()
         self.assertEqual(local_data.data, ['fo', 'ba'])
 
