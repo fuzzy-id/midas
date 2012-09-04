@@ -126,12 +126,7 @@ class IntegrationTests(unittest.TestCase):
         url_open.assert_called_once_with(
             'http://api.crunchbase.com/v/1/companies.js')
         listing = os.listdir(self.tmpd)
-        self.assertEqual(listing, ['companies.json.gz'])
-        companies_file = os.path.join(self.tmpd,
-                                      'companies.json.gz')
-        self.assertTrue(os.path.isfile(companies_file))
-        with GzipFile(companies_file) as fp:
-            self.assertEqual(json.load(fp), [])
+        self.assertEqual(listing, [])
 
     @mock.patch('crawlcrunch.model.local_files.url_open')
     def test_on_companies_list_with_elements(self, url_open):
@@ -150,13 +145,8 @@ class IntegrationTests(unittest.TestCase):
         listing = os.listdir(self.tmpd)
         listing.sort()
         self.assertEqual(listing, ['bar.json.gz',
-                                   'companies.json.gz',
                                    'foo.json.gz'])
 
-        with GzipFile(os.path.join(self.tmpd,
-                                   'companies.json.gz')) as fp:
-            self.assertEqual(json.load(fp), [{'permalink': 'foo'},
-                                             {'permalink': 'bar'}])
         with GzipFile(os.path.join(self.tmpd,
                                    'bar.json.gz')) as fp:
             self.assertEqual(json.load(fp), ['some_bar', ])
