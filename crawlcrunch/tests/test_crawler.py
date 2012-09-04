@@ -31,17 +31,6 @@ class UpdaterTests(unittest.TestCase):
 
 class CompanyFetcherTests(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        import logging
-        cls._old_log_level = logging.root.getEffectiveLevel()
-        logging.root.setLevel(logging.CRITICAL)
-
-    @classmethod
-    def tearDownClass(cls):
-        import logging
-        logging.root.setLevel(cls._old_log_level)
-
     def _test_it(self, company):
         from crawlcrunch.crawler import CompanyFetcher
         semaphore = threading.Semaphore(1)

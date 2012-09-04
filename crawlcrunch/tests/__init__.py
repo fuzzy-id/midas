@@ -19,7 +19,7 @@ else:
     import unittest
 
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.CRITICAL)
 
 __here__ = os.path.abspath(os.path.dirname(__file__))
 __test_examples__ = os.path.join(__here__, 'destinations')
