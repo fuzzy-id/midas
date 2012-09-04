@@ -35,6 +35,12 @@ class ArgumentParserTests(unittest.TestCase):
         effargs.extend(args)
         return self._get_target_class()(effargs)
 
+    def test_defaults(self):
+        cmd = self._make_one('.')
+        self.assertEqual(cmd.args.location, '.')
+        self.assertEqual(cmd.args.classes, ['companies'])
+        self.assertFalse(cmd.args.sql)
+
     def test_missing_argument(self):
         with self.assertRaises(SystemExit):
             self._make_one()
@@ -75,6 +81,9 @@ class ArgumentParserTests(unittest.TestCase):
         cmd = self._make_one('--sql', 'sqlite:///:memory:')
         self.assertEqual(cmd.args.location, 'sqlite:///:memory:')
 
+    def test_classes_flag(self):
+        cmd = self._make_one('.', 'foo', 'bar')
+        self.assertEqual(cmd.args.classes, ['foo', 'bar'])
 
 class MainTests(unittest.TestCase):
 
