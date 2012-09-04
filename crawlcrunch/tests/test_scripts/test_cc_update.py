@@ -75,6 +75,7 @@ class ArgumentParserTests(unittest.TestCase):
         cmd = self._make_one('.', 'foo', 'bar')
         self.assertEqual(cmd.args.classes, ['foo', 'bar'])
 
+
 class MainTests(unittest.TestCase):
 
     def setUp(self):
@@ -103,6 +104,7 @@ class MainTests(unittest.TestCase):
         e = cm.exception
         self.assertEqual(len(e.args), 1)
         self.assertTrue(e.args[0].endswith("'no_such_class'"))
+
 
 class IntegrationTests(unittest.TestCase):
 
