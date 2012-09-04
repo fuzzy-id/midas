@@ -80,12 +80,12 @@ class CompanyListTests(unittest.TestCase):
     def test_list_creation_when_all_companies_files_present(self):
         cl = self._make_one(EXAMPLES_PATH['company_files_empty'])
         cl.load()
-        self.assertEqual(list(cl.not_local()), [])
+        self.assertEqual(list(cl.list_not_local()), [])
 
     def test_list_creation_when_companies_missing(self):
         cl = self._make_one(EXAMPLES_PATH['no_company_files'])
         cl.load()
-        result = list(cl.not_local())
+        result = list(cl.list_not_local())
         result.sort()
         expected = ['de-revolutione', 'group-laurier',
                     'hiconversion', 'pivotshare', 'vaporstream']
