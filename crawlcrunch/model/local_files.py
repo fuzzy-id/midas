@@ -23,10 +23,10 @@ class LocalFilesRoot(object):
                             '{0}{1}'.format(fname, self.suffix))
 
     def get(self, name):
-        local_data = self.get_local_data(name)
         if name == 'companies':
-            return CompanyList(self, local_data)
+            return CompanyList(self, self.path)
         else:
+            local_data = self.get_local_data(name)
             return Company(local_data, name)
 
     def get_local_data(self, name):
@@ -125,29 +125,32 @@ class Company(Node, CrunchBaseFetcherMixin):
         return self.company_url_tpl.format(self.name)
 
 
-class CompanyList(Node, CrunchBaseFetcherMixin):
+class CompanyList(CrunchBaseFetcherMixin):
 
-    def __init__(self, root, local_data, name='companies'):
-        Node.__init__(self, local_data, name)
+    name='companies'
+
+    def __init__(self, root, path):
         self.root = root
-        self._nodes = {}
-
-    def load(self):
-        self.local_data.load()
-        self._nodes = dict((company['permalink'], None)
-                           for company in self.local_data.data)
+        self.path = path
+        self._remote_nodes = set()
 
     def list_not_local(self):
-        for company_name in self._nodes:
+        for company_name in self._remote_nodes:
             company = self.root.get(company_name)
             if not company.is_local():
                 yield company_name
 
     def list_local(self):
-        for company_name in self._nodes:
+        for company_file in os.listdir(self.path):
+            company_name = company_file.split('.')[0]
             company = self.root.get(company_name)
             if company.is_local():
                 yield company_name
 
     def query_url(self):
         return self.companies_list_url
+
+    def update(self):
+        data = self.fetch()
+        for company in data:
+            self._remote_nodes.add(company['permalink'])
