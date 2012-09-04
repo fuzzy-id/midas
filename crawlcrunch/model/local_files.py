@@ -147,6 +147,9 @@ class CompanyList(CrunchBaseFetcherMixin):
             if company.is_local():
                 yield company_name
 
+    def get(self, company):
+        return self.root.get(company)
+
     def query_url(self):
         return self.companies_list_url
 
