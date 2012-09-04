@@ -85,18 +85,21 @@ class CompanyListTests(unittest.TestCase):
     def test_list_creation_when_companies_missing(self):
         cl = self._make_one(EXAMPLES_PATH['no_company_files'])
         cl.load()
-        cl.sort()
+        result = list(cl.not_local())
+        result.sort()
         expected = ['de-revolutione', 'group-laurier',
                     'hiconversion', 'pivotshare', 'vaporstream']
-        self.assertEqual(cl, expected)
+        self.assertEqual(result, expected)
 
     def test_local_list_when_companies_missing(self):
         cl = self._make_one(EXAMPLES_PATH['company_files_empty'])
         cl.load()
-        cl.sort()
+        result = list(cl.list_local())
+        result.sort()
         expected = ['de-revolutione', 'group-laurier',
                     'hiconversion', 'pivotshare', 'vaporstream']
-        self.assertEqual(list(cl.list_local()), expected)
+        self.assertEqual(result, expected)
+
 
 class IntegrationTests(unittest.TestCase):
 
@@ -110,7 +113,6 @@ class IntegrationTests(unittest.TestCase):
         from crawlcrunch.model.local_files import LocalFilesRoot
         return LocalFilesRoot(path)
 
-    @unittest.skip('rebuilding things')
     @mock.patch('crawlcrunch.model.local_files.url_open')
     def test_list_is_fetched_when_not_present(self, url_open):
         url = 'http://api.crunchbase.com/v/1/companies.js'
