@@ -16,9 +16,6 @@ class LocalFilesRoot(object):
     suffix = '.json.gz'
 
     def __init__(self, path):
-        path = os.path.expanduser(path)
-        path = os.path.abspath(path)
-        path = os.path.normpath(path)
         self.path = path
 
     def expand(self, fname):
