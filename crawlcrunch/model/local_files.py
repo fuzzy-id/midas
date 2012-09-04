@@ -125,26 +125,26 @@ class Company(Node, CrunchBaseFetcherMixin):
         return self.company_url_tpl.format(self.name)
 
 
-class CompanyList(UserList, Node, CrunchBaseFetcherMixin):
+class CompanyList(Node, CrunchBaseFetcherMixin):
 
     def __init__(self, root, local_data, name='companies'):
-        UserList.__init__(self)
         Node.__init__(self, local_data, name)
         self.root = root
+        self._nodes = {}
 
     def load(self):
         self.local_data.load()
-        self.data = [company['permalink']
-                     for company in self.local_data.data]
+        self._nodes = dict((company['permalink'], None)
+                           for company in self.local_data.data)
 
     def not_local(self):
-        for company_name in self:
+        for company_name in self._nodes:
             company = self.root.get(company_name)
             if not company.is_local():
                 yield company_name
 
     def list_local(self):
-        for company_name in self:
+        for company_name in self._nodes:
             company = self.root.get(company_name)
             if company.is_local():
                 yield company_name
