@@ -42,12 +42,6 @@ class ArgumentParserTests(unittest.TestCase):
         with self.assertRaises(SystemExit):
             self._make_one()
 
-    def test_too_much_arguments(self):
-        with self.assertRaises(SystemExit) as cm:
-            cmd = self._make_one('one', 'two', )
-        e = cm.exception
-        self.assertEqual(e.code, 2)
-
     def test_non_existent_path(self):
         dst = os.path.join('non', 'existent', 'path', )
         with self.assertRaises(SystemExit) as cm:
