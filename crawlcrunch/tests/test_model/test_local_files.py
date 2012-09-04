@@ -73,10 +73,6 @@ class CompanyListTests(unittest.TestCase):
         from crawlcrunch.model.local_files import CompanyList
         return CompanyList(DummyRoot(), path)
 
-    def test_list_creation_when_all_companies_files_present(self):
-        cl = self._make_one(EXAMPLES_PATH['company_files_empty'])
-        self.assertEqual(list(cl.list_not_local()), [])
-
     def test_local_list_when_company_files_empty(self):
         cl = self._make_one(EXAMPLES_PATH['company_files_empty'])
         result = list(cl.list_local())
