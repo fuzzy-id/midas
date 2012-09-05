@@ -16,6 +16,8 @@ from sqlalchemy.orm import backref
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.exc import MultipleResultsFound
+from sqlalchemy.orm.exc import NoResultFound
 
 from crawlcrunch.model import CrunchBaseFetcherMixin
 
@@ -40,18 +42,31 @@ class DataBaseRoot(object):
 class CompanyList(CrunchBaseFetcherMixin):
 
     def __init__(self):
-        self._remote_data = {}
+        self._remote_data = None
+
+    def list_local(self):
+        session = Session()
+        q = session.query(Company)
+        for company in q.all():
+            yield company
+
+    def list_not_local(self):
+        for entry in self._remote_data:
+            c = self.get(entry['permalink'])
+            if c.id is None:
+                yield c
 
     def get(self, name):
         session = Session()
         q = session.query(Company).filter(Company.name == name)
-        result = q.all()
-        if len(result) == 0:
+        try:
+            return q.one()
+        except NoResultFound as e:
             return Company(name=name)
-        elif len(result) == 1:
-            return result[0]
-        raise RuntimeError("Found {0} {1} times in the db."\
-                               .format(name, len(result)))
+        except MultipleResultsFound as e:
+            logging.critical(
+                "Exception raised when processing: '{0}'".format(name))
+            raise e
 
     def update(self):
         self._remote_data = self.fetch()

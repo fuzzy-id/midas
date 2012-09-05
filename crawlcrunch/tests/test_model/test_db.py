@@ -3,6 +3,7 @@
 import datetime
 
 from sqlalchemy import create_engine
+from sqlalchemy.orm.exc import MultipleResultsFound
 
 from crawlcrunch.tests import MEM_DB
 from crawlcrunch.tests import prepare_url_open
@@ -19,7 +20,7 @@ class SqlTestCase(unittest.TestCase):
     def setUp(self):
         engine = create_engine(MEM_DB, echo=False)
         Session.configure(bind=engine)
-        Base.metadata.create_all(engine)
+        Base.metadata.create_all(engine, checkfirst=False)
         self.session = Session()
 
     def tearDown(self):
@@ -173,14 +174,47 @@ class CompanyListTests(SqlTestCase):
         comp2 = cl.get('foo')
         self.assertIs(comp1, comp2)
 
-    def test_duplicate_entries_raises_error(self):
+    @mock.patch('logging.critical')
+    def test_duplicate_entries_raises_error(self, critical):
         cl = self._make_one()
         comp1 = cl.get('foo')
         comp2 = cl.get('foo')
         self.session.add(comp1)
         self.session.add(comp2)
-        with self.assertRaises(RuntimeError) as cm:
+        with self.assertRaises(MultipleResultsFound):
             cl.get('foo')
-        e = cm.exception
-        self.assertEqual(len(e.args), 1)
-        self.assertTrue(e.args[0].startswith('Found'))
+        critical.assert_called_once()
+
+    def test_local_list_when_db_empty(self):
+        cl = self._make_one()
+        self.assertEqual(list(cl.list_local()), [])
+
+    def test_local_list_with_elements(self):
+        cl = self._make_one()
+        self.session.add(cl.get('foo'))
+        self.session.add(cl.get('bar'))
+        result = list(map(str, cl.list_local()))
+        result.sort()
+        expected = [ 'Company( {0} )'.format(n) 
+                     for n in ('bar', 'foo') ]
+        self.assertEqual(result, expected)
+
+    def test_list_not_local_wo_elements(self):
+        cl = self._make_one()
+        cl._remote_data = []
+        result = list(cl.list_not_local())
+        expected = []
+        self.assertEqual(result, expected)
+
+    def test_list_not_local_w_elements(self):
+        cl = self._make_one()
+        cl._remote_data = [{'permalink': 'foo'},
+                           {'permalink': 'bar'}]
+        result = list(map(str, cl.list_not_local()))
+        result.sort()
+        expected = [ 'Company( {0} )'.format(n) 
+                     for n in ('bar', 'foo') ]
+        self.assertEqual(result, expected)
+
+if __name__ == '__main__':  # pragma: no cover
+    unittest.main()
