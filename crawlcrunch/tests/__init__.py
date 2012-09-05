@@ -28,6 +28,7 @@ EXAMPLES_PATH = {
                                         'company_files_empty'),
     'no_company_files': os.path.join(__test_examples__, 
                                      'no_company_files') }
+MEM_DB = 'sqlite:///:memory:'
 
 def DummyRoot(path=None):
     from crawlcrunch.model.local_files import LocalFilesRoot
