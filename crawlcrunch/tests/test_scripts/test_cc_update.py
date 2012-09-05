@@ -139,7 +139,7 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(os.listdir(self.tmpd), [])
 
     @mock.patch('crawlcrunch.compat.urlopen')
-    def test_on_companies_list_with_elements(self, urlopen):
+    def test_on_local_companies_list_with_elements(self, urlopen):
         companies_url = 'http://api.crunchbase.com/v/1/companies.js'
         foo_url = 'http://api.crunchbase.com/v/1/company/foo.js'
         bar_url = 'http://api.crunchbase.com/v/1/company/bar.js'
