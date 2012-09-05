@@ -120,7 +120,7 @@ class MainIntegrationTestCase(unittest.TestCase):
 
     def _test_it(self, *args):
         from crawlcrunch.scripts.cc_update import main
-        effargs = ['cc_update']
+        effargs = ['cc_update', '-qqq']
         effargs.extend(args)
         return main(effargs)
 
@@ -137,7 +137,7 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
     def test_on_empty_companies_list(self, urlopen):
         url_return = {COMPANIES_URL: []}
         prepare_url_open(urlopen, url_return)
-        self.assertEqual(self._test_it('-qqq', self.tmpd), 0)
+        self.assertEqual(self._test_it(self.tmpd), 0)
         urlopen.assert_called_once_with(COMPANIES_URL)
         self.assertEqual(os.listdir(self.tmpd), [])
 
@@ -150,7 +150,7 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
                                           {'permalink': 'bar', }],
                           foo_url: ['some_foo'],
                           bar_url: ['some_bar']})
-        self.assertEqual(self._test_it('-qqq', self.tmpd), 0)
+        self.assertEqual(self._test_it(self.tmpd), 0)
         urlopen.assert_called_with(bar_url)
         listing = os.listdir(self.tmpd)
         listing.sort()
@@ -170,7 +170,7 @@ class MainSqlIntegrationTests(MainIntegrationTestCase):
     def test_on_empty_companies_list(self, urlopen):
         url_return = {COMPANIES_URL: []}
         prepare_url_open(urlopen, url_return)
-        self.assertEqual(self._test_it('-qqq', '--sql', MEM_DB), 0)
+        self.assertEqual(self._test_it('--sql', MEM_DB), 0)
         urlopen.assert_called_once_with(COMPANIES_URL)
 
 if __name__ == '__main__':  # pragma: no cover
