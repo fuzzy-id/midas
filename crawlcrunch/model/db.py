@@ -42,6 +42,17 @@ class CompanyList(CrunchBaseFetcherMixin):
     def __init__(self):
         self._remote_data = {}
 
+    def get(self, name):
+        session = Session()
+        q = session.query(Company).filter(Company.name == name)
+        result = q.all()
+        if len(result) == 0:
+            return Company(name=name)
+        elif len(result) == 1:
+            return result[0]
+        raise RuntimeError("Found {0} {1} times in the db."\
+                               .format(name, len(result)))
+
     def update(self):
         self._remote_data = self.fetch()
 

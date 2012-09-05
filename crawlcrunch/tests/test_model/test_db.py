@@ -157,3 +157,30 @@ class CompanyListTests(SqlTestCase):
         cl = self._make_one()
         cl.update()
         urlopen.assert_called_once_with(url)
+
+    def test_get_on_new_company(self):
+        cl = self._make_one()
+        result = cl.get('foo')
+        from crawlcrunch.model.db import Company
+        self.assertIsInstance(result, Company)
+        self.assertEqual(str(result), 'Company( foo )')
+        self.assertIsNone(result.id)
+
+    def test_get_on_existent_company(self):
+        cl = self._make_one()
+        comp1 = cl.get('foo')
+        self.session.add(comp1)
+        comp2 = cl.get('foo')
+        self.assertIs(comp1, comp2)
+
+    def test_duplicate_entries_raises_error(self):
+        cl = self._make_one()
+        comp1 = cl.get('foo')
+        comp2 = cl.get('foo')
+        self.session.add(comp1)
+        self.session.add(comp2)
+        with self.assertRaises(RuntimeError) as cm:
+            cl.get('foo')
+        e = cm.exception
+        self.assertEqual(len(e.args), 1)
+        self.assertTrue(e.args[0].startswith('Found'))
