@@ -63,5 +63,6 @@ database.
                 updater = Updater(cls_inst)
                 updater.run()
         finally:
-            root.clean_up()
+            if hasattr(root, 'clean_up'):
+                root.clean_up()
         return 0
