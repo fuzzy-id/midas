@@ -39,6 +39,10 @@ class DataBaseRoot(object):
             return CompanyList()
         raise ValueError("No such class '{0}'".format(name))
 
+    def clean_up(self):
+        Session.remove()
+
+
 class CompanyList(CrunchBaseFetcherMixin):
 
     def __init__(self):
@@ -147,7 +151,8 @@ class Company(Base, CrunchBaseFetcherMixin):
         if self.updated_at is None or new_c.updated_at > self.updated_at:
             logging.info('Updating {0}'.format(self))
             session = Session()
-            session.delete(self)
+            if self.id is not None:
+                session.delete(self)
             session.add(new_c)
             session.commit()
 
