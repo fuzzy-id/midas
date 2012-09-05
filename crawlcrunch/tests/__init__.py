@@ -30,6 +30,10 @@ EXAMPLES_PATH = {
                                      'no_company_files') }
 MEM_DB = 'sqlite:///:memory:'
 
+COMPANIES_URL = 'http://api.crunchbase.com/v/1/companies.js'
+FOO_URL = 'http://api.crunchbase.com/v/1/company/foo.js'
+BAR_URL = 'http://api.crunchbase.com/v/1/company/bar.js'
+
 def DummyRoot(path=None):
     from crawlcrunch.model.local_files import LocalFilesRoot
     dr = mock.Mock(spec=LocalFilesRoot, path=path)
