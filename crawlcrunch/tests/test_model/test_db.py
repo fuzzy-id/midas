@@ -145,5 +145,15 @@ class DataBaseRootTests(unittest.TestCase):
 
 class CompanyListTests(SqlTestCase):
 
-    
-    pass
+    def _make_one(self):
+        from crawlcrunch.model.db import CompanyList
+        return CompanyList()
+
+    @mock.patch('crawlcrunch.compat.urlopen')
+    def test_update(self, urlopen):
+        url = 'http://api.crunchbase.com/v/1/companies.js'
+        prepare_url_open(urlopen,
+                         {url: [{'permalink': 'foo'}]})
+        cl = self._make_one()
+        cl.update()
+        urlopen.assert_called_once_with(url)

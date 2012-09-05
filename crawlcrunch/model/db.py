@@ -34,15 +34,19 @@ class DataBaseRoot(object):
 
     def get(self, name):
         if name == 'companies':
-            return CompanyList(self)
+            return CompanyList()
         raise ValueError("No such class '{0}'".format(name))
 
 class CompanyList(CrunchBaseFetcherMixin):
 
-    name = 'companies'
+    def __init__(self):
+        self._remote_data = {}
 
-    def __init__(self, root):
-        self.root = root
+    def update(self):
+        self._remote_data = self.fetch()
+
+    def query_url(self):
+        return self.companies_list_url
 
 class Company(Base, CrunchBaseFetcherMixin):
     __tablename__ = 'companies'
