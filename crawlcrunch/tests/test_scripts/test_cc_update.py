@@ -10,15 +10,16 @@ import tempfile
 
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import StringIO
+from crawlcrunch.tests import BAR_URL
+from crawlcrunch.tests import COMPANIES_URL
 from crawlcrunch.tests import EXAMPLES_PATH
+from crawlcrunch.tests import FOO_URL
 from crawlcrunch.tests import MEM_DB
 from crawlcrunch.tests import prepare_url_open
 from crawlcrunch.tests import unittest
 
 import mock
 
-
-COMPANIES_URL = 'http://api.crunchbase.com/v/1/companies.js'
 
 class ArgumentParserTests(unittest.TestCase):
 
@@ -172,6 +173,27 @@ class MainSqlIntegrationTests(MainIntegrationTestCase):
         prepare_url_open(urlopen, url_return)
         self.assertEqual(self._test_it('--sql', MEM_DB), 0)
         urlopen.assert_called_once_with(COMPANIES_URL)
+
+    @mock.patch('crawlcrunch.compat.urlopen')
+    def test_on_companies_list_with_elements(self, urlopen):
+        from crawlcrunch.model.db import DataBaseRoot
+        prepare_url_open(urlopen,
+                         {COMPANIES_URL: [{'permalink': 'foo', },
+                                          {'permalink': 'bar', }],
+                          FOO_URL: {'name': 'foo'},
+                          BAR_URL: {'name': 'bar'}})
+        with tempfile.NamedTemporaryFile() as fp:
+            db_file = 'sqlite:///{0}'.format(fp.name)
+            self.assertEqual( self._test_it('--sql', db_file), 0)
+            urlopen.assert_called_with(BAR_URL)
+            root = DataBaseRoot(db_file)
+            try:
+                cl = root.get('companies')
+                self.assertIsNotNone(cl.get('bar').id)
+                self.assertIsNotNone(cl.get('foo').id)
+            finally:
+                root.clean_up()
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
