@@ -61,17 +61,21 @@ class CompanyTests(unittest.TestCase):
         return Company
 
     def _make_one(self, *args, **kwargs):
-        return self._get_target_class()(*args, **kwargs)
+        c = self._get_target_class()(*args, **kwargs)
+        self.session.add(c)
+        self.session.commit()
+        return c
 
     def _make_one_from_parsed_json(self, *args, **kwargs):
-        return self._get_target_class()\
+        c = self._get_target_class()\
             .make_from_parsed_json(*args, **kwargs)
+        self.session.add(c)
+        self.session.commit()
+        return c
 
     def test_updated_at_is_datetime_when_from_parsed_json(self):
         c = self._make_one_from_parsed_json(
             {'updated_at': 'Tue Aug 07 22:57:25 UTC 2012'})
-        self.session.add(c)
-        self.session.commit()
         expected = datetime.datetime(2012, 8, 7, 22, 57, 25)
         self.assertEqual(c.updated_at, expected)
         
@@ -80,8 +84,6 @@ class CompanyTests(unittest.TestCase):
         f1 = FundingRound(funded_year=40)
         f2 = FundingRound(funded_year=30)
         c = self._make_one(funding_rounds=[f1, f2])
-        self.session.add(c)
-        self.session.commit()
         result = self.session.query(self._get_target_class()).get(1)
         self.assertIs(result, c)
         self.assertIs(result.funding_rounds[0], f1)
@@ -91,10 +93,12 @@ class CompanyTests(unittest.TestCase):
         c = self._make_one_from_parsed_json(
             { 'funding_rounds': [ {'funded_day': 30},
                                   {'round_code': 'angel'} ],
-              'description': 'foo'                
-              } )
-        self.session.add(c)
-        self.session.commit()
+              'description': 'foo' } )
         result = self.session.query(self._get_target_class()).get(1)
         self.assertIs(result, c)
         self.assertEqual(len(result.funding_rounds), 2)
+
+    def test_funding_round_is_deleted_with_company(self):
+        c = self._make_one_from_parsed_json(
+            {'funding_rounds': [ {'funded_day': 30} ]})
+        
