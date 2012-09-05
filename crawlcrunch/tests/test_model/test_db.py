@@ -5,6 +5,7 @@ import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm.exc import MultipleResultsFound
 
+from crawlcrunch.tests import FOO_URL
 from crawlcrunch.tests import MEM_DB
 from crawlcrunch.tests import prepare_url_open
 from crawlcrunch.tests import unittest
@@ -121,13 +122,22 @@ class CompanyTests(SqlTestCase):
         self.assertEqual(str(c), 'Company( foo )')
 
     @mock.patch('crawlcrunch.compat.urlopen')
-    def test_update(self, urlopen):
-        c = self._make_one(name='foo')
-        foo_url = 'http://api.crunchbase.com/v/1/company/foo.js'
-        prepare_url_open(urlopen, {foo_url: {'description': 'blah',
+    def test_update_when_company_fresh(self, urlopen):
+        c = self._get_target_class()(name='foo')
+        prepare_url_open(urlopen, {FOO_URL: {'description': 'blah',
                                              'updated_at': TSTAMP}})
         c.update()
-        urlopen.assert_called_once_with(foo_url)
+        result = self.session.query(self._get_target_class()).one()
+        self.assertEqual(result.description, 'blah')
+        self.assertIsNot(c, result)
+
+    @mock.patch('crawlcrunch.compat.urlopen')
+    def test_update_when_company_persisted(self, urlopen):
+        c = self._make_one(name='foo')
+        prepare_url_open(urlopen, {FOO_URL: {'description': 'blah',
+                                             'updated_at': TSTAMP}})
+        c.update()
+        urlopen.assert_called_once_with(FOO_URL)
         results = self.session.query(self._get_target_class()).all()
         self.assertEqual(len(results), 1)
         result = results.pop()
@@ -143,6 +153,7 @@ class DataBaseRootTests(unittest.TestCase):
         cl = root.get('companies')
         from crawlcrunch.model.db import CompanyList
         self.assertIsInstance(cl, CompanyList)
+
 
 class CompanyListTests(SqlTestCase):
 
