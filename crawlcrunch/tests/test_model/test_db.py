@@ -4,17 +4,26 @@ import datetime
 
 from sqlalchemy import create_engine
 
+from crawlcrunch.tests import MEM_DB
+from crawlcrunch.tests import prepare_url_open
 from crawlcrunch.tests import unittest
 from crawlcrunch.model.db import Session
 from crawlcrunch.model.db import Base
 
+import mock
+
+TSTAMP = 'Tue Aug 07 22:57:25 UTC 2012'
+
 class FundingTests(unittest.TestCase):
 
     def setUp(self):
-        engine = create_engine('sqlite:///:memory:', echo=False)
+        engine = create_engine(MEM_DB, echo=False)
         Session.configure(bind=engine)
         Base.metadata.create_all(engine)
         self.session = Session()
+
+    def tearDown(self):
+        Session.remove()
 
     def _get_target_class(self):
         from crawlcrunch.model.db import FundingRound
@@ -51,10 +60,13 @@ class FundingTests(unittest.TestCase):
 class CompanyTests(unittest.TestCase):
 
     def setUp(self):
-        engine = create_engine('sqlite:///:memory:', echo=False)
+        engine = create_engine(MEM_DB, echo=False)
         Session.configure(bind=engine)
         Base.metadata.create_all(engine)
         self.session = Session()
+
+    def tearDown(self):
+        Session.remove()
 
     def _get_target_class(self):
         from crawlcrunch.model.db import Company
@@ -74,8 +86,7 @@ class CompanyTests(unittest.TestCase):
         return c
 
     def test_updated_at_is_datetime_when_from_parsed_json(self):
-        c = self._make_one_from_parsed_json(
-            {'updated_at': 'Tue Aug 07 22:57:25 UTC 2012'})
+        c = self._make_one_from_parsed_json({'updated_at': TSTAMP})
         expected = datetime.datetime(2012, 8, 7, 22, 57, 25)
         self.assertEqual(c.updated_at, expected)
         
@@ -105,3 +116,35 @@ class CompanyTests(unittest.TestCase):
         from crawlcrunch.model.db import FundingRound
         result = self.session.query(FundingRound).all()
         self.assertEqual(result, [])
+
+    def test_query_url(self):
+        c = self._make_one(name='foo')
+        expected = 'http://api.crunchbase.com/v/1/company/foo.js'
+        self.assertEqual(c.query_url(), expected)
+    
+    def test_str(self):
+        c = self._make_one(name='foo')
+        self.assertEqual(str(c), 'Company( foo )')
+
+    @mock.patch('crawlcrunch.compat.urlopen')
+    def test_update(self, urlopen):
+        c = self._make_one(name='foo')
+        foo_url = 'http://api.crunchbase.com/v/1/company/foo.js'
+        prepare_url_open(urlopen, {foo_url: {'description': 'blah',
+                                             'updated_at': TSTAMP}})
+        c.update()
+        urlopen.assert_called_once_with(foo_url)
+        results = self.session.query(self._get_target_class()).all()
+        self.assertEqual(len(results), 1)
+        result = results.pop()
+        self.assertEqual(result.description, 'blah')
+        self.assertIsNot(c, result)
+
+class DataBaseRootTests(unittest.TestCase):
+
+    def test_companies_list_creation(self):
+        from crawlcrunch.model.db import DataBaseRoot
+        root = DataBaseRoot(MEM_DB)
+        cl = root.get('companies')
+        from crawlcrunch.model.db import CompanyList
+        self.assertIsInstance(cl, CompanyList)
