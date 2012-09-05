@@ -8,6 +8,7 @@ import os.path
 import sys
 
 from crawlcrunch.crawler import Updater
+from crawlcrunch.model.db import DataBaseRoot
 from crawlcrunch.model.local_files import LocalFilesRoot
 
 def main(argv=sys.argv):
@@ -52,7 +53,9 @@ database.
 
     def run(self):
         logging.basicConfig(level=self.args.verbosity)
-        if not self.args.sql:
+        if self.args.sql:
+            root = DataBaseRoot(self.args.location)
+        else:
             root = LocalFilesRoot(self.args.location)
         for cls_name in self.args.classes:
             cls_inst = root.get(cls_name)
