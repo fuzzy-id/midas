@@ -2,24 +2,49 @@
 
 from datetime import datetime
 
+import logging
+
 from sqlalchemy import Column
 from sqlalchemy import DateTime
 from sqlalchemy import Float
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import backref
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 
+from crawlcrunch.model import CrunchBaseFetcherMixin
 
 Base = declarative_base()
-Session = sessionmaker()
+Session = scoped_session(sessionmaker())
 
 TM_FORMAT = '%a %b %d %H:%M:%S %Z %Y'
 
-class Company(Base):
+class DataBaseRoot(object):
+
+    def __init__(self, db_path):
+        self.db_path = db_path
+        engine = create_engine(db_path)
+        Session.configure(bind=engine)
+        Base.metadata.create_all(engine)
+
+    def get(self, name):
+        if name == 'companies':
+            return CompanyList(self)
+        raise ValueError("No such class '{0}'".format(name))
+
+class CompanyList(CrunchBaseFetcherMixin):
+
+    name = 'companies'
+
+    def __init__(self, root):
+        self.root = root
+
+class Company(Base, CrunchBaseFetcherMixin):
     __tablename__ = 'companies'
 
     id = Column(Integer, primary_key=True)
@@ -67,6 +92,9 @@ class Company(Base):
     # 'screenshots': list,
     # 'video_embeds': list
 
+    def __str__(self):
+        return 'Company( {0} )'.format(self.name)
+
     @classmethod
     def make_from_parsed_json(cls, parsed_json):
         fundings = []
@@ -82,6 +110,19 @@ class Company(Base):
                                                 TM_FORMAT)
         d['funding_rounds'] = fundings
         return cls(**d)
+
+    def update(self):
+        data = self.fetch()
+        new_c = self.make_from_parsed_json(data)
+        if self.updated_at is None or new_c.updated_at > self.updated_at:
+            logging.info('Updating {0}'.format(self))
+            session = Session()
+            session.delete(self)
+            session.add(new_c)
+            session.commit()
+
+    def query_url(self):
+        return self.company_url_tpl.format(self.name)
 
 
 class FundingRound(Base):
@@ -106,4 +147,3 @@ class FundingRound(Base):
         d = dict(((field, parsed_json.get(field, None)) 
                   for field in fields))
         return cls(**d)
-        
