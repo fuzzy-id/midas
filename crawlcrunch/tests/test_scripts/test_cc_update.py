@@ -129,7 +129,7 @@ class IntegrationTests(unittest.TestCase):
         return main(effargs)
 
     @mock.patch('crawlcrunch.compat.urlopen')
-    def test_on_empty_companies_list(self, urlopen):
+    def test_on_empty_local_companies_list(self, urlopen):
         url_return = (
             {'http://api.crunchbase.com/v/1/companies.js': []})
         prepare_url_open(urlopen, url_return)
