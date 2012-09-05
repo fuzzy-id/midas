@@ -25,7 +25,7 @@ class CrunchBaseFetcherMixin(object):
         return s
 
     def fetch(self):
-        logging.info('Fetching {0}'.format(self.name))
+        logging.info('Fetching {0}'.format(self))
         response = crawlcrunch.compat.urlopen(self.query_url())
         content = response.read()
         s = content.decode('utf-8')
