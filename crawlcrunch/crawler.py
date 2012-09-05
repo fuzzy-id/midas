@@ -17,9 +17,7 @@ class Updater(object):
         self.inst_list.update()
         for inst in self.inst_list.list_not_local():
             self.semaphore.acquire()
-            fetcher = Fetcher(
-                self.inst_list.get(inst),
-                self.semaphore)
+            fetcher = Fetcher(inst, self.semaphore)
             fetcher.start()
         # Wait 'til all threads finished
         for _ in range(self.num_threads):

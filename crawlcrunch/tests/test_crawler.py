@@ -91,7 +91,7 @@ class IntegrationTests(unittest.TestCase):
     def test_crawler_and_company_fetcher_play_together(self):
         from crawlcrunch.crawler import Updater
         cl = DummyCompanyList()
-        cl.list_not_local.return_value = ['facebook', ]
+        cl.list_not_local.return_value = (cl.get('facebook'), )
         crawler = Updater(cl)
         crawler.run()
         fb = cl.get.assert_called_once_with('facebook')

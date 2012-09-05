@@ -81,14 +81,14 @@ class CompanyList(CrunchBaseFetcherMixin):
         for company_name in self._remote_nodes:
             company = self.get(company_name)
             if not company.is_local():
-                yield company_name
+                yield company
 
     def list_local(self):
         for company_file in os.listdir(self.path):
             company_name = company_file.split('.')[0]
             company = self.get(company_name)
             if company.is_local():
-                yield company_name
+                yield company
 
     def get(self, company_name):
         local_data = self.get_local_data(company_name)

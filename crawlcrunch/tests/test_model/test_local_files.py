@@ -80,10 +80,11 @@ class CompanyListTests(unittest.TestCase):
 
     def test_local_list_when_company_files_empty(self):
         cl = self._make_one(EXAMPLES_PATH['company_files_empty'])
-        result = list(cl.list_local())
+        result = list(map(str, cl.list_local()))
         result.sort()
-        expected = ['de-revolutione', 'group-laurier',
-                    'hiconversion', 'pivotshare', 'vaporstream']
+        expected = [ 'Company( {0} )'.format(s)
+                     for s in ('de-revolutione', 'group-laurier',
+                               'hiconversion', 'pivotshare', 'vaporstream') ]
         self.assertEqual(result, expected)
 
     def test_get(self):

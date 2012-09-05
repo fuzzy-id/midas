@@ -140,6 +140,7 @@ class CompanyTests(unittest.TestCase):
         self.assertEqual(result.description, 'blah')
         self.assertIsNot(c, result)
 
+
 class DataBaseRootTests(unittest.TestCase):
 
     def test_companies_list_creation(self):
@@ -148,3 +149,7 @@ class DataBaseRootTests(unittest.TestCase):
         cl = root.get('companies')
         from crawlcrunch.model.db import CompanyList
         self.assertIsInstance(cl, CompanyList)
+
+class CompanyListTests(unittest.TestCase):
+
+    pass
