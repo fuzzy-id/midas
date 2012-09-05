@@ -114,7 +114,7 @@ class MainTests(unittest.TestCase):
         self.assertTrue(e.args[0].endswith("'no_such_class'"))
 
 
-class IntegrationTests(unittest.TestCase):
+class MainLocalFilesIntegrationTests(unittest.TestCase):
 
     def setUp(self):
         self.tmpd = tempfile.mkdtemp()
@@ -129,7 +129,7 @@ class IntegrationTests(unittest.TestCase):
         return main(effargs)
 
     @mock.patch('crawlcrunch.compat.urlopen')
-    def test_on_empty_local_companies_list(self, urlopen):
+    def test_on_empty_companies_list(self, urlopen):
         url_return = (
             {'http://api.crunchbase.com/v/1/companies.js': []})
         prepare_url_open(urlopen, url_return)
@@ -139,7 +139,7 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(os.listdir(self.tmpd), [])
 
     @mock.patch('crawlcrunch.compat.urlopen')
-    def test_on_local_companies_list_with_elements(self, urlopen):
+    def test_on_companies_list_with_elements(self, urlopen):
         companies_url = 'http://api.crunchbase.com/v/1/companies.js'
         foo_url = 'http://api.crunchbase.com/v/1/company/foo.js'
         bar_url = 'http://api.crunchbase.com/v/1/company/bar.js'
