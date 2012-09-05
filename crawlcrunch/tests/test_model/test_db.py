@@ -14,7 +14,7 @@ import mock
 
 TSTAMP = 'Tue Aug 07 22:57:25 UTC 2012'
 
-class FundingTests(unittest.TestCase):
+class SqlTestCase(unittest.TestCase):
 
     def setUp(self):
         engine = create_engine(MEM_DB, echo=False)
@@ -24,6 +24,8 @@ class FundingTests(unittest.TestCase):
 
     def tearDown(self):
         Session.remove()
+
+class FundingTests(SqlTestCase):
 
     def _get_target_class(self):
         from crawlcrunch.model.db import FundingRound
@@ -57,16 +59,7 @@ class FundingTests(unittest.TestCase):
         with self.assertRaises(TypeError):
             self._make_one(**{'foo': 'bar'})
 
-class CompanyTests(unittest.TestCase):
-
-    def setUp(self):
-        engine = create_engine(MEM_DB, echo=False)
-        Session.configure(bind=engine)
-        Base.metadata.create_all(engine)
-        self.session = Session()
-
-    def tearDown(self):
-        Session.remove()
+class CompanyTests(SqlTestCase):
 
     def _get_target_class(self):
         from crawlcrunch.model.db import Company
@@ -150,6 +143,7 @@ class DataBaseRootTests(unittest.TestCase):
         from crawlcrunch.model.db import CompanyList
         self.assertIsInstance(cl, CompanyList)
 
-class CompanyListTests(unittest.TestCase):
+class CompanyListTests(SqlTestCase):
 
+    
     pass
