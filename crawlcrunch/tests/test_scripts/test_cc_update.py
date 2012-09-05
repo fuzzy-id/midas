@@ -18,6 +18,8 @@ from crawlcrunch.tests import unittest
 import mock
 
 
+COMPANIES_URL = 'http://api.crunchbase.com/v/1/companies.js'
+
 class ArgumentParserTests(unittest.TestCase):
 
     def setUp(self):
@@ -114,13 +116,7 @@ class MainTests(unittest.TestCase):
         self.assertTrue(e.args[0].endswith("'no_such_class'"))
 
 
-class MainLocalFilesIntegrationTests(unittest.TestCase):
-
-    def setUp(self):
-        self.tmpd = tempfile.mkdtemp()
-
-    def tearDown(self):
-        shutil.rmtree(self.tmpd)
+class MainIntegrationTestCase(unittest.TestCase):
 
     def _test_it(self, *args):
         from crawlcrunch.scripts.cc_update import main
@@ -128,23 +124,29 @@ class MainLocalFilesIntegrationTests(unittest.TestCase):
         effargs.extend(args)
         return main(effargs)
 
+
+class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
+
+    def setUp(self):
+        self.tmpd = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpd)
+
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_on_empty_companies_list(self, urlopen):
-        url_return = (
-            {'http://api.crunchbase.com/v/1/companies.js': []})
+        url_return = {COMPANIES_URL: []}
         prepare_url_open(urlopen, url_return)
         self.assertEqual(self._test_it('-qqq', self.tmpd), 0)
-        urlopen.assert_called_once_with(
-            'http://api.crunchbase.com/v/1/companies.js')
+        urlopen.assert_called_once_with(COMPANIES_URL)
         self.assertEqual(os.listdir(self.tmpd), [])
 
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_on_companies_list_with_elements(self, urlopen):
-        companies_url = 'http://api.crunchbase.com/v/1/companies.js'
         foo_url = 'http://api.crunchbase.com/v/1/company/foo.js'
         bar_url = 'http://api.crunchbase.com/v/1/company/bar.js'
         prepare_url_open(urlopen,
-                         {companies_url: [{'permalink': 'foo', },
+                         {COMPANIES_URL: [{'permalink': 'foo', },
                                           {'permalink': 'bar', }],
                           foo_url: ['some_foo'],
                           bar_url: ['some_bar']})
@@ -161,6 +163,15 @@ class MainLocalFilesIntegrationTests(unittest.TestCase):
                                    'foo.json.gz')) as fp:
             self.assertEqual(json.load(fp), ['some_foo', ])
 
+
+class MainSqlIntegrationTests(MainIntegrationTestCase):
+
+    @mock.patch('crawlcrunch.compat.urlopen')
+    def test_on_empty_companies_list(self, urlopen):
+        url_return = {COMPANIES_URL: []}
+        prepare_url_open(urlopen, url_return)
+        self.assertEqual(self._test_it('-qqq', '--sql', MEM_DB), 0)
+        urlopen.assert_called_once_with(COMPANIES_URL)
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
