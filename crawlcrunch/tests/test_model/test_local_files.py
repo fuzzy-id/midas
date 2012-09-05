@@ -92,7 +92,7 @@ class CompanyListTests(unittest.TestCase):
         result = cl.get('de-revolutione')
         from crawlcrunch.model.local_files import Company
         self.assertIsInstance(result, Company)
-        self.assertEqual(result.name, 'de-revolutione')
+        self.assertEqual(str(result), 'Company( de-revolutione )')
 
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_list_is_fetched_when_not_present(self, urlopen):
