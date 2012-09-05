@@ -95,7 +95,7 @@ class CompanyListTests(unittest.TestCase):
         self.assertEqual(str(result), 'Company( de-revolutione )')
 
     @mock.patch('crawlcrunch.compat.urlopen')
-    def test_list_is_fetched_when_not_present(self, urlopen):
+    def test_update(self, urlopen):
         url = 'http://api.crunchbase.com/v/1/companies.js'
         prepare_url_open(urlopen,
                          {url: [{'permalink': 'foo'}]})
