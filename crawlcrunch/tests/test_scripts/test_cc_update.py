@@ -11,6 +11,7 @@ import tempfile
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import StringIO
 from crawlcrunch.tests import EXAMPLES_PATH
+from crawlcrunch.tests import MEM_DB
 from crawlcrunch.tests import prepare_url_open
 from crawlcrunch.tests import unittest
 
@@ -101,6 +102,13 @@ class MainTests(unittest.TestCase):
     def test_with_wrong_class(self):
         with self.assertRaises(ValueError) as cm:
             self._test_it('-qqq', '.', 'no_such_class')
+        e = cm.exception
+        self.assertEqual(len(e.args), 1)
+        self.assertTrue(e.args[0].endswith("'no_such_class'"))
+
+    def test_with_wrong_class_on_sql(self):
+        with self.assertRaises(ValueError) as cm:
+            self._test_it('-qqq', '--sql', MEM_DB, 'no_such_class')
         e = cm.exception
         self.assertEqual(len(e.args), 1)
         self.assertTrue(e.args[0].endswith("'no_such_class'"))
