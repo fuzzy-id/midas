@@ -101,4 +101,7 @@ class CompanyTests(unittest.TestCase):
     def test_funding_round_is_deleted_with_company(self):
         c = self._make_one_from_parsed_json(
             {'funding_rounds': [ {'funded_day': 30} ]})
-        
+        self.session.delete(c)
+        from crawlcrunch.model.db import FundingRound
+        result = self.session.query(FundingRound).all()
+        self.assertEqual(result, [])
