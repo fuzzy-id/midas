@@ -57,8 +57,11 @@ database.
             root = DataBaseRoot(self.args.location)
         else:
             root = LocalFilesRoot(self.args.location)
-        for cls_name in self.args.classes:
-            cls_inst = root.get(cls_name)
-            updater = Updater(cls_inst)
-            updater.run()
+        try:
+            for cls_name in self.args.classes:
+                cls_inst = root.get(cls_name)
+                updater = Updater(cls_inst)
+                updater.run()
+        finally:
+            root.clean_up()
         return 0
