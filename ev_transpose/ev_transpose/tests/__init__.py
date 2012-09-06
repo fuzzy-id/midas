@@ -18,5 +18,5 @@ __here__ = os.path.abspath(os.path.dirname(__file__))
 __test_data__ = os.path.join(__here__, 'data')
 TEST_DATA = (
     (os.path.join(__test_data__, 'top-1m-2012-09-03.csv.zip', ),
-     (Entry('foo', datetime.datetime(2012, 9, 3), 1),
-      Entry('bar', datetime.datetime(2012, 9, 3), 2))), )
+     (Entry('foo', '2012-09-03', 1),
+      Entry('bar', '2012-09-03', 2))), )
