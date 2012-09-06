@@ -6,7 +6,7 @@ import sys
 
 PY_VERSION = sys.version_info[:2]
 
-tests_require = []
+tests_require = ['mock']
 
 if PY_VERSION == (2, 6):
     tests_require.append('unittest2')
