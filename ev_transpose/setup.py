@@ -19,6 +19,6 @@ setup(name='ev_transpose',
       test_suite='ev_transpose.tests',
       entry_points={
         'console_scripts':
-            ['ev_tp_mapper=ev_transpose.scripts:mapper',
-             'ev_tp_reducer=ev_transpose.scripts:reducer']
+            ['ev_tp_mapper=ev_transpose.mapper:mapper',
+             'ev_tp_reducer=ev_transpose.reducer:reducer']
         })
