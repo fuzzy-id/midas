@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import collections
 import datetime
 import os.path
 import sys
@@ -12,9 +11,9 @@ if PY_VERSION == (2, 6):  # pragma: no cover
 else:
     import unittest
 
+from ev_transpose import Entry
 from ev_transpose.compat import StringIO
 
-Entry = collections.namedtuple('Entry', ['name', 'date', 'rank'])
 
 __here__ = os.path.abspath(os.path.dirname(__file__))
 __test_data__ = os.path.join(__here__, 'data')
