@@ -22,6 +22,6 @@ setup(name='crawlcrunch',
       test_suite='crawlcrunch.tests',
       entry_points={
         'console_scripts':
-        ['cc_update=crawlcrunch.scripts.cc_update:main', ],
+            ['cc_update=crawlcrunch.scripts.cc_update:main', ],
         },
       )
