@@ -9,3 +9,7 @@ def unzip_file(fname, filelist=('top-1m.csv', )):
         for zipped_file in filelist:
             for line in zf.open(zipped_file):
                 yield line.decode().strip()
+
+def split_rank_name(line):
+    rank, name = line.split(',')
+    return int(rank), name
