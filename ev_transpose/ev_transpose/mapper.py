@@ -10,8 +10,8 @@ from ev_transpose.compat import ZipFile
 TSTAMP_FORMAT = 'top-1m-%Y-%m-%d.csv.zip'
 
 def mapper():
-    tstamp = convert_fname_to_tstamp()
     for fname in sys.stdin:
+        tstamp = convert_fname_to_tstamp(fname)
         for l in unzip_file(fname):
             rank, name = split_rank_name(l)
             print('{0}\t{1}, {2}'.format(name, tstamp, rank))
