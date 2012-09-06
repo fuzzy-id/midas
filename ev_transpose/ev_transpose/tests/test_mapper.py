@@ -21,6 +21,11 @@ class HelperTests(unittest.TestCase):
         result = split_rank_name('1,foo')
         self.assertEqual(result, (1, 'foo'))
 
+    def test_convert_fname_to_tstamp_w_trailing_newline(self):
+        from ev_transpose.mapper import convert_fname_to_tstamp
+        result = convert_fname_to_tstamp('~/top-1m-2012-03-03.csv.zip\n')
+        self.assertEqual(result, '2012-03-03')
+
 
 class ScriptTests(IntegrationTestCase):
 

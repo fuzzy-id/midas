@@ -18,7 +18,7 @@ def mapper():
     return 0
 
 def convert_fname_to_tstamp(fname):
-    fname_last = os.path.basename(fname)
+    fname_last = os.path.basename(fname).strip()
     date = datetime.datetime.strptime(fname_last, TSTAMP_FORMAT)
     return date.strftime(TP_TSTAMP_FORMAT)
 
