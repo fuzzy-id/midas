@@ -33,5 +33,5 @@ def unzip_file(fname, filelist=('top-1m.csv', )):
                 yield line.decode().strip()
 
 def split_rank_name(line):
-    rank, name = line.split(',')
+    rank, name = line.split(',', 1)
     return int(rank), name
