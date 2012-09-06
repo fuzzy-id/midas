@@ -1,4 +1,3 @@
-
 * Transpose
 
 A mapper and a reducer to be run in a MapReduce framework (known to
