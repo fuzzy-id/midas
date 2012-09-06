@@ -35,13 +35,13 @@ class ScriptTests(unittest.TestCase):
         sys.stdin = self._oldin
     
     def test_mapper(self):
-        from ev_transpose.scripts import mapper
+        from ev_transpose.mapper import mapper
         sys.stdin.write(TEST_DATA[0][0])
         sys.stdin.seek(0)
         self.assertEqual(mapper(), 0)
         sys.stdout.seek(0)
         out = sys.stdout.getvalue()
-        expected = '\n'.join('{e.name}\t{e.date},{e.rank}'.format(e=entry)
+        expected = '\n'.join('{e.name}\t{e.date}, {e.rank}'.format(e=entry)
                              for entry in TEST_DATA[0][1])
         self.assertEqual(out.strip(), expected)
 
