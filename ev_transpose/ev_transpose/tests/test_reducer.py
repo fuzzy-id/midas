@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+import sys
+
 from ev_transpose.tests import IntegrationTestCase
 from ev_transpose.tests import unittest
 from ev_transpose import Entry
-
-from datetime import datetime
 
 
 class HelperTests(unittest.TestCase):
@@ -18,18 +19,22 @@ class HelperTests(unittest.TestCase):
 
 class ScriptTests(IntegrationTestCase):
 
-    @unittest.skip('not implemented, yet')
     def test_reducer(self):
-        from ev_transpose.scripts import reducer
-        data = ['foo\t2012-09-05,1',
-                'foo\t2012-09-03,1',
-                'foo\t2012-09-06,3',
-                'foo\t2012-09-04,2']
+        from ev_transpose.reducer import reducer
+        data = ['foo\t2012-09-05, 1',
+                'foo\t2012-09-03, 1',
+                'foo\t2012-09-06, 3',
+                'foo\t2012-09-04, 2']
         sys.stdin.write('\n'.join(data))
+        sys.stdin.seek(0)
         self.assertEqual(reducer(), 0)
         sys.stdout.seek(0)
-        out = sys.stdout.getvalue()
+        out = sys.stdout.getvalue().strip()
         data.sort()
         expected = '\n'.join(data)
         self.assertEqual(out, expected)
+
+
+if __name__ == '__main__':  # pragma: no cover
+    unittest.main()
 
