@@ -2,6 +2,19 @@
 
 from ev_transpose.tests import IntegrationTestCase
 from ev_transpose.tests import unittest
+from ev_transpose import Entry
+
+from datetime import datetime
+
+
+class HelperTests(unittest.TestCase):
+
+    def test_split_name_date_rank(self):
+        from ev_transpose.reducer import line_to_entry
+        result = line_to_entry('foo\t2012-09-05, 1')
+        expected = Entry('foo', datetime(2012, 9, 5), 1)
+        self.assertEqual(result, expected)
+
 
 class ScriptTests(IntegrationTestCase):
 
