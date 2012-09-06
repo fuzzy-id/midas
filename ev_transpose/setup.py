@@ -15,4 +15,10 @@ setup(name='ev_transpose',
       version='0.0a1',
       description='Transpose time-series gathered over csv-files.',
       author='Thomas Bach',
-      test_suite='ev_transpose.tests')
+      tests_require=tests_require,
+      test_suite='ev_transpose.tests',
+      entry_points={
+        'console_scripts':
+            ['ev_tp_mapper=ev_transpose.scripts:mapper',
+             'ev_tp_reducer=ev_transpose.scripts:reducer']
+        })
