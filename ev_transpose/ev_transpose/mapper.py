@@ -18,6 +18,3 @@ def mapper():
             rank, name = split_rank_name(l)
             print('{0}\t{1}, {2}'.format(name, tstamp, rank))
     return 0
-
-def reducer():
-    pass
