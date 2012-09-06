@@ -11,6 +11,7 @@ TSTAMP_FORMAT = 'top-1m-%Y-%m-%d.csv.zip'
 
 def mapper():
     for fname in sys.stdin:
+        fname = fname.strip()
         tstamp = convert_fname_to_tstamp(fname)
         for l in unzip_file(fname):
             rank, name = split_rank_name(l)
@@ -18,7 +19,7 @@ def mapper():
     return 0
 
 def convert_fname_to_tstamp(fname):
-    fname_last = os.path.basename(fname).strip()
+    fname_last = os.path.basename(fname)
     date = datetime.datetime.strptime(fname_last, TSTAMP_FORMAT)
     return date.strftime(TP_TSTAMP_FORMAT)
 
