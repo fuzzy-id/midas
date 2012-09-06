@@ -21,6 +21,12 @@ class HelperTests(unittest.TestCase):
         result = split_rank_name('1,foo')
         self.assertEqual(result, (1, 'foo'))
 
+    def test_parse_line_w_comma_in_name(self):
+        ' This seems to happen. *sigh* '
+        from ev_transpose.mapper import split_rank_name
+        result = split_rank_name('1,foo,bar')
+        self.assertEqual(result, (1, 'foo,bar'))
+        
 
 class ScriptTests(IntegrationTestCase):
 
