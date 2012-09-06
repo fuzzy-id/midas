@@ -1,5 +1,6 @@
+*.pyc
+
 .tox
 .coverage
 unittest2-0.5.1-py2.6.egg/
 ev_transpose.egg-info/
-*.pyc
