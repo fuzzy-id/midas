@@ -18,6 +18,10 @@ class PatchedStderrTestCase(unittest.TestCase):
         sys.stderr.seek(0)
         return sys.stderr.getvalue()
 
+    def assert_err_endswith(self, s):
+        err = self._get_err_msg()
+        self.assertTrue(err.endswith(s))
+
 class ArgParserTests(PatchedStderrTestCase):
 
     def _make_one(self, *args):
@@ -30,13 +34,13 @@ class ArgParserTests(PatchedStderrTestCase):
         with self.assertRaises(SystemExit):
             self._make_one()
         err = self._get_err_msg()
-        self.assertTrue(err.endswith('too few arguments\n'))
+        self.assert_err_endswith('too few arguments\n')
 
     def test_only_one_argument_raises_error(self):
         with self.assertRaises(SystemExit):
             self._make_one('foo')
         err = self._get_err_msg()
-        self.assertTrue(err.endswith('too few arguments\n'))
+        self.assert_err_endswith('too few arguments\n')
 
     def test_one_dst_and_one_file(self):
         args = self._make_one('foo', 'bar')
@@ -54,5 +58,4 @@ class IntegrationTests(PatchedStderrTestCase):
         from ev_transpose.script import main
         with self.assertRaises(SystemExit):
             main(['ev_transpose'])
-        err = self._get_err_msg()
-        self.assertTrue(err.endswith('too few arguments\n'))
+        self.assert_err_endswith('too few arguments\n')
