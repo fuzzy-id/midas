@@ -16,6 +16,8 @@ if PY_VERSION == (2, 6):  # pragma: no cover
 else:
     from zipfile import ZipFile
 
+from gzip import GzipFile
+
 try:
     from StringIO import StringIO
 except ImportError:  # pragma: no cover

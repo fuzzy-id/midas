@@ -7,6 +7,7 @@ import sys
 import tempfile
 
 from ev_transpose import Entry
+from ev_transpose.compat import GzipFile
 from ev_transpose.compat import StringIO
 from ev_transpose.tests import TEST_DATA 
 from ev_transpose.tests import unittest
@@ -84,7 +85,8 @@ class EvTransposeTests(unittest.TestCase):
         et = self._make_one(None, None)
         e = Entry(name='example.com', rank=2, 
                   date=datetime.datetime(1900, 1, 1))
-        self.assertEqual(et.format_out(e), '1900-01-01, 2')
+        self.assertEqual(et.format_out(e), 
+                         'example.com, 1900-01-01, 2')
 
 
 class IntegrationTests(PatchedStderrTestCase):
@@ -101,14 +103,13 @@ class IntegrationTests(PatchedStderrTestCase):
         effargs.extend(args)
         return main(effargs)
 
-    @unittest.skip('refactoring')
     def test_on_test_data_one(self):
-        cmd = self._test_it(self.tmpd, *TEST_DATA[0][0])
+        cmd = self._test_it(self.tmpd, TEST_DATA[0][0])
         self.assertEqual(cmd, 0)
         dir_listing = os.listdir(self.tmpd)
         dir_listing.sort()
         self.assertEqual(dir_listing, ['bar.gz', 'foo.gz'])
         with GzipFile(os.path.join(self.tmpd, 'bar.gz')) as fp:
-            self.assertEqual(fp.readlines(), TEST_DATA[0][1]['bar'])
+            self.assertEqual(fp.readlines(), TEST_DATA[0][2]['bar'])
         with GzipFile(os.path.join(self.tmpd, 'foo.gz')) as fp:
-            self.assertEqual(fp.readlines(), TEST_DATA[0][1]['foo'])
+            self.assertEqual(fp.readlines(), TEST_DATA[0][2]['foo'])
