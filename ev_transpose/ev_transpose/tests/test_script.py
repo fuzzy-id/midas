@@ -56,7 +56,17 @@ class ArgParserTests(PatchedStderrTestCase):
         self.assertEqual(args.dst, 'foo')
         self.assertEqual(args.zip_file, ['bar', 'baz'])
 
-class EvTransposeTests(PatchedStderrTestCase):
+
+class MainTests(PatchedStderrTestCase):
+
+    def test_main_wo_arguments(self):
+        from ev_transpose.script import main
+        with self.assertRaises(SystemExit):
+            main(['ev_transpose'])
+        self.assert_err_endswith('too few arguments\n')
+
+
+class IntegrationTests(PatchedStderrTestCase):
 
     def setUp(self):
         self.tmpd = tempfile.mkdtemp()
@@ -64,15 +74,15 @@ class EvTransposeTests(PatchedStderrTestCase):
     def tearDown(self):
         shutil.rmtree(self.tmpd)
 
-    def _make_one(self, *args):
-        from ev_transpose.script import EvTranspose
+    def _test_it(self, *args):
+        from ev_transpose.script import main
         effargs = ['ev_transpose']
         effargs.extend(args)
-        return EvTranspose(effargs)
+        return main(effargs)
 
     def test_on_test_data_one(self):
-        cmd = self._make_one(self.tmpd, *TEST_DATA[0][0])
-        self.assertEqual(cmd.run(), 0)
+        cmd = self._test_it(self.tmpd, *TEST_DATA[0][0])
+        self.assertEqual(cmd, 0)
         dir_listing = os.listdir(self.tmpd)
         dir_listing.sort()
         self.assertEqual(dir_listing, ['bar.gz', 'foo.gz'])
@@ -80,11 +90,3 @@ class EvTransposeTests(PatchedStderrTestCase):
             self.assertEqual(fp.readlines(), TEST_DATA[0][1]['bar'])
         with GzipFile(os.path.join(self.tmpd, 'foo.gz')) as fp:
             self.assertEqual(fp.readlines(), TEST_DATA[0][1]['foo'])
-
-class IntegrationTests(PatchedStderrTestCase):
-
-    def test_main_wo_arguments(self):
-        from ev_transpose.script import main
-        with self.assertRaises(SystemExit):
-            main(['ev_transpose'])
-        self.assert_err_endswith('too few arguments\n')
