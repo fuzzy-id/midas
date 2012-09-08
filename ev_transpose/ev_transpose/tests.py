@@ -18,6 +18,8 @@ from ev_transpose import Entry
 from ev_transpose.compat import GzipFile
 from ev_transpose.compat import StringIO
 
+import mock
+
 
 __here__ = os.path.abspath(os.path.dirname(__file__))
 __test_data__ = os.path.join(__here__, 'data')
@@ -142,9 +144,11 @@ class IntegrationTests(PatchedStderrTestCase):
         effargs.extend(args)
         return main(effargs)
 
-    def test_on_test_data_one(self):
+    @mock.patch('logging.info')
+    def test_on_test_data_one(self, info):
         cmd = self._test_it(self.tmpd, TEST_DATA[0][0])
         self.assertEqual(cmd, 0)
+        info.assert_called_once_with("Processing '{0}'".format(TEST_DATA[0][0]))
         dir_listing = os.listdir(self.tmpd)
         dir_listing.sort()
         self.assertEqual(dir_listing, ['bar.gz', 'foo.gz'])
