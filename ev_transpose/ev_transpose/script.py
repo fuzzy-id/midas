@@ -40,7 +40,7 @@ class EvTranspose(object):
         return 0
 
     def write_out(self, entry):
-        with GzipFile(self.expand(entry.name), 'w') as fp:
+        with open(self.expand(entry.name), 'a') as fp:
             fp.write(comp_bytes(self.format_out(entry), 'utf-8'))
 
     def expand(self, fname):
