@@ -24,6 +24,8 @@ class EvTranspose(object):
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('dst', help='the destination for the output files')
     parser.add_argument('zip_file', nargs='+', help='the zipped files to parse')
+
+    _replace = (('/', '_'), )
     
     def __init__(self, argv):
         self.args = self.parser.parse_args(argv[1:])
@@ -42,6 +44,8 @@ class EvTranspose(object):
             fp.write(comp_bytes(self.format_out(entry), 'utf-8'))
 
     def expand(self, fname):
+        for old, new in self._replace:
+            fname = fname.replace(old, new)
         return os.path.join(self.dst, '.'.join((fname, 'gz')))
 
     def format_out(self, entry):
