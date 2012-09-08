@@ -9,6 +9,7 @@ from ev_transpose import TP_TSTAMP_FORMAT
 from ev_transpose import Entry
 from ev_transpose.compat import GzipFile
 from ev_transpose.compat import ZipFile
+from ev_transpose.compat import comp_bytes
 
 TSTAMP_FORMAT = 'top-1m-%Y-%m-%d.csv.zip'
 
@@ -35,7 +36,7 @@ class EvTranspose(object):
 
     def write_out(self, entry):
         with GzipFile(self.expand(entry.name), 'w') as fp:
-            fp.write(bytes(self.format_out(entry), 'utf-8'))
+            fp.write(comp_bytes(self.format_out(entry), 'utf-8'))
 
     def expand(self, fname):
         return os.path.join(self.dst, '.'.join((fname, 'gz')))
