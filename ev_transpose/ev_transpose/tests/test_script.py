@@ -2,17 +2,10 @@
 
 import datetime
 import os
+import os.path
 import shutil
 import sys
 import tempfile
-
-from ev_transpose import Entry
-from ev_transpose.compat import GzipFile
-from ev_transpose.compat import StringIO
-
-import datetime
-import os.path
-import sys
 
 PY_VERSION = sys.version_info[:2]
 
@@ -22,6 +15,7 @@ else:
     import unittest
 
 from ev_transpose import Entry
+from ev_transpose.compat import GzipFile
 from ev_transpose.compat import StringIO
 
 
@@ -34,18 +28,6 @@ TEST_DATA = (
      {'foo': [b'foo, 2012-09-03, 1', ],
       'bar': [b'bar, 2012-09-03, 2', ]}), )
 
-
-class IntegrationTestCase(unittest.TestCase):
-
-    def setUp(self):
-        self._oldout = sys.stdout
-        sys.stdout = StringIO()
-        self._oldin = sys.stdin
-        sys.stdin = StringIO()
-
-    def tearDown(self):
-        sys.stdout = self._oldout
-        sys.stdin = self._oldin
 
 class PatchedStderrTestCase(unittest.TestCase):
 
@@ -63,6 +45,7 @@ class PatchedStderrTestCase(unittest.TestCase):
     def assert_err_endswith(self, s):
         err = self._get_err_msg()
         self.assertTrue(err.endswith(s))
+
 
 class ArgParserTests(PatchedStderrTestCase):
 
