@@ -130,7 +130,7 @@ class HelperTests(unittest.TestCase):
         self.assertEqual(result, (1, 'foo,bar'))
 
 
-class IntegrationTests(PatchedStderrTestCase):
+class IntegrationTests(unittest.TestCase):
 
     def setUp(self):
         self.tmpd = tempfile.mkdtemp()
