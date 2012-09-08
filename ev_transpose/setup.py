@@ -10,6 +10,7 @@ tests_require = ['mock']
 
 if PY_VERSION == (2, 6):
     tests_require.append('unittest2')
+    tests_require.append('argparse')
 
 setup(name='ev_transpose',
       version='0.0a1',

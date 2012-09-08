@@ -3,5 +3,6 @@
 .tox
 .coverage
 ev_transpose.egg-info/
-unittest2-0.5.1-py2.6.egg/
+argparse-*-py2.6.egg/
+unittest2-*-py2.6.egg/
 mock-*-py?.?.egg/
