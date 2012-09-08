@@ -101,6 +101,11 @@ class EvTransposeTests(unittest.TestCase):
         et = self._make_one('/foo', None)
         self.assertEqual(et.expand('bar'), '/foo/bar.gz')
 
+    def test_expand_fname_w_strange_chars(self):
+        et = self._make_one('/foo', None)
+        self.assertEqual(et.expand('feedproxy.google.com/~r'), 
+                         '/foo/feedproxy.google.com_~r.gz')
+
     def test_format_out(self):
         et = self._make_one(None, None)
         e = Entry(name='example.com', rank=2, 
