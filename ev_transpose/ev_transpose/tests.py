@@ -27,8 +27,8 @@ TEST_DATA = (
     (os.path.join(__test_data__, 'top-1m-2012-09-03.csv.zip', ),
      (Entry('foo', '2012-09-03', 1),
       Entry('bar', '2012-09-03', 2)),
-     {'foo': [b'foo, 2012-09-03, 1', ],
-      'bar': [b'bar, 2012-09-03, 2', ]}), )
+     {'foo': ['foo, 2012-09-03, 1', ],
+      'bar': ['bar, 2012-09-03, 2', ]}), )
 
 
 class PatchedStderrTestCase(unittest.TestCase):
@@ -99,12 +99,12 @@ class EvTransposeTests(unittest.TestCase):
 
     def test_expand_fname(self):
         et = self._make_one('/foo', None)
-        self.assertEqual(et.expand('bar'), '/foo/bar.gz')
+        self.assertEqual(et.expand('bar'), '/foo/bar')
 
     def test_expand_fname_w_strange_chars(self):
         et = self._make_one('/foo', None)
         self.assertEqual(et.expand('feedproxy.google.com/~r'), 
-                         '/foo/feedproxy.google.com_~r.gz')
+                         '/foo/feedproxy.google.com_~r')
 
     def test_format_out(self):
         et = self._make_one(None, None)
@@ -156,8 +156,8 @@ class IntegrationTests(unittest.TestCase):
         info.assert_called_once_with("Processing '{0}'".format(TEST_DATA[0][0]))
         dir_listing = os.listdir(self.tmpd)
         dir_listing.sort()
-        self.assertEqual(dir_listing, ['bar.gz', 'foo.gz'])
-        with GzipFile(os.path.join(self.tmpd, 'bar.gz')) as fp:
+        self.assertEqual(dir_listing, ['bar', 'foo'])
+        with open(os.path.join(self.tmpd, 'bar')) as fp:
             self.assertEqual(fp.readlines(), TEST_DATA[0][2]['bar'])
-        with GzipFile(os.path.join(self.tmpd, 'foo.gz')) as fp:
+        with open(os.path.join(self.tmpd, 'foo')) as fp:
             self.assertEqual(fp.readlines(), TEST_DATA[0][2]['foo'])

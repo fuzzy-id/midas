@@ -41,12 +41,12 @@ class EvTranspose(object):
 
     def write_out(self, entry):
         with open(self.expand(entry.name), 'a') as fp:
-            fp.write(comp_bytes(self.format_out(entry), 'utf-8'))
+            fp.write(self.format_out(entry))
 
     def expand(self, fname):
         for old, new in self._replace:
             fname = fname.replace(old, new)
-        return os.path.join(self.dst, '.'.join((fname, 'gz')))
+        return os.path.join(self.dst, fname)
 
     def format_out(self, entry):
         date = entry.date.strftime(TP_TSTAMP_FORMAT)
