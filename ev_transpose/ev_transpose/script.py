@@ -2,6 +2,7 @@
 
 import argparse
 import datetime
+import logging
 import os.path
 import sys
 
@@ -29,7 +30,9 @@ class EvTranspose(object):
         self.dst = self.args.dst
 
     def run(self):
+        logging.basicConfig(level=logging.INFO)
         for zfile in self.args.zip_file:
+            logging.info("Processing '{0}'".format(zfile))
             for entry in parse_input_file(zfile):
                 self.write_out(entry)
         return 0
