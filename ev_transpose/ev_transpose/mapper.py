@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import datetime
 import os.path
 import sys
@@ -11,8 +13,8 @@ TSTAMP_FORMAT = 'top-1m-%Y-%m-%d.csv.zip'
 
 def mapper():
     for fname in sys.stdin:
-        print("Processing '{0}'".format(fname), file=sys.stderr)
         fname = fname.strip()
+        print("Processing '{0}'".format(fname), file=sys.stderr)
         tstamp = convert_fname_to_tstamp(fname)
         for l in unzip_file(fname):
             rank, name = split_rank_name(l)
