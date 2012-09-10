@@ -15,9 +15,8 @@ HADOOP_STREAMING="${HADOOP_HOME}/contrib/streaming/hadoop-streaming-1.0.3.jar"
 ${HADOOP_BIN} fs -rmr ${OUT}
 
 ${HADOOP_BIN} jar ${HADOOP_STREAMING} \
-    -D mapred.max.split.size=40 \
-    -D mapred.map.tasks=4 \
-    -D mapred.reduce.tasks=4 \
+    -D mapred.map.tasks=3 \
+    -D mapred.reduce.tasks=3 \
     -D mapred.output.compress=true \
     -D mapred.output.compression.codec=org.apache.hadoop.io.compress.GzipCodec \
     -files ${FILES} \
