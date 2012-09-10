@@ -1,2 +1,2 @@
 
-Code collection of things I used in my Bachelor thesis.
+Code collection if things I used in my Bachelor thesis.

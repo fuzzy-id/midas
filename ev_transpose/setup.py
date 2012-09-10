@@ -10,7 +10,6 @@ tests_require = ['mock']
 
 if PY_VERSION == (2, 6):
     tests_require.append('unittest2')
-    tests_require.append('argparse')
 
 setup(name='ev_transpose',
       version='0.0a1',
@@ -20,4 +19,6 @@ setup(name='ev_transpose',
       test_suite='ev_transpose.tests',
       entry_points={
         'console_scripts':
-            ['ev_transpose=ev_transpose.script:main']})
+            ['ev_tp_mapper=ev_transpose.mapper:mapper',
+             'ev_tp_reducer=ev_transpose.reducer:reducer']
+        })
