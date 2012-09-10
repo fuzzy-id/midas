@@ -11,6 +11,7 @@ TSTAMP_FORMAT = 'top-1m-%Y-%m-%d.csv.zip'
 
 def mapper():
     for fname in sys.stdin:
+        print("Processing '{0}'".format(fname), file=sys.stderr)
         fname = fname.strip()
         tstamp = convert_fname_to_tstamp(fname)
         for l in unzip_file(fname):
