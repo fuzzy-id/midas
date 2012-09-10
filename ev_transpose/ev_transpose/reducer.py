@@ -9,10 +9,19 @@ from ev_transpose import Entry
 
 
 def reducer():
+    cache = []
     for line in sys.stdin:
         entry = line_to_entry(line)
-        out(entry)
+        if len(cache) > 0 and cache[0].name != entry.name:
+            out_cache(cache)
+        cache.append(entry)
+    out_cache(cache)
     return 0
+
+def out_cache(cache):
+    cache.sort(key=lambda e: e.date)
+    while len(cache) > 0:
+        out(cache.pop(0))
 
 def line_to_entry(line):
     name, tail = line.split('\t')
