@@ -22,17 +22,22 @@ class ScriptTests(IntegrationTestCase):
 
     def test_reducer(self):
         from ev_transpose.reducer import reducer
-        data = ['foo\t2012-09-05, 1',
+        foos = ['foo\t2012-09-05, 1',
                 'foo\t2012-09-06, 3',
                 'foo\t2012-09-03, 1',
                 'foo\t2012-09-04, 2']
-        sys.stdin.write('\n'.join(data))
+        bars = ['bar\t2012-09-05, 1',
+                'bar\t2012-09-06, 3',
+                'bar\t2012-09-03, 1',
+                'bar\t2012-09-04, 2']
+        sys.stdin.write('\n'.join(foos + bars))
         sys.stdin.seek(0)
         self.assertEqual(reducer(), 0)
         sys.stdout.seek(0)
         out = sys.stdout.getvalue().strip()
-        data.sort()
-        expected = '\n'.join(data)
+        foos.sort()
+        bars.sort()
+        expected = '\n'.join(foos + bars)
         self.assertEqual(out, expected)
 
 
