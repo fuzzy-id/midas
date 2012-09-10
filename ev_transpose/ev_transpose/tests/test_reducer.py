@@ -31,7 +31,7 @@ class ScriptTests(IntegrationTestCase):
         self.assertEqual(reducer(), 0)
         sys.stdout.seek(0)
         out = sys.stdout.getvalue().strip()
-        data.sort()
+        #data.sort()
         expected = '\n'.join(data)
         self.assertEqual(out, expected)
 
@@ -48,7 +48,7 @@ class ScriptTests(IntegrationTestCase):
         sys.stdout.seek(0)
         result = sys.stdout.getvalue().strip().split('\n')
         self.assertEqual(len(result), len(data))
-        data.sort()
+        #data.sort()
         self.assertEqual(result, data)
 
 
