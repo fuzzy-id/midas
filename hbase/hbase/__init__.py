@@ -18,9 +18,16 @@ class HBase(object):
         req.headers['Accept'] = 'application/json'
         return req
 
+    def _open_and_parse(self, req):
+        resp = comp.urlopen(req)
+        return json.loads(resp.readall().decode())        
+
     def get_tables(self):
         req = self._make_request()
-        resp = comp.urlopen(req)
-        parsed_json = json.loads(resp.readall().decode())
+        parsed_json = self._open_and_parse(req)
         for table_struct in parsed_json['table']:
             yield table_struct['name']
+
+    def get_version(self):
+        req = self._make_request()
+        return self._open_and_parse(req)
