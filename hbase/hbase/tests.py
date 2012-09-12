@@ -24,10 +24,15 @@ class TableListTests(unittest.TestCase):
 
     @mock.patch("hbase.compat.urlopen")
     def test_query_version_information(self, urlopen):
-        urlopen().readall.return_value = b'{"JVM":"Oracle Corporation 1.7.0_07-23.3-b01","Jersey":"1.8","OS":"Linux 3.4.2-x86_64-linode25 amd64","REST":"0.0.2","Server":"jetty/6.1.26"}'
+        urlopen().readall.return_value = bytes(
+            ','.join(['{"JVM":"Oracle Corporation 1.7.0_07-23.3-b01"',
+                      '"Jersey":"1.8"',
+                      '"OS":"Linux 3.4.2-x86_64-linode25 amd64"',
+                      '"REST":"0.0.2","Server":"jetty/6.1.26"}']), 'utf-8')
         hb_con = self._make_one()
-        self.assertEqual(hb_con.get_version(), {"JVM": "Oracle Corporation 1.7.0_07-23.3-b01",
-                                                "Jersey": "1.8",
-                                                "OS": "Linux 3.4.2-x86_64-linode25 amd64",
-                                                "REST": "0.0.2",
-                                                "Server": "jetty/6.1.26"})
+        self.assertEqual(hb_con.get_version(), 
+                         {"JVM": "Oracle Corporation 1.7.0_07-23.3-b01",
+                          "Jersey": "1.8",
+                          "OS": "Linux 3.4.2-x86_64-linode25 amd64",
+                          "REST": "0.0.2",
+                          "Server": "jetty/6.1.26"})
