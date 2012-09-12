@@ -2,7 +2,7 @@
 
 .tox
 .coverage
-ev_transpose.egg-info/
+*.egg-info/
 mock-*-py?.?.egg/
 argparse-*-py2.6.egg/
 unittest2-*-py2.6.egg/
