@@ -4,7 +4,7 @@ from hbase.compat import PY26
 
 import mock
 
-if PY26:
+if PY26:  # pragma: no cover
     import unittest2 as unittest
 else:
     import unittest
