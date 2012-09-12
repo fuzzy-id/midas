@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from hbase.compat import PY26
+from hbase.compat import comp_bytes
 
 import mock
 
@@ -24,7 +25,7 @@ class TableListTests(unittest.TestCase):
 
     @mock.patch("hbase.compat.urlopen")
     def test_query_version_information(self, urlopen):
-        urlopen().readall.return_value = bytes(
+        urlopen().readall.return_value = comp_bytes(
             ','.join(['{"JVM":"Oracle Corporation 1.7.0_07-23.3-b01"',
                       '"Jersey":"1.8"',
                       '"OS":"Linux 3.4.2-x86_64-linode25 amd64"',

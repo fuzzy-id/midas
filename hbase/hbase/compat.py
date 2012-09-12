@@ -13,3 +13,7 @@ else:
     from urllib2 import Request
     from urllib2 import urlopen
     
+if PY3K:  # pragma: no cover
+    comp_bytes = bytes
+else:
+    comp_bytes = lambda s, _: s
