@@ -28,6 +28,6 @@ class HBase(object):
         for table_struct in parsed_json['table']:
             yield table_struct['name']
 
-    def get_version(self):
+    def get_version(self, 'version'):
         req = self._make_request()
         return self._open_and_parse(req)
