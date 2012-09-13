@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import base64
+import collections
 import json
 
 import hbase.compat as comp
@@ -11,15 +12,20 @@ def _open_and_parse(req):
 
 def _json_decode_hook(d):
     if 'column' in d and '$' in d:  # should be a cell
-        d['column'] = b64decode(d['column'])
-        d['$'] = b64decode(d['$'])
+        d['column'] = str64decode(d['column'])
+        d['$'] = str64decode(d['$'])
     elif 'Cell' in d and 'key' in d:  # should be a row
-        d['key'] = b64decode(d['key'])
+        d['key'] = str64decode(d['key'])
     return d
 
 def str64decode(s):
     b = comp.comp_bytes(s, 'utf-8')
     d = base64.b64decode(b)
+    return d.decode('utf-8')
+
+def str64encode(s):
+    b = comp.comp_bytes(s, 'utf-8')
+    d = base64.b64encode(b)
     return d.decode('utf-8')
 
 def decode_response(resp):
@@ -74,8 +80,13 @@ class HBConnection(HBBase):
         tbl = self[name]
         tbl.schema = {}
 
+    def delete_table(self, name):
+        tbl = self[name]
+        del tbl.schema
+
     def __getitem__(self, name):
         return HBTable(name, self)
+
 
 class HBTable(HBBase):
 
@@ -91,7 +102,13 @@ class HBTable(HBBase):
     @schema.setter
     def schema(self, schema):
         req = self._make_request('schema', data=schema)
-        return _open_and_parse(req)
+        comp.urlopen(req)
+
+    @schema.deleter
+    def schema(self):
+        req = self._make_request('schema')
+        req.get_method = lambda : 'DELETE'
+        comp.urlopen(req)
 
     @property
     def regions(self):
@@ -111,9 +128,69 @@ class HBTable(HBBase):
 
         resp = _next()
         while resp.code == 200:
-            yield decode_response(resp)
+            decoded = decode_response(resp)
+            for cell in decoded['Row']:
+                yield Row.from_parsed_json(cell)
             resp = _next()
 
-    def put_cell(self, row, col, data):
-        req = self._make_request(row, col, data=data)
+    def update(self, row):
+        data = {'Row': [row.as_parsable_json()]}
+        req = self._make_request('non-existent-row', data=data)
         comp.urlopen(req)
+
+
+class Row(object):
+
+    def __init__(self, key, cells):
+        self.key = key
+        self.cells = cells
+
+    @classmethod
+    def from_parsed_json(cls, js):
+        cells = [ Cell.from_parsed_json(cell) 
+                  for cell in js['Cell'] ]
+        return cls(js['key'], cells)
+
+    def __str__(self):
+        return 'Row({0}, {1})'.format(self.key,
+                                      [ str(cell) for cell in self.cells ])
+
+    def as_parsable_json(self):
+        d = collections.OrderedDict()
+        d['key'] = str64encode(self.key)
+        d['Cell'] = [ cell.as_parsable_json() 
+                      for cell in self.cells ]
+        return d
+
+
+class Cell(object):
+
+    def __init__(self, value, column, ts=None):
+        self._value = value
+        self.column = column
+        self.ts = ts
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, new_val):
+        self.ts = None
+        self._value = new_val
+
+    def as_parsable_json(self):
+        d = collections.OrderedDict()
+        d['column'] = str64encode(self.column)
+        d['$'] = str64encode(self.value)
+        if self.ts is not None:
+            d['timestamp'] = self.ts
+        return d
+
+    def __str__(self):
+        return 'Cell({s.value}, {s.column}, {s.ts})'.format(s=self)
+
+    @classmethod
+    def from_parsed_json(cls, js):
+        return cls(js['$'], js['column'], js['timestamp'])
+        
