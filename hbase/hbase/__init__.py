@@ -14,8 +14,8 @@ class HBase(object):
         head = 'http://{0}:{1}/'.format(self.host, self.port)
         tail = '/'.join(path)
         url = head + tail
-        req = comp.Request(url)
-        req.headers['Accept'] = 'application/json'
+        req = comp.Request(url, 
+                           headers={'Accept': 'application/json'})
         return req
 
     def _open_and_parse(self, req):
@@ -31,3 +31,11 @@ class HBase(object):
     def get_version(self):
         req = self._make_request('version')
         return self._open_and_parse(req)
+
+    def get_scanner(self, table, batch=1):
+        req = self._make_request(table, 'scanner')
+        req.headers['Content-Type'] = 'text/xml'
+        req.data = bytes('<Scanner batch="{0}"/>'.format(batch), 'utf-8')
+        resp = comp.urlopen(req)
+        scanner_loc = resp.headers['Location']
+        return scanner_loc
