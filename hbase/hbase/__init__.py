@@ -193,4 +193,3 @@ class Cell(object):
     @classmethod
     def from_parsed_json(cls, js):
         return cls(js['$'], js['column'], js['timestamp'])
-        
