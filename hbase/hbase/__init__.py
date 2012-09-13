@@ -9,6 +9,23 @@ def _open_and_parse(req):
     resp = comp.urlopen(req)
     return json.loads(resp.readall().decode())        
 
+def _json_decode_hook(d):
+    if 'column' in d and '$' in d:  # should be a cell
+        d['column'] = b64decode(d['column'])
+        d['$'] = b64decode(d['$'])
+    elif 'Cell' in d and 'key' in d:  # should be a row
+        d['key'] = b64decode(d['key'])
+    return d
+
+def str64decode(s):
+    b = comp.comp_bytes(s, 'utf-8')
+    d = base64.b64decode(b)
+    return d.decode('utf-8')
+
+def decode_response(resp):
+    s = resp.readall().decode()
+    return json.loads(s, object_hook=_json_decode_hook)
+
 class HBase(object):
 
     def __init__(self, host, port):
@@ -40,30 +57,31 @@ class HBase(object):
         req = self._make_request('version')
         return _open_and_parse(req)
 
-    def get_scanner(self, table, batch=1):
-        req = self._make_request(table, 'scanner', data={'Scanner': {'batch': batch}})
+    def __getitem__(self, name):
+        return HBTable(name, self)
+
+class HBTable(object):
+
+    def __init__(self, name, root):
+        self.name = name
+        self.root = root
+
+    def scan(self, batch=1):
+        req = self.root._make_request(self.name, 'scanner', 
+                                      data={'Scanner': {'batch': batch}})
         resp = comp.urlopen(req)
         scanner_loc = resp.headers['Location']
-        req = comp.Request(scanner_loc, headers={'Accept': 'application/json'})
-        resp = comp.urlopen(req)
+
+        def _next():
+            req = comp.Request(scanner_loc, 
+                               headers={'Accept': 'application/json'})
+            return comp.urlopen(req)
+        resp = _next()
+
         while resp.code == 200:
-            yield json.loads(resp.readall().decode(), object_hook=my_hook)
-            req = comp.Request(scanner_loc, headers={'Accept': 'application/json'})
-            resp = comp.urlopen(req)
+            yield decode_response(resp)
+            resp = _next()
 
-    def put_cell(self, table, row, col, data):
-        req = self._make_request(table, row, col, data=data)
+    def put_cell(self, row, col, data):
+        req = self.root._make_request(self.name, row, col, data=data)
         comp.urlopen(req)
-
-def my_hook(d):
-    if 'column' in d and '$' in d:  # should be a cell
-        d['column'] = b64decode(d['column'])
-        d['$'] = b64decode(d['$'])
-    elif 'Cell' in d and 'key' in d:  # should be a row
-        d['key'] = b64decode(d['key'])
-    return d
-
-def b64decode(s):
-    b = bytes(s, 'utf-8')
-    d = base64.b64decode(b)
-    return d.decode('utf-8')
