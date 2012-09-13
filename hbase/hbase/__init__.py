@@ -39,12 +39,12 @@ class HBase(object):
         req = self._make_request(table, 'scanner', data={'Scanner': {'batch': batch}})
         resp = comp.urlopen(req)
         scanner_loc = resp.headers['Location']
-        return scanner_loc
-
-def b64decode(s):
-    b = bytes(s, 'utf-8')
-    d = base64.b64decode(b)
-    return d.decode('utf-8')
+        req = comp.Request(scanner_loc, headers={'Accept': 'application/json'})
+        resp = comp.urlopen(req)
+        while resp.code == 200:
+            yield json.loads(resp.readall().decode(), object_hook=my_hook)
+            req = comp.Request(scanner_loc, headers={'Accept': 'application/json'})
+            resp = comp.urlopen(req)
 
 def my_hook(d):
     if 'column' in d and '$' in d:  # should be a cell
@@ -54,10 +54,7 @@ def my_hook(d):
         d['key'] = b64decode(d['key'])
     return d
 
-def iter_scanner(scanner_loc):
-    req = comp.Request(scanner_loc, headers={'Accept': 'application/json'})
-    resp = comp.urlopen(req)
-    while resp.code == 200:
-        yield json.loads(resp.readall().decode(), object_hook=my_hook)
-        req = comp.Request(scanner_loc, headers={'Accept': 'application/json'})
-        resp = comp.urlopen(req)
+def b64decode(s):
+    b = bytes(s, 'utf-8')
+    d = base64.b64decode(b)
+    return d.decode('utf-8')
