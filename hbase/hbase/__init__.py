@@ -6,6 +6,19 @@ import json
 
 import hbase.compat as comp
 
+DEFAULT_SCHEMA = OrderedDict(
+    [('name', 'DEFAULT'), 
+     ('IS_META', False), 
+     ('IS_ROOT', False), 
+     ('ColumnSchema', [OrderedDict([('name', 'cf'), 
+                                    ('BLOCKSIZE', '65536'), 
+                                    ('BLOOMFILTER', False), 
+                                    ('BLOCKCACHE', True), 
+                                    ('COMPRESSION', 'GZ'), 
+                                    ('VERSIONS', 3), 
+                                    ('TTL', -1), 
+                                    ('IN_MEMORY', False)])])])
+
 def _open_and_parse(req):
     resp = comp.urlopen(req)
     return json.loads(resp.readall().decode())        
@@ -76,9 +89,12 @@ class HBConnection(HBBase):
         req = self._make_request('status', 'cluster')
         comp.urlopen(req)
 
-    def create_table(self, name):
+    def create_table(self, name, schema=None):
         tbl = self[name]
-        tbl.schema = {}
+        if schema is None:
+            schema = copy.deepcopy(DEFAULT_SCHEMA)
+            schema['name'] = name
+        tbl.schema = schema
 
     def delete_table(self, name):
         tbl = self[name]
