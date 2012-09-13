@@ -26,12 +26,8 @@ def decode_response(resp):
     s = resp.readall().decode()
     return json.loads(s, object_hook=_json_decode_hook)
 
-class HBase(object):
 
-    def __init__(self, host, port):
-        self.host = host
-        self.port = port
-        self._base_url = 'http://{0}:{1}/'.format(self.host, self.port)
+class HBBase(object):
 
     def _make_request(self, *path, data=None):
         tail = '/'.join(path)
@@ -45,6 +41,13 @@ class HBase(object):
             data = comp.comp_bytes(json.dumps(data), 'utf-8')
         return comp.Request(url, data=data, headers=headers)
 
+class HBConnection(HBBase):
+
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
+        self._base_url = 'http://{0}:{1}/'.format(self.host, self.port)
+
     @property
     def tables(self):
         req = self._make_request()
@@ -57,18 +60,47 @@ class HBase(object):
         req = self._make_request('version')
         return _open_and_parse(req)
 
+    @property
+    def cluster_version(self):
+        req = self._make_request('version', 'cluster')
+        return _open_and_parse(req)
+
+    @property
+    def cluster_status(self):
+        req = self._make_request('status', 'cluster')
+        comp.urlopen(req)
+
+    def create_table(self, name):
+        tbl = self[name]
+        tbl.schema = {}
+
     def __getitem__(self, name):
         return HBTable(name, self)
 
-class HBTable(object):
+class HBTable(HBBase):
 
     def __init__(self, name, root):
         self.name = name
-        self.root = root
+        self._base_url = '{0}{1}/'.format(root._base_url, self.name)
+
+    @property
+    def schema(self):
+        req = self._make_request('schema')
+        return _open_and_parse(req)
+
+    @schema.setter
+    def schema(self, schema):
+        req = self._make_request('schema', data=schema)
+        return _open_and_parse(req)
+
+    @property
+    def regions(self):
+        req = self._make_request('regions')
+        return _open_and_parse(req)
 
     def scan(self, batch=1):
-        req = self.root._make_request(self.name, 'scanner', 
-                                      data={'Scanner': {'batch': batch}})
+        req = self._make_request('scanner', 
+                                 data={'Scanner': {'batch': str(batch)}})
         resp = comp.urlopen(req)
         scanner_loc = resp.headers['Location']
 
@@ -76,12 +108,12 @@ class HBTable(object):
             req = comp.Request(scanner_loc, 
                                headers={'Accept': 'application/json'})
             return comp.urlopen(req)
-        resp = _next()
 
+        resp = _next()
         while resp.code == 200:
             yield decode_response(resp)
             resp = _next()
 
     def put_cell(self, row, col, data):
-        req = self.root._make_request(self.name, row, col, data=data)
+        req = self._make_request(row, col, data=data)
         comp.urlopen(req)
