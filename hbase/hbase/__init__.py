@@ -20,18 +20,23 @@ class HBase(object):
         tail = '/'.join(path)
         url = self._base_url + tail
         headers = {'Accept': 'application/json'}
-        if data is not None:
+        if isinstance(data, str):
+            headers['Content-Type'] = 'application/octet-stream'
+            data = comp.comp_bytes(data, 'utf-8')
+        elif data is not None:
             headers['Content-Type'] = 'application/json'
-            data = bytes(json.dumps(data), 'utf-8')
+            data = comp.comp_bytes(json.dumps(data), 'utf-8')
         return comp.Request(url, data=data, headers=headers)
 
-    def get_tables(self):
+    @property
+    def tables(self):
         req = self._make_request()
         parsed_json = _open_and_parse(req)
-        for table_struct in parsed_json['table']:
-            yield table_struct['name']
+        return [ table_struct['name']
+                 for table_struct in parsed_json['table'] ]
 
-    def get_version(self):
+    @property
+    def version(self):
         req = self._make_request('version')
         return _open_and_parse(req)
 
@@ -45,6 +50,10 @@ class HBase(object):
             yield json.loads(resp.readall().decode(), object_hook=my_hook)
             req = comp.Request(scanner_loc, headers={'Accept': 'application/json'})
             resp = comp.urlopen(req)
+
+    def put_cell(self, table, row, col, data):
+        req = self._make_request(table, row, col, data=data)
+        comp.urlopen(req)
 
 def my_hook(d):
     if 'column' in d and '$' in d:  # should be a cell
