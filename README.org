@@ -1,2 +1,4 @@
 
-Code collection if things I used in my Bachelor thesis.
+* Project Midas
+
+Code collection of things I used in my Bachelor thesis.
