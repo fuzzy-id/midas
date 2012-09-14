@@ -48,10 +48,11 @@ def decode_response(resp):
 
 class HBBase(object):
 
-    def _make_request(self, data=None, *path):
+    def _make_request(self, *path, **kwargs):
         tail = '/'.join(path)
         url = self._base_url + tail
         headers = {'Accept': 'application/json'}
+        data = kwargs.get('data', None)
         if isinstance(data, str):
             headers['Content-Type'] = 'application/octet-stream'
             data = comp.comp_bytes(data, 'utf-8')
