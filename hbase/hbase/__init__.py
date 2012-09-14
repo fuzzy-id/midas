@@ -10,14 +10,14 @@ DEFAULT_SCHEMA = collections.OrderedDict(
     [('name', 'DEFAULT'), 
      ('IS_META', False), 
      ('IS_ROOT', False), 
-     ('ColumnSchema', [OrderedDict([('name', 'cf'), 
-                                    ('BLOCKSIZE', '65536'), 
-                                    ('BLOOMFILTER', False), 
-                                    ('BLOCKCACHE', True), 
-                                    ('COMPRESSION', 'GZ'), 
-                                    ('VERSIONS', 3), 
-                                    ('TTL', -1), 
-                                    ('IN_MEMORY', False)])])])
+     ('ColumnSchema', [collections.OrderedDict([('name', 'cf'), 
+                                                ('BLOCKSIZE', '65536'), 
+                                                ('BLOOMFILTER', False), 
+                                                ('BLOCKCACHE', True), 
+                                                ('COMPRESSION', 'GZ'), 
+                                                ('VERSIONS', 3), 
+                                                ('TTL', -1), 
+                                                ('IN_MEMORY', False)])])])
 
 def _open_and_parse(req):
     resp = comp.urlopen(req)
