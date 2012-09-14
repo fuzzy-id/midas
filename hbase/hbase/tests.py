@@ -20,21 +20,21 @@ class HelperTests(unittest.TestCase):
 
     def test_str64encode(self):
         from hbase import str64encode
-        result = str64decode('bar')
+        result = str64encode('bar')
         self.assertEqual(result, 'YmFy')
 
 
 class TableListTests(unittest.TestCase):
 
     def _make_one(self):
-        from hbase import HBase
-        return HBase('localhost', '8080')
+        from hbase import HBConnection
+        return HBConnection('localhost', '8080')
 
     @mock.patch("hbase.compat.urlopen")
     def test_query_tables_list(self, urlopen):
         urlopen().readall.return_value = b'{"table":[{"name":"test"}]}'
         hb_con = self._make_one()
-        self.assertEqual(list(hb_con.get_tables()), ['test'])
+        self.assertEqual(hb_con.tables, ['test'])
 
     @mock.patch("hbase.compat.urlopen")
     def test_query_version_information(self, urlopen):
@@ -44,7 +44,7 @@ class TableListTests(unittest.TestCase):
                       '"OS":"Linux 3.4.2-x86_64-linode25 amd64"',
                       '"REST":"0.0.2","Server":"jetty/6.1.26"}']), 'utf-8')
         hb_con = self._make_one()
-        self.assertEqual(hb_con.get_version(), 
+        self.assertEqual(hb_con.version, 
                          {"JVM": "Oracle Corporation 1.7.0_07-23.3-b01",
                           "Jersey": "1.8",
                           "OS": "Linux 3.4.2-x86_64-linode25 amd64",
