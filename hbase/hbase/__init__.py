@@ -34,7 +34,7 @@ def open_and_parse(req):
     return decode_response(resp)        
 
 def decode_response(resp):
-    s = resp.readall().decode()
+    s = resp.read().decode()
     return json.loads(s, object_hook=_json_decode_hook)
 
 def _json_decode_hook(d):
