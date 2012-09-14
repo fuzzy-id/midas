@@ -35,12 +35,12 @@ class MakeRequestTests(unittest.TestCase):
     def test_call_without_args(self):
         func = self._get_target_func()
         req = func()
-        self.assertEqual(req.full_url, 'http://example.com/')
+        self.assertEqual(req.get_full_url(), 'http://example.com/')
 
     def test_path_expansion(self):
         func = self._get_target_func()
         req = func('foo', 'bar')
-        self.assertEqual(req.full_url, 'http://example.com/foo/bar')
+        self.assertEqual(req.get_full_url(), 'http://example.com/foo/bar')
 
     def test_w_str_as_data(self):
         func = self._get_target_func()
