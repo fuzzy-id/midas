@@ -23,6 +23,17 @@ class HelperTests(unittest.TestCase):
         result = str64encode('bar')
         self.assertEqual(result, 'YmFy')
 
+    def test_decode_response_on_a_row(self):
+        from hbase import decode_response
+        resp = mock.Mock()
+        resp.readall.return_value = (
+            b'{"Row": {"key": "cm93MQ==", '
+            + b'"Cell": [{"column": "Y2Y6YQ==", "$": "YmFy"}]}}')
+        self.assertEqual(decode_response(resp), 
+                         {'Row': {'key': 'row1',
+                                  'Cell': [{'$': 'bar',
+                                            'column': 'cf:a'}]}})
+
 
 class MakeRequestTests(unittest.TestCase):
 
