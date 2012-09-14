@@ -6,18 +6,18 @@ import json
 
 import hbase.compat as comp
 
-DEFAULT_SCHEMA = collections.OrderedDict(
+DEFAULT_SCHEMA = comp.OrderedDict(
     [('name', 'DEFAULT'), 
      ('IS_META', False), 
      ('IS_ROOT', False), 
-     ('ColumnSchema', [collections.OrderedDict([('name', 'cf'), 
-                                                ('BLOCKSIZE', '65536'), 
-                                                ('BLOOMFILTER', False), 
-                                                ('BLOCKCACHE', True), 
-                                                ('COMPRESSION', 'GZ'), 
-                                                ('VERSIONS', 3), 
-                                                ('TTL', -1), 
-                                                ('IN_MEMORY', False)])])])
+     ('ColumnSchema', [comp.OrderedDict([('name', 'cf'), 
+                                         ('BLOCKSIZE', '65536'), 
+                                         ('BLOOMFILTER', False), 
+                                         ('BLOCKCACHE', True), 
+                                         ('COMPRESSION', 'GZ'), 
+                                         ('VERSIONS', 3), 
+                                         ('TTL', -1), 
+                                         ('IN_MEMORY', False)])])])
 
 def _open_and_parse(req):
     resp = comp.urlopen(req)
@@ -48,7 +48,7 @@ def decode_response(resp):
 
 class HBBase(object):
 
-    def _make_request(self, *path, data=None):
+    def _make_request(self, data=None, *path):
         tail = '/'.join(path)
         url = self._base_url + tail
         headers = {'Accept': 'application/json'}
@@ -172,7 +172,7 @@ class Row(object):
                                       [ str(cell) for cell in self.cells ])
 
     def as_parsable_json(self):
-        d = collections.OrderedDict()
+        d = comp.OrderedDict()
         d['key'] = str64encode(self.key)
         d['Cell'] = [ cell.as_parsable_json() 
                       for cell in self.cells ]
@@ -196,7 +196,7 @@ class Cell(object):
         self._value = new_val
 
     def as_parsable_json(self):
-        d = collections.OrderedDict()
+        d = comp.OrderedDict()
         d['column'] = str64encode(self.column)
         d['$'] = str64encode(self.value)
         if self.ts is not None:

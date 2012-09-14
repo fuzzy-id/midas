@@ -17,3 +17,8 @@ if PY3K:  # pragma: no cover
     comp_bytes = bytes
 else:
     comp_bytes = lambda s, _: s
+
+if PY26:  # pragma: no cover
+    from ordereddict import OrderedDict
+else:
+    from collections import OrderedDict
