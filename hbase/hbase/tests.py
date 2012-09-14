@@ -24,6 +24,20 @@ class HelperTests(unittest.TestCase):
         self.assertEqual(result, 'YmFy')
 
 
+class MakeRequestTests(unittest.TestCase):
+
+    def _get_target_func(self):
+        from hbase import HBBase
+        class Wrapper(HBBase):
+            _base_url = 'http://example.com/'
+        return Wrapper()._make_request
+
+    def test_path_expansion(self):
+        func = self._get_target_func()
+        req = func('foo', 'bar')
+        self.assertEqual(req.full_url, 'http://example.com/foo/bar')
+
+
 class TableListTests(unittest.TestCase):
 
     def _make_one(self):
