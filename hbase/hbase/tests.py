@@ -32,11 +32,30 @@ class MakeRequestTests(unittest.TestCase):
             _base_url = 'http://example.com/'
         return Wrapper()._make_request
 
+    def test_call_without_args(self):
+        func = self._get_target_func()
+        req = func()
+        self.assertEqual(req.full_url, 'http://example.com/')
+
     def test_path_expansion(self):
         func = self._get_target_func()
         req = func('foo', 'bar')
         self.assertEqual(req.full_url, 'http://example.com/foo/bar')
 
+    def test_w_str_as_data(self):
+        func = self._get_target_func()
+        req = func('foo', data='bar')
+        self.assertEqual(req.data, b'bar')
+        self.assertEqual(req.headers['Content-type'],
+                         'application/octet-stream')
+    
+    def test_w_list_as_data(self):
+        func = self._get_target_func()
+        req = func('foo', data=['bar'])
+        self.assertEqual(req.data, b'["bar"]')
+        self.assertEqual(req.headers['Content-type'],
+                         'application/json')
+    
 
 class TableListTests(unittest.TestCase):
 
