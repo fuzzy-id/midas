@@ -9,16 +9,22 @@ import sys
 from ev_transpose import TP_TSTAMP_FORMAT
 from ev_transpose.compat import ZipFile
 
+import hbase
+
 TSTAMP_FORMAT = 'top-1m-%Y-%m-%d.csv.zip'
 
 def mapper():
+    con = hbase.HBConnection('localhost', '8080')
+    tbl = con['alexa-top-1m']
     for fname in sys.stdin:
         fname = fname.strip()
         print("Processing '{0}'".format(fname), file=sys.stderr)
         tstamp = convert_fname_to_tstamp(fname)
+        column = 'ts:{0}'.format(tstamp)
         for l in unzip_file(fname):
             rank, name = split_rank_name(l)
-            print('{0}\t{1}, {2}'.format(name, tstamp, rank))
+            row = hbase.Row(name, [hbase.Cell(str(rank), column)])
+            tbl.update(row)
     return 0
 
 def convert_fname_to_tstamp(fname):
