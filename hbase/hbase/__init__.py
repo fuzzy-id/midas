@@ -2,6 +2,7 @@
 
 import base64
 import collections
+import copy
 import json
 
 import hbase.compat as comp

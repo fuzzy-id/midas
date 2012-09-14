@@ -14,17 +14,20 @@ import hbase
 TSTAMP_FORMAT = 'top-1m-%Y-%m-%d.csv.zip'
 
 def mapper():
-    con = hbase.HBConnection('localhost', '8080')
+    con = hbase.HBConnection('localhost', '50080')
     tbl = con['alexa-top-1m']
+    print(tbl.schema, file=sys.stderr)
     for fname in sys.stdin:
         fname = fname.strip()
         print("Processing '{0}'".format(fname), file=sys.stderr)
         tstamp = convert_fname_to_tstamp(fname)
         column = 'ts:{0}'.format(tstamp)
-        for l in unzip_file(fname):
+        for i, l in enumerate(unzip_file(fname)):
             rank, name = split_rank_name(l)
             row = hbase.Row(name, [hbase.Cell(str(rank), column)])
             tbl.update(row)
+            if i % 1000 == 0:
+                print("Processed {0} entries".format(i), file=sys.stderr)
     return 0
 
 def convert_fname_to_tstamp(fname):
