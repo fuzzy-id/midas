@@ -11,6 +11,19 @@ else:
     import unittest
 
 
+class HelperTests(unittest.TestCase):
+
+    def test_str64decode(self):
+        from hbase import str64decode
+        result = str64decode('YmFy')
+        self.assertEqual(result, 'bar')
+
+    def test_str64encode(self):
+        from hbase import str64encode
+        result = str64decode('bar')
+        self.assertEqual(result, 'YmFy')
+
+
 class TableListTests(unittest.TestCase):
 
     def _make_one(self):
