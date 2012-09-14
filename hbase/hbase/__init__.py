@@ -6,7 +6,7 @@ import json
 
 import hbase.compat as comp
 
-DEFAULT_SCHEMA = OrderedDict(
+DEFAULT_SCHEMA = collections.OrderedDict(
     [('name', 'DEFAULT'), 
      ('IS_META', False), 
      ('IS_ROOT', False), 
