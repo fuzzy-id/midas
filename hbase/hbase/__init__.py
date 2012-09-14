@@ -19,18 +19,6 @@ DEFAULT_SCHEMA = comp.OrderedDict(
                                          ('TTL', -1), 
                                          ('IN_MEMORY', False)])])])
 
-def _open_and_parse(req):
-    resp = comp.urlopen(req)
-    return json.loads(resp.readall().decode())        
-
-def _json_decode_hook(d):
-    if 'column' in d and '$' in d:  # should be a cell
-        d['column'] = str64decode(d['column'])
-        d['$'] = str64decode(d['$'])
-    elif 'Cell' in d and 'key' in d:  # should be a row
-        d['key'] = str64decode(d['key'])
-    return d
-
 def str64decode(s):
     b = comp.comp_bytes(s, 'utf-8')
     d = base64.b64decode(b)
@@ -41,9 +29,21 @@ def str64encode(s):
     d = base64.b64encode(b)
     return d.decode('utf-8')
 
+def open_and_parse(req):
+    resp = comp.urlopen(req)
+    return decode_response(resp)        
+
 def decode_response(resp):
     s = resp.readall().decode()
     return json.loads(s, object_hook=_json_decode_hook)
+
+def _json_decode_hook(d):
+    if 'column' in d and '$' in d:  # should be a cell
+        d['column'] = str64decode(d['column'])
+        d['$'] = str64decode(d['$'])
+    elif 'Cell' in d and 'key' in d:  # should be a row
+        d['key'] = str64decode(d['key'])
+    return d
 
 
 class HBBase(object):
@@ -71,19 +71,19 @@ class HBConnection(HBBase):
     @property
     def tables(self):
         req = self._make_request()
-        parsed_json = _open_and_parse(req)
+        parsed_json = open_and_parse(req)
         return [ table_struct['name']
                  for table_struct in parsed_json['table'] ]
 
     @property
     def version(self):
         req = self._make_request('version')
-        return _open_and_parse(req)
+        return open_and_parse(req)
 
     @property
     def cluster_version(self):
         req = self._make_request('version', 'cluster')
-        return _open_and_parse(req)
+        return open_and_parse(req)
 
     @property
     def cluster_status(self):
@@ -114,7 +114,7 @@ class HBTable(HBBase):
     @property
     def schema(self):
         req = self._make_request('schema')
-        return _open_and_parse(req)
+        return open_and_parse(req)
 
     @schema.setter
     def schema(self, schema):
@@ -130,7 +130,7 @@ class HBTable(HBBase):
     @property
     def regions(self):
         req = self._make_request('regions')
-        return _open_and_parse(req)
+        return open_and_parse(req)
 
     def scan(self, batch=1):
         req = self._make_request('scanner', 
