@@ -20,5 +20,6 @@ setup(name='ev_transpose',
       entry_points={
         'console_scripts':
             ['ev_tp_mapper=ev_transpose.mapper:mapper',
-             'ev_tp_reducer=ev_transpose.reducer:reducer']
+             'ev_tp_reducer=ev_transpose.reducer:reducer',
+             'ev_alex2db=ev_transpose.model:push_to_db']
         })
