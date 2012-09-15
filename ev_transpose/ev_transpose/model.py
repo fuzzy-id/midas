@@ -35,7 +35,7 @@ def push_to_db():
     engine = create_engine(db)
     Session.configure(bind=engine)
     Base.metadata.create_all(engine)
-    sess = Session()
+    session = Session()
     for fname in sys.stdin:
         fname = fname.strip()
         print("Processing '{0}'".format(fname), file=sys.stderr)
