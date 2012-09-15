@@ -31,10 +31,12 @@ def mapper():
     return 0
 
 def convert_fname_to_tstamp(fname):
-    fname_last = os.path.basename(fname)
-    date = datetime.datetime.strptime(fname_last, TSTAMP_FORMAT)
+    date = convert_fname_to_date(fname)
     return date.strftime(TP_TSTAMP_FORMAT)
 
+def convert_fname_to_date(fname):
+    fname_last = os.path.basename(fname)
+    return datetime.datetime.strptime(fname_last, TSTAMP_FORMAT)
 
 def unzip_file(fname, filelist=('top-1m.csv', )):
     ''' Iterates over the compressed file.
