@@ -44,7 +44,7 @@ def push_to_db():
             rank, name = split_rank_name(l)
             entry = Rank(name=name, rank=rank, ts=date)
             session.add(entry)
-            if i % 10000 == 0:
-                session.commit()
-                print("Processed {0} entries".format(i), file=sys.stderr)
+        else:
+            session.commit()
+            print("Commited", file=sys.stderr)
     return 0
