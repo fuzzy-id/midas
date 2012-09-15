@@ -13,6 +13,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 from ev_transpose.mapper import convert_fname_to_date
+from ev_transpose.mapper import split_rank_name
 from ev_transpose.mapper import unzip_file
 
 
