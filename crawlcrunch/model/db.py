@@ -3,6 +3,7 @@
 from datetime import datetime
 
 import logging
+import threading
 
 from sqlalchemy import Column
 from sqlalchemy import DateTime
@@ -23,6 +24,8 @@ from crawlcrunch.model import CrunchBaseFetcherMixin
 
 Base = declarative_base()
 Session = scoped_session(sessionmaker())
+
+DB_LOCK = threading.Lock()
 
 TM_FORMAT = '%a %b %d %H:%M:%S %Z %Y'
 
@@ -154,7 +157,8 @@ class Company(Base, CrunchBaseFetcherMixin):
             if self.id is not None:
                 session.delete(self)
             session.add(new_c)
-            session.commit()
+            with DB_LOCK:
+                session.commit()
 
     def query_url(self):
         return self.company_url_tpl.format(self.name)
