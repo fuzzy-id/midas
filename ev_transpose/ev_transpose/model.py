@@ -20,6 +20,7 @@ Base = declarative_base()
 Session = sessionmaker()
 
 class Rank(Base):
+    __tablename__ = 'ranking'
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
