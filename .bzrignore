@@ -6,5 +6,6 @@ midas.egg-info/
 
 # Files created when running tox
 .tox/
+SQLAlchemy-*-py*.egg/
 mock-*-py*.egg/
 unittest2-*-py2.6.egg/
