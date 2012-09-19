@@ -77,9 +77,9 @@ class FetcherTests(unittest.TestCase):
 
     @mock.patch('logging.critical')
     @mock.patch('logging.exception')
-    def test_505_is_logged_but_retry_happens(self, exc, critical):
+    def test_503_is_logged_but_retry_happens(self, exc, critical):
         dc = DummyCompany()
-        dc.update.side_effect = HTTPError(None, 505, None, None, None)
+        dc.update.side_effect = HTTPError(None, 503, None, None, None)
         _, semaphore = self._test_it(dc)
         dc.update.assert_called_once()
         exc.assert_called_once()
