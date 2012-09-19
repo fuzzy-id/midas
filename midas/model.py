@@ -40,7 +40,7 @@ def push_to_db():
         fname = fname.strip()
         print("Processing '{0}'".format(fname), file=sys.stderr)
         date = convert_fname_to_date(fname)
-        for i, l in enumerate(unzip_file(fname)):
+        for l in unzip_file(fname):
             rank, name = split_rank_name(l)
             entry = Rank(name=name, rank=rank, ts=date)
             session.add(entry)
