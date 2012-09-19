@@ -1,2 +1,10 @@
-ev_transpose/ev_transpose.egg-info
 run.sh
+
+# Files created when running tests
+.coverage
+
+# Files created when running tox
+.tox/
+ev_transpose.egg-info/
+mock-*-py*.egg/
+unittest2-*-py2.6.egg/
