@@ -26,6 +26,12 @@ class HelperTests(unittest.TestCase):
         from ev_transpose.mapper import split_rank_name
         result = split_rank_name('1,foo,bar')
         self.assertEqual(result, (1, 'foo,bar'))
+
+    def test_normalize_name(self):
+        from ev_transpose.mapper import normalize_site
+        self.assertEqual('example.com', normalize_site('example.com'))
+        self.assertEqual('example.com', normalize_site('http://www.example.com/'))
+        self.assertEqual('example.com', normalize_site('www.example.com/foo'))
         
 
 class ScriptTests(IntegrationTestCase):
