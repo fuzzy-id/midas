@@ -1,21 +1,39 @@
 #!/bin/bash
 
+# `infile` should contain a list with the file names in hdfs you want
+# processed. One name each line. See
+# http://hadoop.apache.org/docs/r1.0.3/streaming.html#Making+Files+Available+to+Tasks
+# for further information on how to combine this with the `#` in the
+# `FILES` variable.
 INPUT="input/infile"
-OUT="out"
-
 FILES="hdfs://localhost:9000/user/thbach/top-1m#data"
 
+# Where the output should be saved. THIS IS GOING TO BE DELETED
+# FURTHER DOWN!
+OUT="out"
 
-MAPPER="${HOME}/py_envs/cc26/bin/ev_tp_mapper"
+# Set this according to your environment
+MAPPER="${HOME}/py_envs/cc26/bin/md_top1m_to_sha1"
 HADOOP_HOME="${HOME}/opt/hadoop-1.0.3"
+
+# Should equal to the number of keys you expect to produce. Currently
+# the script uses the first two digets of the hash which gives us
+# 16*16 = 256 keys.
+NUM_KEYS="256"
+
+# Set `mapred.map.tasks` to a value which best fits your environment.
+NUM_MAPS="16"
+
 HADOOP_BIN="${HADOOP_HOME}/bin/hadoop"
 HADOOP_STREAMING="${HADOOP_HOME}/contrib/streaming/hadoop-streaming-1.0.3.jar"
 
+# Delete the output directory
 ${HADOOP_BIN} fs -rmr ${OUT}
 
+
 ${HADOOP_BIN} jar ${HADOOP_STREAMING} \
-    -D mapred.map.tasks=6 \
-    -D mapred.reduce.tasks=256 \
+    -D mapred.map.tasks=${NUM_MAPS} \
+    -D mapred.reduce.tasks=${NUM_KEYS} \
     -files ${FILES} \
     -input ${INPUT} \
     -output ${OUT} \
