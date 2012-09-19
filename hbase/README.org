@@ -1,4 +1,0 @@
-
-* HBase
-
-Query HBase via Stargate in Python.
