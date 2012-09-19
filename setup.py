@@ -19,7 +19,6 @@ setup(name='ev_transpose',
       test_suite='ev_transpose.tests',
       entry_points={
         'console_scripts':
-            ['ev_tp_mapper=ev_transpose.mapper:mapper',
-             'ev_tp_reducer=ev_transpose.reducer:reducer',
+            ['ev_top1m_to_sha1=ev_transpose.mapper:mapper',
              'ev_alex2db=ev_transpose.model:push_to_db']
         })
