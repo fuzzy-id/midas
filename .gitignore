@@ -6,3 +6,4 @@
 mock-*-py?.?.egg/
 argparse-*-py2.6.egg/
 unittest2-*-py2.6.egg/
+run.sh
