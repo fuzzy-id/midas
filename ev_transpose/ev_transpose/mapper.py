@@ -3,6 +3,7 @@
 from __future__ import print_function
 
 import datetime
+import hashlib
 import os.path
 import sys
 
@@ -14,21 +15,28 @@ import hbase
 TSTAMP_FORMAT = 'top-1m-%Y-%m-%d.csv.zip'
 
 def mapper():
-    con = hbase.HBConnection('localhost', '50080')
-    tbl = con['alexa-top-1m']
-    print(tbl.schema, file=sys.stderr)
     for fname in sys.stdin:
         fname = fname.strip()
         print("Processing '{0}'".format(fname), file=sys.stderr)
         tstamp = convert_fname_to_tstamp(fname)
-        column = 'ts:{0}'.format(tstamp)
-        for i, l in enumerate(unzip_file(fname)):
+        for l in unzip_file(fname):
             rank, name = split_rank_name(l)
-            row = hbase.Row(name, [hbase.Cell(str(rank), column)])
-            tbl.update(row)
-            if i % 1000 == 0:
-                print("Processed {0} entries".format(i), file=sys.stderr)
+            domain_dot_tld = normalize_site(name)
+            print(type(domain_dot_tld))
+            h = hashlib.sha1(domain_dot_tld)
+            h_start = h[:2]
+            print("{0}\t{1}, {2}, {3}".format(h_start, name, tstamp, rank))
     return 0
+
+def normalize_site(name):
+    splits = name.split('/')
+    if splits[0] == 'http:':
+        assert splits[1] == ''
+        host = splits[2]
+    else:
+        host = splits[0]
+    splits = host.split('.')
+    return '.'.join(splits[-2:])
 
 def convert_fname_to_tstamp(fname):
     date = convert_fname_to_date(fname)
