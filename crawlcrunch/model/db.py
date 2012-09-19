@@ -25,7 +25,7 @@ from crawlcrunch.model import CrunchBaseFetcherMixin
 Base = declarative_base()
 Session = scoped_session(sessionmaker())
 
-DB_LOCK = threading.Lock()
+DB_LOCK = threading.RLock()
 
 TM_FORMAT = '%a %b %d %H:%M:%S %Z %Y'
 
