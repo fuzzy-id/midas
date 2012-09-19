@@ -7,8 +7,8 @@ import hashlib
 import os.path
 import sys
 
-from ev_transpose import TP_TSTAMP_FORMAT
-from ev_transpose.compat import ZipFile
+from midas import TP_TSTAMP_FORMAT
+from midas.compat import ZipFile
 
 TSTAMP_FORMAT = 'top-1m-%Y-%m-%d.csv.zip'
 
