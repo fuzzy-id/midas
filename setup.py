@@ -6,6 +6,8 @@ import sys
 
 PY_VERSION = sys.version_info[:2]
 
+install_requires = ['sqlalchemy']
+
 tests_require = ['mock']
 
 if PY_VERSION == (2, 6):
@@ -15,6 +17,7 @@ setup(name='midas',
       version='0.0a1',
       description='Try to get some useful information from Top1M.',
       author='Thomas Bach',
+      install_requires=install_requires,
       tests_require=tests_require,
       test_suite='midas.tests',
       entry_points={
