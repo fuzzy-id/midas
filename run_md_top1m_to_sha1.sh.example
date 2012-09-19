@@ -15,7 +15,7 @@ ${HADOOP_BIN} fs -rmr ${OUT}
 
 ${HADOOP_BIN} jar ${HADOOP_STREAMING} \
     -D mapred.map.tasks=6 \
-    -D mapred.reduce.tasks=0 \
+    -D mapred.reduce.tasks=256 \
     -files ${FILES} \
     -input ${INPUT} \
     -output ${OUT} \
