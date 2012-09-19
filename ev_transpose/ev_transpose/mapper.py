@@ -10,8 +10,6 @@ import sys
 from ev_transpose import TP_TSTAMP_FORMAT
 from ev_transpose.compat import ZipFile
 
-import hbase
-
 TSTAMP_FORMAT = 'top-1m-%Y-%m-%d.csv.zip'
 
 def mapper():
@@ -21,9 +19,7 @@ def mapper():
         tstamp = convert_fname_to_tstamp(fname)
         for l in unzip_file(fname):
             rank, name = split_rank_name(l)
-            domain_dot_tld = normalize_site(name)
-            print(type(domain_dot_tld))
-            h = hashlib.sha1(domain_dot_tld)
+            h = hashlib.sha1(name).hexdigest()
             h_start = h[:2]
             print("{0}\t{1}, {2}, {3}".format(h_start, name, tstamp, rank))
     return 0
