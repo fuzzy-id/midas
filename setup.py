@@ -11,7 +11,7 @@ install_requires = ['sqlalchemy', ]
 tests_require = ['mock', ]
 if py_version == (2, 6):
     tests_require.append('unittest2')
-    tests_require.append('argparse')
+    install_requires.append('argparse')
 
 setup(name='crawlcrunch',
       version='0.2',
