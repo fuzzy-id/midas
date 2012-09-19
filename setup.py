@@ -22,6 +22,6 @@ setup(name='midas',
       test_suite='midas.tests',
       entry_points={
         'console_scripts':
-            ['md_top1m_to_sha1=midas.map_to_sha1:mapper',
-             'md_top1m_to_db=midas.model:push_to_db']
+            ['md_top1m_to_sha1=midas.transform:map_to_sha1',
+             'md_top1m_to_db=midas.transform:push_to_db']
         })
