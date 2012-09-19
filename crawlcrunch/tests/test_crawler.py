@@ -33,7 +33,7 @@ class FetcherTests(unittest.TestCase):
 
     def _test_it(self, company):
         from crawlcrunch.crawler import Fetcher
-        semaphore = threading.Semaphore(1)
+        semaphore = mock.MagicMock()
         cf = Fetcher(company, semaphore)
         cf.run()
         return cf, semaphore
@@ -43,7 +43,7 @@ class FetcherTests(unittest.TestCase):
         dc = DummyCompany()
         dc.update.side_effect = Exception()
         _, semaphore = self._test_it(dc)
-        self.assertTrue(semaphore.acquire(False))
+        semaphore.release.assert_called_once_with()
         critical.assert_called_once()
 
     @mock.patch('logging.critical')
@@ -53,7 +53,7 @@ class FetcherTests(unittest.TestCase):
         _, semaphore = self._test_it(dc)
         critical.assert_has_calls([])
         critical.assert_called_once()
-        self.assertTrue(semaphore.acquire(False))
+        semaphore.release.assert_called_once_with()
 
     @mock.patch('logging.exception')
     def test_not_404_is_logged(self, exc):
@@ -62,7 +62,19 @@ class FetcherTests(unittest.TestCase):
         _, semaphore = self._test_it(dc)
         dc.update.assert_called_once()
         exc.assert_called_once()
-        self.assertTrue(semaphore.acquire(False))
+        semaphore.release.assert_called_once_with()
+
+    @mock.patch('logging.critical')
+    @mock.patch('logging.exception')
+    def test_504_is_logged_but_retry_happens(self, exc, critical):
+        dc = DummyCompany()
+        dc.update.side_effect = HTTPError(None, 504, None, None, None)
+        _, semaphore = self._test_it(dc)
+        dc.update.assert_called_once()
+        exc.assert_called_once()
+        self.assertEqual(critical.call_count, 2)
+        self.assertEqual(semaphore.release.call_count, 3)
+
 
 
 class IntegrationTests(unittest.TestCase):

@@ -32,12 +32,19 @@ class Fetcher(threading.Thread):
         self.semaphore = semaphore
 
     def run(self):
+        self.make_update(0)
+
+    def make_update(self, tries=0):
         try:
             self.inst.update()
         except HTTPError as e:
             if e.code == 404:
                 logging.critical(
                     '{0}: Got 404'.format(self.inst))
+            elif e.code == 504 and tries < 2:
+                logging.critical(
+                    '{0}: Got 504 ({1} attempt[s])'.format(self.inst, tries + 1))
+                self.make_update(tries + 1)
             else:
                 logging.exception(e)
         except Exception as e:
