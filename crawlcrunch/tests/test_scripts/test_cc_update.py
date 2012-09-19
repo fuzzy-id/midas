@@ -180,8 +180,8 @@ class MainSqlIntegrationTests(MainIntegrationTestCase):
         prepare_url_open(urlopen,
                          {COMPANIES_URL: [{'permalink': 'foo', },
                                           {'permalink': 'bar', }],
-                          FOO_URL: {'name': 'foo'},
-                          BAR_URL: {'name': 'bar'}})
+                          FOO_URL: {'permalink': 'foo'},
+                          BAR_URL: {'permalink': 'bar'}})
         with tempfile.NamedTemporaryFile() as fp:
             db_file = 'sqlite:///{0}'.format(fp.name)
             self.assertEqual( self._test_it('--sql', db_file), 0)

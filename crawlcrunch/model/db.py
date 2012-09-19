@@ -63,16 +63,16 @@ class CompanyList(CrunchBaseFetcherMixin):
             if c.id is None:
                 yield c
 
-    def get(self, name):
+    def get(self, permalink):
         session = Session()
-        q = session.query(Company).filter(Company.name == name)
+        q = session.query(Company).filter(Company.permalink == permalink)
         try:
             return q.one()
         except NoResultFound as e:
-            return Company(name=name)
+            return Company(permalink=permalink)
         except MultipleResultsFound as e:
             logging.critical(
-                "Exception raised when processing: '{0}'".format(name))
+                "Exception raised when processing: '{0}'".format(permalink))
             raise e
 
     def update(self):
@@ -130,7 +130,7 @@ class Company(Base, CrunchBaseFetcherMixin):
     # 'video_embeds': list
 
     def __str__(self):
-        return 'Company( {0} )'.format(self.name)
+        return 'Company( {0} )'.format(self.permalink)
 
     @classmethod
     def make_from_parsed_json(cls, parsed_json):
@@ -161,7 +161,7 @@ class Company(Base, CrunchBaseFetcherMixin):
                 session.commit()
 
     def query_url(self):
-        return self.company_url_tpl.format(self.name)
+        return self.company_url_tpl.format(self.permalink)
 
 
 class FundingRound(Base):

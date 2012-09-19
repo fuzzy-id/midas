@@ -113,17 +113,17 @@ class CompanyTests(SqlTestCase):
         self.assertEqual(result, [])
 
     def test_query_url(self):
-        c = self._make_one(name='foo')
+        c = self._make_one(permalink='foo')
         expected = 'http://api.crunchbase.com/v/1/company/foo.js'
         self.assertEqual(c.query_url(), expected)
     
     def test_str(self):
-        c = self._make_one(name='foo')
+        c = self._make_one(permalink='foo')
         self.assertEqual(str(c), 'Company( foo )')
 
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_update_when_company_fresh(self, urlopen):
-        c = self._get_target_class()(name='foo')
+        c = self._get_target_class()(permalink='foo')
         prepare_url_open(urlopen, {FOO_URL: {'description': 'blah',
                                              'updated_at': TSTAMP}})
         c.update()
@@ -133,7 +133,7 @@ class CompanyTests(SqlTestCase):
 
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_update_when_company_persisted(self, urlopen):
-        c = self._make_one(name='foo')
+        c = self._make_one(permalink='foo')
         prepare_url_open(urlopen, {FOO_URL: {'description': 'blah',
                                              'updated_at': TSTAMP}})
         c.update()
