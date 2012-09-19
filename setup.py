@@ -19,6 +19,6 @@ setup(name='midas',
       test_suite='midas.tests',
       entry_points={
         'console_scripts':
-            ['md_top1m_to_sha1=midas.mapper:mapper',
+            ['md_top1m_to_sha1=midas.map_to_sha1:mapper',
              'md_top1m_to_db=midas.model:push_to_db']
         })

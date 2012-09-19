@@ -11,8 +11,8 @@ if PY_VERSION == (2, 6):  # pragma: no cover
 else:
     import unittest
 
-from ev_transpose import Entry
-from ev_transpose.compat import StringIO
+from midas import Entry
+from midas.compat import StringIO
 
 
 __here__ = os.path.abspath(os.path.dirname(__file__))
