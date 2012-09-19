@@ -41,7 +41,7 @@ class Fetcher(threading.Thread):
             if e.code == 404:
                 logging.critical(
                     '{0}: Got 404'.format(self.inst))
-            elif e.code == 504 and tries < 2:
+            elif tries < 2 and (e.code == 504 or e.code == 505):
                 logging.critical(
                     '{0}: Got 504 ({1} attempt[s])'.format(self.inst, tries + 1))
                 self.make_update(tries + 1)
