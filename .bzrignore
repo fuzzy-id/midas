@@ -2,9 +2,9 @@ run.sh
 
 # Files created when running tests
 .coverage
+midas.egg-info/
 
 # Files created when running tox
 .tox/
-ev_transpose.egg-info/
 mock-*-py*.egg/
 unittest2-*-py2.6.egg/
