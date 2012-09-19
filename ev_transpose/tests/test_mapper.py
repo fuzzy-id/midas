@@ -32,31 +32,3 @@ class HelperTests(unittest.TestCase):
         self.assertEqual('example.com', normalize_site('example.com'))
         self.assertEqual('example.com', normalize_site('http://www.example.com/'))
         self.assertEqual('example.com', normalize_site('www.example.com/foo'))
-        
-
-class ScriptTests(IntegrationTestCase):
-
-    def test_mapper(self):
-        from ev_transpose.mapper import mapper
-        sys.stdin.write(TEST_DATA[0][0])
-        sys.stdin.seek(0)
-        self.assertEqual(mapper(), 0)
-        sys.stdout.seek(0)
-        out = sys.stdout.getvalue()
-        expected = '\n'.join('{e.name}\t{e.date}, {e.rank}'.format(e=entry)
-                             for entry in TEST_DATA[0][1])
-        self.assertEqual(out.strip(), expected)
-
-    def test_mapper_multiple_files_w_trailing_newlines(self):
-        from ev_transpose.mapper import mapper
-        sys.stdin.write(TEST_DATA[0][0])
-        sys.stdin.write('\n')
-        sys.stdin.write(TEST_DATA[0][0])
-        sys.stdin.write('\n')
-        sys.stdin.seek(0)
-        self.assertEqual(mapper(), 0)
-        sys.stdout.seek(0)
-        out = sys.stdout.getvalue()
-        expected = '\n'.join('{e.name}\t{e.date}, {e.rank}'.format(e=entry)
-                             for entry in TEST_DATA[0][1]) + '\n'
-        self.assertEqual(out, expected*2)
