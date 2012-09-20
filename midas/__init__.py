@@ -59,7 +59,10 @@ class RankEntry(object):
         
     @classmethod
     def iter_alexa_file(cls, fname):
-        """ The standard Alexa Top1M data is a
+        """ Returns an iterator yielding a :class:`RankEntry` for
+        every line it finds in the file in the archive `fname`.
+
+        The standard Alexa Top1M data is a
         :class:`zipfile.ZipFile`. The archive contains one file named
         `top-1m.csv`. The lines in this file have the form
         `rank,site_name` (no spaces!).
@@ -67,10 +70,8 @@ class RankEntry(object):
         As the time-stamp is encoded in the file name (defined by
         :attr:`ALEXA_TS_FORMAT`) and not in the line, parsing cannot be
         done line-by-line but needs to be done on a per file basis.
-
-        Returns an iterator yielding a :class:`RankEntry` for every
-        line it finds in the file in the archive.
         """
+        fname = fname.strip()
         fname_last = os.path.basename(fname)
         date = datetime.datetime.strptime(fname_last, cls.ALEXA_TS_FORMAT)
         with ZipFile(fname) as zf:
