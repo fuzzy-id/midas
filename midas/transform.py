@@ -16,21 +16,17 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from midas import TP_TSTAMP_FORMAT
-from midas.compat import ZipFile
+from midas import Entry
 from midas.compat import GzipFile
 
 Base = declarative_base()
 Session = sessionmaker()
 
-TSTAMP_FORMAT = 'top-1m-%Y-%m-%d.csv.zip'
-
 def mapper():
     for fname in sys.stdin:
         fname = fname.strip()
         print("Processing '{0}'".format(fname), file=sys.stderr)
-        tstamp = convert_fname_to_tstamp(fname)
-        for l in unzip_file(fname):
+        for entry in Entry.iter_alexa_file(fname):
             rank, name = split_rank_name(l)
             h = hashlib.sha1(name).hexdigest()
             h_start = h[:2]
@@ -90,23 +86,3 @@ def push_to_db():
             session.commit()
             print("Commited", file=sys.stderr)
     return 0
-
-def convert_fname_to_tstamp(fname):
-    date = convert_fname_to_date(fname)
-    return date.strftime(TP_TSTAMP_FORMAT)
-
-def convert_fname_to_date(fname):
-    fname_last = os.path.basename(fname)
-    return datetime.datetime.strptime(fname_last, TSTAMP_FORMAT)
-
-def unzip_file(fname, filelist=('top-1m.csv', )):
-    ''' Iterates over the compressed file.
-    '''
-    with ZipFile(fname) as zf:
-        for zipped_file in filelist:
-            for line in zf.open(zipped_file):
-                yield line.decode().strip()
-
-def split_rank_name(line):
-    rank, name = line.split(',', 1)
-    return int(rank), name
