@@ -24,5 +24,5 @@ setup(name='midas',
         'console_scripts':
             ['md_top1m_to_sha1=midas.transform:map_to_sha1',
              'md_sort_sha1=midas.transform:sort_sha1',
-             'md_top1m_to_db=midas.transform:push_to_db']
-        })
+             'md_top1m_to_db=midas.transform:push_to_db',
+             'md_find_strange_names=midas.assign.:find_strange_names']})
