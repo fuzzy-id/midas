@@ -13,10 +13,13 @@ def find_strange_names():
     norm_chars.update( chr(i) for i in range(ord('A'), ord('Z') + 1) )
     norm_chars.update( str(i) for i in range(0, 10) )
     norm_chars.add('.')
+    last_processed = ''
     for line in sys.stdin:
         name, tail = line.split('\t')
-        for c in name:
-            if c not in norm_chars:
-                print(name)
-                break
+        if last_processed != name:
+            last_processed = name
+            for c in name:
+                if c not in norm_chars:
+                    print(name)
+                    break
     return 0
