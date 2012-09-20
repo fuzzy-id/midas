@@ -76,7 +76,8 @@ class RankEntry(object):
         cached even though the `name` changes.
         """
         if self._key is None:
-            self._key = hashlib.sha1(self.name.encode()).hexdigest()[:CUT_HASH_KEY]
+            sha1 = hashlib.sha1(self.name.encode()).hexdigest()
+            self._key = sha1[:CUT_HASH_KEY]
         return self._key
 
     @classmethod
