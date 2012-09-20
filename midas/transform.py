@@ -24,13 +24,13 @@ Base = declarative_base()
 Session = sessionmaker()
 
 def alexa_to_sha1(argv=sys.argv):
-    """ Iterates over the Alexa Top1M files in `fname_stream`, applies
+    """ Iterates over Alexa Top1M files, applies
     :method:`midas.RankEntry.iter_alexa_file` on them and prints
     :method:`midas.RankEntry.format_w_key` of all the entries.
     """
     descr = ' '.join(("Parse the given Alexa Top1M file(s) and print",
                       "the found entries in key format."))
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=descr)
     parser.add_argument('-q', '--quiet', action='store_true', default=False,
                         help='do not print status messages')
     parser.add_argument('stream', nargs='*', metavar='FILE', default=sys.stdin,
@@ -46,7 +46,20 @@ def alexa_to_sha1(argv=sys.argv):
             print(entry.format_w_key)
     return 0
 
-def sort_sha1():
+def sort_sha1(argv=sys.argv):
+    """ Sort entries provided in key format in descending order. Print
+    them in standard format. 
+    """
+    descr = ' '.join(('Parse entries in key format, sort them and print',
+                      'them in standart format '))
+    parser = argparse.ArgumentParser(description=descr)
+    parser.add_argument('-q', '--quiet', action='store_true', default=False,
+                        help='do not print status messages')
+    parser.add_argument('stream', nargs='*', metavar='ENTRY', default=sys.stdin,
+                        help=' '.join(('the entries to process, when no entry',
+                                       'is given the entries are read from',
+                                       'stdin')))
+    args = parser.parse_args(argv[1:])
     for fname in sys.argv[1:]:
         fname = fname.strip()
         print("Processing '{0}'".format(fname))
