@@ -50,7 +50,9 @@ class RankEntry(object):
     @property
     def key(self):
         """ The first :attr:`CUT_HASH_KEY` digits of the hash produced
-        by :func:`hashlib.sha1` on the `name`. """
+        by :func:`hashlib.sha1` on the `name`. The key is computed and
+        cached even though the `name` changes.
+        """
         if self._key is None:
             self._key = hashlib.sha1(self.name).hexdigest()[:CUT_HASH_KEY]
         return self._key
