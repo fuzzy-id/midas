@@ -25,6 +25,6 @@ setup(name='midas',
       test_suite='midas.tests',
       entry_points={
         'console_scripts':
-            ['md_alexa_to_sha1=midas.transform:run_alexa_to_sha1',
-             'md_sha1_to_files=midas.transform:run_sha1_to_files',
+            ['md_alexa_to_key=midas.transform:run_alexa_to_key',
+             'md_key_to_files=midas.transform:run_key_to_files',
              'md_find_strange_names=midas.assign:find_strange_names']})

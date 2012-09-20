@@ -13,11 +13,11 @@ from midas.compat import StringIO
 from midas.tests import TEST_DATA
 from midas.tests import IntegrationTestCase
 
-class AlexaToSha1Tests(IntegrationTestCase):
+class AlexaToKeyTests(IntegrationTestCase):
 
     def _get_target_func(self):
-        from midas.transform import run_alexa_to_sha1
-        return run_alexa_to_sha1
+        from midas.transform import run_alexa_to_key
+        return run_alexa_to_key
 
     def test_help_flag(self):
         with self.assertRaises(SystemExit) as cm:
@@ -32,11 +32,11 @@ class AlexaToSha1Tests(IntegrationTestCase):
                                            for e in TEST_DATA[1]) + '\n')
 
 
-class SortSha1Tests(IntegrationTestCase):
+class KeyToFilesTests(IntegrationTestCase):
 
     def _get_target_func(self):
-        from midas.transform import run_sort_sha1
-        return run_sort_sha1
+        from midas.transform import run_key_to_files
+        return run_key_to_files
 
     def test_help_flag(self):
         with self.assertRaises(SystemExit) as cm:

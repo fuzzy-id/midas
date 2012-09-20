@@ -12,11 +12,11 @@ import sys
 from midas import RankEntry
 from midas.compat import GzipFile
 
-def run_alexa_to_sha1(argv=sys.argv):
-    cmd = AlexaToSha1(argv)
+def run_alexa_to_key(argv=sys.argv):
+    cmd = AlexaToKey(argv)
     return cmd.run()
 
-class AlexaToSha1(object):
+class AlexaToKey(object):
     """ Parse Alexa Top1M files and print the found entries in key
     format. When no file is given the names of the files are read from
     stdin.
@@ -40,11 +40,11 @@ class AlexaToSha1(object):
                 print(entry.format_w_key)
         return 0
 
-def run_sort_sha1(argv=sys.argv):
-    cmd = SortSha1(argv)
+def run_key_to_files(argv=sys.argv):
+    cmd = KeyToFiles(argv)
     return cmd.run()
 
-class SortSha1(object):
+class KeyToFiles(object):
     """ Sort entries provided in key format in descending order. Put
     them in standard format in a gzipped file named after the
     key. When no entry is given the entries are read from stdin.
@@ -67,7 +67,6 @@ class SortSha1(object):
         cache = [RankEntry.parse_key(first)]
         for line in stream_iter:
             entry = RankEntry.parse_key(line)
-            print(entry, file=sys.stderr)
             if entry.key != cache[0].key:
                 self._write_out(cache)
                 cache = []
