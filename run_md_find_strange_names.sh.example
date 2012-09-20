@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# `infile` should contain a list with the file names in hdfs you want
+# processed. One name each line. See
+# http://hadoop.apache.org/docs/r1.0.3/streaming.html#Making+Files+Available+to+Tasks
+# for further information on how to combine this with the `#` in the
+# `FILES` variable.
+INPUT="top-1m-sha1"
+
+# Where the output should be saved. THIS IS GOING TO BE DELETED
+# FURTHER DOWN!
+OUT="out"
+
+# Set this according to your environment
+MAPPER="${HOME}/py_envs/cc26/bin/md_find_strange_names"
+HADOOP_HOME="${HOME}/opt/hadoop-1.0.3"
+
+# Set `mapred.map.tasks` to a value which best fits your environment.
+NUM_MAPS="16"
+
+HADOOP_BIN="${HADOOP_HOME}/bin/hadoop"
+HADOOP_STREAMING="${HADOOP_HOME}/contrib/streaming/hadoop-streaming-1.0.3.jar"
+
+# Delete the output directory
+${HADOOP_BIN} fs -rmr ${OUT}
+
+
+${HADOOP_BIN} jar ${HADOOP_STREAMING} \
+    -D mapred.map.tasks=${NUM_MAPS} \
+    -D mapred.reduce.tasks=1 \
+    -D mapred.input.compress=true \
+    -D mapred.input.compression.codec=org.apache.hadoop.io.compress.GzipCodec \
+    -input ${INPUT} \
+    -output ${OUT} \
+    -mapper ${MAPPER}
