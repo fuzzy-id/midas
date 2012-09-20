@@ -8,6 +8,7 @@ midas.egg-info/
 .tox/
 SQLAlchemy-*-py*.egg/
 mock-*-py*.egg/
+argparse-*-py2.6.egg/
 unittest2-*-py2.6.egg/
 
 # Files created when running sphinx (`make html' in the doc folder)
