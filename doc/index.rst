@@ -11,7 +11,15 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+API Documentation
+=================
 
+Documentation for the :app:`midas` API.
+
+.. toctree::
+   :maxdepth: 2
+
+   api
 
 Indices and tables
 ==================
