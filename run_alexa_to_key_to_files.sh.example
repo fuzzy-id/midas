@@ -13,16 +13,13 @@ FILES="hdfs://localhost:9000/user/thbach/top-1m#data"
 OUT="out"
 
 # Set this according to your environment
-MAPPER="${HOME}/py_envs/cc26/bin/md_top1m_to_sha1"
+MAPPER="${HOME}/py_envs/cc26/bin/md_alexa_to_key"
+REDUCER="${HOME}/py_envs/cc26/bin/md_key_to_files -d ${OUT}"
 HADOOP_HOME="${HOME}/opt/hadoop-1.0.3"
 
-# Should equal to the number of keys you expect to produce. Currently
-# the script uses the first two digets of the hash which gives us
-# 16*16 = 256 keys.
-NUM_KEYS="256"
-
-# Set `mapred.map.tasks` to a value which best fits your environment.
+# Set to a value which best fits your environment.
 NUM_MAPS="16"
+NUM_REDUCERS="28"
 
 HADOOP_BIN="${HADOOP_HOME}/bin/hadoop"
 HADOOP_STREAMING="${HADOOP_HOME}/contrib/streaming/hadoop-streaming-1.0.3.jar"
@@ -33,8 +30,9 @@ ${HADOOP_BIN} fs -rmr ${OUT}
 
 ${HADOOP_BIN} jar ${HADOOP_STREAMING} \
     -D mapred.map.tasks=${NUM_MAPS} \
-    -D mapred.reduce.tasks=${NUM_KEYS} \
+    -D mapred.reduce.tasks=${NUM_REDUCERS} \
     -files ${FILES} \
     -input ${INPUT} \
-    -output ${OUT} \
-    -mapper ${MAPPER}
+    -output "${OUT}#${OUT}" \
+    -mapper "${MAPPER}" \
+    -reducer "${REDUCER}"
