@@ -29,7 +29,7 @@ def alexa_to_sha1(argv=sys.argv):
     :method:`midas.RankEntry.format_w_key` of all the entries.
     """
     descr = ' '.join(("Parse the given Alexa Top1M file(s) and print",
-                      "the found entries as key format."))
+                      "the found entries in key format."))
     parser = argparse.ArgumentParser()
     parser.add_argument('-q', '--quiet', action='store_true', default=False,
                         help='do not print status messages')
@@ -40,7 +40,8 @@ def alexa_to_sha1(argv=sys.argv):
     args = parser.parse_args(argv[1:])
     for fname in args.stream:
         fname = fname.strip()
-        print("Processing '{0}'".format(fname), file=sys.stderr)
+        if not args.quiet:
+            print("Processing '{0}'".format(fname), file=sys.stderr)
         for entry in RankEntry.iter_alexa_file(fname):
             print(entry.format_w_key)
     return 0
