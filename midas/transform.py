@@ -23,15 +23,6 @@ from midas.compat import GzipFile
 Base = declarative_base()
 Session = sessionmaker()
 
-class Rank(Base):
-    __tablename__ = 'ranking'
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    rank = Column(Integer)
-    ts = Column(DateTime)
-
-
 TSTAMP_FORMAT = 'top-1m-%Y-%m-%d.csv.zip'
 
 def mapper():
@@ -70,7 +61,15 @@ def sort_sha1():
                 sha_fp.write('{0}\t{1}, {2}\n'.format(entry[0], entry[1], entry[2]))
     return 0
         
-        
+
+class Rank(Base):
+    __tablename__ = 'ranking'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    rank = Column(Integer)
+    ts = Column(DateTime)
+
 
 def push_to_db():
     db = sys.argv[1]
