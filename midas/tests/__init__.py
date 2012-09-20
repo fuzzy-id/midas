@@ -25,3 +25,8 @@ class IntegrationTestCase(unittest.TestCase):
     def tearDown(self):
         sys.stdout = self._oldout
         sys.stdin = self._oldin
+
+    def assert_stdout_startswith(self, s):
+        sys.stdout.seek(0)
+        val = sys.stdout.getvalue()
+        self.assertTrue(val.startswith(s))
