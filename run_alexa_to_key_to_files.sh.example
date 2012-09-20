@@ -6,21 +6,21 @@
 # for further information on how to combine this with the `#` in the
 # `FILES` variable.
 INPUT="input/infile"
-FILES="hdfs://localhost:9000/user/thbach/top-1m#data"
+FILES="hdfs://localhost:9000/user/thbach/alexa-files#data"
 
 # Where the output should be saved. THIS IS GOING TO BE DELETED
 # FURTHER DOWN!
-OUT="out"
+OUT="key-files"
 
 # Set this according to your environment
-MAPPER="${HOME}/py_envs/cc26/bin/md_alexa_to_key"
-REDUCER="${HOME}/py_envs/cc26/bin/md_key_to_files -d ${OUT}"
 HADOOP_HOME="${HOME}/opt/hadoop-1.0.3"
 
 # Set to a value which best fits your environment.
 NUM_MAPS="16"
 NUM_REDUCERS="28"
 
+MAPPER="$(which md_alexa_to_key)"
+REDUCER="$(which md_key_to_files) -d ${OUT}"
 HADOOP_BIN="${HADOOP_HOME}/bin/hadoop"
 HADOOP_STREAMING="${HADOOP_HOME}/contrib/streaming/hadoop-streaming-1.0.3.jar"
 
