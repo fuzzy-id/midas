@@ -23,35 +23,40 @@ from midas.compat import GzipFile
 Base = declarative_base()
 Session = sessionmaker()
 
-def alexa_to_sha1(argv=sys.argv):
-    """ Iterates over Alexa Top1M files, applies
-    :method:`midas.RankEntry.iter_alexa_file` on them and prints
-    :method:`midas.RankEntry.format_w_key` of all the entries.
+def run_alexa_to_sha1(argv=sys.argv):
+    cmd = AlexaToSha1(argv)
+    return cmd.run()
+
+class AlexaToSha1(object):
+    """ Parse Alexa Top1M files and print the found entries in key
+    format. When no file is, given the names of the files are read
+    from stdin.
     """
-    descr = ' '.join(("Parse the given Alexa Top1M file(s) and print",
-                      "the found entries in key format."))
-    parser = argparse.ArgumentParser(description=descr)
+
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('-q', '--quiet', action='store_true', default=False,
                         help='do not print status messages')
-    parser.add_argument('stream', nargs='*', metavar='FILE', default=sys.stdin,
-                        help=' '.join(('the files to process, when no file is',
-                                       'given the names of the files are read',
-                                       'from stdin')))
-    args = parser.parse_args(argv[1:])
-    for fname in args.stream:
-        fname = fname.strip()
-        if not args.quiet:  # pragma: no cover
-            print("processing '{0}'".format(fname), file=sys.stderr)
-        for entry in RankEntry.iter_alexa_file(fname):
-            print(entry.format_w_key)
-    return 0
+    parser.add_argument('stream', nargs='*', metavar='FILE', default=sys.stdin)
+
+    def __init__(self, argv):
+        self.args = self.parser.parse_args(argv[1:])
+
+    def run(self):
+        for fname in self.args.stream:
+            fname = fname.strip()
+            if not self.args.quiet:  # pragma: no cover
+                print("processing '{0}'".format(fname), file=sys.stderr)
+            for entry in RankEntry.iter_alexa_file(fname):
+                print(entry.format_w_key)
+        return 0
 
 def sort_sha1(argv=sys.argv):
-    """ Sort entries provided in key format in descending order. Print
-    them in standard format. 
+    """ Sort entries provided in key format in descending order. Put
+    them in standard format in a gzipped file named after the key.
     """
     descr = ' '.join(('Parse entries in key format, sort them and print',
-                      'them in standart format '))
+                      'them in standard format in a gzipped file named',
+                      'like the key.'))
     parser = argparse.ArgumentParser(description=descr)
     parser.add_argument('-q', '--quiet', action='store_true', default=False,
                         help='do not print status messages')
@@ -60,8 +65,8 @@ def sort_sha1(argv=sys.argv):
                                        'is given the entries are read from',
                                        'stdin')))
     args = parser.parse_args(argv[1:])
-    for fname in sys.argv[1:]:
-        fname = fname.strip()
+    for line in args.stream:
+        entry = RankEntry.parse_std(line)
         print("Processing '{0}'".format(fname))
         with open(fname) as fp:
             if os.fstat(fp.fileno()).st_size == 0:

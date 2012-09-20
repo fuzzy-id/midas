@@ -78,6 +78,10 @@ class RankEntry(object):
         if self._key is None:
             self._key = hashlib.sha1(self.name.encode()).hexdigest()[:CUT_HASH_KEY]
         return self._key
+
+    @classmethod
+    def parse_std(self, s):
+        pass
         
     @classmethod
     def iter_alexa_file(cls, fname):

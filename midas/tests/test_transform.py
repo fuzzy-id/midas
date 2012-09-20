@@ -11,8 +11,8 @@ from midas.tests import IntegrationTestCase
 class AlexaToSha1Tests(IntegrationTestCase):
 
     def _get_target_func(self):
-        from midas.transform import alexa_to_sha1
-        return alexa_to_sha1
+        from midas.transform import run_alexa_to_sha1
+        return run_alexa_to_sha1
 
     def test_help_flag(self):
         with self.assertRaises(SystemExit) as cm:
@@ -39,3 +39,9 @@ class SortSha1Tests(IntegrationTestCase):
         self.assertEqual(cm.exception.code, 0)
         self.assert_stdout_startswith('usage: ')
 
+    def test_on_test_data(self):
+        entries = [ e.format_w_key for e in TEST_DATA[1] ]
+        ret_code = self._run('-q', *entries)
+        self.assertEqual(ret_code, 0)
+        self.assert_stdout_equal('\n'.join(e.format_std
+                                           for e in TEST_DATA[1]) + '\n')
