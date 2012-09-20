@@ -16,7 +16,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from midas import Entry
+from midas import RankEntry
 from midas.compat import GzipFile
 
 Base = declarative_base()
@@ -26,10 +26,7 @@ def mapper():
     for fname in sys.stdin:
         fname = fname.strip()
         print("Processing '{0}'".format(fname), file=sys.stderr)
-        for entry in Entry.iter_alexa_file(fname):
-            rank, name = split_rank_name(l)
-            h = hashlib.sha1(name).hexdigest()
-            h_start = h[:2]
+        for entry in RankEntry.iter_alexa_file(fname):
             print("{0}\t{1}, {2}, {3}".format(h_start, name, tstamp, rank))
     return 0
 
