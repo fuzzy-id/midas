@@ -36,7 +36,7 @@ class RankEntry(object):
         self.rank = rank
         self._key = None
 
-    def __repr__(self):
+    def __str__(self):
         return 'RankEntry({e.name}, {e.date}, {e.rank})'.format(e=self)
 
     def __lt__(self, other):
