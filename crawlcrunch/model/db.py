@@ -54,20 +54,24 @@ class CompanyList(CrunchBaseFetcherMixin):
     def list_local(self):
         session = Session()
         q = session.query(Company)
-        for company in q.all():
+        with DB_LOCK:
+            companies = q.all()
+        for company in companies:
             yield company
 
     def list_not_local(self):
-        for entry in self._remote_data:
-            c = self.get(entry['permalink'])
-            if c.id is None:
-                yield c
+        remotes = set( entry['permalink'] for entry in self._remote_data )
+        locals_ = set( c.permalink for c in self.list_local() )
+        not_locals = remotes - locals_
+        for permalink in not_locals:
+            yield Company(permalink=permalink)
 
     def get(self, permalink):
         session = Session()
         q = session.query(Company).filter(Company.permalink == permalink)
         try:
-            return q.one()
+            with DB_LOCK:
+                return q.one()
         except NoResultFound as e:
             return Company(permalink=permalink)
         except MultipleResultsFound as e:
@@ -183,6 +187,6 @@ class FundingRound(Base):
     def make_from_parsed_json(cls, parsed_json):
         fields = ( f.name for f in cls.__table__.columns
                    if f.name != 'id' and f.name != 'company_id' )
-        d = dict(((field, parsed_json.get(field, None)) 
-                  for field in fields))
+        d = dict( (field, parsed_json.get(field, None)) 
+                  for field in fields )
         return cls(**d)
