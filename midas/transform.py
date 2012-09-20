@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 
+import argparse
 import datetime
 import hashlib
 import os
@@ -22,12 +23,26 @@ from midas.compat import GzipFile
 Base = declarative_base()
 Session = sessionmaker()
 
-def mapper():
-    for fname in sys.stdin:
+def alexa_to_sha1(argv=sys.argv):
+    """ Iterates over the Alexa Top1M files in `fname_stream`, applies
+    :method:`midas.RankEntry.iter_alexa_file` on them and prints
+    :method:`midas.RankEntry.format_w_key` of all the entries.
+    """
+    descr = ' '.join(("Parse the given Alexa Top1M file(s) and print",
+                      "the found entries as key format."))
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-q', '--quiet', action='store_true', default=False,
+                        help='do not print status messages')
+    parser.add_argument('stream', nargs='*', metavar='FILE', default=sys.stdin,
+                        help=' '.join(('the files to process, when no file is',
+                                       'given the names of the files are read',
+                                       'from stdin')))
+    args = parser.parse_args(argv[1:])
+    for fname in args.stream:
         fname = fname.strip()
         print("Processing '{0}'".format(fname), file=sys.stderr)
         for entry in RankEntry.iter_alexa_file(fname):
-            print("{0}\t{1}, {2}, {3}".format(h_start, name, tstamp, rank))
+            print(entry.format_w_key)
     return 0
 
 def sort_sha1():
