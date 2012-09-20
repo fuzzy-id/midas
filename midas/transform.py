@@ -9,19 +9,8 @@ import os
 import os.path
 import sys
 
-from sqlalchemy import Column
-from sqlalchemy import DateTime
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-
 from midas import RankEntry
 from midas.compat import GzipFile
-
-Base = declarative_base()
-Session = sessionmaker()
 
 def run_alexa_to_sha1(argv=sys.argv):
     cmd = AlexaToSha1(argv)
@@ -97,7 +86,18 @@ class SortSha1(object):
                 fp.write(entry.format_std.encode())
         
 
-class Rank(Base):
+from sqlalchemy import Column
+from sqlalchemy import DateTime
+from sqlalchemy import Integer
+from sqlalchemy import String
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+Base = declarative_base()
+Session = sessionmaker()
+
+class DBRank(Base):
     __tablename__ = 'ranking'
 
     id = Column(Integer, primary_key=True)
@@ -116,11 +116,9 @@ def push_to_db():
     for fname in sys.stdin:
         fname = fname.strip()
         print("Processing '{0}'".format(fname), file=sys.stderr)
-        date = convert_fname_to_date(fname)
-        for l in unzip_file(fname):
-            rank, name = split_rank_name(l)
-            entry = Rank(name=name, rank=rank, ts=date)
-            session.add(entry)
+        for entry in RankEntry.iter_alexa_file(fname):
+            db_entry = DBRank(name=entry.name, rank=entry.rank, ts=entry.date)
+            session.add(db_entry)
         else:
             session.commit()
             print("Commited", file=sys.stderr)
