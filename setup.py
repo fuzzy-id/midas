@@ -26,5 +26,5 @@ setup(name='midas',
       entry_points={
         'console_scripts':
             ['md_alexa_to_sha1=midas.transform:run_alexa_to_sha1',
-             'md_sort_sha1=midas.transform:run_sort_sha1',
+             'md_sha1_to_files=midas.transform:run_sha1_to_files',
              'md_find_strange_names=midas.assign:find_strange_names']})
