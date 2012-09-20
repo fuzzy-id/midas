@@ -1,18 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import datetime
-import os.path
 
-from midas import RankEntry
 from midas.tests import unittest
-
-
-__here__ = os.path.abspath(os.path.dirname(__file__))
-__test_data__ = os.path.join(__here__, 'data')
-TEST_DATA = (os.path.join(__test_data__, 'top-1m-2012-09-03.csv.zip'),
-             (RankEntry('foo', datetime.datetime(2012, 9, 3), 1),
-              RankEntry('bar', datetime.datetime(2012, 9, 3), 2)))
-
+from midas.tests import TEST_DATA
 
 class RankEntryTestCase(unittest.TestCase):
 

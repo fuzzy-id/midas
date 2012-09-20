@@ -11,7 +11,15 @@ if PY_VERSION == (2, 6):  # pragma: no cover
 else:
     import unittest
 
+from midas import RankEntry
 from midas.compat import StringIO
+
+
+__here__ = os.path.abspath(os.path.dirname(__file__))
+__test_data__ = os.path.join(__here__, 'data')
+TEST_DATA = (os.path.join(__test_data__, 'top-1m-2012-09-03.csv.zip'),
+             (RankEntry('foo', datetime.datetime(2012, 9, 3), 1),
+              RankEntry('bar', datetime.datetime(2012, 9, 3), 2)))
 
 
 class IntegrationTestCase(unittest.TestCase):
@@ -30,3 +38,8 @@ class IntegrationTestCase(unittest.TestCase):
         sys.stdout.seek(0)
         val = sys.stdout.getvalue()
         self.assertTrue(val.startswith(s))
+
+    def assert_stdout_equal(self, s):
+        sys.stdout.seek(0)
+        val = sys.stdout.getvalue()
+        self.assertEqual(val, s)
