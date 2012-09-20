@@ -61,8 +61,8 @@ class RankEntry(object):
 
     @property
     def tstamp(self):
-        " The `date` formated as defined in :attr:`TS_FORMAT`. "
-        return datetime.datetime.strftime(self.date, self.TS_FORMAT)
+        " Return the `date` formated as defined in :attr:`TS_FORMAT`. "
+        return self.date.strftime(self.TS_FORMAT)
 
     @property
     def format_w_key(self):
