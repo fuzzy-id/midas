@@ -80,9 +80,17 @@ class RankEntry(object):
         return self._key
 
     @classmethod
-    def parse_std(self, s):
-        pass
+    def parse_key(cls, s):
+        key, std = s.strip().split('\t', 1)
+        return cls.parse_std(std)
         
+    @classmethod
+    def parse_std(cls, s):
+        name, tail = s.strip().split('\t')
+        date, rank = tail.split(', ')
+        date = datetime.datetime.strptime(date, cls.TS_FORMAT)
+        return cls(name=name, date=date, rank=rank)
+
     @classmethod
     def iter_alexa_file(cls, fname):
         """ Returns an iterator yielding a :class:`RankEntry` for
