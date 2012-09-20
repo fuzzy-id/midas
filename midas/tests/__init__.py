@@ -24,6 +24,11 @@ TEST_DATA = (os.path.join(__test_data__, 'top-1m-2012-09-03.csv.zip'),
 
 class IntegrationTestCase(unittest.TestCase):
 
+    def _run(self, *args):
+        effargs = ['script_name']
+        effargs.extend(args)
+        return self._get_target_func()(effargs)
+        
     def setUp(self):
         self._oldout = sys.stdout
         sys.stdout = StringIO()
