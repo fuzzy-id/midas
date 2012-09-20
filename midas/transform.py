@@ -29,14 +29,15 @@ def run_alexa_to_sha1(argv=sys.argv):
 
 class AlexaToSha1(object):
     """ Parse Alexa Top1M files and print the found entries in key
-    format. When no file is, given the names of the files are read
-    from stdin.
+    format. When no file is given the names of the files are read from
+    stdin.
     """
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('-q', '--quiet', action='store_true', default=False,
                         help='do not print status messages')
-    parser.add_argument('stream', nargs='*', metavar='FILE', default=sys.stdin)
+    parser.add_argument('stream', nargs='*', metavar='FILE', default=sys.stdin,
+                        help='the files to read')
 
     def __init__(self, argv):
         self.args = self.parser.parse_args(argv[1:])
@@ -50,43 +51,50 @@ class AlexaToSha1(object):
                 print(entry.format_w_key)
         return 0
 
-def sort_sha1(argv=sys.argv):
+def run_sort_sha1(argv=sys.argv):
+    cmd = SortSha1(argv)
+    return cmd.run()
+
+class SortSha1(object):
     """ Sort entries provided in key format in descending order. Put
-    them in standard format in a gzipped file named after the key.
+    them in standard format in a gzipped file named after the
+    key. When no entry is given the entries are read from stdin.
     """
-    descr = ' '.join(('Parse entries in key format, sort them and print',
-                      'them in standard format in a gzipped file named',
-                      'like the key.'))
-    parser = argparse.ArgumentParser(description=descr)
+
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('-q', '--quiet', action='store_true', default=False,
                         help='do not print status messages')
+    parser.add_argument('-d', '--dest', default='.',
+                        help='destination for the output files')
     parser.add_argument('stream', nargs='*', metavar='ENTRY', default=sys.stdin,
-                        help=' '.join(('the entries to process, when no entry',
-                                       'is given the entries are read from',
-                                       'stdin')))
-    args = parser.parse_args(argv[1:])
-    for line in args.stream:
-        entry = RankEntry.parse_std(line)
-        print("Processing '{0}'".format(fname))
-        with open(fname) as fp:
-            if os.fstat(fp.fileno()).st_size == 0:
-                print('File is empty. Skipping.')
-                continue
-            sha_start, _ = next(fp).split('\t')
-            sha_fname = '{0}.gz'.format(sha_start)
-            assert not os.path.exists(sha_fname)
-            fp.seek(0)
-            lines = []
-            for l in fp:
-                l = l.strip()
-                name, ts, rank = l.split('\t')[1].split(', ')
-                lines.append((name, ts, rank))
-        lines.sort()
-        print("Writing to '{0}'".format(sha_fname))
-        with GzipFile(sha_fname, 'wb') as sha_fp:
-            for entry in lines:
-                sha_fp.write('{0}\t{1}, {2}\n'.format(entry[0], entry[1], entry[2]))
-    return 0
+                        help='the entries to process, ')
+
+    def __init__(self, argv):
+        self.args = self.parser.parse_args(argv[1:])
+
+    def run(self):
+        stream_iter = iter(self.args.stream)
+        first = next(stream_iter)
+        cache = [RankEntry.parse_key(first)]
+        for line in stream_iter:
+            entry = RankEntry.parse_key(line)
+            print(entry, file=sys.stderr)
+            if entry.key != cache[0].key:
+                self._write_out(cache)
+                cache = []
+            cache.append(entry)
+        else:
+            self._write_out(cache)
+        return 0
+
+    def _write_out(self, entries):
+        key_fname = os.path.join(self.args.dest, '{0}.gz'.format(entries[0].key))
+        if not self.args.quiet:  # pragma: no cover
+            print("Writing to '{0}'".format(key_fname), file=sys.stderr)
+        entries.sort()
+        with GzipFile(key_fname, 'wb') as fp:
+            for entry in entries:
+                fp.write(entry.format_std.encode())
         
 
 class Rank(Base):
