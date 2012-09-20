@@ -2,6 +2,10 @@
 """ Common functions that are needed in most other submodules.
 """
 
+import datetime
+import hashlib
+import os.path
+
 from midas.compat import ZipFile
 
 #: How much letters of the hash key should be used to pre-sort the
@@ -32,6 +36,24 @@ class RankEntry(object):
         self.rank = rank
         self._key = None
 
+    def __repr__(self):
+        return 'RankEntry({e.name}, {e.date}, {e.rank})'.format(e=self)
+
+    def __lt__(self, other):
+        return (self.name < other.name 
+                and self.date < other.date
+                and self.rank < other.rank)
+
+    def __le__(self, other):
+        return (self.name <= other.name 
+                and self.date <= other.date
+                and self.rank <= other.rank)
+        
+    def __eq__(self, other):
+        return (self.name == other.name
+                and self.date == other.date
+                and self.rank == other.rank)
+
     @property
     def format_std(self):
         " `'name[TAB]tstamp,[SPACE]rank'`. "
@@ -40,7 +62,7 @@ class RankEntry(object):
     @property
     def tstamp(self):
         " The `date` formated as defined in :attr:`TS_FORMAT`. "
-        return datetime.strftime(self.date, self.TS_FORMAT)
+        return datetime.datetime.strftime(self.date, self.TS_FORMAT)
 
     @property
     def format_w_key(self):
@@ -54,7 +76,7 @@ class RankEntry(object):
         cached even though the `name` changes.
         """
         if self._key is None:
-            self._key = hashlib.sha1(self.name).hexdigest()[:CUT_HASH_KEY]
+            self._key = hashlib.sha1(self.name.encode()).hexdigest()[:CUT_HASH_KEY]
         return self._key
         
     @classmethod
