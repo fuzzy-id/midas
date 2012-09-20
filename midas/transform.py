@@ -40,8 +40,8 @@ def alexa_to_sha1(argv=sys.argv):
     args = parser.parse_args(argv[1:])
     for fname in args.stream:
         fname = fname.strip()
-        if not args.quiet:
-            print("Processing '{0}'".format(fname), file=sys.stderr)
+        if not args.quiet:  # pragma: no cover
+            print("processing '{0}'".format(fname), file=sys.stderr)
         for entry in RankEntry.iter_alexa_file(fname):
             print(entry.format_w_key)
     return 0
