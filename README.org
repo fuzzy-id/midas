@@ -1,4 +1,6 @@
 
+* Midas
+
 This is a collection of scripts used to correlate rankings of the one
 million most visited sites per day and information from
 CrunchBase [fn:1]. The final goal is to make a prediction whether an
@@ -7,30 +9,7 @@ soon.
 
 The several scripts are written to run under Hadoop.
 
-* Transforming the Data
-
-The data comes in a rather unhandy format for our purpose:
-
-A mapper and a reducer to be run in a MapReduce framework (known to
-work in Hadoop). It converts a zipped csv-file named
-~top-1m-2012-09-03.csv.zip~ of the form
-
-#+BEGIN_EXAMPLE
-1,foo
-2,bar
-#+END_EXAMPLE
-
-into two csv-files. One being ~foo.csv.zip~
-
-#+BEGIN_EXAMPLE
-2012-09-03, 1
-#+END_EXAMPLE
-
-and another one being ~bar.csv.zip~
-
-#+BEGIN_EXAMPLE
-2012-09-03, 2
-#+END_EXAMPLE
+Further documentation is provided in the ~doc~ folder via Sphinx.
 
 * Footnotes
 
