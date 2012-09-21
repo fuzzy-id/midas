@@ -5,12 +5,15 @@
 # http://hadoop.apache.org/docs/r1.0.3/streaming.html#Making+Files+Available+to+Tasks
 # for further information on how to combine this with the `#` in the
 # `FILES` variable.
-INPUT="input/infile"
-FILES="hdfs://localhost:9000/user/thbach/alexa-files#data"
+USER_HADOOP="hdfs://localhost:9000/user/${USER}"
+INPUT="${USER_HADOOP}/input/infile"
+ALEXA_FILES="${USER_HADOOP}/alexa-files#data"
+SHA1_DEST="sha1"
+SHA1_FILES="${USER_HADOOP}/sha1-files#${SHA1_DEST}"
 
-# Where the output should be saved. THIS IS GOING TO BE DELETED
-# FURTHER DOWN!
-OUT="key-files"
+# Where the output should go. THIS IS GOING TO BE DELETED FURTHER
+# DOWN!
+OUT="out"
 
 # Set this according to your environment
 HADOOP_HOME="${HOME}/opt/hadoop-1.0.3"
@@ -20,7 +23,7 @@ NUM_MAPS="16"
 NUM_REDUCERS="28"
 
 MAPPER="$(which md_alexa_to_key)"
-REDUCER="$(which md_key_to_files) -d ${OUT}"
+REDUCER="$(which md_key_to_files) -d ${SHA1_DEST}"
 HADOOP_BIN="${HADOOP_HOME}/bin/hadoop"
 HADOOP_STREAMING="${HADOOP_HOME}/contrib/streaming/hadoop-streaming-1.0.3.jar"
 
@@ -31,8 +34,9 @@ ${HADOOP_BIN} fs -rmr ${OUT}
 ${HADOOP_BIN} jar ${HADOOP_STREAMING} \
     -D mapred.map.tasks=${NUM_MAPS} \
     -D mapred.reduce.tasks=${NUM_REDUCERS} \
-    -files ${FILES} \
+    -files ${ALEXA_FILES} \
+    -files ${SHA1_FILES} \
     -input ${INPUT} \
-    -output "${OUT}#${OUT}" \
+    -output "${OUT}" \
     -mapper "${MAPPER}" \
     -reducer "${REDUCER}"
