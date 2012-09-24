@@ -7,7 +7,10 @@ import datetime
 import hashlib
 import os
 import os.path
+import shutil
+import subprocess
 import sys
+import tempfile
 
 from midas import RankEntry
 from midas.compat import GzipFile
@@ -77,10 +80,17 @@ class KeyToFiles(object):
         return 0
 
     def _write_out(self, entries):
-        key_fname = os.path.join(self.args.dest, '{0}.gz'.format(entries[0].key))
-        if not self.args.quiet:  # pragma: no cover
-            print("Writing to '{0}'".format(key_fname), file=sys.stderr)
         entries.sort()
-        with GzipFile(key_fname, 'wb') as fp:
-            for entry in entries:
-                fp.write(entry.format_std.encode())
+        tmpd = tempfile.mkdtemp()
+        try:
+            key_file = '{0}.gz'.format(entries[0].key)
+            tmpfile = os.path.join(tmpd, key_file)
+            with GzipFile(tmpfile, 'wb') as fp:
+                for entry in entries:
+                    fp.write((entry.format_std + '\n').encode())
+            dst_file = os.path.join(self.args.dest, key_file)
+            cmd = ('hadoop', 'fs', '-put', tmpfile, dst_file)
+            print("Executing '{0}'".format(' '.join(cmd)), file=sys.stderr)
+            subprocess.check_call(cmd)
+        finally:
+            shutil.rmtree(tmpd)
