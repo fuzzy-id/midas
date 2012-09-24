@@ -63,7 +63,6 @@ class KeyToFiles(object):
 
     def __init__(self, argv):
         self.args = self.parser.parse_args(argv[1:])
-        assert os.path.isdir(self.args.dest)
 
     def run(self):
         stream_iter = iter(self.args.stream)
