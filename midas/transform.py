@@ -88,8 +88,23 @@ class KeyToFiles(object):
                 for entry in entries:
                     fp.write((entry.format_std + '\n').encode())
             dst_file = os.path.join(self.args.dest, key_file)
-            cmd = ('hadoop', 'fs', '-put', tmpfile, dst_file)
-            print("Executing '{0}'".format(' '.join(cmd)), file=sys.stderr)
-            subprocess.check_call(cmd)
+            cmd = (get_hadoop_binary(), 'fs', '-put', tmpfile, dst_file)
+            if not self.args.quiet:
+                print("Executing '{0}'".format(' '.join(cmd)), file=sys.stderr)
+            try:
+                proc = subprocess.Popen(cmd, 
+                                        stdout=subprocess.PIPE, 
+                                        stderr=subprocess.PIPE)
+                proc.wait()
+                if proc.returncode != 0:
+                    print('STDOUT: {0}\nSTDERR: {1}'.format(*proc.communicate()),
+                          file=sys.stderr)
+                    raise subprocess.CalledProcessError(proc.returncode, cmd)
+            except OSError as e:
+                print(sys.exc_info(), file=sys.stderr)
+                raise
         finally:
             shutil.rmtree(tmpd)
+
+def get_hadoop_binary():
+    return os.path.join(os.environ['HADOOP_HOME'], 'bin', 'hadoop')
