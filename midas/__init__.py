@@ -81,7 +81,7 @@ class RankEntry(object):
 
     @classmethod
     def make_key(cls, s):
-        sha1 = hashlib.sha1(self.name.encode()).hexdigest()
+        sha1 = hashlib.sha1(s.encode()).hexdigest()
         return sha1[:CUT_HASH_KEY]
         
 
