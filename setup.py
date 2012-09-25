@@ -6,7 +6,7 @@ import sys
 
 PY_VERSION = sys.version_info[:2]
 
-install_requires = ['sqlalchemy']
+install_requires = []
 
 if PY_VERSION == (2, 6):
     install_requires.append('argparse')
