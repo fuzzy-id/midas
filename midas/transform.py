@@ -91,18 +91,17 @@ class KeyToFiles(object):
             cmd = (get_hadoop_binary(), 'fs', '-put', tmpfile, dst_file)
             if not self.args.quiet:
                 print("Executing '{0}'".format(' '.join(cmd)), file=sys.stderr)
-            try:
-                proc = subprocess.Popen(cmd, 
-                                        stdout=subprocess.PIPE, 
-                                        stderr=subprocess.PIPE)
-                proc.wait()
-                if proc.returncode != 0:
-                    print('STDOUT: {0}\nSTDERR: {1}'.format(*proc.communicate()),
-                          file=sys.stderr)
-                    raise subprocess.CalledProcessError(proc.returncode, cmd)
-            except OSError as e:
-                print(sys.exc_info(), file=sys.stderr)
-                raise
+            proc = subprocess.Popen(cmd, 
+                                    stdout=subprocess.PIPE, 
+                                    stderr=subprocess.PIPE)
+            proc.wait()
+            if proc.returncode != 0:
+                print('STDOUT: {0}\nSTDERR: {1}'.format(*proc.communicate()),
+                      file=sys.stderr)
+                raise subprocess.CalledProcessError(proc.returncode, cmd)
+            else:
+                proc.stdout.close()
+                proc.stderr.close()
         finally:
             shutil.rmtree(tmpd)
 
