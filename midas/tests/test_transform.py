@@ -44,16 +44,22 @@ class KeyToFilesTests(IntegrationTestCase):
         self.assertEqual(cm.exception.code, 0)
         self.assert_stdout_startswith('usage: ')
 
-    def test_on_test_data(self):
+    @mock.patch('midas.transform.get_hadoop_binary')
+    def test_on_test_data(self, hadoop_bin):
         a_date = datetime.date(1900, 1, 1)
         entries = (RankEntry('foo', a_date, 1),
                    RankEntry('foo', a_date, 2),
                    RankEntry('bar', a_date, 1),
                    RankEntry('bar', a_date, 2))
+        hadoop_bin.return_value = 'echo'
+        tmpd = tempfile.mkdtemp()
         try:
-            tmpd = tempfile.mkdtemp()
-            ret_code = self._run('-q', '-d', tmpd, 
-                                 *( e.format_w_key for e in entries ))
+            with mock.patch('midas.transform.tempfile.mkdtemp') as mkdtemp:
+                mkdtemp.return_value = tmpd
+                with mock.patch('midas.transform.shutil.rmtree') as rmtree:
+                    ret_code = self._run('-q', '-d', tmpd, 
+                                         *( e.format_w_key for e in entries ))
+                    rmtree.assert_called_with(tmpd)
             self.assertEqual(ret_code, 0)
             listing = os.listdir(tmpd)
             listing.sort()
