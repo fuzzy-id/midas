@@ -26,9 +26,6 @@ REDUCER="$(which md_key_to_files) -d ${SHA1_FILES}"
 HADOOP_BIN="${HADOOP_HOME}/bin/hadoop"
 HADOOP_STREAMING="${HADOOP_HOME}/contrib/streaming/hadoop-streaming-1.0.3.jar"
 
-# `hadoop' is called in `md_key_to_files'
-export PATH="${PATH}:${HADOOP_HOME}/bin"
-
 # Delete the output directory
 ${HADOOP_BIN} fs -rmr ${OUT}
 
