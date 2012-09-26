@@ -106,9 +106,10 @@ class KeyToFiles(object):
         tmpfile = os.path.join(self.tmpd, '{0}.gz'.format(self.cache[0].key))
         logging.info('Writing to {0}'.format(tmpfile))
         with GzipFile(tmpfile, 'wb') as fp:
-            while len(self.cache) != 0:
-                fp.write((self.cache.pop(0).format_std + '\n').encode())
+            for entry in self.cache:
+                fp.write((entry.format_std + '\n').encode())
         self.tmp_files.append(tmpfile)
+        self.cache = []
         logging.info('Generated {0}'.format(tmpfile))
 
     def _cp_tmp_files_to_hdfs(self):
