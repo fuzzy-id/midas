@@ -40,19 +40,32 @@ class RankEntry(object):
         return 'RankEntry({e.name}, {e.date}, {e.rank})'.format(e=self)
 
     def __lt__(self, other):
-        return (self.name < other.name 
-                and self.date < other.date
-                and self.rank < other.rank)
+        if self.name < other.name:
+            return True
+        elif self.name > other.name:
+            return False
+        elif self.date < other.date:
+            return True
+        elif self.date > other.date:
+            return False
+        elif self.rank < other.rank:
+            return True
+        else:
+            return False
 
     def __le__(self, other):
-        return (self.name <= other.name 
-                and self.date <= other.date
-                and self.rank <= other.rank)
-        
+        return self == other or self < other
+
     def __eq__(self, other):
         return (self.name == other.name
                 and self.date == other.date
                 and self.rank == other.rank)
+
+    def __ge__(self, other):
+        return not self < other
+
+    def __gt__(self, other):
+        return not self <= other
 
     @property
     def format_std(self):
