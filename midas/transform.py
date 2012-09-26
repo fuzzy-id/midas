@@ -93,6 +93,7 @@ class KeyToFiles(object):
                 entry = RankEntry.parse_key(line)
                 if entry.key != self.cache[0].key:
                     self._write_out_cache()
+                    self._cp_tmp_files_to_hdfs()
                 self.cache.append(entry)
             else:
                 self._write_out_cache()
