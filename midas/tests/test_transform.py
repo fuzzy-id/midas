@@ -58,8 +58,10 @@ class KeyToFilesTests(IntegrationTestCase):
                 RankEntry('bar', a_date + one_day, 1),
                 RankEntry('bar', a_date + one_day*2, 1),
                 RankEntry('bar', a_date + one_day*5, 1))
-        data = list(foos) + list(bars)
-        random.shuffle(data)
+        in_foos = list(foos)
+        random.shuffle(in_foos)
+        in_bars = list(bars)
+        random.shuffle(in_bars)
         hadoop_bin.return_value = 'echo'
         tmpd = tempfile.mkdtemp()
         try:
@@ -67,7 +69,7 @@ class KeyToFilesTests(IntegrationTestCase):
                 mkdtemp.return_value = tmpd
                 with mock.patch('midas.transform.shutil.rmtree') as rmtree:
                     ret_code = self._run('-q', '-d', tmpd, 
-                                         *( e.format_w_key for e in data ))
+                                         *( e.format_w_key for e in in_foos + in_bars ))
                     rmtree.assert_called_with(tmpd)
             self.assertEqual(ret_code, 0)
             listing = os.listdir(tmpd)
@@ -75,8 +77,10 @@ class KeyToFilesTests(IntegrationTestCase):
             # foo -> 0b; bar -> 62
             self.assertEqual(listing, ['0b.gz', '62.gz']) 
             with GzipFile(os.path.join(tmpd, '0b.gz')) as fp:
-                self.assertEqual(fp.readlines(), [ l.format_std + '\n' for l in foos ])
+                self.assertEqual(fp.readlines(), [ (l.format_std + '\n').encode()
+                                                   for l in foos ])
             with GzipFile(os.path.join(tmpd, '62.gz')) as fp:
-                self.assertEqual(fp.readlines(), [ l.format_std + '\n' for l in bars ])
+                self.assertEqual(fp.readlines(), [ (l.format_std + '\n').encode()
+                                                   for l in bars ])
         finally:
             shutil.rmtree(tmpd)
