@@ -39,6 +39,11 @@ class RankEntry(object):
     def __str__(self):
         return 'RankEntry({e.name}, {e.tstamp}, {e.rank})'.format(e=self)
 
+    def __eq__(self, other):
+        return (self.name == other.name
+                and self.date == other.date
+                and self.rank == other.rank)
+
     def __lt__(self, other):
         if self.name < other.name:
             return True
@@ -55,11 +60,6 @@ class RankEntry(object):
 
     def __le__(self, other):
         return self == other or self < other
-
-    def __eq__(self, other):
-        return (self.name == other.name
-                and self.date == other.date
-                and self.rank == other.rank)
 
     def __ge__(self, other):
         return not self < other
