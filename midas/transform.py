@@ -104,6 +104,7 @@ class KeyToFiles(object):
     def _write_out_cache(self):
         self.cache.sort()
         tmpfile = os.path.join(self.tmpd, '{0}.gz'.format(self.cache[0].key))
+        logging.info('Writing to {0}'.format(tmpfile))
         with GzipFile(tmpfile, 'wb') as fp:
             while len(self.cache) != 0:
                 fp.write((self.cache.pop(0).format_std + '\n').encode())
