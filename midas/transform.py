@@ -29,19 +29,25 @@ class AlexaToKey(object):
     """
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('-q', '--quiet', action='store_true', default=False,
-                        help='do not print status messages')
+    parser.add_argument('-v', '--verbose', dest='verbosity', 
+                        action='append_const', const=-10, 
+                        help='be verbose, can be given multiple times',
+                        default=[logging.getLevelName('INFO')])
+    parser.add_argument('-q', '--quiet', dest='verbosity', 
+                        action='append_const', const=10,
+                        help='be quiet, can be given multiple times')
     parser.add_argument('stream', nargs='*', metavar='FILE', default=sys.stdin,
                         help='the files to read')
 
     def __init__(self, argv):
         self.args = self.parser.parse_args(argv[1:])
+        self.args.verbosity = sum(self.args.verbosity)
+        logging.basicConfig(level=self.args.verbosity, stream=sys.stderr)
 
     def run(self):
         for fname in self.args.stream:
             fname = fname.strip()
-            if not self.args.quiet:  # pragma: no cover
-                print("processing '{0}'".format(fname), file=sys.stderr)
+            logging.info("processing '{0}'".format(fname))
             for entry in RankEntry.iter_alexa_file(fname):
                 print(entry.format_w_key)
         return 0
@@ -57,8 +63,13 @@ class KeyToFiles(object):
     """
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('-q', '--quiet', action='store_true', default=False,
-                        help='do not print status messages')
+    parser.add_argument('-v', '--verbose', dest='verbosity', 
+                        action='append_const', const=-10, 
+                        help='be verbose, can be given multiple times',
+                        default=[logging.getLevelName('INFO')])
+    parser.add_argument('-q', '--quiet', dest='verbosity', 
+                        action='append_const', const=10,
+                        help='be quiet, can be given multiple times')
     parser.add_argument('-d', '--dest', default='.',
                         help='destination for the output files')
     parser.add_argument('stream', nargs='*', metavar='ENTRY', default=sys.stdin,
@@ -66,12 +77,13 @@ class KeyToFiles(object):
 
     def __init__(self, argv):
         self.args = self.parser.parse_args(argv[1:])
+        self.args.verbosity = sum(self.args.verbosity)
         self.tmp_files = []
         self.tmpd = None
         self.cache = []
 
     def run(self):
-        logging.basicConfig(stream=sys.stderr)
+        logging.basicConfig(level=self.args.verbosity, stream=sys.stderr)
         stream_iter = iter(self.args.stream)
         first = next(stream_iter)
         self.cache.append(RankEntry.parse_key(first))
@@ -96,6 +108,7 @@ class KeyToFiles(object):
             while len(self.cache) != 0:
                 fp.write((self.cache.pop(0).format_std + '\n').encode())
         self.tmp_files.append(tmpfile)
+        logging.info('Generated {0}'.format(tmpfile))
 
     def _cp_tmp_files_to_hdfs(self):
         copied = []
