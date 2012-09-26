@@ -11,9 +11,9 @@ def lookup_ranking(name, key_dir):
     fname = os.path.join(key_dir, '{0}.gz'.format(key))
     entries = []
     with GzipFile(fname) as fp:
-        itertools.dropwhile(lambda l: RankEntry.parse_std(l).name != name, fp)
-        for line in fp:
-            entry = RankEntry.parse_std(line)
+        pred = lambda l: RankEntry.parse_std(l.decode()).name != name
+        for line in itertools.dropwhile(pred, fp):
+            entry = RankEntry.parse_std(line.decode())
             if entry.name == name:
                 yield entry
             else:
