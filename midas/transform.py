@@ -5,6 +5,7 @@ from __future__ import print_function
 import argparse
 import datetime
 import hashlib
+import logging
 import os
 import os.path
 import shutil
@@ -14,6 +15,8 @@ import tempfile
 
 from midas import RankEntry
 from midas.compat import GzipFile
+
+logger = logging.getLogger(__name__)
 
 def run_alexa_to_key(argv=sys.argv):
     cmd = AlexaToKey(argv)
@@ -63,47 +66,61 @@ class KeyToFiles(object):
 
     def __init__(self, argv):
         self.args = self.parser.parse_args(argv[1:])
+        self.tmp_files = []
+        self.tmpd = None
+        self.cache = []
 
     def run(self):
+        logging.basicConfig(stream=sys.stderr)
         stream_iter = iter(self.args.stream)
         first = next(stream_iter)
-        cache = [RankEntry.parse_key(first)]
-        for line in stream_iter:
-            entry = RankEntry.parse_key(line)
-            if entry.key != cache[0].key:
-                self._write_out(cache)
-                cache = []
-            cache.append(entry)
-        else:
-            self._write_out(cache)
+        self.cache.append(RankEntry.parse_key(first))
+        self.tmpd = tempfile.mkdtemp()
+        try:
+            for line in stream_iter:
+                entry = RankEntry.parse_key(line)
+                if entry.key != self.cache[0].key:
+                    self._write_out_cache()
+                self.cache.append(entry)
+            else:
+                self._write_out_cache()
+            self._cp_tmp_files_to_hdfs()
+        finally:
+            shutil.rmtree(self.tmpd)
         return 0
 
-    def _write_out(self, entries):
-        entries.sort()
-        tmpd = tempfile.mkdtemp()
+    def _write_out_cache(self):
+        self.cache.sort()
+        tmpfile = os.path.join(self.tmpd, '{0}.gz'.format(self.cache[0].key))
+        with GzipFile(tmpfile, 'wb') as fp:
+            while len(self.cache) != 0:
+                fp.write((self.cache.pop(0).format_std + '\n').encode())
+        self.tmp_files.append(tmpfile)
+
+    def _cp_tmp_files_to_hdfs(self):
+        copied = []
         try:
-            key_file = '{0}.gz'.format(entries[0].key)
-            tmpfile = os.path.join(tmpd, key_file)
-            with GzipFile(tmpfile, 'wb') as fp:
-                for entry in entries:
-                    fp.write((entry.format_std + '\n').encode())
-            dst_file = os.path.join(self.args.dest, key_file)
-            cmd = (get_hadoop_binary(), 'fs', '-put', tmpfile, dst_file)
-            if not self.args.quiet:
-                print("Executing '{0}'".format(' '.join(cmd)), file=sys.stderr)
-            proc = subprocess.Popen(cmd, 
-                                    stdout=subprocess.PIPE, 
-                                    stderr=subprocess.PIPE)
-            proc.wait()
-            if proc.returncode != 0:
-                print('STDOUT: {0}\nSTDERR: {1}'.format(*proc.communicate()),
-                      file=sys.stderr)
-                raise subprocess.CalledProcessError(proc.returncode, cmd)
-            else:
-                proc.stdout.close()
-                proc.stderr.close()
-        finally:
-            shutil.rmtree(tmpd)
+            for tmpfile in self.tmp_files:
+                dst_file = os.path.join(self.args.dest, os.path.basename(tmpfile))
+                cmd = (get_hadoop_binary(), 'fs', '-put', tmpfile, dst_file)
+                copied.append(dst_file)
+        except:
+            logging.critical('Removing copied files from HDFS.')
+            for dst_file in copied:
+                cmd = (get_hadoop_binary(), 'fs', '-rm', dst_file)
+                popen_log(cmd)
+            raise
+
+def popen_log(cmd):
+    logging.info("Executing '{0}'".format(' '.join(cmd)))
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc.wait()
+    if proc.returncode != 0:
+        logging.critical('STDOUT: {0}\nSTDERR: {1}'.format(*proc.communicate()))
+        raise subprocess.CalledProcessError(proc.returncode, cmd)
+    else:
+        proc.stdout.close()
+        proc.stderr.close()
 
 def get_hadoop_binary():
     return os.path.join(os.environ['HADOOP_HOME'], 'bin', 'hadoop')
