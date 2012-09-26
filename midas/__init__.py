@@ -37,7 +37,7 @@ class RankEntry(object):
         self._key = None
 
     def __str__(self):
-        return 'RankEntry({e.name}, {e.date}, {e.rank})'.format(e=self)
+        return 'RankEntry({e.name}, {e.tstamp}, {e.rank})'.format(e=self)
 
     def __lt__(self, other):
         if self.name < other.name:
