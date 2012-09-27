@@ -12,7 +12,7 @@ from midas.compat import ZipFile
 #: entries. The larger this number the more and smaller files
 #: will be produced. The default value is `2` which gives us `16 * 16 =
 #: 256` files.
-CUT_HASH_KEY = 2
+CUT_HASH_KEY = 3
 
 class RankEntry(object):
     """ Returns an entry of a ranking for `site`.
