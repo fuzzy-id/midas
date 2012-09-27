@@ -119,6 +119,7 @@ class KeyToFiles(object):
             for tmpfile in self.tmp_files:
                 dst_file = os.path.join(self.args.dest, os.path.basename(tmpfile))
                 cmd = (get_hadoop_binary(), 'fs', '-put', tmpfile, dst_file)
+                popen_log(cmd)
                 copied.append(dst_file)
         except:
             logging.critical('Removing copied files from HDFS.')
