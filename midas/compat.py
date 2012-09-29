@@ -14,6 +14,7 @@ if PY26:  # pragma: no cover
             return self
 
         def __exit__(self, *exc_inf):
+            self.close()
             return True
 else:
     from zipfile import ZipFile
@@ -26,6 +27,7 @@ if PY26:  # pragma: no cover
             return self
 
         def __exit__(self, *exc_inf):
+            self.close()
             return True
 else:
     from gzip import GzipFile
