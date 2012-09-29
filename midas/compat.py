@@ -33,7 +33,7 @@ if PY26:  # pragma: no cover
 else:
     from gzip import GzipFile
 
-if PY3K:
+if PY3K:  # pragma: no cover
     imap = map
 else:
     from itertools import imap
