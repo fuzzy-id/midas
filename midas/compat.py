@@ -5,6 +5,7 @@ import sys
 PY_VERSION = sys.version_info[:2]
 
 PY26 = PY_VERSION == (2, 6)
+PY3K = PY_VERSION[0] == 3
 
 if PY26:  # pragma: no cover
     import zipfile
@@ -31,6 +32,11 @@ if PY26:  # pragma: no cover
             return True
 else:
     from gzip import GzipFile
+
+if PY3K:
+    imap = map
+else:
+    from itertools import imap
 
 try:
     from StringIO import StringIO
