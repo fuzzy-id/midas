@@ -74,12 +74,12 @@ class KeyToFilesTests(IntegrationTestCase):
             self.assertEqual(ret_code, 0)
             listing = os.listdir(tmpd)
             listing.sort()
-            # foo -> 0b; bar -> 62
-            self.assertEqual(listing, ['0b.gz', '62.gz']) 
-            with GzipFile(os.path.join(tmpd, '0b.gz')) as fp:
+            # foo -> 0be; bar -> 62c
+            self.assertEqual(listing, ['0be.gz', '62c.gz']) 
+            with GzipFile(os.path.join(tmpd, '0be.gz')) as fp:
                 self.assertEqual(fp.readlines(), [ (l.format_std + '\n').encode()
                                                    for l in foos ])
-            with GzipFile(os.path.join(tmpd, '62.gz')) as fp:
+            with GzipFile(os.path.join(tmpd, '62c.gz')) as fp:
                 self.assertEqual(fp.readlines(), [ (l.format_std + '\n').encode()
                                                    for l in bars ])
         finally:

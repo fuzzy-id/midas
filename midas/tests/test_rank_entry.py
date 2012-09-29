@@ -26,7 +26,7 @@ class FormatTests(RankEntryTestCase):
 
     def test_format_w_key(self):
         entry = self._make_one('foo', datetime.datetime(1900, 1, 1), 1)
-        self.assertEqual(entry.format_w_key, '0b\tfoo\t1900-01-01, 1')
+        self.assertEqual(entry.format_w_key, '0be\tfoo\t1900-01-01, 1')
 
     def test_str_representation(self):
         entry = self._make_one('foo', self.a_date, 1)
