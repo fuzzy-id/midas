@@ -11,7 +11,7 @@ ALEXA_FILES="${USER_HADOOP}/alexa-files#data"
 
 # Where the output should go. THIS IS GOING TO BE DELETED FURTHER
 # DOWN!
-OUT="name_count
+OUT="name_count"
 
 # Set this according to your environment
 HADOOP_HOME="${HOME}/opt/hadoop-1.0.3"
