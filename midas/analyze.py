@@ -1,13 +1,44 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import functools
 import itertools
 import logging
 import operator
 import sys
 
 from midas import RankEntry
+from midas.compat import ifilter
 from midas.compat import imap
+
+
+VALID_CHRS = set(chr(i) for i in itertools.chain(range(ord('a'), ord('z') + 1),
+                                                 range(ord('A'), ord('Z') + 1),
+                                                 range(ord('0'), ord('9') + 1),
+                                                 (ord(c) 
+                                                  for c in ('-', '.', '_'))))
+
+def is_valid_name(name):
+    for n in name:
+        if n not in VALID_CHRS:
+            return False
+    return True
+
+def is_invalid_name(name):
+    return not is_valid_name(name)
+
+def filter_invalid_names(names):
+    return ifilter(is_invalid_name, names)
+
+def groupby_key(iterable, sep='\t'):
+    keyfunc = functools.partial(key, sep=sep)
+    return imap(operator.itemgetter(1), itertools.groupby(iterable, keyfunc))
+
+def key(line, sep='\t'):
+    return split_key_value(line, sep)[0]
+
+def split_key_value(line, sep='\t'):
+    return line.strip().split(sep, 1)
 
 def run_alexa_to_names_and_one(argv=sys.argv):
     cmd = AlexaToNamesAndOne(argv)
@@ -67,14 +98,10 @@ class SumValues(object):
         logging.basicConfig(level=self.args.verbosity, stream=sys.stderr)
 
     def run(self):
-        for block in get_in_blocks(self.args.stream):
+        for group in groupby_key(self.args.stream):
             counter = 0
-            for entry in block:
+            for entry in group:
                 name_tab_count = entry.strip()
                 name, count = name_tab_count.split('\t')
                 counter += int(count)
             print('{0}\t{1}'.format(name, counter))
-
-def get_in_blocks(iterable, key_value_sep='\t'):
-    keyfunc = lambda entry: entry.split(key_value_sep, 1)[0]
-    return imap(operator.itemgetter(1), itertools.groupby(iterable, keyfunc))
