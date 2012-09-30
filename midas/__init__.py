@@ -8,6 +8,48 @@ import os.path
 
 from midas.compat import ZipFile
 
+SAMPLE_CONFIG = """
+[DEFAULTS]
+user_name = thbach
+hadoop_home = hdfs://localhost:9000/user/%(user_name)s
+local_home = /home/$(user_name)s
+
+[job]
+mappers = 16
+reducers = 28
+
+[alexa]
+top1m_files = %(hadoop_home)s/alexa-files#alexa-files
+cut_hash_key = 3
+
+[hadoop]
+home = %(local_home)s/opt/hadoop-1.0.3
+exec = %(home)s/bin/hadoop
+streaming = %(home)/contrib/streaming/hadoop-streaming-1.0.3.jar
+
+[loggers]
+keys = root
+
+[handlers]
+keys = stderr
+
+[formatters]
+keys = generic
+
+[logger_root]
+level = INFO
+handlers = stderr
+
+[handler_stderr]
+class = StreamHandler
+args = (sys.stderr, )
+level = NOTSET
+formatter = generic
+
+[formatter_generic]
+format = %(asctime)s %(levelname)-5.5s %(message)s
+"""
+
 #: How much letters of the hash key should be used to pre-sort the
 #: entries. The larger this number the more and smaller files
 #: will be produced. The default value is `2` which gives us `16 * 16 =
