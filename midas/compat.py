@@ -38,6 +38,11 @@ if PY3K:  # pragma: no cover
 else:
     from itertools import imap
 
+if PY3K:  # pragma: no cover
+    ifilter = filter
+else:
+    from itertools import ifilter
+
 try:
     from StringIO import StringIO
 except ImportError:  # pragma: no cover
