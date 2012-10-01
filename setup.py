@@ -26,8 +26,7 @@ setup(name='midas',
       test_suite='midas.tests',
       entry_points={
         'console_scripts':
-            ['md_alexa_to_key=midas.transform:run_alexa_to_key',
-             'md_key_to_files=midas.transform:run_key_to_files',
-             'md_alexa_to_names_and_one=midas.analyze:run_alexa_to_names_and_one',
-             'md_sum_values=midas.analyze:run_sum_names',
-             'md_find_strange_names=midas.assign:find_strange_names']})
+            ['md_alexa_to_key=midas.transform:AlexaToKey.cmd',
+             'md_key_to_files=midas.transform:KeyToFiles.cmd',
+             'md_alexa_to_names_and_one=midas.analyze:AlexaToNamesAndOne.cmd',
+             'md_sum_values=midas.analyze:SumValues.cmd']})
