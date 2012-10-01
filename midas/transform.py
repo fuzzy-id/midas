@@ -19,6 +19,23 @@ from midas.compat import GzipFile
 
 logger = logging.getLogger(__name__)
 
+
+def popen_log(cmd):
+    logging.info("Executing '{0}'".format(' '.join(cmd)))
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc.wait()
+    if proc.returncode != 0:
+        logging.critical('STDOUT: {0}\nSTDERR: {1}'.format(*proc.communicate()))
+        raise subprocess.CalledProcessError(proc.returncode, cmd)
+    else:
+        proc.stdout.close()
+        proc.stderr.close()
+
+
+def get_hadoop_binary():
+    return os.path.join(os.environ['HADOOP_HOME'], 'bin', 'hadoop')
+
+
 class AlexaToKey(MDCommand):
     """ Parse Alexa Top1M files and print the found entries in key
     format. When no file is given the names of the files are read from
@@ -96,17 +113,3 @@ class KeyToFiles(MDCommand):
                 cmd = (get_hadoop_binary(), 'fs', '-rm', dst_file)
                 popen_log(cmd)
             raise
-
-def popen_log(cmd):
-    logging.info("Executing '{0}'".format(' '.join(cmd)))
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    proc.wait()
-    if proc.returncode != 0:
-        logging.critical('STDOUT: {0}\nSTDERR: {1}'.format(*proc.communicate()))
-        raise subprocess.CalledProcessError(proc.returncode, cmd)
-    else:
-        proc.stdout.close()
-        proc.stderr.close()
-
-def get_hadoop_binary():
-    return os.path.join(os.environ['HADOOP_HOME'], 'bin', 'hadoop')
