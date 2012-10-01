@@ -73,7 +73,10 @@ class MDCommand(object):
     @classmethod
     def cmd(cls, argv=sys.argv):
         obj = cls(argv)
-        return obj.run()
+        ret_val = obj.run()
+        if ret_val is None:  # nothing means everything's fine
+            return 0
+        return ret_val
 
     def run(self):
         """ Overwrite this method with the code you want your command
