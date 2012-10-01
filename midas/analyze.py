@@ -12,11 +12,32 @@ from midas.compat import ifilter
 from midas.compat import imap
 
 
-VALID_CHRS = set(chr(i) for i in itertools.chain(range(ord('a'), ord('z') + 1),
-                                                 range(ord('A'), ord('Z') + 1),
-                                                 range(ord('0'), ord('9') + 1),
-                                                 (ord(c) 
-                                                  for c in ('-', '.', '_'))))
+VALID_CHRS = set(chr(i)
+                 for i in itertools.chain(range(ord('a'), ord('z') + 1),
+                                          range(ord('A'), ord('Z') + 1),
+                                          range(ord('0'), ord('9') + 1),
+                                          (ord(c) for c in ('-', '.', '_'))))
+
+def count_entries(iterable):
+    try:
+        return len(iterable)
+    except TypeError:
+        counter = 0
+        for _ in iterable:
+            counter += 1
+        return counter
+
+def num_dots(name):
+    eq_dot = functools.partial(operator.eq, '.')
+    return count_entries(ifilter(eq_dot, name))
+
+def is_ip_adress(name):
+    last = name.split('.')[-1]
+    try:
+        int(last)
+        return True
+    except ValueError:
+        return False
 
 def is_valid_name(name):
     for n in name:
