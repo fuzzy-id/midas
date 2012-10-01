@@ -13,36 +13,17 @@ import subprocess
 import sys
 import tempfile
 
+from midas import MDCommand
 from midas import RankEntry
 from midas.compat import GzipFile
 
 logger = logging.getLogger(__name__)
 
-def run_alexa_to_key(argv=sys.argv):
-    cmd = AlexaToKey(argv)
-    return cmd.run()
-
-class AlexaToKey(object):
+class AlexaToKey(MDCommand):
     """ Parse Alexa Top1M files and print the found entries in key
     format. When no file is given the names of the files are read from
     stdin.
     """
-
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('-v', '--verbose', dest='verbosity', 
-                        action='append_const', const=-10, 
-                        help='be verbose, can be given multiple times',
-                        default=[logging.getLevelName('INFO')])
-    parser.add_argument('-q', '--quiet', dest='verbosity', 
-                        action='append_const', const=10,
-                        help='be quiet, can be given multiple times')
-    parser.add_argument('stream', nargs='*', metavar='FILE', default=sys.stdin,
-                        help='the files to read')
-
-    def __init__(self, argv):
-        self.args = self.parser.parse_args(argv[1:])
-        self.args.verbosity = sum(self.args.verbosity)
-        logging.basicConfig(level=self.args.verbosity, stream=sys.stderr)
 
     def run(self):
         for fname in self.args.stream:
