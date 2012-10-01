@@ -33,32 +33,15 @@ class AlexaToKey(MDCommand):
                 print(entry.format_w_key)
         return 0
 
-def run_key_to_files(argv=sys.argv):
-    cmd = KeyToFiles(argv)
-    return cmd.run()
 
-class KeyToFiles(object):
+class KeyToFiles(MDCommand):
     """ Sort entries provided in key format in descending order. Put
     them in standard format in a gzipped file named after the
     key. When no entry is given the entries are read from stdin.
     """
 
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('-v', '--verbose', dest='verbosity', 
-                        action='append_const', const=-10, 
-                        help='be verbose, can be given multiple times',
-                        default=[logging.getLevelName('INFO')])
-    parser.add_argument('-q', '--quiet', dest='verbosity', 
-                        action='append_const', const=10,
-                        help='be quiet, can be given multiple times')
-    parser.add_argument('-d', '--dest', default='.',
-                        help='destination for the output files')
-    parser.add_argument('stream', nargs='*', metavar='ENTRY', default=sys.stdin,
-                        help='the entries to process, ')
-
-    def __init__(self, argv):
-        self.args = self.parser.parse_args(argv[1:])
-        self.args.verbosity = sum(self.args.verbosity)
+    def __init__(self, argv=sys.argv):
+        MDCommand.__init__(self, argv)
         self.tmp_files = []
         self.tmpd = None
         self.cache = []
@@ -82,6 +65,11 @@ class KeyToFiles(object):
         finally:
             shutil.rmtree(self.tmpd)
         return 0
+
+    def add_argument(self):
+        self.parser.add_argument('-d', '--dest', default='.',
+                                 help='destination for the output files')
+
 
     def _write_out_cache(self):
         self.cache.sort()
