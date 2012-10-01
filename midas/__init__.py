@@ -20,6 +20,7 @@ reducers = 28
 
 [alexa]
 top1m_files = %(hadoop_home)s/alexa-files#alexa-files
+crunchbase_db = sqlite:////$(local_home)s/ba_data/crunchbase_db.sql
 cut_hash_key = 3
 
 [hadoop]
