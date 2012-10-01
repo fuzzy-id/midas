@@ -9,8 +9,8 @@ class AlexaToNamesAndOneTests(IntegrationTestCase):
     def _run_it(self, *args):
         effargs = ['alexa_to_names_and_one']
         effargs.extend(args)
-        from midas.analyze import run_alexa_to_names_and_one
-        return run_alexa_to_names_and_one(effargs)
+        from midas.analyze import AlexaToNamesAndOne
+        return AlexaToNamesAndOne.cmd(effargs)
 
     def test_on_file(self):
         ret_code = self._run_it(TEST_DATA[0])
