@@ -37,8 +37,8 @@ class AlexaToKeyTests(IntegrationTestCase):
 class KeyToFilesTests(IntegrationTestCase):
 
     def _get_target_func(self):
-        from midas.transform import run_key_to_files
-        return run_key_to_files
+        from midas.transform import KeyToFiles
+        return KeyToFiles.cmd
 
     def test_help_flag(self):
         with self.assertRaises(SystemExit) as cm:
