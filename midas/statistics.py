@@ -5,6 +5,8 @@ and the Top1M data.
 
 import collections
 
+from midas.compat import urlparse
+
 import crawlcrunch.model.db as ccdb
 
 def hps(sess):
@@ -32,7 +34,7 @@ def collect_by_key(iterable, keyfunc):
 
 def common_hp_starts(hps, netloc=False):
     if netloc:
-        keyfunc = lambda hp: netloc(hp).split('.', 1)[0]
+        keyfunc = lambda hp: urlparse(hp).netloc.split('.', 1)[0]
     else:
         keyfunc = lambda hp: hp.split('.', 1)[0]
     return count_keys(hps, keyfunc)
