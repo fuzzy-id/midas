@@ -52,7 +52,7 @@ def is_invalid_name(name):
 def filter_invalid_names(names):
     return ifilter(is_invalid_name, names)
 
-def groupby_key(iterable, sep='\t'):
+def group_by_key(iterable, sep='\t'):
     keyfunc = functools.partial(key, sep=sep)
     return imap(operator.itemgetter(1), itertools.groupby(iterable, keyfunc))
 
@@ -128,7 +128,7 @@ class SumValues(object):
         logging.basicConfig(level=self.args.verbosity, stream=sys.stderr)
 
     def run(self):
-        for group in groupby_key(self.args.stream):
+        for group in group_by_key(self.args.stream):
             counter = 0
             for entry in group:
                 name_tab_count = entry.strip()
