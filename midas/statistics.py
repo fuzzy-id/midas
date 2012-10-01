@@ -3,6 +3,8 @@
 and the Top1M data.
 """
 
+import collections
+
 import crawlcrunch.model.db as ccdb
 
 def hps(sess):
@@ -16,9 +18,17 @@ def netloc(url):
 def num_companies(sess):
     return sess.query(ccdb.Company).count()
 
-def common_starts(iterable):
+def count_keys(iterable, keyfunc):
     counter = collections.defaultdict(int)
     for item in iterable:
-        start = item.split('.', 1)[0]
-        counter[start] += 1
+        counter[keyfunc(item)] += 1
     return counter
+
+def collect_by_key(iterable, keyfunc):
+    collected = collection.defaultdict(list)
+    for item in iterable:
+        collected[keyfunc(item)].append(item)
+    return collected
+
+def common_hp_starts(hps):
+    return count_keys(hps, lambda hp: netloc(hp).split('.', 1)[0])
