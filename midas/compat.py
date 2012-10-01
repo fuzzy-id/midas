@@ -2,10 +2,8 @@
 
 import sys
 
-PY_VERSION = sys.version_info[:2]
-
-PY26 = PY_VERSION == (2, 6)
-PY3K = PY_VERSION[0] == 3
+PY26 = sys.version_info[:2] == (2, 6)
+PY3K = sys.version_info[0] == 3
 
 if PY26:  # pragma: no cover
     import zipfile
