@@ -80,7 +80,8 @@ class MDCommand(object):
 
     def run(self):
         """ Overwrite this method with the code you want your command
-        to execute. Return 0 on success, otherwise an other integer.
+        to execute. Return an integer unequal 0 if you want to signal
+        that something went wrong.
         """
         raise NotImplementedError()
 
