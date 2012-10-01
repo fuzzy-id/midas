@@ -82,30 +82,10 @@ class AlexaToNamesAndOne(MDCommand):
             for entry in RankEntry.iter_alexa_file(fname):
                 print("{0}\t1".format(entry.name))
 
-def run_sum_names(argv=sys.argv):
-    cmd = SumValues(argv)
-    cmd.run()
-    return 0
 
-class SumValues(object):
+class SumValues(MDCommand):
     """ Sums up the counts of the keys.
     """
-
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('-v', '--verbose', dest='verbosity',
-                        action='append_const', const=-10,
-                        help='be verbose, can be given multiple times',
-                        default=[logging.getLevelName('INFO')])
-    parser.add_argument('-q', '--quiet', dest='verbosity',
-                        action='append_const', const=10,
-                        help='be quiet, can be given multiple times')
-    parser.add_argument('stream', nargs='*', metavar='FILE', default=sys.stdin,
-                        help='the records to read')
-
-    def __init__(self, argv):
-        self.args = self.parser.parse_args(argv[1:])
-        self.args.verbosity = sum(self.args.verbosity)
-        logging.basicConfig(level=self.args.verbosity, stream=sys.stderr)
 
     def run(self):
         for group in group_by_key(self.args.stream):

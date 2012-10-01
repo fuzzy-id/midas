@@ -23,8 +23,8 @@ class SumValues(IntegrationTestCase):
     def _run_it(self, *args):
         effargs = ['md_sum_values']
         effargs.extend(args)
-        from midas.analyze import run_sum_names
-        return run_sum_names(effargs)
+        from midas.analyze import SumValues
+        return SumValues.cmd(effargs)
 
     def test_simple(self):
         ret_code = self._run_it(*('{0}\t1\n'.format(name) 
