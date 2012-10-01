@@ -43,6 +43,11 @@ if PY3K:  # pragma: no cover
 else:
     from itertools import ifilter
 
+if PY3K:  # pragma: no cover
+    from urllib.parse import urlparse
+else:
+    from urlparse import urlparse
+
 try:
     from StringIO import StringIO
 except ImportError:  # pragma: no cover
