@@ -98,8 +98,14 @@ class MDCommand(object):
             parser.add_argument('stream', nargs='*', metavar='FILE', default=sys.stdin,
                                 help='the files to read')
             self._parser = parser
+            self.add_argument()
         return self._parser
 
+    def add_argument(self):
+        """ Overwrite this function to add further arguments to
+        :attr:`self.parser`.
+        """
+        pass
 
 class RankEntry(object):
     """ Returns an entry of a ranking for `site`.
