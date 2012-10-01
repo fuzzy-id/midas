@@ -35,8 +35,8 @@ class SumValues(IntegrationTestCase):
 class GetInBlocksTests(unittest.TestCase):
 
     def _run_it(self, iterable):
-        from midas.analyze import get_in_blocks
-        return get_in_blocks(iterable)
+        from midas.analyze import group_by_key
+        return group_by_key(iterable)
 
     def test_general_case(self):
         data = ('{0}\t3'.format(e) for e in ['foo'] * 5 + ['bar'] * 3)
