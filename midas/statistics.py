@@ -30,5 +30,9 @@ def collect_by_key(iterable, keyfunc):
         collected[keyfunc(item)].append(item)
     return collected
 
-def common_hp_starts(hps):
-    return count_keys(hps, lambda hp: netloc(hp).split('.', 1)[0])
+def common_hp_starts(hps, netloc=False):
+    if netloc:
+        keyfunc = lambda hp: netloc(hp).split('.', 1)[0]
+    else:
+        keyfunc = lambda hp: hp.split('.', 1)[0]
+    return count_keys(hps, keyfunc)
