@@ -18,8 +18,8 @@ from midas.tests import IntegrationTestCase
 class AlexaToKeyTests(IntegrationTestCase):
 
     def _get_target_func(self):
-        from midas.transform import run_alexa_to_key
-        return run_alexa_to_key
+        from midas.transform import AlexaToKey
+        return AlexaToKey.cmd
 
     def test_help_flag(self):
         with self.assertRaises(SystemExit) as cm:
