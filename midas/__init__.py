@@ -2,9 +2,12 @@
 """ Common functions that are needed in most other submodules.
 """
 
+import argparse
 import datetime
 import hashlib
+import logging
 import os.path
+import sys
 
 from midas.compat import ZipFile
 
@@ -63,11 +66,19 @@ class MDCommand(object):
     """
 
     def __init__(self, argv):
-        self.parser.parse_args(argv[1:])
+        self.args = self.parser.parse_args(argv[1:])
         self.args.verbosity = sum(self.args.verbosity)
         logging.basicConfig(level=self.args.verbosity, stream=sys.stderr)
-    
+
+    @classmethod
+    def cmd(cls, argv=sys.argv):
+        obj = cls(argv)
+        return obj.run()
+
     def run(self):
+        """ Overwrite this method with the code you want your command
+        to execute. Return 0 on success, otherwise an other integer.
+        """
         raise NotImplementedError()
 
     @property
@@ -75,7 +86,7 @@ class MDCommand(object):
         """ Returns a :class:`argparse.ArgumentParser` object having
         `--verbose`, `--quiet` flags and reads from `stdin`.
         """
-        if not hasattr(self, _parser):
+        if not hasattr(self, '_parser'):
             parser = argparse.ArgumentParser(description=self.__doc__)
             parser.add_argument('-v', '--verbose', dest='verbosity',
                                 action='append_const', const=-10,
