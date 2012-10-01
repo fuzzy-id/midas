@@ -10,7 +10,7 @@ import sys
 from midas import RankEntry
 from midas.compat import ifilter
 from midas.compat import imap
-from compat import urlparse
+from midas.compat import urlparse
 
 
 VALID_CHRS = set(chr(i)
