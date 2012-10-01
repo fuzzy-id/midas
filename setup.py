@@ -6,7 +6,7 @@ import sys
 
 PY_VERSION = sys.version_info[:2]
 
-install_requires = []
+install_requires = ['crawlcrunch']
 
 if PY_VERSION == (2, 6):
     install_requires.append('argparse')
@@ -20,6 +20,7 @@ setup(name='midas',
       version='0.0a1',
       description='Try to get some useful information from Top1M.',
       author='Thomas Bach',
+      dependency_links = ['http://github.com/fuzzy-id/crawlcrunch/tarball/master#egg=crawlcrunch'],
       install_requires=install_requires,
       tests_require=tests_require,
       test_suite='midas.tests',
