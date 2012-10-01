@@ -10,6 +10,7 @@ import sys
 from midas import RankEntry
 from midas.compat import ifilter
 from midas.compat import imap
+from compat import urlparse
 
 
 VALID_CHRS = set(chr(i)
@@ -60,6 +61,14 @@ def key(line, sep='\t'):
 
 def split_key_value(line, sep='\t'):
     return line.strip().split(sep, 1)
+
+def cut_www(s):
+    if s.startswith('www.'):
+        return s[4:]
+    return s
+
+def netloc(url):
+    return urlparse(url).netloc
 
 def run_alexa_to_names_and_one(argv=sys.argv):
     cmd = AlexaToNamesAndOne(argv)
