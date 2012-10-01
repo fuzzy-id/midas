@@ -57,6 +57,39 @@ format = %(asctime)s %(levelname)-5.5s %(message)s
 #: 256` files.
 CUT_HASH_KEY = 3
 
+class MDCommand(object):
+    """ Subclass this to write an easy to use command line interface to
+    your function.
+    """
+
+    def __init__(self, argv):
+        self.parser.parse_args(argv[1:])
+        self.args.verbosity = sum(self.args.verbosity)
+        logging.basicConfig(level=self.args.verbosity, stream=sys.stderr)
+    
+    def run(self):
+        raise NotImplementedError()
+
+    @property
+    def parser(self):
+        """ Returns a :class:`argparse.ArgumentParser` object having
+        `--verbose`, `--quiet` flags and reads from `stdin`.
+        """
+        if not hasattr(self, _parser):
+            parser = argparse.ArgumentParser(description=self.__doc__)
+            parser.add_argument('-v', '--verbose', dest='verbosity',
+                                action='append_const', const=-10,
+                                help='be more verbose, can be given once',
+                                default=[logging.getLevelName('INFO')])
+            parser.add_argument('-q', '--quiet', dest='verbosity',
+                                action='append_const', const=10,
+                                help='be quieter, can be given up to three times')
+            parser.add_argument('stream', nargs='*', metavar='FILE', default=sys.stdin,
+                                help='the files to read')
+            self._parser = parser
+        return self._parser
+
+
 class RankEntry(object):
     """ Returns an entry of a ranking for `site`.
 
