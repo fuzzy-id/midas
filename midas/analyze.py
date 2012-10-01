@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import argparse
 import functools
 import itertools
 import logging
 import operator
-import sys
 
 from midas import MDCommand
 from midas import RankEntry
