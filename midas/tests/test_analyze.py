@@ -13,7 +13,7 @@ class AlexaToNamesAndOneTests(IntegrationTestCase):
         return AlexaToNamesAndOne.cmd(effargs)
 
     def test_on_file(self):
-        ret_code = self._run_it(TEST_DATA[0])
+        ret_code = self._run_it('-q', TEST_DATA[0])
         self.assertEqual(ret_code, 0)
         self.assert_stdout_equal(''.join('{0}\t1\n'.format(e.name)
                                          for e in TEST_DATA[1]))
