@@ -46,7 +46,12 @@ if PY3K:  # pragma: no cover
 else:
     from urlparse import urlparse
 
-try:
-    from StringIO import StringIO
-except ImportError:  # pragma: no cover
+if PY3K:  # pragma: no cover
+    from configparser import ConfigParser
+else:
+    from ConfigParser import ConfigParser
+
+if PY3K:  # pragma: no cover
     from io import StringIO
+else:
+    from StringIO import StringIO
