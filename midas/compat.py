@@ -47,11 +47,21 @@ else:
     from urlparse import urlparse
 
 if PY3K:  # pragma: no cover
-    from configparser import ConfigParser
-else:
-    from ConfigParser import ConfigParser
-
-if PY3K:  # pragma: no cover
     from io import StringIO
 else:
     from StringIO import StringIO
+
+if PY3K:  # pragma: no cover
+    from configparser import ConfigParser
+else:
+    from ConfigParser import SafeConfigParser
+
+    class ConfigParser(SafeConfigParser):
+
+        def read_string(self, s):
+            """ Puts the string `s` into a :class:`StringIO.StringIO`
+            instance and passes it to :meth:`readfp`.
+            """
+            buf = StringIO(s)
+            buf.seek(0)
+            self.readfp(buf)
