@@ -63,16 +63,16 @@ CUT_HASH_KEY = 3
 class MDCommand(object):
     """ Subclass this to write an easy to use command line interface to
     your function.
+
+    Initializes the :class:`MDCommand` instance by passing `argv`
+    (usually :attr:`sys.argv`) to :method:`parser` and configuring the
+    :mod:`logging`.
+
+    Make sure to call this class's :method:`__init__` when
+    over-writing it.
     """
 
     def __init__(self, argv):
-        """ Initializes the :class:`MDCommand` instance by passing
-        `argv` (usually :attr:`sys.argv`) to :method:`parser` and
-        configuring the :mod:`logging`.
-
-        Make sure to call this class's :method:`__init__` when
-        over-writing it.
-        """
         self.args = self.parser.parse_args(argv[1:])
         self.args.verbosity = sum(self.args.verbosity)
         logging.basicConfig(level=self.args.verbosity, stream=sys.stderr)
@@ -106,8 +106,8 @@ class MDCommand(object):
             parser.add_argument('-q', '--quiet', dest='verbosity',
                                 action='append_const', const=10,
                                 help='be quieter, can be given up to three times')
-            parser.add_argument('stream', nargs='*', metavar='RECORD', default=sys.stdin,
-                                help='the records to read')
+            parser.add_argument('stream', nargs='*', metavar='RECORD', 
+                                default=sys.stdin, help='the records to read')
             self._parser = parser
             self.add_argument()
         return self._parser
