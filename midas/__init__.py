@@ -61,15 +61,13 @@ format = %(asctime)s %(levelname)-5.5s %(message)s
 CUT_HASH_KEY = 3
 
 class MDCommand(object):
-    """ Subclass this to write an easy to use command line interface to
-    your function.
-
-    Initializes the :class:`MDCommand` instance by passing `argv`
-    (usually :attr:`sys.argv`) to :method:`parser` and configuring the
+    """ Initializes the :class:`MDCommand` instance by passing `argv`
+    (usually :attr:`sys.argv`) to :meth:`parser` and configuring the
     :mod:`logging`.
 
-    Make sure to call this class's :method:`__init__` when
-    over-writing it.
+    Subclass this to write an easy to use command line interface to
+    your function. But, make sure to call this class's
+    :meth:`__init__` method when over-writing it.
     """
 
     def __init__(self, argv):
@@ -79,6 +77,10 @@ class MDCommand(object):
 
     @classmethod
     def cmd(cls, argv=sys.argv):
+        """ Initiates the class and calls its :meth:`run`
+        method. Returns whatever :meth:`run` returns, except for
+        :class:`None` which is interpreted as `0`.
+        """
         obj = cls(argv)
         ret_val = obj.run()
         if ret_val is None:  # nothing means everything's fine
