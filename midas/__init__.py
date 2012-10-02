@@ -6,6 +6,7 @@ import argparse
 import datetime
 import hashlib
 import logging.config
+import os
 import os.path
 import sys
 
@@ -13,11 +14,12 @@ from midas.compat import ConfigParser
 from midas.compat import StringIO
 from midas.compat import ZipFile
 
+
 DEFAULT_CONFIG = """
 [DEFAULTS]
-user_name = YOUR_USERNAME
+user_name = {env[USER]}
 hdfs_home = hdfs://localhost:9000/user/%(user_name)s
-local_home = /home/$(user_name)s
+local_home = {env[HOME]}
 
 [job]
 mappers = 16
@@ -54,7 +56,7 @@ formatter = generic
 
 [formatter_generic]
 format = %(asctime)s %(levelname)-5.5s %(message)s
-"""
+""".format(env=os.environ)
 
 #: How much letters of the hash key should be used to pre-sort the
 #: entries. The larger this number the more and smaller files
