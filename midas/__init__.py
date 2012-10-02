@@ -5,16 +5,18 @@
 import argparse
 import datetime
 import hashlib
-import logging
+import logging.config
 import os.path
 import sys
 
+from midas.compat import ConfigParser
+from midas.compat import StringIO
 from midas.compat import ZipFile
 
-SAMPLE_CONFIG = """
+DEFAULT_CONFIG = """
 [DEFAULTS]
-user_name = thbach
-hadoop_home = hdfs://localhost:9000/user/%(user_name)s
+user_name = YOUR_USERNAME
+hdfs_home = hdfs://localhost:9000/user/%(user_name)s
 local_home = /home/$(user_name)s
 
 [job]
@@ -22,32 +24,32 @@ mappers = 16
 reducers = 28
 
 [alexa]
-top1m_files = %(hadoop_home)s/alexa-files#alexa-files
+top1m_files = %(hdfs_home)s/alexa-files#alexa-files
 crunchbase_db = sqlite:////$(local_home)s/ba_data/crunchbase_db.sql
-cut_hash_key = 3
+key_length = 3
 
 [hadoop]
 home = %(local_home)s/opt/hadoop-1.0.3
 exec = %(home)s/bin/hadoop
-streaming = %(home)/contrib/streaming/hadoop-streaming-1.0.3.jar
+streaming = %(home)s/contrib/streaming/hadoop-streaming-1.0.3.jar
 
 [loggers]
 keys = root
 
 [handlers]
-keys = stderr
+keys = console
 
 [formatters]
 keys = generic
 
 [logger_root]
-level = INFO
-handlers = stderr
+level = DEBUG
+handlers = console
 
-[handler_stderr]
+[handler_console]
 class = StreamHandler
 args = (sys.stderr, )
-level = NOTSET
+level = INFO
 formatter = generic
 
 [formatter_generic]
@@ -72,8 +74,18 @@ class MDCommand(object):
 
     def __init__(self, argv):
         self.args = self.parser.parse_args(argv[1:])
-        self.args.verbosity = sum(self.args.verbosity)
-        logging.basicConfig(level=self.args.verbosity, stream=sys.stderr)
+        self._configure_logging()
+    
+    def _configure_logging(self):
+        console_severity = self.config.get('handler_console', 'level')
+        level_as_int = logging.getLevelName(console_severity)
+        new_level = level_as_int + sum(self.args.verbosity)
+        self.config.set('handler_console', 'level', 
+                        logging.getLevelName(new_level))
+        buf = StringIO()
+        self.config.write(buf)
+        buf.seek(0)
+        logging.config.fileConfig(buf)
 
     @classmethod
     def cmd(cls, argv=sys.argv):
@@ -94,6 +106,19 @@ class MDCommand(object):
         raise NotImplementedError()
 
     @property
+    def config(self):
+        """ Returns a :class:`midas.compat.ConfigParser` object having
+        parsed :const:`DEFAULT_CONFIG` first and the configuration
+        file as given to :meth:`parser` second.
+        """
+        if not hasattr(self, '_config'):
+            cp = ConfigParser()
+            cp.read_string(DEFAULT_CONFIG)
+            cp.read(os.path.expanduser(self.args.cfg))
+            self._config = cp
+        return self._config
+
+    @property
     def parser(self):
         """ Returns a :class:`argparse.ArgumentParser` object having
         `--verbose`, `--quiet` flags and reads from `stdin`.
@@ -102,11 +127,14 @@ class MDCommand(object):
             parser = argparse.ArgumentParser(description=self.__doc__)
             parser.add_argument('-v', '--verbose', dest='verbosity',
                                 action='append_const', const=-10,
-                                help='be more verbose, can be given once',
-                                default=[logging.getLevelName('INFO')])
+                                help='decrease the severity of the console handler',
+                                default=[0])
             parser.add_argument('-q', '--quiet', dest='verbosity',
                                 action='append_const', const=10,
-                                help='be quieter, can be given up to three times')
+                                help='increase the severity of the console handler')
+            parser.add_argument('-c', '--cfg', default='~/.midas',
+                                help=' '.join(('the midas configuration file,',
+                                               'default is "~/.midas"')))
             parser.add_argument('stream', nargs='*', metavar='RECORD', 
                                 default=sys.stdin, help='the records to read')
             self._parser = parser
@@ -115,7 +143,8 @@ class MDCommand(object):
 
     def add_argument(self):
         """ Overwrite this function to add further arguments to
-        :attr:`self.parser`.
+        :attr:`self.parser`. This function is called before the actual
+        arguments are passed in :meth:`__init__`.
         """
         pass
 
