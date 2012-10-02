@@ -62,7 +62,7 @@ CUT_HASH_KEY = 3
 
 class MDCommand(object):
     """ Initializes the :class:`MDCommand` instance by passing `argv`
-    (usually :attr:`sys.argv`) to :meth:`parser` and configuring the
+    (usually :obj:`sys.argv`) to :meth:`parser` and configuring the
     :mod:`logging`.
 
     Subclass this to write an easy to use command line interface to
@@ -79,7 +79,7 @@ class MDCommand(object):
     def cmd(cls, argv=sys.argv):
         """ Initiates the class and calls its :meth:`run`
         method. Returns whatever :meth:`run` returns, except for
-        :class:`None` which is interpreted as `0`.
+        :obj:`None` which is interpreted as `0` (integer zero).
         """
         obj = cls(argv)
         ret_val = obj.run()
@@ -120,7 +120,7 @@ class MDCommand(object):
         pass
 
 class RankEntry(object):
-    """ Returns an entry of a ranking for `site`.
+    """ Returns an entry of a ranking for `name`.
 
     The `date` specifies the date of the entry and should be a
     :class:`datetime.datetime` instance.
