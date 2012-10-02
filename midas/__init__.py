@@ -83,14 +83,13 @@ class MDCommand(object):
         """
         obj = cls(argv)
         ret_val = obj.run()
-        if ret_val is None:  # nothing means everything's fine
-            return 0
-        return ret_val
+        # `None` means everything's fine
+        return 0 if ret_val is None else ret_val
 
     def run(self):
         """ Overwrite this method with the code you want your command
-        to execute. Return an integer unequal 0 if you want to signal
-        that something went wrong.
+        to execute. Return an integer unequal `0` if you want to
+        signal that something went wrong.
         """
         raise NotImplementedError()
 
