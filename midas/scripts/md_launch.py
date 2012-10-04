@@ -48,9 +48,12 @@ class MDLaunch(MDCommand):
           proc_cmd.extend(
              ['-D', 'mapred.output.compress=true',
               '-D', 'mapred.output.compression.codec=org.apache.hadoop.io.compress.GzipCodec'])
+       if self.config.get('job', 'files') != 'optional':
+          proc_cmd.append('-files')
+          proc_cmd.append(','.join( s.strip() 
+                                    for s in self.config.get('job', 'files').split(',')))
        proc_cmd.extend(
-          ['-files', self.config.get('alexa', 'top1m_files'),
-           '-input', self.config.get('job', 'input'),
+          ['-input', self.config.get('job', 'input'),
            '-output', self.config.get('job', 'output'),
            '-mapper', self.config.get('job', 'mapper'),
            '-reducer', self.config.get('job', 'reducer')])
@@ -58,15 +61,15 @@ class MDLaunch(MDCommand):
        proc = subprocess.Popen(proc_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
        while proc.poll() is None:
           for l in proc.stderr:
-             logger.error(l.strip())
+             logger.error(l.decode().strip())
           for l in proc.stdout:
-             logger.info(l.strip())
+             logger.info(l.decode().strip())
        else:
           for l in proc.stderr:
-             logger.error(l.strip())
+             logger.error(l.decode().strip())
           proc.stderr.close()
           for l in proc.stdout:
-             logger.info(l.strip())
+             logger.info(l.decode().strip())
           proc.stdout.close()
        return proc.poll()
           
