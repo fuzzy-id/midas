@@ -79,6 +79,8 @@ class MDCommand(object):
     :meth:`__init__` method when over-writing it.
     """
 
+    POS_ARG = None
+
     def __init__(self, argv):
         self.args = self.parser.parse_args(argv[1:])
         self._configure_logging()
@@ -142,8 +144,8 @@ class MDCommand(object):
             parser.add_argument('-c', '--cfg', default='~/.midas',
                                 help=' '.join(('the midas configuration file,',
                                                'default is "~/.midas"')))
-            parser.add_argument('stream', nargs='*', metavar='RECORD', 
-                                default=sys.stdin, help='the records to read')
+            if self.POS_ARG:
+                parser.add_argument(**self.POS_ARG)
             self._parser = parser
             self.add_argument()
         return self._parser
@@ -154,6 +156,16 @@ class MDCommand(object):
         arguments are passed in :meth:`__init__`.
         """
         pass
+
+class MDJob(MDCommand):
+    " Provides :class:`MDCommand` with a positional argument. "
+    
+    POS_ARG = {'dest': 'stream', 
+               'nargs': '*',
+               'metavar': 'RECORD', 
+               'default': sys.stdin, 
+               'help': 'the records to read'}
+
 
 class RankEntry(object):
     """ Returns an entry of a ranking for `name`.
