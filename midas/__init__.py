@@ -20,15 +20,17 @@ DEFAULT_CONFIG = """
 user_name = {env[USER]}
 hdfs_home = hdfs://localhost:9000/user/%(user_name)s
 local_home = {env[HOME]}
+virt_env = %(local_home)s/py_envs/py26
 
 [job]
 mapper = /path/to/mapper
 num_mappers = 16
 reducer = /path/to/reducer
 num_reducers = 28
-input = None
-output = None
+input = /path/to/input
+output = optional
 compress_output = true
+files = optional
 
 [alexa]
 top1m_files = %(hdfs_home)s/alexa-files#alexa-files
