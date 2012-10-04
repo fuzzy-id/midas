@@ -16,7 +16,7 @@ from midas.compat import ZipFile
 
 
 DEFAULT_CONFIG = """
-[DEFAULTS]
+[DEFAULT]
 user_name = {env[USER]}
 hdfs_home = hdfs://localhost:9000/user/%(user_name)s
 local_home = {env[HOME]}
