@@ -22,8 +22,13 @@ hdfs_home = hdfs://localhost:9000/user/%(user_name)s
 local_home = {env[HOME]}
 
 [job]
-mappers = 16
-reducers = 28
+mapper = /path/to/mapper
+num_mappers = 16
+reducer = /path/to/reducer
+num_reducers = 28
+input = None
+output = None
+compress_output = true
 
 [alexa]
 top1m_files = %(hdfs_home)s/alexa-files#alexa-files
