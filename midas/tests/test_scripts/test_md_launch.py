@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import tempfile
+
+import mock
+
 from midas.compat import StringIO
 from midas.tests import IntegrationTestCase
 
@@ -11,13 +15,15 @@ class MDLaunchTests(IntegrationTestCase):
         from midas.scripts.md_launch import MDLaunch
         return MDLaunch.cmd(effargs)
 
-    def test_subproc_writes_to_stdout(self):
-        cfg = StringIO('\n'.join(('[hadoop]',
-                                  'exec = echo',
-                                  '[job]',
-                                  'mapper = foo',
-                                  'reducer = bar')))
-        cfg.seek(0)
-        self.assertEqual(0, self._call_cmd(cfg))
-        self.assert_stdout_startswith('jar')
-        
+    @mock.patch('midas.scripts.md_launch.logger')
+    def test_subproc_stdout(self, logger):
+        with tempfile.NamedTemporaryFile('w+') as fp:
+            fp.writelines('\n'.join(('[hadoop]',
+                                     'exec = echo',
+                                     '[job]',
+                                     'mapper = foo',
+                                     'reducer = bar')))
+            fp.seek(0)
+            self.assertEqual(0, self._call_cmd(fp.name))
+        self.assertFalse(logger.error.called)
+        self.assertTrue(logger.info.called)
