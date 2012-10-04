@@ -24,9 +24,18 @@ class MDLaunch(MDCommand):
     configuration file.
     """
 
+    POS_ARG = {'dest': 'job_cfg',
+               'nargs': 1,
+               'metavar': 'FILE',
+               'help': 'the configuration of the job'}
+
+    def __init__(self, argv):
+       MDCommand.__init__(self, argv)
+       self.config.read(self.args.job_cfg)
+
     def run(self):
        proc_cmd = [self.config.get('hadoop', 'exec'), 
-                        'jar', self.config.get('hadoop', 'streaming')]
+                   'jar', self.config.get('hadoop', 'streaming')]
        proc_cmd.extend(
           ['-D', "mapred.map.tasks={0}".format(self.config.getint('job', 'num_mappers'))])
        proc_cmd.extend(
