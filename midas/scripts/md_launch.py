@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import os
 import os.path
 import subprocess
 
+from midas import MDCommand
+
+logger = logging.getLogger(__name__)
 
 def which(program):
    def is_exe(fpath):
@@ -51,4 +55,18 @@ class MDLaunch(MDCommand):
            '-mapper', self.config.get('job', 'mapper'),
            '-reducer', self.config.get('job', 'reducer')])
        logger.info("Executing '{0}'".format(' '.join(proc_cmd)))
-       subprocess.check_call(proc_cmd)
+       proc = subprocess.Popen(proc_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+       while proc.poll() is None:
+          for l in proc.stderr:
+             logger.error(l.strip())
+          for l in proc.stdout:
+             logger.info(l.strip())
+       else:
+          for l in proc.stderr:
+             logger.error(l.strip())
+          proc.stderr.close()
+          for l in proc.stdout:
+             logger.info(l.strip())
+          proc.stdout.close()
+       return proc.poll()
+          
