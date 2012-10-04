@@ -13,7 +13,7 @@ import subprocess
 import sys
 import tempfile
 
-from midas import MDCommand
+from midas import MDJob
 from midas import RankEntry
 from midas.compat import GzipFile
 
@@ -36,7 +36,7 @@ def get_hadoop_binary():
     return os.path.join(os.environ['HADOOP_HOME'], 'bin', 'hadoop')
 
 
-class AlexaToKey(MDCommand):
+class AlexaToKey(MDJob):
     """ Parse Alexa Top1M files and print the found entries in key
     format. When no file is given the names of the files are read from
     stdin.
@@ -51,14 +51,14 @@ class AlexaToKey(MDCommand):
         return 0
 
 
-class KeyToFiles(MDCommand):
+class KeyToFiles(MDJob):
     """ Sort entries provided in key format in descending order. Put
     them in standard format in a gzipped file named after the
     key. When no entry is given the entries are read from stdin.
     """
 
     def __init__(self, argv=sys.argv):
-        MDCommand.__init__(self, argv)
+        MDJob.__init__(self, argv)
         self.tmp_files = []
         self.tmpd = None
         self.cache = []

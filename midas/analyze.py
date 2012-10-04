@@ -5,7 +5,7 @@ import itertools
 import logging
 import operator
 
-from midas import MDCommand
+from midas import MDJob
 from midas import RankEntry
 from midas.compat import ifilter
 from midas.compat import imap
@@ -69,7 +69,7 @@ def cut_www(s):
 def netloc(url):
     return urlparse(url).netloc
 
-class AlexaToNamesAndOne(MDCommand):
+class AlexaToNamesAndOne(MDJob):
     """ Parse Alexa Top1M files and print the names found in the
     entries as key and a `1' as value.
     """
@@ -81,7 +81,7 @@ class AlexaToNamesAndOne(MDCommand):
                 print("{0}\t1".format(entry.name))
 
 
-class SumValues(MDCommand):
+class SumValues(MDJob):
     """ Sums up the counts of the keys.
     """
 
