@@ -2,6 +2,8 @@
 
 import os
 import os.path
+import subprocess
+
 
 def which(program):
    def is_exe(fpath):
@@ -17,3 +19,27 @@ def which(program):
    return None
 
 
+class MDLaunch(MDCommand):
+    """ Launches a MapReduce job defined by the passed job
+    configuration file.
+    """
+
+    def run(self):
+       proc_cmd = [self.config.get('hadoop', 'exec'), 
+                        'jar', self.config.get('hadoop', 'streaming')]
+       proc_cmd.extend(
+          ['-D', "mapred.map.tasks={0}".format(self.config.getint('job', 'num_mappers'))])
+       proc_cmd.extend(
+          ['-D', "mapred.reduce.tasks={0}".format(self.config.getint('job', 'num_reducers'))])
+       if self.config.getboolean('job', 'compress_output'):
+          proc_cmd.extend(
+             ['-D', 'mapred.output.compress=true',
+              '-D', 'mapred.output.compression.codec=org.apache.hadoop.io.compress.GzipCodec'])
+       proc_cmd.extend(
+          ['-files', self.config.get('alexa', 'top1m_files'),
+           '-input', self.config.get('job', 'input'),
+           '-output', self.config.get('job', 'output'),
+           '-mapper', self.config.get('job', 'mapper'),
+           '-reducer', self.config.get('job', 'reducer')])
+       logger.info("Executing '{0}'".format(' '.join(proc_cmd)))
+       subprocess.check_call(proc_cmd)
