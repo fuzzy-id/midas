@@ -7,9 +7,7 @@ from midas.tests import unittest
 class ConfigParserBehaviorTests(unittest.TestCase):
 
     def test_interpretation_of_None(self):
-        buf = StringIO('\n'.join(['[foo]', 'bar = None', 'files']))
-        buf.seek(0)
         cp = ConfigParser()
-        cp.readfp(buf)
+        cp.read_string('\n'.join(['[foo]', 'bar = None']))
         self.assertEqual(cp.get('foo', 'bar'), 'None')
-        self.assertIsNone(cp.get('foo', 'files'))
+
