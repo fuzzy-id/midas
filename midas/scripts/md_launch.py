@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import datetime
 import logging
 import os
 import os.path
@@ -23,8 +24,6 @@ class MDLaunch(MDCommand):
     def __init__(self, argv):
        MDCommand.__init__(self, argv)
        self.config.read(self.args.job_cfg)
-
-    def run(self):
        proc_cmd = [self.config.get('hadoop', 'exec'), 
                    'jar', self.config.get('hadoop', 'streaming')]
        proc_cmd.extend(
@@ -35,28 +34,33 @@ class MDLaunch(MDCommand):
           proc_cmd.extend(
              ['-D', 'mapred.output.compress=true',
               '-D', 'mapred.output.compression.codec=org.apache.hadoop.io.compress.GzipCodec'])
-       if self.config.get('job', 'files') != 'optional':
-          proc_cmd.append('-files')
-          proc_cmd.append(','.join( s.strip() 
-                                    for s in self.config.get('job', 'files').split(',')))
-       proc_cmd.extend(
-          ['-input', self.config.get('job', 'input'),
-           '-output', self.config.get('job', 'output'),
-           '-mapper', self.config.get('job', 'mapper'),
-           '-reducer', self.config.get('job', 'reducer')])
-       logger.info("Executing '{0}'".format(' '.join(proc_cmd)))
-       proc = subprocess.Popen(proc_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-       while proc.poll() is None:
-          for l in proc.stderr:
-             logger.error(l.decode().strip())
-          for l in proc.stdout:
-             logger.info(l.decode().strip())
+
+       if self.config.get('job', 'output') == 'optional':
+          out_dst = 'out_{0}_%Y-%m-%d_%H-%M-%S'.format(self.args.job_cfg)
+          self.config.set('job', 'output', 
+                          datetime.datetime.now().strftime(out_dst))
+
+       for field in ('files', 'mapper', 'reducer', 'input', 'output'):
+          if self.config.get('job', field) != 'optional':
+             proc_cmd.append('-{0}'.format(field))
+             proc_cmd.append(self.config.get('job', field))
+       self.proc_cmd = proc_cmd
+
+    def run(self):
+       logger.info("Executing '{0}'".format(' '.join(self.proc_cmd)))
+       self.proc = subprocess.Popen(self.proc_cmd, 
+                                    stdout=subprocess.PIPE, 
+                                    stderr=subprocess.PIPE)
+       while self.proc.poll() is None:
+          self.log_proc()
        else:
-          for l in proc.stderr:
-             logger.error(l.decode().strip())
-          proc.stderr.close()
-          for l in proc.stdout:
-             logger.info(l.decode().strip())
-          proc.stdout.close()
-       return proc.poll()
-          
+          self.log_proc()
+          self.proc.stderr.close()
+          self.proc.stdout.close()
+       return self.proc.poll()
+
+    def log_proc(self):
+       for l in self.proc.stderr:
+          logger.error(l.decode().strip())
+       for l in self.proc.stdout:
+          logger.info(l.decode().strip())
