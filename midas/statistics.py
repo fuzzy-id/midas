@@ -9,6 +9,16 @@ from midas.compat import urlparse
 
 import crawlcrunch.model.db as ccdb
 
+SiteCnt = collections.namedtuple('NameCount', ['site', 'cnt'])
+
+def names(path):
+    with GzipFile(path) as fp:
+        for l in fp:
+            site, cnt = l.decode().strip().split('\t', 1)
+            cnt = int(cnt)
+            yield SiteCnt(site, cnt)
+            
+
 def hps(sess):
     return [ i[0] for i in sess.query(ccdb.Company.homepage_url)\
                  .filter(ccdb.Company.homepage_url != None)\
