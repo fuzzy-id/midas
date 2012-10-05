@@ -15,17 +15,19 @@ import tempfile
 
 from midas import MDJob
 from midas import RankEntry
+from midas.analyze import group_by_key
 from midas.compat import GzipFile
+from midas.compat import imap
 
 logger = logging.getLogger(__name__)
 
 
 def popen_log(cmd):
-    logging.info("Executing '{0}'".format(' '.join(cmd)))
+    logger.info("Executing '{0}'".format(' '.join(cmd)))
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.wait()
     if proc.returncode != 0:
-        logging.critical('STDOUT: {0}\nSTDERR: {1}'.format(*proc.communicate()))
+        logger.critical('STDOUT: {0}\nSTDERR: {1}'.format(*proc.communicate()))
         raise subprocess.CalledProcessError(proc.returncode, cmd)
     else:
         proc.stdout.close()
@@ -45,7 +47,7 @@ class AlexaToKey(MDJob):
     def run(self):
         for fname in self.args.stream:
             fname = fname.strip()
-            logging.info("processing '{0}'".format(fname))
+            logger.info("processing '{0}'".format(fname))
             for entry in RankEntry.iter_alexa_file(fname):
                 print(entry.format_w_key)
         return 0
@@ -61,22 +63,12 @@ class KeyToFiles(MDJob):
         MDJob.__init__(self, argv)
         self.tmp_files = []
         self.tmpd = None
-        self.cache = []
 
     def run(self):
-        logging.basicConfig(level=self.args.verbosity, stream=sys.stderr)
-        stream_iter = iter(self.args.stream)
-        first = next(stream_iter)
-        self.cache.append(RankEntry.parse_key(first))
         self.tmpd = tempfile.mkdtemp()
         try:
-            for line in stream_iter:
-                entry = RankEntry.parse_key(line)
-                if entry.key != self.cache[0].key:
-                    self._write_out_cache()
-                    self._cp_tmp_files_to_hdfs()
-                self.cache.append(entry)
-            else:
+            for group in group_by_key(self.args.stream):
+                self.cache = sorted(imap(RankEntry.parse_key, group))
                 self._write_out_cache()
             self._cp_tmp_files_to_hdfs()
         finally:
@@ -87,17 +79,14 @@ class KeyToFiles(MDJob):
         self.parser.add_argument('-d', '--dest', default='.',
                                  help='destination for the output files')
 
-
     def _write_out_cache(self):
-        self.cache.sort()
         tmpfile = os.path.join(self.tmpd, '{0}.gz'.format(self.cache[0].key))
-        logging.info('Writing to {0}'.format(tmpfile))
+        logger.info('Writing to {0}'.format(tmpfile))
         with GzipFile(tmpfile, 'wb') as fp:
             for entry in self.cache:
                 fp.write((entry.format_std + '\n').encode())
         self.tmp_files.append(tmpfile)
-        self.cache = []
-        logging.info('Generated {0}'.format(tmpfile))
+        logger.info('Generated {0}'.format(tmpfile))
 
     def _cp_tmp_files_to_hdfs(self):
         copied = []
@@ -108,7 +97,7 @@ class KeyToFiles(MDJob):
                 popen_log(cmd)
                 copied.append(dst_file)
         except:
-            logging.critical('Removing copied files from HDFS.')
+            logger.critical('Removing copied files from HDFS.')
             for dst_file in copied:
                 cmd = (get_hadoop_binary(), 'fs', '-rm', dst_file)
                 popen_log(cmd)
