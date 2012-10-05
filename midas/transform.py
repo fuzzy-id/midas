@@ -56,10 +56,9 @@ class KeyToFiles(MDJob):
     def run(self):
         self.tmpd = tempfile.mkdtemp()
         try:
-            for group in group_by_key(self.args.stream):
-                self.cache = sorted(imap(RankEntry.parse_key, group))
-                self._write_out_cache()
-            self._cp_tmp_files_to_hdfs()
+            files = [ self._write_out(sorted(imap(RankEntry.parse_key, group)))
+                      for group in group_by_key(self.args.stream) ]
+            self._cp_files_to_hdfs(files)
         finally:
             shutil.rmtree(self.tmpd)
         return 0
@@ -68,20 +67,21 @@ class KeyToFiles(MDJob):
         self.parser.add_argument('-d', '--dest', default='.',
                                  help='destination for the output files')
 
-    def _write_out_cache(self):
-        tmpfile = os.path.join(self.tmpd, '{0}.gz'.format(self.cache[0].key))
+    def _write_out(self, cache):
+        tmpfile = os.path.join(self.tmpd, '{0}.gz'.format(cache[0].key))
         logger.info('Writing to {0}'.format(tmpfile))
         with GzipFile(tmpfile, 'wb') as fp:
-            for entry in self.cache:
+            for entry in cache:
                 fp.write((entry.format_std + '\n').encode())
-        self.tmp_files.append(tmpfile)
         logger.info('Generated {0}'.format(tmpfile))
+        return tmpfile
 
-    def _cp_tmp_files_to_hdfs(self):
+    def _cp_files_to_hdfs(self, files):
         copied = []
         try:
-            for tmpfile in self.tmp_files:
-                dst_file = os.path.join(self.args.dest, os.path.basename(tmpfile))
+            for tmpfile in files:
+                dst_file = os.path.join(self.args.dest, 
+                                        os.path.basename(tmpfile))
                 cmd = (get_hadoop_binary(), 'fs', '-put', tmpfile, dst_file)
                 log_popen(cmd)
                 copied.append(dst_file)
