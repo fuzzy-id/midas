@@ -36,9 +36,10 @@ class MDLaunch(MDCommand):
               '-D', 'mapred.output.compression.codec=org.apache.hadoop.io.compress.GzipCodec'])
 
        if self.config.get('job', 'output') == 'optional':
-          out_dst = 'out_{0}_%Y-%m-%d_%H-%M-%S'.format(self.args.job_cfg)
-          self.config.set('job', 'output', 
-                          datetime.datetime.now().strftime(out_dst))
+          out_dst = 'out_{0}_%Y-%m-%d_%H-%M-%S'.format(self.args.job_cfg[0])
+          out_dst = datetime.datetime.now().strftime(out_dst)
+          self.config.set('job', 'output', out_dst)
+          logger.info("Output goes to '{0}'".format(out_dst))
 
        for field in ('files', 'mapper', 'reducer', 'input', 'output'):
           if self.config.get('job', field) != 'optional':
