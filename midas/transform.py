@@ -18,21 +18,10 @@ from midas import RankEntry
 from midas.analyze import group_by_key
 from midas.compat import GzipFile
 from midas.compat import imap
+from midas.tools import log_popen
+
 
 logger = logging.getLogger(__name__)
-
-
-def popen_log(cmd):
-    logger.info("Executing '{0}'".format(' '.join(cmd)))
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    proc.wait()
-    if proc.returncode != 0:
-        logger.critical('STDOUT: {0}\nSTDERR: {1}'.format(*proc.communicate()))
-        raise subprocess.CalledProcessError(proc.returncode, cmd)
-    else:
-        proc.stdout.close()
-        proc.stderr.close()
-
 
 def get_hadoop_binary():
     return os.path.join(os.environ['HADOOP_HOME'], 'bin', 'hadoop')
@@ -94,11 +83,11 @@ class KeyToFiles(MDJob):
             for tmpfile in self.tmp_files:
                 dst_file = os.path.join(self.args.dest, os.path.basename(tmpfile))
                 cmd = (get_hadoop_binary(), 'fs', '-put', tmpfile, dst_file)
-                popen_log(cmd)
+                log_popen(cmd)
                 copied.append(dst_file)
         except:
             logger.critical('Removing copied files from HDFS.')
             for dst_file in copied:
                 cmd = (get_hadoop_binary(), 'fs', '-rm', dst_file)
-                popen_log(cmd)
+                log_popen(cmd)
             raise
