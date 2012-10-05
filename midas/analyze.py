@@ -10,6 +10,7 @@ from midas import RankEntry
 from midas.compat import ifilter
 from midas.compat import imap
 from midas.compat import urlparse
+from midas.tools import group_by_key
 
 
 VALID_CHRS = set(chr(i)
@@ -51,23 +52,10 @@ def is_invalid_name(name):
 def filter_invalid_names(names):
     return ifilter(is_invalid_name, names)
 
-def group_by_key(iterable, sep='\t'):
-    keyfunc = functools.partial(key, sep=sep)
-    return imap(operator.itemgetter(1), itertools.groupby(iterable, keyfunc))
-
-def key(line, sep='\t'):
-    return split_key_value(line, sep)[0]
-
-def split_key_value(line, sep='\t'):
-    return line.strip().split(sep, 1)
-
 def cut_www(s):
     if s.startswith('www.'):
         return s[4:]
     return s
-
-def netloc(url):
-    return urlparse(url).netloc
 
 class AlexaToNamesAndOne(MDJob):
     """ Parse Alexa Top1M files and print the names found in the
@@ -88,8 +76,7 @@ class SumValues(MDJob):
     def run(self):
         for group in group_by_key(self.args.stream):
             counter = 0
-            for entry in group:
-                name_tab_count = entry.strip()
-                name, count = name_tab_count.split('\t')
+            for name_tab_count in group:
+                name, count = name_tab_count.strip().split('\t', 1)
                 counter += int(count)
             print('{0}\t{1}'.format(name, counter))
