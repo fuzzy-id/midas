@@ -31,8 +31,8 @@ class MDLaunchTests(unittest.TestCase):
             fp.seek(0)
             mdl = self._get_target_cls()(['md_launch', fp.name])
         out_dst = mdl.proc_cmd[mdl.proc_cmd.index('-output') + 1]
-        self.assertIn(os.path.basename(fp.name), out_dst)
-        self.assertIn(datetime.date.today().strftime('%Y-%m-%d'), out_dst)
+        self.assertIn(os.path.basename('_{0}_'.format(fp.name)), out_dst)
+        self.assertIn(datetime.date.today().strftime('_%Y-%m-%d_'), out_dst)
             
 
     @mock.patch('midas.scripts.md_launch.logger')
