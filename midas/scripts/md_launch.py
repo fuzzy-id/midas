@@ -6,6 +6,7 @@ import os
 import os.path
 import subprocess
 
+from midas.tools import log_popen
 from midas import MDCommand
 
 logger = logging.getLogger(__name__)
@@ -48,20 +49,5 @@ class MDLaunch(MDCommand):
        self.proc_cmd = proc_cmd
 
     def run(self):
-       logger.info("Executing '{0}'".format(' '.join(self.proc_cmd)))
-       self.proc = subprocess.Popen(self.proc_cmd, 
-                                    stdout=subprocess.PIPE, 
-                                    stderr=subprocess.PIPE)
-       while self.proc.poll() is None:
-          self.log_proc()
-       else:
-          self.log_proc()
-          self.proc.stderr.close()
-          self.proc.stdout.close()
-       return self.proc.poll()
+       return log_popen(self.proc_cmd)
 
-    def log_proc(self):
-       for l in self.proc.stderr:
-          logger.error(l.decode().strip())
-       for l in self.proc.stdout:
-          logger.info(l.decode().strip())
