@@ -2,15 +2,10 @@
 
 from __future__ import print_function
 
-import argparse
 import collections
-import datetime
-import hashlib
 import logging
-import os
 import os.path
 import shutil
-import subprocess
 import sys
 import tempfile
 
@@ -24,9 +19,6 @@ from midas.tools import log_popen
 import midas.hdfs as md_hdfs
 
 logger = logging.getLogger(__name__)
-
-def get_hadoop_binary():
-    return os.path.join(os.environ['HADOOP_HOME'], 'bin', 'hadoop')
 
 
 class AlexaToKey(MDJob):
