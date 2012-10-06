@@ -106,6 +106,17 @@ class CompanyTests(SqlTestCase):
         self.assertIs(result, c)
         self.assertEqual(len(result.funding_rounds), 2)
 
+    def test_make_from_parsed_json_with_external_links(self):
+        c = self._make_one_from_parsed_json(
+            { 'external_links': [{'title': 'foo', 'external_url': 'blah'},
+                                 {'title': 'bar', 'external_url': 'more_blah'}] })
+        self.assertEqual(len(c.external_links), 2)
+        self.assertEqual(c.external_links[0].title, 'foo')
+        self.assertEqual(c.external_links[1].external_url, 'more_blah')
+        result = self.session.query(self._get_target_class()).get(1)
+        self.assertIs(result, c)
+        self.assertEqual(len(result.external_links), 2)
+
     def test_funding_round_is_deleted_with_company(self):
         c = self._make_one_from_parsed_json(
             {'funding_rounds': [ {'funded_day': 30} ]})

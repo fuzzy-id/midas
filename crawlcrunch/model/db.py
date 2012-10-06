@@ -125,6 +125,9 @@ class Company(Base, CrunchBaseFetcherMixin):
     funding_rounds = relationship('FundingRound', 
                                   backref='company',
                                   cascade='all, delete, delete-orphan')
+    external_links = relationship('ExternalLink', 
+                                  backref='company',
+                                  cascade='all, delete, delete-orphan')
     # 'acquisiton': dict,
     # 'acquisitions': list,
     # 'competitions': list,
@@ -149,8 +152,11 @@ class Company(Base, CrunchBaseFetcherMixin):
         if obj.updated_at:
             obj.updated_at = datetime.strptime(obj.updated_at,
                                                TM_FORMAT)
-        obj.funding_rounds = [ FundingRound.make_from_parsed_json(f)
-                               for f in obj.funding_rounds ]
+        for cls, field in ((FundingRound, 'funding_rounds'),
+                           (ExternalLink, 'external_links')):
+            if parsed_json.get(field):
+                setattr(obj, field, [ make_from_parsed_json(cls, js)
+                                      for js in parsed_json[field] ])
         return obj
 
     def update(self):
@@ -186,6 +192,13 @@ class FundingRound(Base):
     source_url = Column(String)
     # 'investments': list,
 
-    @classmethod
-    def make_from_parsed_json(cls, parsed_json):
-        return make_from_parsed_json(cls, parsed_json)
+
+class ExternalLink(Base):
+    __tablename__ = 'external_links'
+    
+    special_fields = set(('id', 'company_id'))
+
+    id = Column(Integer, primary_key=True)
+    company_id = Column(Integer, ForeignKey('companies.id'))
+    external_url = Column(String)
+    title = Column(String)
