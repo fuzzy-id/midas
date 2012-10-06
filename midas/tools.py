@@ -21,6 +21,18 @@ def count_items(iterable):
     except TypeError:
         return sum(1 for _ in iterable)
 
+def count_by_key(iterable, keyfunc):
+    counter = collections.defaultdict(int)
+    for item in iterable:
+        counter[keyfunc(item)] += 1
+    return counter
+
+def collect_by_key(iterable, keyfunc):
+    collected = collection.defaultdict(list)
+    for item in iterable:
+        collected[keyfunc(item)].append(item)
+    return collected
+
 def key(line, sep='\t'):
     return split_key_value(line, sep)[0]
 

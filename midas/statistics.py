@@ -30,18 +30,6 @@ def netloc(url):
 def num_companies(sess):
     return sess.query(ccdb.Company).count()
 
-def count_keys(iterable, keyfunc):
-    counter = collections.defaultdict(int)
-    for item in iterable:
-        counter[keyfunc(item)] += 1
-    return counter
-
-def collect_by_key(iterable, keyfunc):
-    collected = collection.defaultdict(list)
-    for item in iterable:
-        collected[keyfunc(item)].append(item)
-    return collected
-
 def common_hp_starts(hps, netloc=False):
     if netloc:
         keyfunc = lambda hp: urlparse(hp).netloc.split('.', 1)[0]
