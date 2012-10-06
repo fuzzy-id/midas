@@ -11,6 +11,7 @@ import mock
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import HTTPError
 from crawlcrunch.compat import StringIO
+from crawlcrunch.tests import FOO_URL
 from crawlcrunch.tests import DummyCompany
 from crawlcrunch.tests import DummyCompanyList
 from crawlcrunch.tests import DummyRoot
@@ -99,14 +100,13 @@ class IntegrationTests(unittest.TestCase):
     def test_company_fetcher_and_company_list(self, urlopen):
         from crawlcrunch.crawler import Fetcher
         from crawlcrunch.model.local_files import CompanyList
-        url = 'http://api.crunchbase.com/v/1/company/facebook.js'
-        prepare_url_open(urlopen, {url: {'foo': 'bar'}, })
-        dump_file = os.path.join(self.tmpd, 'facebook.json.gz')
+        prepare_url_open(urlopen, {FOO_URL: {'foo': 'bar'}, })
+        dump_file = os.path.join(self.tmpd, 'foo.json.gz')
         cl = CompanyList(DummyRoot(), self.tmpd)
-        cf = Fetcher(cl.get('facebook'),
+        cf = Fetcher(cl.get('foo'),
                             threading.Semaphore(1))
         cf.run()
-        urlopen.assert_called_once_with(url)
+        urlopen.assert_called_once_with(FOO_URL)
         with GzipFile(dump_file) as fp:
             self.assertEqual(json.load(fp), {'foo': 'bar'})
 

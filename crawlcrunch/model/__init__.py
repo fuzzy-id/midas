@@ -12,8 +12,11 @@ class CrunchBaseFetcherMixin(object):
     """
     to_replace = ('\x00', '\x03', '\x0b', '\x0e',
                   '\x12', '\x14', '\x1d', '\x1e', '\x1f')
-    companies_list_url = 'http://api.crunchbase.com/v/1/companies.js'
-    company_url_tpl = 'http://api.crunchbase.com/v/1/company/{0}.js'
+    api_key = 'vqrwexbhj9s2d7fbzzj9cg57'
+    companies_list_url = '?'.join(('http://api.crunchbase.com/v/1/companies.js',
+                                   'api_key={0}'.format(api_key)))
+    company_url_tpl = '?'.join(('http://api.crunchbase.com/v/1/company/{0}.js',
+                                'api_key={0}'.format(api_key)))
 
     def query_url(self):  # pragma: no cover
         raise NotImplementedError()

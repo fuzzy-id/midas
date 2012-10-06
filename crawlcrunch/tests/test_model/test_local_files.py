@@ -10,7 +10,9 @@ import tempfile
 
 from crawlcrunch.compat import GzipFile
 from crawlcrunch.compat import StringIO
+from crawlcrunch.tests import COMPANIES_URL
 from crawlcrunch.tests import EXAMPLES_PATH
+from crawlcrunch.tests import FOO_URL
 from crawlcrunch.tests import DummyRoot
 from crawlcrunch.tests import prepare_url_open
 from crawlcrunch.tests import unittest
@@ -37,9 +39,8 @@ class CompanyTests(unittest.TestCase):
         return Company(local_data, name)
 
     def test_url_generation(self):
-        company = self._make_one('foo', 'facebook')
-        expected = 'http://api.crunchbase.com/v/1/company/facebook.js'
-        self.assertEqual(company.query_url(), expected)
+        company = self._make_one('foo', 'foo')
+        self.assertEqual(company.query_url(), FOO_URL)
 
     def _make_update(self):
         from crawlcrunch.model.local_files import ZippedJsonFile
@@ -55,13 +56,12 @@ class CompanyTests(unittest.TestCase):
 
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_update(self, urlopen):
-        foo_url = 'http://api.crunchbase.com/v/1/company/foo.js'
         prepare_url_open(urlopen,
-                         {foo_url: {'foo': 'bar', }})
+                         {FOO_URL: {'foo': 'bar', }})
         local_data, company = self._make_update()
         self.assertEqual(local_data.data, {'foo': 'bar'})
         self.assertEqual(company.data, {'foo': 'bar'})
-        urlopen.assert_called_once_with(foo_url)
+        urlopen.assert_called_once_with(FOO_URL)
 
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_control_chars_in_response(self, urlopen):
@@ -96,12 +96,11 @@ class CompanyListTests(unittest.TestCase):
 
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_update(self, urlopen):
-        url = 'http://api.crunchbase.com/v/1/companies.js'
         prepare_url_open(urlopen,
-                         {url: [{'permalink': 'foo'}]})
+                         {COMPANIES_URL: [{'permalink': 'foo'}]})
         cl = self._make_one(None)
         cl.update()
-        urlopen.assert_called_once_with(url)
+        urlopen.assert_called_once_with(COMPANIES_URL)
 
 class ZippedJsonFileTests(unittest.TestCase):
 

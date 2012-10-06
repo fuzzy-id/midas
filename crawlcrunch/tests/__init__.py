@@ -30,9 +30,9 @@ EXAMPLES_PATH = {
                                      'no_company_files') }
 MEM_DB = 'sqlite:///:memory:'
 
-COMPANIES_URL = 'http://api.crunchbase.com/v/1/companies.js'
-FOO_URL = 'http://api.crunchbase.com/v/1/company/foo.js'
-BAR_URL = 'http://api.crunchbase.com/v/1/company/bar.js'
+COMPANIES_URL = 'http://api.crunchbase.com/v/1/companies.js?api_key=vqrwexbhj9s2d7fbzzj9cg57'
+FOO_URL = 'http://api.crunchbase.com/v/1/company/foo.js?api_key=vqrwexbhj9s2d7fbzzj9cg57'
+BAR_URL = 'http://api.crunchbase.com/v/1/company/bar.js?api_key=vqrwexbhj9s2d7fbzzj9cg57'
 
 def DummyRoot(path=None):
     from crawlcrunch.model.local_files import LocalFilesRoot

@@ -144,15 +144,13 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
 
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_on_companies_list_with_elements(self, urlopen):
-        foo_url = 'http://api.crunchbase.com/v/1/company/foo.js'
-        bar_url = 'http://api.crunchbase.com/v/1/company/bar.js'
         prepare_url_open(urlopen,
                          {COMPANIES_URL: [{'permalink': 'foo', },
                                           {'permalink': 'bar', }],
-                          foo_url: ['some_foo'],
-                          bar_url: ['some_bar']})
+                          FOO_URL: ['some_foo'],
+                          BAR_URL: ['some_bar']})
         self.assertEqual(self._test_it(self.tmpd), 0)
-        urlopen.assert_called_with(bar_url)
+        urlopen.assert_called_with(BAR_URL)
         listing = os.listdir(self.tmpd)
         listing.sort()
         self.assertEqual(listing, ['bar.json.gz',

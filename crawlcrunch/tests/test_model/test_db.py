@@ -5,6 +5,7 @@ import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm.exc import MultipleResultsFound
 
+from crawlcrunch.tests import COMPANIES_URL
 from crawlcrunch.tests import FOO_URL
 from crawlcrunch.tests import MEM_DB
 from crawlcrunch.tests import prepare_url_open
@@ -115,8 +116,7 @@ class CompanyTests(SqlTestCase):
 
     def test_query_url(self):
         c = self._make_one(permalink='foo')
-        expected = 'http://api.crunchbase.com/v/1/company/foo.js'
-        self.assertEqual(c.query_url(), expected)
+        self.assertEqual(c.query_url(), FOO_URL)
     
     def test_str(self):
         c = self._make_one(permalink='foo')
@@ -164,12 +164,11 @@ class CompanyListTests(SqlTestCase):
 
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_update(self, urlopen):
-        url = 'http://api.crunchbase.com/v/1/companies.js'
         prepare_url_open(urlopen,
-                         {url: [{'permalink': 'foo'}]})
+                         {COMPANIES_URL: [{'permalink': 'foo'}]})
         cl = self._make_one()
         cl.update()
-        urlopen.assert_called_once_with(url)
+        urlopen.assert_called_once_with(COMPANIES_URL)
 
     def test_get_on_new_company(self):
         cl = self._make_one()
