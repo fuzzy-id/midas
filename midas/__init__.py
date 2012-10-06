@@ -80,9 +80,10 @@ class RankEntry(object):
 
     @property
     def key(self):
-        """ The first :attr:`CUT_HASH_KEY` digits of the hash produced
-        by :func:`hashlib.sha1` on the `name`. The key is computed and
-        cached even though the `name` changes.
+        """ The first :attr:`midas.config.get('alexa', 'key_length)`
+        digits of the hash produced by :func:`hashlib.sha1` on the
+        `site`. The key is computed and cached even though the `site`
+        changes.
         """
         if self._key is None:
             self._key = self.make_key(self.site)
@@ -96,11 +97,13 @@ class RankEntry(object):
 
     @classmethod
     def parse_key(cls, s):
+        " Parse back :meth:`RankEntry.format_key`. "
         key, std = s.strip().split('\t', 1)
         return cls.parse_std(std)
         
     @classmethod
     def parse_std(cls, s):
+        " Parse back :meth:`RankEntry.format_std`. "
         site, tail = s.strip().split('\t')
         date, rank = tail.split(', ')
         date = datetime.datetime.strptime(date, cls.TS_FORMAT)
