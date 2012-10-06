@@ -9,7 +9,7 @@ class AlexaToNamesAndOneTests(IntegrationTestCase):
     def _run_it(self, *args):
         effargs = ['alexa_to_names_and_one']
         effargs.extend(args)
-        from midas.analyze import AlexaToNamesAndOne
+        from midas.scripts.alexa_count_names import AlexaToNamesAndOne
         return AlexaToNamesAndOne.cmd(effargs)
 
     def test_on_file(self):
@@ -23,7 +23,7 @@ class SumValues(IntegrationTestCase):
     def _run_it(self, *args):
         effargs = ['md_sum_values']
         effargs.extend(args)
-        from midas.analyze import SumValues
+        from midas.scripts.alexa_count_names import SumValues
         return SumValues.cmd(effargs)
 
     def test_simple(self):
