@@ -80,10 +80,11 @@ class RankEntry(object):
 
     @property
     def key(self):
-        """ The first :attr:`midas.config.get('alexa', 'key_length)`
-        digits of the hash produced by :func:`hashlib.sha1` on the
-        `site`. The key is computed and cached even though the `site`
-        changes.
+        """ The cached key as computed by
+        :meth:`RankEntry.make_key`. Note that the key is cached!
+        Hence, even though `self.site` changes, `self.key` will remain
+        the same. You can force a recomputation of the key by setting
+        `self.key` to :const:`None`.
         """
         if self._key is None:
             self._key = self.make_key(self.site)
@@ -91,6 +92,10 @@ class RankEntry(object):
 
     @classmethod
     def make_key(cls, s):
+        """ The first :attr:`midas.config.get('alexa', 'key_length)`
+        digits of the hash produced by :func:`hashlib.sha1` on the
+        `site`. 
+        """
         sha1 = hashlib.sha1(s.encode()).hexdigest()
         return sha1[:md_cfg.getint('alexa', 'key_length')]
         
