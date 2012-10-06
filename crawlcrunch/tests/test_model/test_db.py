@@ -100,6 +100,7 @@ class CompanyTests(SqlTestCase):
             { 'funding_rounds': [ {'funded_day': 30},
                                   {'round_code': 'angel'} ],
               'description': 'foo' } )
+        self.assertEqual(len(c.funding_rounds), 2)
         result = self.session.query(self._get_target_class()).get(1)
         self.assertIs(result, c)
         self.assertEqual(len(result.funding_rounds), 2)
