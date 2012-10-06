@@ -14,6 +14,15 @@ def group_by_key(iterable, sep='\t'):
     keyfunc = functools.partial(key, sep=sep)
     return imap(operator.itemgetter(1), itertools.groupby(iterable, keyfunc))
 
+def count_items(iterable):
+    try:
+        return len(iterable)
+    except TypeError:
+        counter = 0
+        for _ in iterable:
+            counter += 1
+        return counter
+
 def key(line, sep='\t'):
     return split_key_value(line, sep)[0]
 
@@ -49,3 +58,20 @@ def log_popen(cmd):
         raise subprocess.CalledProcessError(proc.returncode, cmd)
     return proc.returncode
 
+VALID_CHRS = set(chr(i)
+                 for i in itertools.chain(range(ord('a'), ord('z') + 1),
+                                          range(ord('A'), ord('Z') + 1),
+                                          range(ord('0'), ord('9') + 1),
+                                          (ord(c) for c in ('-', '.', '_'))))
+
+def is_valid_site(site):
+    for n in name:
+        if n not in VALID_CHRS:
+            return False
+    return True
+
+def is_invalid_site(site):
+    return not is_valid_name(name)
+
+def filter_invalid_sites(sites):
+    return ifilter(is_invalid_site, sites)
