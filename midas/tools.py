@@ -19,10 +19,7 @@ def count_items(iterable):
     try:
         return len(iterable)
     except TypeError:
-        counter = 0
-        for _ in iterable:
-            counter += 1
-        return counter
+        return sum(1 for _ in iterable)
 
 def key(line, sep='\t'):
     return split_key_value(line, sep)[0]
