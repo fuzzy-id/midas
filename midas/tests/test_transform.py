@@ -18,7 +18,7 @@ from midas.tests import IntegrationTestCase
 class AlexaToKeyTests(IntegrationTestCase):
 
     def _get_target_func(self):
-        from midas.transform import AlexaToKey
+        from midas.scripts.alexa_to_key_files import AlexaToKey
         return AlexaToKey.cmd
 
     def test_help_flag(self):
@@ -37,7 +37,7 @@ class AlexaToKeyTests(IntegrationTestCase):
 class KeyToFilesTests(IntegrationTestCase):
 
     def _get_target_func(self):
-        from midas.transform import KeyToFiles
+        from midas.scripts.alexa_to_key_files import KeyToFiles
         return KeyToFiles.cmd
 
     def test_help_flag(self):
@@ -65,9 +65,9 @@ class KeyToFilesTests(IntegrationTestCase):
         hadoop_bin.return_value = 'echo'
         tmpd = tempfile.mkdtemp()
         try:
-            with mock.patch('midas.transform.tempfile.mkdtemp') as mkdtemp:
+            with mock.patch('midas.scripts.alexa_to_key_files.tempfile.mkdtemp') as mkdtemp:
                 mkdtemp.return_value = tmpd
-                with mock.patch('midas.transform.shutil.rmtree') as rmtree:
+                with mock.patch('midas.scripts.alexa_to_key_files.shutil.rmtree') as rmtree:
                     ret_code = self._run('-q', '-d', tmpd, 
                                          *( e.format_w_key for e in in_foos + in_bars ))
                     rmtree.assert_called_with(tmpd)

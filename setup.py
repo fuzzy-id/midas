@@ -27,7 +27,7 @@ setup(name='midas',
       entry_points={
         'console_scripts':
             ['md_launch=midas.scripts.md_launch:MDLaunch.cmd',
-             'md_alexa_to_key=midas.transform:AlexaToKey.cmd',
-             'md_key_to_files=midas.transform:KeyToFiles.cmd',
+             'md_alexa_to_key=midas.scripts.alexa_to_key_files:AlexaToKey.cmd',
+             'md_key_to_files=midas.scripts.alexa_to_key_files:KeyToFiles.cmd',
              'md_alexa_to_names_and_one=midas.scripts.alexa_count_names:AlexaToNamesAndOne.cmd',
              'md_sum_values=midas.scripts.alexa_count_names:SumValues.cmd']})
