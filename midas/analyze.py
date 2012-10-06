@@ -66,7 +66,7 @@ class AlexaToNamesAndOne(MDJob):
         for fname in self.args.stream:
             logging.info("processing '{0}'".format(fname))
             for entry in RankEntry.iter_alexa_file(fname):
-                print("{0}\t1".format(entry.name))
+                print("{0}\t1".format(entry.site))
 
 
 class SumValues(MDJob):

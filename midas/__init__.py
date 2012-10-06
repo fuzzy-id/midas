@@ -2,10 +2,8 @@
 """ Common functions that are needed in most other submodules.
 """
 
-import argparse
 import datetime
 import hashlib
-import os
 import os.path
 
 from midas.compat import ZipFile
@@ -13,7 +11,7 @@ import midas.config as md_cfg
 
 
 class RankEntry(object):
-    """ Returns an entry of a ranking for `name`.
+    """ Return an entry of a ranking for `site`.
 
     The `date` specifies the date of the entry and should be a
     :class:`datetime.datetime` instance.
@@ -28,24 +26,24 @@ class RankEntry(object):
     #: The time-stamp format as encoded in Alexa's Top1M files.
     ALEXA_TS_FORMAT = 'top-1m-%Y-%m-%d.csv.zip'
 
-    def __init__(self, name, date, rank):
-        self.name = name
+    def __init__(self, site, date, rank):
+        self.site = site
         self.date = date
         self.rank = rank
         self._key = None
 
     def __str__(self):
-        return 'RankEntry({e.name}, {e.tstamp}, {e.rank})'.format(e=self)
+        return 'RankEntry({e.site}, {e.tstamp}, {e.rank})'.format(e=self)
 
     def __eq__(self, other):
-        return (self.name == other.name
+        return (self.site == other.site
                 and self.date == other.date
                 and self.rank == other.rank)
 
     def __lt__(self, other):
-        if self.name < other.name:
+        if self.site < other.site:
             return True
-        elif self.name > other.name:
+        elif self.site > other.site:
             return False
         elif self.date < other.date:
             return True
@@ -68,7 +66,7 @@ class RankEntry(object):
     @property
     def format_std(self):
         " `'name[TAB]tstamp,[SPACE]rank'`. "
-        return '{e.name}\t{e.tstamp}, {e.rank}'.format(e=self)
+        return '{e.site}\t{e.tstamp}, {e.rank}'.format(e=self)
 
     @property
     def tstamp(self):
@@ -87,7 +85,7 @@ class RankEntry(object):
         cached even though the `name` changes.
         """
         if self._key is None:
-            self._key = self.make_key(self.name)
+            self._key = self.make_key(self.site)
         return self._key
 
     @classmethod
@@ -103,10 +101,10 @@ class RankEntry(object):
         
     @classmethod
     def parse_std(cls, s):
-        name, tail = s.strip().split('\t')
+        site, tail = s.strip().split('\t')
         date, rank = tail.split(', ')
         date = datetime.datetime.strptime(date, cls.TS_FORMAT)
-        return cls(name=name, date=date, rank=rank)
+        return cls(site=site, date=date, rank=rank)
 
     @classmethod
     def iter_alexa_file(cls, fname):

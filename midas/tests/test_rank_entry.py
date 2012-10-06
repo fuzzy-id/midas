@@ -14,8 +14,8 @@ class RankEntryTestCase(unittest.TestCase):
         from midas import RankEntry
         return RankEntry
 
-    def _make_one(self, name, date, rank):
-        return self._get_target_cls()(name=name, date=date, rank=rank)
+    def _make_one(self, site, date, rank):
+        return self._get_target_cls()(site=site, date=date, rank=rank)
 
 
 class FormatTests(RankEntryTestCase):
