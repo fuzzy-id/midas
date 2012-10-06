@@ -5,6 +5,7 @@
 import argparse
 import datetime
 import hashlib
+import logging
 import logging.config
 import os
 import os.path
@@ -14,6 +15,8 @@ from midas.compat import ConfigParser
 from midas.compat import StringIO
 from midas.compat import ZipFile
 
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_CONFIG = """
 [DEFAULT]
@@ -64,12 +67,6 @@ formatter = generic
 [formatter_generic]
 format = %(asctime)s %(levelname)-5.5s %(message)s
 """.format(env=os.environ)
-
-#: How much letters of the hash key should be used to pre-sort the
-#: entries. The larger this number the more and smaller files
-#: will be produced. The default value is `2` which gives us `16 * 16 =
-#: 256` files.
-CUT_HASH_KEY = 3
 
 class MDCommand(object):
     """ Initializes the :class:`MDCommand` instance by passing `argv`
