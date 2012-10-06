@@ -65,7 +65,7 @@ class RankEntry(object):
 
     @property
     def format_std(self):
-        " `'name[TAB]tstamp,[SPACE]rank'`. "
+        " `'site[TAB]tstamp,[SPACE]rank'`. "
         return '{e.site}\t{e.tstamp}, {e.rank}'.format(e=self)
 
     @property
