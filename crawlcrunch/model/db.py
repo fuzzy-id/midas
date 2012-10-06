@@ -85,8 +85,15 @@ class CompanyList(CrunchBaseFetcherMixin):
     def query_url(self):
         return self.companies_list_url
 
+def make_from_parsed_json(cls, parsed_json):
+    return cls(**dict((f.name, parsed_json.get(f.name, None)) 
+                      for f in cls.__table__.columns
+                      if f.name not in cls.special_fields ))
+
 class Company(Base, CrunchBaseFetcherMixin):
     __tablename__ = 'companies'
+
+    special_fields = set(('id'))
 
     id = Column(Integer, primary_key=True)
     alias_list = Column(String)
@@ -138,19 +145,13 @@ class Company(Base, CrunchBaseFetcherMixin):
 
     @classmethod
     def make_from_parsed_json(cls, parsed_json):
-        fundings = []
-        for funding in parsed_json.get('funding_rounds', []):
-            d = FundingRound.make_from_parsed_json(funding)
-            fundings.append(d)
-        fields = ( f.name for f in cls.__table__.columns
-                   if f.name != 'id' )
-        d = dict(((field, parsed_json.get(field, None)) 
-                  for field in fields))
-        if d.get('updated_at', None) is not None:
-            d['updated_at'] = datetime.strptime(d['updated_at'],
-                                                TM_FORMAT)
-        d['funding_rounds'] = fundings
-        return cls(**d)
+        obj = make_from_parsed_json(cls, parsed_json)
+        if obj.updated_at:
+            obj.updated_at = datetime.strptime(obj.updated_at,
+                                               TM_FORMAT)
+        obj.funding_rounds = [ FundingRound.make_from_parsed_json(f)
+                               for f in obj.funding_rounds ]
+        return obj
 
     def update(self):
         data = self.fetch()
@@ -170,6 +171,8 @@ class Company(Base, CrunchBaseFetcherMixin):
 
 class FundingRound(Base):
     __tablename__ = 'funding_rounds'
+
+    special_fields = set(('id', 'company_id'))
     
     id = Column(Integer, primary_key=True)
     company_id = Column(Integer, ForeignKey('companies.id'))
@@ -185,8 +188,4 @@ class FundingRound(Base):
 
     @classmethod
     def make_from_parsed_json(cls, parsed_json):
-        fields = ( f.name for f in cls.__table__.columns
-                   if f.name != 'id' and f.name != 'company_id' )
-        d = dict( (field, parsed_json.get(field, None)) 
-                  for field in fields )
-        return cls(**d)
+        return make_from_parsed_json(cls, parsed_json)
