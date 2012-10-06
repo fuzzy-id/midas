@@ -6,6 +6,7 @@ import logging
 import operator
 import subprocess
 
+from midas.compat import ifilter
 from midas.compat import imap
 
 logger = logging.getLogger(__name__)
