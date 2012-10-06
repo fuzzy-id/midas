@@ -144,7 +144,10 @@ class Company(Base, CrunchBaseFetcherMixin):
     # 'video_embeds': list
 
     def __str__(self):
-        return 'Company( {0} )'.format(self.permalink)
+        return 'Company({0})'.format(self.permalink)
+
+    def __hash__(self):
+        return hash(self.permalink)
 
     @classmethod
     def make_from_parsed_json(cls, parsed_json):

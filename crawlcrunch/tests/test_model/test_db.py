@@ -131,7 +131,7 @@ class CompanyTests(SqlTestCase):
     
     def test_str(self):
         c = self._make_one(permalink='foo')
-        self.assertEqual(str(c), 'Company( foo )')
+        self.assertEqual(str(c), 'Company(foo)')
 
     @mock.patch('crawlcrunch.compat.urlopen')
     def test_update_when_company_fresh(self, urlopen):
@@ -186,7 +186,7 @@ class CompanyListTests(SqlTestCase):
         result = cl.get('foo')
         from crawlcrunch.model.db import Company
         self.assertIsInstance(result, Company)
-        self.assertEqual(str(result), 'Company( foo )')
+        self.assertEqual(str(result), 'Company(foo)')
         self.assertIsNone(result.id)
 
     def test_get_on_existent_company(self):
@@ -217,7 +217,7 @@ class CompanyListTests(SqlTestCase):
         self.session.add(cl.get('bar'))
         result = list(map(str, cl.list_local()))
         result.sort()
-        expected = [ 'Company( {0} )'.format(n) 
+        expected = [ 'Company({0})'.format(n) 
                      for n in ('bar', 'foo') ]
         self.assertEqual(result, expected)
 
@@ -234,7 +234,7 @@ class CompanyListTests(SqlTestCase):
                            {'permalink': 'bar'}]
         result = list(map(str, cl.list_not_local()))
         result.sort()
-        expected = [ 'Company( {0} )'.format(n) 
+        expected = [ 'Company({0})'.format(n) 
                      for n in ('bar', 'foo') ]
         self.assertEqual(result, expected)
 
