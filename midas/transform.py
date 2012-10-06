@@ -3,6 +3,7 @@
 from __future__ import print_function
 
 import argparse
+import collections
 import datetime
 import hashlib
 import logging
@@ -76,3 +77,17 @@ class KeyToFiles(MDJob):
                 fp.write((entry.format_std + '\n').encode())
         logger.info('Generated {0}'.format(tmpfile))
         return tmpfile
+
+def entries_cnt(files):
+    counter = collections.defaultdict(int)
+    for f in files:
+        f_name = os.path.basename(f)
+        f_sha = f_name[:3]
+        with GzipFile(f) as fp:
+            print("Processing {0}".format(f_sha))
+            for line in fp:
+                entry = RankEntry.parse_std(line.decode())
+                if entry.key != f_sha:
+                    raise Exception('{0} != {1}'.format(entry.key, f_sha))
+                counter[f_sha] += 1
+    return counter
