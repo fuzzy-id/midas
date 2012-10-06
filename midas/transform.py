@@ -13,13 +13,14 @@ import subprocess
 import sys
 import tempfile
 
-from midas import MDJob
 from midas import RankEntry
-from midas.analyze import group_by_key
 from midas.compat import GzipFile
 from midas.compat import imap
+from midas.scripts import MDJob
+from midas.tools import group_by_key
 from midas.tools import log_popen
 
+import midas.hdfs as md_hdfs
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +59,7 @@ class KeyToFiles(MDJob):
         try:
             files = [ self._write_out(sorted(imap(RankEntry.parse_key, group)))
                       for group in group_by_key(self.args.stream) ]
-            self._cp_files_to_hdfs(files)
+            md_hdfs.put(files, self.args.dest)
         finally:
             shutil.rmtree(self.tmpd)
         return 0
@@ -75,19 +76,3 @@ class KeyToFiles(MDJob):
                 fp.write((entry.format_std + '\n').encode())
         logger.info('Generated {0}'.format(tmpfile))
         return tmpfile
-
-    def _cp_files_to_hdfs(self, files):
-        copied = []
-        try:
-            for tmpfile in files:
-                dst_file = os.path.join(self.args.dest, 
-                                        os.path.basename(tmpfile))
-                cmd = (get_hadoop_binary(), 'fs', '-put', tmpfile, dst_file)
-                log_popen(cmd)
-                copied.append(dst_file)
-        except:
-            logger.critical('Removing copied files from HDFS.')
-            for dst_file in copied:
-                cmd = (get_hadoop_binary(), 'fs', '-rm', dst_file)
-                log_popen(cmd)
-            raise

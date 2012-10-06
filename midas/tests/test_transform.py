@@ -46,7 +46,7 @@ class KeyToFilesTests(IntegrationTestCase):
         self.assertEqual(cm.exception.code, 0)
         self.assert_stdout_startswith('usage: ')
 
-    @mock.patch('midas.transform.get_hadoop_binary')
+    @mock.patch('midas.hdfs.get_hadoop_exec')
     def test_on_test_data(self, hadoop_bin):
         a_date = datetime.date(1900, 1, 1)
         one_day = datetime.timedelta(days=1)

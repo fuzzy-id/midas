@@ -16,6 +16,10 @@ class MDLaunchTests(unittest.TestCase):
               'streaming = a_stream',
               '[job]']
 
+    def setUp(self):
+        import midas.config as md_cfg
+        md_cfg.new_configparser()
+
     def _get_target_cls(self):
         from midas.scripts.md_launch import MDLaunch
         return MDLaunch
@@ -25,7 +29,7 @@ class MDLaunchTests(unittest.TestCase):
         effargs.extend(args)
         return self._get_target_cls().cmd(effargs)
 
-    def test_output_is_generated(self):
+    def test_output_is_generated_by_default(self):
         with tempfile.NamedTemporaryFile('w+') as fp:
             fp.writelines('\n'.join(self.config))
             fp.seek(0)

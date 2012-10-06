@@ -5,7 +5,7 @@ import itertools
 import logging
 import operator
 
-from midas import MDJob
+from midas.scripts import MDJob
 from midas import RankEntry
 from midas.compat import ifilter
 from midas.compat import imap
