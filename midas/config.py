@@ -31,7 +31,7 @@ crunchbase_db = sqlite:////$(local_home)s/ba_data/crunchbase_db.sql
 key_length = 3
 
 [local_data]
-key_files = $(local_home)s/ba_data/key-files
+key_files = %(local_home)s/ba_data/key-files
 
 [hadoop]
 home = %(local_home)s/opt/hadoop-1.0.3
