@@ -22,10 +22,10 @@ def check_sha1_distr_mean_max_min_deviation_variance(root_dir=None):
     mean = sum(counter.itervalues()) / len(counter) * 1.0
     max_ = max(counter.itervalues())
     min_ = min(counter.itervalues())
-    deviation = (sum(math.fabs(x - mean) for x in counter.itervalues()) 
+    deviation = (sum(math.fabs(x - mean) for x in counter.itervalues())
                  / len(counter))
-    variance = deviation ** 2
-    return mean, max_, min_, deviation, variance
+    variance = deviation**2
+    return (mean, max_, min_, deviation, variance)
     
 
 SiteCnt = collections.namedtuple('NameCount', ['site', 'cnt'])
@@ -44,8 +44,7 @@ def only_hps(sess):
 
 def only_externals(sess):
     return set(i[0] for i in sess.query(ccdb.Company)\
-                   .filter(ccdb.Company.external_links != None)\
-                   .filter(ccdb.))
+                   .filter(ccdb.Company.external_links != None))
 
 def netloc(url):
     return urlparse(url).netloc
