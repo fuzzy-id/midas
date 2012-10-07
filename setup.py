@@ -7,13 +7,10 @@ import sys
 PY_VERSION = sys.version_info[:2]
 
 install_requires = ['crawlcrunch']
-
-if PY_VERSION == (2, 6):
-    install_requires.append('argparse')
-
 tests_require = ['mock']
 
 if PY_VERSION == (2, 6):
+    install_requires.append('argparse')
     tests_require.append('unittest2')
 
 setup(name='midas',
