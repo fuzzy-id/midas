@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import collection
+import collections
 import functools
 import itertools
 import logging
