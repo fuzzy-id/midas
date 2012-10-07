@@ -19,10 +19,15 @@ def site_cnt(path):
             cnt = int(cnt)
             yield SiteCnt(site, cnt)
 
-def hps(sess):
-    return [ i[0] for i in sess.query(ccdb.Company.homepage_url)\
-                 .filter(ccdb.Company.homepage_url != None)\
-                 .filter(ccdb.Company.homepage_url != '').all() ]
+def only_hps(sess):
+    return set(i[0] for i in sess.query(ccdb.Company)\
+                   .filter(ccdb.Company.homepage_url != None)\
+                   .filter(ccdb.Company.homepage_url != '').all())
+
+def only_externals(sess):
+    return set(i[0] for i in sess.query(ccdb.Company)\
+                   .filter(ccdb.Company.external_links != None)\
+                   .filter(ccdb.))
 
 def netloc(url):
     return urlparse(url).netloc
