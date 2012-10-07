@@ -4,11 +4,29 @@ and the Top1M data.
 """
 
 import collections
+import glob
+import os.path
+
+import crawlcrunch.model.db as ccdb
 
 from midas.compat import GzipFile
 from midas.compat import urlparse
+from midas.scripts.alexa_to_key_files import check_and_count_entries
 
-import crawlcrunch.model.db as ccdb
+import midas.config as md_cfg
+
+def check_sha1_distr_mean_max_min_deviation_variance(root_dir=None):
+    if root_dir is None:
+        root_dir = md_cfg.get('local_data', 'key_files')
+    counter = check_and_count_entries(glob.glob(os.path.join(root_dir, '*'))):
+    mean = sum(counter.itervalues()) / len(counter) * 1.0
+    max_ = max(counter.itervalues())
+    min_ = min(counter.itervalues())
+    deviation = (sum(math.fabs(x - mean) for x in counter.itervalues()) 
+                 / len(counter))
+    variance = deviation ** 2
+    return mean, max_, min_, deviation, variance
+    
 
 SiteCnt = collections.namedtuple('NameCount', ['site', 'cnt'])
 

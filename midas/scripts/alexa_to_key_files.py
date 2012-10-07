@@ -70,7 +70,7 @@ class KeyToFiles(MDJob):
         logger.info('Generated {0}'.format(tmpfile))
         return tmpfile
 
-def entries_cnt(files):
+def check_and_count_entries(files):
     counter = collections.defaultdict(int)
     for f in files:
         f_name = os.path.basename(f)
