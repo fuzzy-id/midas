@@ -15,6 +15,18 @@ from midas.scripts.alexa_to_key_files import check_and_count_entries
 
 import midas.config as md_cfg
 
+_sess = None
+
+def make_session(db=None):
+    global _sess
+    if _sess is None:
+        if db is None:
+            db = md_cfg.get('local_data', 'crunchbase_db')
+        engine = ccdb.create_engine(db)
+        ccdb.Session.configure(bind=engine)
+        _sess = Session()
+    return _sess
+
 def check_sha1_distr_mean_max_min_deviation_variance(root_dir=None):
     if root_dir is None:
         root_dir = md_cfg.get('local_data', 'key_files')
