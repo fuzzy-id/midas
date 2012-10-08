@@ -9,8 +9,12 @@ import subprocess
 
 from midas.compat import ifilter
 from midas.compat import imap
+from midas.compat import urlparse
 
 logger = logging.getLogger(__name__)
+
+def netloc(url):
+    return urlparse(url).netloc
 
 def group_by_key(iterable, sep='\t'):
     keyfunc = functools.partial(key, sep=sep)

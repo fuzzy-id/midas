@@ -65,9 +65,6 @@ def all_companies():
     sess = make_session()
     return sess.query(ccdb.Company).all()
 
-def netloc(url):
-    return urlparse(url).netloc
-
 def common_hp_starts(hps, netloc=False):
     if netloc:
         keyfunc = lambda hp: urlparse(hp).netloc.split('.', 1)[0]
