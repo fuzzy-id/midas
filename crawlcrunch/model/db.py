@@ -124,10 +124,12 @@ class Company(Base, CrunchBaseFetcherMixin):
 
     funding_rounds = relationship('FundingRound', 
                                   backref='company',
-                                  cascade='all, delete, delete-orphan')
+                                  cascade='all, delete, delete-orphan',
+                                  lazy='subquery')
     external_links = relationship('ExternalLink', 
                                   backref='company',
-                                  cascade='all, delete, delete-orphan')
+                                  cascade='all, delete, delete-orphan',
+                                  lazy='subquery')
     # 'acquisiton': dict,
     # 'acquisitions': list,
     # 'competitions': list,
