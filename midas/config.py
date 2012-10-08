@@ -29,9 +29,11 @@ files = optional
 top1m_files = %(hdfs_home)s/alexa-files#alexa-files
 key_length = 3
 
-[local_data]
-key_files = %(local_home)s/ba_data/key-files
-crunchbase_db = sqlite:////%(local_home)s/ba_data/crunchbase_db.sql
+[statistics]
+home = %(local_home)s/md_data
+key_files = %(home)s/key_files
+crunchbase_db = sqlite:///%(home)s/crunchbase_db.sql
+site_count = %(home)s/site_count.gz
 
 [hadoop]
 home = %(local_home)s/opt/hadoop-1.0.3
