@@ -42,9 +42,9 @@ class Parent(object):
 def build_tree(sites):
     root = Parent()
     for s in sites:
-        try:
-            domain, _ = s.lower().split('/', 1)
-        except ValueError:
-            domain = s.lower()
+        split = s.lower().split('/', 1)
+        if len(split) == 1:
+            split.append(None)
+        domain, _ = split
         root.add_branch(domain, s)
     return root
