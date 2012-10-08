@@ -4,40 +4,41 @@ import collections
 
 import midas.tools as md_tools
 
-class Parent(object):
+class BucketTree(dict):
 
-    def __init__(self, name=None):
-        self.branches = {}
+    def __init__(self, splitfunc, name='root'):
+        dict.__init__(self)
+        self.splitfunc = splitfunc
         self.name = name
-        self.values = []
-        self.fulls = []
+        self.leafs = []
+        self.bucket = collections.defaultdict(list)
 
-    def add_branch(self, site, full):
-        if site == '':
-            self.fulls.append(full)
+    def grow(self, item, key):
+        if key is None:
+            self.leafs.append(item)
             return
-        split = site.rsplit('.', 1)
-        if len(split) == 1:
-            head, tail = '', split[0]
+        split = self.splitfunc(key)
+        if len(split) == 2:
+            head, tail = split 
         else:
-            head, tail = split
-        if tail not in self.branches:
-            self.branches[tail] = Parent(tail)
-        self.branches[tail].add_branch(head, full)
+            head, tail = split[0], None
+        if head not in self:
+            self[head] = BucketTree(self.splitfunc, head)
+        self[head].grow(item, tail)
 
-    def add_value(self, site):
-        if site == '':
-            self.values.append(site)
+    def fill(self, item, key):
+        if key is None:
+            self.bucket[None].append(item)
             return
-        split = site.rsplit('.', 1)
-        if len(split) == 1:
-            head, tail = '', split[0]
-        else:
+        split = self.splitfunc(key)
+        if len(split) == 2:
             head, tail = split
-        if tail not in self.branches:
-            self.values.append(site)
         else:
-            self.branches[tail].add_value(head)
+            head, tail = split[0], None
+        if head not in self:
+            self.bucket[head].append(item)
+        else:
+            self[head].fill(item, tail)
 
 def build_tree(sites):
     root = Parent()
