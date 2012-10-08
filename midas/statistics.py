@@ -1,10 +1,19 @@
 # -*- coding: utf-8 -*-
 """ Code to find out about common things in both the crunchbase data
 and the Top1M data.
+
+What you should do before starting to use this module:
+
+    * generate key files
+
+    * generate a name count
+
+    * fetch all data from crunchbase
 """
 
 import collections
 import glob
+import math
 import os.path
 
 import crawlcrunch.model.db as ccdb
@@ -21,15 +30,15 @@ def make_session(db=None):
     global _sess
     if _sess is None:
         if db is None:
-            db = md_cfg.get('local_data', 'crunchbase_db')
+            db = md_cfg.get('statistics', 'crunchbase_db')
         engine = ccdb.create_engine(db)
         ccdb.Session.configure(bind=engine)
-        _sess = Session()
+        _sess = ccdb.Session()
     return _sess
 
 def check_sha1_distr_mean_max_min_deviation_variance(root_dir=None):
     if root_dir is None:
-        root_dir = md_cfg.get('local_data', 'key_files')
+        root_dir = md_cfg.get('statistics', 'key_files')
     counter = check_and_count_entries(glob.glob(os.path.join(root_dir, '*')))
     mean = sum(counter.itervalues()) / len(counter) * 1.0
     max_ = max(counter.itervalues())
@@ -40,29 +49,24 @@ def check_sha1_distr_mean_max_min_deviation_variance(root_dir=None):
     return (mean, max_, min_, deviation, variance)
     
 
-SiteCnt = collections.namedtuple('NameCount', ['site', 'cnt'])
+SiteCnt = collections.namedtuple('SiteCount', ['site', 'cnt'])
 
-def site_cnt(path):
+def site_cnt(path=None):
+    if path is None:
+        path = md_cfg.get('statistics', 'site_count')
     with GzipFile(path) as fp:
         for l in fp:
             site, cnt = l.decode().strip().split('\t', 1)
             cnt = int(cnt)
             yield SiteCnt(site, cnt)
 
-def only_hps(sess):
-    return set(i[0] for i in sess.query(ccdb.Company)\
-                   .filter(ccdb.Company.homepage_url != None)\
-                   .filter(ccdb.Company.homepage_url != '').all())
-
-def only_externals(sess):
-    return set(i[0] for i in sess.query(ccdb.Company)\
-                   .filter(ccdb.Company.external_links != None))
+def all_companies():
+    " Returns 100355 companies. "
+    sess = make_session()
+    return sess.query(ccdb.Company).all()
 
 def netloc(url):
     return urlparse(url).netloc
-
-def num_companies(sess):
-    return sess.query(ccdb.Company).count()
 
 def common_hp_starts(hps, netloc=False):
     if netloc:
