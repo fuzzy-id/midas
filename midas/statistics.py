@@ -5,6 +5,7 @@ and the Top1M data.
 
 import collections
 import glob
+import math
 import os.path
 
 import crawlcrunch.model.db as ccdb
@@ -24,7 +25,7 @@ def make_session(db=None):
             db = md_cfg.get('local_data', 'crunchbase_db')
         engine = ccdb.create_engine(db)
         ccdb.Session.configure(bind=engine)
-        _sess = Session()
+        _sess = ccdb.Session()
     return _sess
 
 def check_sha1_distr_mean_max_min_deviation_variance(root_dir=None):
@@ -49,10 +50,10 @@ def site_cnt(path):
             cnt = int(cnt)
             yield SiteCnt(site, cnt)
 
-def only_hps(sess):
-    return set(i[0] for i in sess.query(ccdb.Company)\
-                   .filter(ccdb.Company.homepage_url != None)\
-                   .filter(ccdb.Company.homepage_url != '').all())
+def all_companies():
+    " Returns 100355 companies. "
+    sess = make_session()
+    return sess.query(ccdb.Company).all()
 
 def only_externals(sess):
     return set(i[0] for i in sess.query(ccdb.Company)\
