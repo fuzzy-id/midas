@@ -2,17 +2,19 @@
 
 import collections
 
+import midas.tools as md_tools
+
 class Parent(object):
 
     def __init__(self, name=None):
         self.branches = {}
         self.name = name
         self.values = []
-        self.node_cnt = 0
+        self.fulls = []
 
-    def add_branch(self, site):
+    def add_branch(self, site, full):
         if site == '':
-            self.node_cnt += 1
+            self.fulls.append(full)
             return
         split = site.rsplit('.', 1)
         if len(split) == 1:
@@ -21,7 +23,7 @@ class Parent(object):
             head, tail = split
         if tail not in self.branches:
             self.branches[tail] = Parent(tail)
-        self.branches[tail].add_branch(head)
+        self.branches[tail].add_branch(head, full)
 
     def add_value(self, site):
         if site == '':
@@ -40,5 +42,9 @@ class Parent(object):
 def build_tree(sites):
     root = Parent()
     for s in sites:
-        root.add_branch(s.lower())
+        try:
+            domain, _ = s.lower().split('/', 1)
+        except ValueError:
+            domain = s.lower()
+        root.add_branch(domain, s)
     return root
