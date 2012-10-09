@@ -44,6 +44,14 @@ class BucketTree(dict):
         else:
             self[head].fill(item, tail)
 
+    def query(self, constraint):
+        if constraint(self) > 0:
+            yield self
+        for branch in self.itervalues():
+            for r in branch.query(constraint):
+                yield r
+
+
 def domain_split_func(site):
     return tuple(reversed(site.rsplit('.', 1)))
 
