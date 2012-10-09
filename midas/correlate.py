@@ -41,6 +41,9 @@ class BucketTree(dict):
         else:
             self[head].fill(item, tail)
 
+def domain_split_func(site):
+    return tuple(reversed(site.split('.', 1)))
+
 def get_all_urls(company):
     if company.homepage_url is not None and len(company.homepage_url) > 0:
         yield company.homepage_url
@@ -51,7 +54,7 @@ def get_all_urls(company):
 def companies_grown_tree(comps=None):
     if comps is None:
         comps = md_stats.all_companies()
-    tree = BucketTree()
+    tree = BucketTree(domain_split_func)
     for c in comps:
         for url in get_all_urls(c):
             tree.grow(c, md_tools.netloc(url).lower())
