@@ -64,10 +64,3 @@ def all_companies():
     " Returns 100355 companies. "
     sess = make_session()
     return sess.query(ccdb.Company).all()
-
-def common_hp_starts(hps, netloc=False):
-    if netloc:
-        keyfunc = lambda hp: urlparse(hp).netloc.split('.', 1)[0]
-    else:
-        keyfunc = lambda hp: hp.split('.', 1)[0]
-    return count_keys(hps, keyfunc)
