@@ -21,11 +21,7 @@ class BucketTree(dict):
         if key is None:
             self.leafs.append(item)
             return
-        split = self.splitfunc(key)
-        if len(split) == 2:
-            head, tail = split 
-        else:
-            head, tail = split[0], None
+        head, tail = self._filled_split(key)
         if head not in self:
             self[head] = BucketTree(self.splitfunc, head)
         self[head].grow(item, tail)
@@ -34,15 +30,19 @@ class BucketTree(dict):
         if key is None:
             self.bucket[None].append(item)
             return
-        split = self.splitfunc(key)
-        if len(split) == 2:
-            head, tail = split
-        else:
-            head, tail = split[0], None
+        head, tail = self._filled_split(key)
         if head not in self:
             self.bucket[head].append(item)
         else:
             self[head].fill(item, tail)
+
+    def _filled_split(self, key):
+        split = self.splitfunc(key)
+        if len(split) == 2:
+            return split 
+        else:
+            return (split[0], None)
+        
 
     def query(self, constraint):
         if constraint(self) > 0:
