@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import collections
+import operator
+
+from midas.compat import imap
 
 import midas.tools as md_tools
 import midas.statistics as md_stats
@@ -59,3 +62,10 @@ def companies_grown_tree(comps=None):
         for url in get_all_urls(c):
             tree.grow(c, md_tools.netloc(url).lower())
     return tree
+
+def fill_with_sites(tree, sites=None):
+    if sites is None:
+        sites = imap(operator.attrgetter('site'), md_stats.get_site_counts())
+    for site in sites:
+        domain = site.split('/', 1)[0]
+        tree.fill(site, domain)
