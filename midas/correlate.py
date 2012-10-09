@@ -42,7 +42,7 @@ class BucketTree(dict):
             self[head].fill(item, tail)
 
 def domain_split_func(site):
-    return tuple(reversed(site.split('.', 1)))
+    return tuple(reversed(site.rsplit('.', 1)))
 
 def get_all_urls(company):
     if company.homepage_url is not None and len(company.homepage_url) > 0:
