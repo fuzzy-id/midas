@@ -49,7 +49,7 @@ def get_all_urls(company):
         yield company.homepage_url
     if len(company.external_links) > 0:
         for link in company.external_links:
-            yield link
+            yield link.external_url
 
 def companies_grown_tree(comps=None):
     if comps is None:
