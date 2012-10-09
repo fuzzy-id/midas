@@ -51,7 +51,7 @@ def check_sha1_distr_mean_max_min_deviation_variance(root_dir=None):
 
 SiteCnt = collections.namedtuple('SiteCount', ['site', 'cnt'])
 
-def site_cnt(path=None):
+def get_site_counts(path=None):
     if path is None:
         path = md_cfg.get('statistics', 'site_count')
     with GzipFile(path) as fp:
