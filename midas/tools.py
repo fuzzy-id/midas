@@ -16,16 +16,6 @@ logger = logging.getLogger(__name__)
 def netloc(url):
     return urlparse(url).netloc
 
-def companies_url(companies):
-    return itertools.chain(imap(get_all_urls, companies))
-
-def get_all_urls(company):
-    if company.homepage_url is not None and len(company.homepage_url) > 0:
-        yield company, company.homepage_url
-    if len(company.external_links) > 0:
-        for link in company.external_links:
-            yield company, link
-
 def group_by_key(iterable, sep='\t'):
     keyfunc = functools.partial(key, sep=sep)
     return imap(operator.itemgetter(1), itertools.groupby(iterable, keyfunc))
