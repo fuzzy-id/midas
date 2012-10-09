@@ -3,6 +3,7 @@
 import collections
 
 import midas.tools as md_tools
+import midas.statistics as md_stats
 
 class BucketTree(dict):
 
@@ -40,9 +41,18 @@ class BucketTree(dict):
         else:
             self[head].fill(item, tail)
 
-def build_tree(sites):
-    root = Parent()
-    for s in sites:
-        domain = s.lower().split('/', 1)[0]
-        root.add_branch(domain, s)
-    return root
+def get_all_urls(company):
+    if company.homepage_url is not None and len(company.homepage_url) > 0:
+        yield company.homepage_url
+    if len(company.external_links) > 0:
+        for link in company.external_links:
+            yield link
+
+def companies_grown_tree(comps=None):
+    if comps is None:
+        comps = md_stats.all_companies()
+    tree = BucketTree()
+    for c in comps:
+        for url in get_all_urls(c):
+            tree.grow(c, md_tools.netloc(url).lower())
+    return tree
