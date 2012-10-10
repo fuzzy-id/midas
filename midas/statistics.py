@@ -14,6 +14,7 @@ What you should do before starting to use this module:
 import collections
 import glob
 import math
+import operator
 import os.path
 
 from sqlalchemy import and_
@@ -21,6 +22,7 @@ from sqlalchemy import or_
 import crawlcrunch.model.db as ccdb
 
 from midas.compat import GzipFile
+from midas.compat import imap
 from midas.compat import urlparse
 from midas.scripts.alexa_to_key_files import check_and_count_entries
 

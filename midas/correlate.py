@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import collections
-import operator
-
-from midas.compat import imap
 
 import midas.tools as md_tools
 import midas.statistics as md_stats
