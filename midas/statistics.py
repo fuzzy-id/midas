@@ -84,9 +84,12 @@ def companies_of_interest():
     'angel', 'seed' or 'a' since December 2010.
     """
     sess = make_session()
-    q = sess.query(ccdb.Company).join(ccdb.FundingRound)\
-        .filter(or_(ccdb.FundingRound.funded_year>2010,
-                    and_(ccdb.FundingRound.funded_year==2010,
-                         ccdb.FundingRound.funded_month==12)))\
-        .filter(ccdb.FundingRound.round_code.in_(['angel', 'seed', 'a']))
+    funding_round_q = sess.query(ccdb.FundingRound).\
+        filter(or_(ccdb.FundingRound.funded_year>2010,
+                   and_(ccdb.FundingRound.funded_year==2010,
+                        ccdb.FundingRound.funded_month==12))).\
+        filter(ccdb.FundingRound.round_code.in_(['angel', 'seed', 'a'])).\
+        subquery()
+    q = sess.query(ccdb.Company).join(funding_round_q,
+                                      ccdb.Company.funding_round)
     return q.all()
