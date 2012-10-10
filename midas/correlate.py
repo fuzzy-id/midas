@@ -88,7 +88,7 @@ def get_all_urls(company):
 
 def companies_grown_tree(comps=None):
     if comps is None:
-        comps = md_stats.all_companies()
+        comps = md_stats.companies_of_interest()
     tree = BucketTree(domain_split_func)
     for c in comps:
         for url in get_all_urls(c):
