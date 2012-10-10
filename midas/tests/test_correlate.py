@@ -45,5 +45,14 @@ class BucketTreeTests(unittest.TestCase):
         self.assertEqual(root['foo'].bucket['bar'], ['foo.bar-item'])
         self.assertEqual(root['foo'].bucket[None], ['foo-item'])
 
+    def test_relate(self):
+        root = self._make_one()
+        root.grow('foo.bar-branch', 'foo.bar')
+        root.grow('foo.baz-branch', 'foo.baz')
+        self.assertEqual(root.relate('foo'), None)
+        self.assertEqual(root.relate('foo.bar'), ['foo.bar-branch'])
+        self.assertEqual(root.relate('foo.bar.baz'), ['foo.bar-branch'])
+        self.assertEqual(root.relate('foo.baz'), ['foo.baz-branch'])
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
