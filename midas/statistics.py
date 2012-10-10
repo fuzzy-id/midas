@@ -80,16 +80,15 @@ def all_companies():
     return sess.query(ccdb.Company).all()
 
 def companies_of_interest():
-    """ Returns all companies with a funding round with round_level
+    """ Returns all companies having a funding round with round_level
     'angel', 'seed' or 'a' since December 2010.
     """
     sess = make_session()
-    funding_round_q = sess.query(ccdb.FundingRound).\
+    funding_round_subq = sess.query(ccdb.FundingRound).\
+        filter(ccdb.FundingRound.round_code.in_(['angel', 'seed', 'a'])).\
         filter(or_(ccdb.FundingRound.funded_year>2010,
                    and_(ccdb.FundingRound.funded_year==2010,
-                        ccdb.FundingRound.funded_month==12))).\
-        filter(ccdb.FundingRound.round_code.in_(['angel', 'seed', 'a'])).\
-        subquery()
-    q = sess.query(ccdb.Company).join(funding_round_q,
+                        ccdb.FundingRound.funded_month==12))).subquery()
+    q = sess.query(ccdb.Company).join(funding_round_subq,
                                       ccdb.Company.funding_round)
     return q.all()
