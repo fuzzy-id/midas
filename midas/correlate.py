@@ -36,6 +36,20 @@ class BucketTree(dict):
         else:
             self[head].fill(item, tail)
 
+    def relate(self, key):
+        if key is None:
+            if len(self.leafs) > 0:  # definite relation
+                return self.leafs
+            elif len(self) == 1:  # relation is further down
+                return self.values()[0].relate(key)
+            else:  # No definite relation!
+                return None
+        else:
+            head, tail = self._filled_split(key)
+            if head in self:  # propagate
+                return self[head].relate(tail)
+            return self.relate(None)
+
     def _filled_split(self, key):
         split = self.splitfunc(key)
         if len(split) == 2:
@@ -43,7 +57,6 @@ class BucketTree(dict):
         else:
             return (split[0], None)
         
-
     def query(self, constraint):
         if constraint(self) > 0:
             yield self
@@ -51,6 +64,20 @@ class BucketTree(dict):
             for r in branch.query(constraint):
                 yield r
 
+    def collect_buckets_of_single_branches(self):
+        if len(self) == 0:  # The end of a branch
+            for l in self.leafs:
+                yield (l, self.bucket.values())
+        elif len(self) == 1:  # We start collecting
+            for leaf_bucket in \
+                    self.values()[0].collect_buckets_of_single_branches():
+                leaf_bucket[1].extend(self.bucket.values())
+                yield leaf_bucket
+        else:
+            for branch in self.itervalues():
+                for leaf_bucket in \
+                        branch.collect_buckets_of_single_branches():
+                    yield leaf_bucket
 
 def domain_split_func(site):
     return tuple(reversed(site.rsplit('.', 1)))
