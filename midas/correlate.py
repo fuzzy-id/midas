@@ -94,7 +94,7 @@ def companies_grown_tree(comps=None):
 
 def sites_grown_tree(sites=None):
     if sites is None:
-        sites = md_stats.get_interesting_sites()
+        sites = md_stats.sites_of_interest()
     tree = BucketTree(domain_split_func)
     for site in sites:
         domain = site_domain(site)
