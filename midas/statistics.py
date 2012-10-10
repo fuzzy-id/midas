@@ -22,6 +22,7 @@ from sqlalchemy import or_
 import crawlcrunch.model.db as ccdb
 
 from midas.compat import GzipFile
+from midas.compat import ifilter
 from midas.compat import imap
 from midas.compat import urlparse
 from midas.scripts.alexa_to_key_files import check_and_count_entries
@@ -64,9 +65,14 @@ def get_site_counts(path=None):
             cnt = int(cnt)
             yield SiteCnt(site, cnt)
 
-def get_sites(path=None):
+def all_sites(path=None):
     return imap(operator.attrgetter('site'), 
                 get_site_counts(path=path))
+
+def sites_of_interest(path=None):
+    " Iterate all sites not having a path. "
+    return ifilter(lambda s: len(s.split('/', 1)) == 1,
+                   all_sites(path))
 
 def all_companies():
     " Returns 100355 companies. "

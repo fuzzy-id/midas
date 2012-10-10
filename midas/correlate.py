@@ -92,9 +92,18 @@ def companies_grown_tree(comps=None):
             tree.grow(c, md_tools.netloc(url).lower())
     return tree
 
+def sites_grown_tree(sites=None):
+    if sites is None:
+        sites = md_stats.get_interesting_sites()
+    tree = BucketTree(domain_split_func)
+    for site in sites:
+        domain = site_domain(site)
+        tree.grow(site, domain)
+    return tree
+
 def relate_with_sites(tree, sites=None):
     if sites is None:
-        sites = md_stats.get_sites()
+        sites = md_stats.get_interesting_sites()
     result = dict()
     for s in sites:
         l = tree.relate(s)
@@ -102,9 +111,23 @@ def relate_with_sites(tree, sites=None):
             result[s] = l
     return result
 
+def relate_with_companies(tree, companies=None):
+    if companies is None:
+        companies = md_stats.companies_of_interest()
+    result = dict()
+    for company in companies:
+        for url in get_all_urls(company):
+            l = tree.relate(company, md_tools.netloc(url).lower())
+            if l is not None:
+                result[s] = l
+    return result
+
 def fill_with_sites(tree, sites=None):
     if sites is None:
         sites = md_stats.get_sites()
     for site in sites:
-        domain = site.split('/', 1)[0]
+        domain = site_domain(site)
         tree.fill(site, domain)
+
+def site_domain(site):
+    return site.split('/', 1)[0].lower()
