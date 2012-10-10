@@ -85,9 +85,6 @@ def domain_split_func(site):
 def get_all_urls(company):
     if company.homepage_url is not None and len(company.homepage_url) > 0:
         yield company.homepage_url
-    if len(company.external_links) > 0:
-        for link in company.external_links:
-            yield link.external_url
 
 def companies_grown_tree(comps=None):
     if comps is None:
