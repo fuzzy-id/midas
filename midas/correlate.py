@@ -106,7 +106,7 @@ def relate_with_sites(tree, sites=None):
         sites = md_stats.get_interesting_sites()
     result = dict()
     for s in sites:
-        l = tree.relate(s)
+        l = tree.relate(site_domain(s))
         if l is not None:
             result[s] = l
     return result
@@ -117,9 +117,9 @@ def relate_with_companies(tree, companies=None):
     result = dict()
     for company in companies:
         for url in get_all_urls(company):
-            l = tree.relate(company, md_tools.netloc(url).lower())
+            l = tree.relate(md_tools.netloc(url).lower())
             if l is not None:
-                result[s] = l
+                result[url] = l
     return result
 
 def fill_with_sites(tree, sites=None):
