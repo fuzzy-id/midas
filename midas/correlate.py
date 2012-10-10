@@ -95,9 +95,19 @@ def companies_grown_tree(comps=None):
             tree.grow(c, md_tools.netloc(url).lower())
     return tree
 
+def relate_with_sites(tree, sites=None):
+    if sites is None:
+        sites = md_stats.get_sites()
+    result = dict()
+    for s in sites:
+        l = tree.relate(s)
+        if l is not None:
+            result[s] = l
+    return result
+
 def fill_with_sites(tree, sites=None):
     if sites is None:
-        sites = imap(operator.attrgetter('site'), md_stats.get_site_counts())
+        sites = md_stats.get_sites()
     for site in sites:
         domain = site.split('/', 1)[0]
         tree.fill(site, domain)

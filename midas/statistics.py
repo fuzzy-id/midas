@@ -62,6 +62,10 @@ def get_site_counts(path=None):
             cnt = int(cnt)
             yield SiteCnt(site, cnt)
 
+def get_sites(path=None):
+    return imap(operator.attrgetter('site'), 
+                get_site_counts(path=path))
+
 def all_companies():
     " Returns 100355 companies. "
     sess = make_session()
