@@ -16,6 +16,8 @@ import glob
 import math
 import os.path
 
+from sqlalchemy import and_
+from sqlalchemy import or_
 import crawlcrunch.model.db as ccdb
 
 from midas.compat import GzipFile
