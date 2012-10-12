@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from setuptools import find_packages
 from setuptools import setup
 
 import sys
@@ -16,11 +15,10 @@ if PY_VERSION == (2, 6):
 
 setup(name='midas',
       version='0.0a1',
-      packages=find_packages(),
       description='Try to get some useful information from Top1M.',
       author='Thomas Bach',
       author_email='thbach@students.uni-mainz.de',
-      dependency_links = ['http://github.com/fuzzy-id/crawlcrunch/tarball/master#egg=crawlcrunch'],
+      dependency_links = ['http://github.com/fuzzy-id/crawlcrunch/tarball/master#egg=crawlcrunch-0.2'],
       install_requires=install_requires,
       tests_require=tests_require,
       test_suite='midas.tests',
