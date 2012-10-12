@@ -13,8 +13,16 @@ from midas.compat import urlparse
 
 logger = logging.getLogger(__name__)
 
-def netloc(url):
-    return urlparse(url).netloc
+def domain(company_or_site):
+    """ Return the domain part of an Alexa Top1M site or a
+    :class:`crawlcrunch.model.db.Company` instance.
+    """
+    if isinstance(obj, ccdb.Company):
+        return urlparse(company_or_site.homepage_url).netloc.lower()
+    elif isinstance(obj, str):  # This should be an Alexa Top1M site
+        return company_or_site.split('/', 1)[0].lower()
+    else:
+        raise TypeError("cannot extract domain part: '{0}'".format(type(company_or_site))
 
 def group_by_key(iterable, sep='\t'):
     keyfunc = functools.partial(key, sep=sep)
