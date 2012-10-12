@@ -61,22 +61,7 @@ class BucketTree(dict):
             for r in branch.query(constraint):
                 yield r
 
-    def collect_buckets_of_single_branches(self):
-        if len(self) == 0:  # The end of a branch
-            for l in self.leafs:
-                yield (l, self.bucket.values())
-        elif len(self) == 1:  # We start collecting
-            for leaf_bucket in \
-                    self.values()[0].collect_buckets_of_single_branches():
-                leaf_bucket[1].extend(self.bucket.values())
-                yield leaf_bucket
-        else:
-            for branch in self.itervalues():
-                for leaf_bucket in \
-                        branch.collect_buckets_of_single_branches():
-                    yield leaf_bucket
-
-def domain_split_func(site):
+def split_domain(site):
     return tuple(reversed(site.rsplit('.', 1)))
 
 def get_all_urls(company):
