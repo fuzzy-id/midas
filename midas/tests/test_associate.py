@@ -42,5 +42,16 @@ class AssociationTreeTests(unittest.TestCase):
                            root.query(lambda n: len(n.leafs) > 0)))
         self.assertEqual(result, ['bar'])
 
+    def test_map(self):
+        root = self._make_one()
+        root.grow('foo.bar-branch', 'foo.bar')
+        root.grow('foo.baz-branch', 'foo.baz')
+        result = root.map(['foo', 'foo.bar'])
+        self.assertEqual(result, {'foo.bar': ['foo.bar-branch']})
+
+class SplitDomainTests(unittest.TestCase):
+
+    pass
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
