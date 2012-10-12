@@ -35,14 +35,14 @@ class AssociationTree(dict):
             if len(self.leafs) > 0:  # definite relation
                 return self.leafs
             elif len(self) == 1:  # relation is further down
-                return self.values()[0].relate(key)
+                return next(iter(self.values())).associate(None)
             else:  # No definite relation!
                 return None
         else:
             head, tail = self._filled_split(key)
             if head in self:  # propagate
-                return self[head].relate(tail)
-            return self.relate(None)
+                return self[head].associate(tail)
+            return self.associate(None)
 
     def _filled_split(self, key):
         split = self.splitfunc(key)
