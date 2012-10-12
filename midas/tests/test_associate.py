@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import operator
+
+from midas.compat import imap
 from midas.tests import unittest
 
 class AssociationTreeTests(unittest.TestCase):
@@ -31,6 +34,13 @@ class AssociationTreeTests(unittest.TestCase):
         self.assertEqual(root.associate('foo.bar'), ['foo.bar-branch'])
         self.assertEqual(root.associate('foo.bar.baz'), ['foo.bar-branch'])
         self.assertEqual(root.associate('foo.baz'), ['foo.baz.blup-branch'])
+
+    def test_query(self):
+        root = self._make_one()
+        root.grow('foo.bar-branch', 'foo.bar')
+        result = list(imap(operator.attrgetter('name'), 
+                           root.query(lambda n: len(n.leafs) > 0)))
+        self.assertEqual(result, ['bar'])
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
