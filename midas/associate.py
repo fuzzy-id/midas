@@ -52,9 +52,9 @@ class AssociationTree(dict):
             return (split[0], None)
         
     def query(self, constraint):
-        if constraint(self) > 0:
+        if constraint(self):
             yield self
-        for branch in self.itervalues():
+        for branch in self.values():
             for r in branch.query(constraint):
                 yield r
 
