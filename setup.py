@@ -15,7 +15,7 @@ if py_version == (2, 6):
 
 setup(name='crawlcrunch',
       version='0.2',
-      provides='crawlcrunch (0.2)',
+      packages=['crawlcrunch']
       description='Crawl crunchbase.com for companies information.',
       author='Thomas Bach',
       install_requires=install_requires,
