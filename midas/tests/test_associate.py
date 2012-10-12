@@ -2,11 +2,11 @@
 
 from midas.tests import unittest
 
-class BucketTreeTests(unittest.TestCase):
+class AssociationTreeTests(unittest.TestCase):
 
     def _get_target_cls(self):
-        from midas.correlate import BucketTree
-        return BucketTree
+        from midas.associate import AssociationTree
+        return Association
 
     def _make_one(self, split_func=lambda s: s.split('.', 1)):
         return self._get_target_cls()(split_func)
@@ -14,7 +14,6 @@ class BucketTreeTests(unittest.TestCase):
     def test_single_root(self):
         root = self._make_one()
         self.assertEqual(len(root), 0)
-        self.assertEqual(len(root.bucket), 0)
 
     def test_grow_branch(self):
         root = self._make_one()
