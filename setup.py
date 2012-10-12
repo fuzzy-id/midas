@@ -2,6 +2,7 @@
 
 import sys
 
+from setuptools import find_packages
 from setuptools import setup
 
 py_version = sys.version_info[:2]
@@ -15,7 +16,7 @@ if py_version == (2, 6):
 
 setup(name='crawlcrunch',
       version='0.2',
-      packages=['crawlcrunch'],
+      packages=find_packages(),
       description='Crawl crunchbase.com for companies information.',
       author='Thomas Bach',
       install_requires=install_requires,
