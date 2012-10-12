@@ -51,7 +51,12 @@ class AssociationTreeTests(unittest.TestCase):
 
 class SplitDomainTests(unittest.TestCase):
 
-    pass
+    def _run_it(self, s):
+        from midas.associate import split_domain
+        return split_domain(s)
+
+    def test_on_empty_str(self):
+        self.assertEqual(self._run_it(''), ('', ))
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
