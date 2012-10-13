@@ -74,17 +74,17 @@ def new_configparser():
 
 new_configparser()
 
+def get_configparser():
+    """ Return the current :class:`configparser.ConfigParser`
+    instance.
+    """
+    return _configparser
+
 def read(files):
     """ Read configuration from `files` into the modules
     :class:`configparser.ConfigParser` instance.
     """
     get_configparser().read(files)
-
-def configure_logging():
-    buf = StringIO()
-    get_configparser().write(buf)
-    buf.seek(0)
-    logging.config.fileConfig(buf)
 
 def set(sect, opt, val):
     return get_configparser().set(sect, opt, val)
@@ -98,5 +98,12 @@ def getint(sect, opt):
 def getboolean(sect, opt):
     return get_configparser().getboolean(sect, opt)
 
-def get_configparser():
-    return _configparser
+def configure_logging():
+    """ Configure logging by passing the configuration of the current
+    :class:`configparser.ConfigParser` instance to
+    :mod:`logging.config`.
+    """
+    buf = StringIO()
+    get_configparser().write(buf)
+    buf.seek(0)
+    logging.config.fileConfig(buf)
