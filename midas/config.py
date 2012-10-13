@@ -86,17 +86,20 @@ def read(files):
     """
     get_configparser().read(files)
 
-def set(sect, opt, val):
-    return get_configparser().set(sect, opt, val)
+def set(section, option, value):
+    """ Set an option on the current
+    :class:`configparser.Configparser` instance. 
+    """
+    return get_configparser().set(section, option, value)
 
-def get(sect, opt):
-    return get_configparser().get(sect, opt)
+def get(section, option):
+    return get_configparser().get(section, option)
 
-def getint(sect, opt):
-    return get_configparser().getint(sect, opt)
+def getint(section, option):
+    return get_configparser().getint(section, option)
 
-def getboolean(sect, opt):
-    return get_configparser().getboolean(sect, opt)
+def getboolean(section, option):
+    return get_configparser().getboolean(section, option)
 
 def configure_logging():
     """ Configure logging by passing the configuration of the current
