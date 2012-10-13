@@ -30,19 +30,6 @@ def domain(company_or_site):
     else:
         raise TypeError("cannot extract domain part: '{0}'".format(type(company_or_site)))
 
-def lookup_ranking(site, key_dir):
-    key = RankEntry.make_key(site)
-    fname = os.path.join(key_dir, '{0}.gz'.format(key))
-    entries = []
-    with GzipFile(fname) as fp:
-        pred = lambda l: RankEntry.parse_std(l.decode()).site != site
-        for line in itertools.dropwhile(pred, fp):
-            entry = RankEntry.parse_std(line.decode())
-            if entry.site == site:
-                yield entry
-            else:
-                break
-
 def group_by_key(iterable, sep='\t'):
     keyfunc = functools.partial(key, sep=sep)
     return imap(operator.itemgetter(1), itertools.groupby(iterable, keyfunc))
