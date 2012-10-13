@@ -15,6 +15,8 @@ if PY_VERSION == (2, 6):
 
 setup(name='midas',
       version='0.0a1',
+      packages=['midas', 'midas.scripts'],
+      license='BSD-new',
       description='Try to get some useful information from Top1M.',
       author='Thomas Bach',
       author_email='thbach@students.uni-mainz.de',
