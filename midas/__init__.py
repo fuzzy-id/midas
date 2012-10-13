@@ -98,7 +98,7 @@ class RankEntry(object):
         `site`. 
         """
         sha1 = hashlib.sha1(s.encode()).hexdigest()
-        return sha1[:md_cfg.getint('alexa', 'key_length')]
+        return sha1[:md_cfg.getint('location', 'key_length')]
         
 
     @classmethod

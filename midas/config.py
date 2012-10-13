@@ -30,11 +30,9 @@ output = optional
 compress_output = true
 files = optional
 
-[alexa]
+[location]
 top1m_files = %(hdfs_home)s/alexa-files#alexa-files
 key_length = 3
-
-[statistics]
 home = %(local_home)s/md_data
 key_files = %(home)s/key_files
 crunchbase_db = sqlite:///%(home)s/crunchbase_db.sql
