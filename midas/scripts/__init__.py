@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
+""" This module provides classes to easily create scripts which can be
+used from the command-line.
+"""
 
 import argparse
 import logging
-import logging.config
 import os.path
 import sys
-
-from midas.compat import ConfigParser
-from midas.compat import StringIO
 
 import midas.config as md_cfg
 
@@ -16,8 +15,8 @@ logger = logging.getLogger(__name__)
 
 class MDCommand(object):
     """ Initializes the :class:`MDCommand` instance by passing `argv`
-    (usually :obj:`sys.argv`) to :meth:`parser` and configuring the
-    :mod:`logging`.
+    to :meth:`parser` and configuring :mod:`logging`. If `argv` is
+    ``None`` :obj:`sys.argv` is passed to the parser.
 
     Subclass this to write an easy to use command line interface to
     your function. But, make sure to call this class's
@@ -26,7 +25,9 @@ class MDCommand(object):
 
     POS_ARG = None
 
-    def __init__(self, argv):
+    def __init__(self, argv=None):
+        if argv is None:
+            argv = sys.argv
         self.args = self.parser.parse_args(argv[1:])
 
         md_cfg.read(os.path.expanduser(self.args.cfg))
@@ -48,7 +49,7 @@ class MDCommand(object):
         # `None` means everything's fine
         return 0 if ret_val is None else ret_val
 
-    def run(self):
+    def run(self):  # pragma: no cover
         """ Overwrite this method with the code you want your command
         to execute. Return an integer unequal `0` if you want to
         signal that something went wrong.
