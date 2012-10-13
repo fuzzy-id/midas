@@ -73,6 +73,18 @@ class KeyToFiles(MDJob):
         logger.info('Generated {0}'.format(tmpfile))
         return tmpfile
 
+def check_and_calc_mean_max_min_deviation_variance(root_dir=None):
+    if root_dir is None:
+        root_dir = md_cfg.get('statistics', 'key_files')
+    counter = check_and_count_entries(glob.glob(os.path.join(root_dir, '*')))
+    mean = sum(counter.itervalues()) / len(counter) * 1.0
+    max_ = max(counter.itervalues())
+    min_ = min(counter.itervalues())
+    deviation = (sum(math.fabs(x - mean) for x in counter.itervalues())
+                 / len(counter))
+    variance = deviation**2
+    return (mean, max_, min_, deviation, variance)
+
 def check_and_count_entries(files):
     counter = collections.defaultdict(int)
     for f in files:

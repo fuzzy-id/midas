@@ -79,7 +79,7 @@ def associate_sites_to_companies(tree=None, sites=None, comps=None):
     if tree is None:
         tree = grow_tree_from_sites(sites)
     if comps is None:
-        comps = md_tools.iter_interesting_companies()
+        comps = iter_interesting_companies()
     return tree.map(sites, md_tools.domain)
 
 def grow_tree_from_companies(comps=None):

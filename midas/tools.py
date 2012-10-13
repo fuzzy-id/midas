@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+""" This module provides common functions which are usually needed in
+all other submodules or interactively.
+"""
 
 import collections
 import functools
@@ -12,6 +15,7 @@ from vincetools.compat import imap
 from vincetools.compat import urlparse
 
 from crawlcrunch.model.db import Company
+from crawlcrunch.model.db import FundingRound
 
 logger = logging.getLogger(__name__)
 
@@ -113,3 +117,55 @@ def is_invalid_site(site):
 
 def filter_invalid_sites(sites):
     return ifilter(is_invalid_site, sites)
+
+def iter_interesting_companies():
+    """ Returns all companies having a funding round with round_level
+    'angel', 'seed' or 'a' since December 2010.
+    """
+    sess = md_tools.make_session()
+    funding_round_subq = sess.query(ccdb.FundingRound).\
+        filter(ccdb.FundingRound.round_code.in_(['angel', 'seed', 'a'])).\
+        filter(or_(ccdb.FundingRound.funded_year>2010,
+                   and_(ccdb.FundingRound.funded_year==2010,
+                        ccdb.FundingRound.funded_month==12))).subquery()
+    q = sess.query(ccdb.Company).join(funding_round_subq,
+                                      ccdb.Company.funding_round)
+    return q.all()
+
+_sess = None
+
+def make_session(db=None):
+    global _sess
+    if _sess is None:
+        if db is None:
+            db = md_cfg.get('statistics', 'crunchbase_db')
+        engine = ccdb.create_engine(db)
+        ccdb.Session.configure(bind=engine)
+        _sess = ccdb.Session()
+    return _sess
+
+SiteCount = collections.namedtuple('SiteCount', ['site', 'cnt'])
+
+def iter_site_counts(path=None):
+    if path is None:
+        path = md_cfg.get('statistics', 'site_count')
+    with GzipFile(path) as fp:
+        for l in fp:
+            site, cnt = l.decode().strip().split('\t', 1)
+            cnt = int(cnt)
+            yield SiteCount(site, cnt)
+
+def iter_all_sites(path=None):
+    return imap(operator.attrgetter('site'), 
+                get_site_counts(path=path))
+
+def sites_of_interest(path=None):
+    " Iterate all sites not having a path. "
+    return ifilter(lambda s: len(s.split('/', 1)) == 1,
+                   all_sites(path))
+
+def iter_all_companies():
+    " Returns 100355 companies. "
+    sess = make_session()
+    return sess.query(ccdb.Company).all()
+
