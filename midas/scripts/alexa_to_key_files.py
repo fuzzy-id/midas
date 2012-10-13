@@ -16,6 +16,7 @@ from midas import RankEntry
 from vincetools.compat import GzipFile
 from vincetools.compat import imap
 from midas.scripts import MDJob
+from midas.tools import get_key
 from midas.tools import group_by_key
 from midas.tools import log_popen
 
@@ -54,7 +55,7 @@ class KeyToFiles(MDJob):
         self.tmpd = tempfile.mkdtemp()
         try:
             files = [ self._write_out(sorted(imap(RankEntry.parse_key, group)))
-                      for group in group_by_key(self.args.stream) ]
+                      for group in group_by_key(self.args.stream, get_key) ]
             md_hdfs.put(files, self.args.dest)
         finally:
             shutil.rmtree(self.tmpd)

@@ -5,6 +5,7 @@ import logging
 from midas.scripts import MDJob
 from midas import RankEntry
 from midas.tools import group_by_key
+from midas.tools import get_key
 from midas.tools import split_key_value
 
 logger = logging.getLogger(__name__)
@@ -27,7 +28,7 @@ class SumValues(MDJob):
     """
 
     def run(self):
-        for group in group_by_key(self.args.stream):
+        for group in group_by_key(self.args.stream, get_key):
             counter = 0
             for name_tab_count in group:
                 name, count = split_key_value(name_tab_count)
