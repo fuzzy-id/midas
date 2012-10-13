@@ -39,7 +39,7 @@ def count_by_key(iterable, keyfunc):
     return counter
 
 def collect_by_key(iterable, keyfunc):
-    collected = collection.defaultdict(list)
+    collected = collections.defaultdict(list)
     for item in iterable:
         collected[keyfunc(item)].append(item)
     return collected
@@ -154,4 +154,3 @@ def log_popen(cmd):
     if proc.returncode != 0:
         raise subprocess.CalledProcessError(proc.returncode, cmd)
     return proc.returncode
-
