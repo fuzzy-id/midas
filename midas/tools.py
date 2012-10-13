@@ -56,7 +56,7 @@ def domain(company_or_site):
     """ Return the domain part of an Alexa Top1M site or a
     :class:`crawlcrunch.model.db.Company` instance.
     """
-    if isinstance(obj, Company):
+    if isinstance(company_or_site, Company):
         return urlparse(company_or_site.homepage_url).netloc.lower()
     elif isinstance(obj, str):  # This should be an Alexa Top1M site
         return company_or_site.split('/', 1)[0].lower()
