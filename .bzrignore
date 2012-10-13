@@ -16,3 +16,6 @@ doc/_build/*
 crawlcrunch-0.2-py2.6.egg
 crawlcrunch-0.2-py2.7.egg
 crawlcrunch-0.2-py3.2.egg
+vincetools-0.1dev-py2.6.egg
+vincetools-0.1dev-py2.7.egg
+vincetools-0.1dev-py3.2.egg
