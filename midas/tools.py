@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 def split_key_value(line, sep='\t'):
     return line.strip().split(sep, 1)
 
-def key(line, sep='\t'):
+def get_key(line, sep='\t'):
     return split_key_value(line, sep)[0]
 
 ### Functions that are often needed in interactive use ###
