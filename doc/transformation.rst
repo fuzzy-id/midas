@@ -1,12 +1,12 @@
-.. _transformation:
+.. _invert_index:
 
-=====================
- Data Transformation
-=====================
+===========================================
+ Invert the Index of the Alexa Top1M Files
+===========================================
 
 The data as provided by Alexa is rather unhandy for our purpose. We
-therefor first ‘transpose’ the data. Here are the steps needed to do
-so::
+therefor first invert the index of the data in a MapReduce job. Here
+are the steps needed to do so::
 
    $ hadoop fs -put alexa-top-1m/ alexa-files
    $ cd alexa-top-1m

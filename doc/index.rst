@@ -11,7 +11,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   transformation
+   invert_index
 
 API Documentation
 =================
@@ -22,7 +22,6 @@ Documentation of the API.
    :maxdepth: 2
 
    api/midas
-   api/transform
 
 Indices and tables
 ==================
