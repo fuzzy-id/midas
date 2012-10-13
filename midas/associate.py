@@ -89,7 +89,7 @@ def grow_tree_from_companies(comps=None):
 
 def grow_tree_from_sites(sites=None):
     if sites is None:
-        sites = md_stats.iter_sites_of_interest()
+        sites = md_stats.iter_interesting_sites()
     return grow_tree_from_sites_or_companies(sites)
 
 def grow_tree_from_sites_or_companies(iterable):
