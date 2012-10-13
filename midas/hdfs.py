@@ -40,4 +40,3 @@ def rm(file_or_files):
     """
     cmd = (get_hadoop_exec(), 'fs', '-rm', file_or_files, dst)
     log_popen(cmd)
-    
