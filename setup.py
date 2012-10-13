@@ -5,4 +5,5 @@ from setuptools import setup
 setup(name='vincetools',
       version='0.1dev',
       packages=['vincetools'],
-      license='BSD-new')
+      license='BSD-new',
+      test_suite='vincetools.tests')
