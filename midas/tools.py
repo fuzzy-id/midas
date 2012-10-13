@@ -16,6 +16,13 @@ from vincetools.compat import urlparse
 
 from crawlcrunch.model.db import Company
 from crawlcrunch.model.db import FundingRound
+from crawlcrunch.model.db import Session
+from crawlcrunch.model.db import create_engine
+
+from sqlalchemy import and_
+from sqlalchemy import or_
+
+import midas.config as md_cfg
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +64,8 @@ def domain(company_or_site):
     :class:`crawlcrunch.model.db.Company` instance.
     """
     if isinstance(company_or_site, Company):
-        return urlparse(company_or_site.homepage_url).netloc.lower()
+        return urlparse(company_or_site.homepage_url)\
+            .netloc.lower()
     elif isinstance(company_or_site, str):               # This should be an
         return company_or_site.split('/', 1)[0].lower()  # Alexa Top1M site
     else:
@@ -73,10 +81,10 @@ def db_session(db=None):
     global _session
     if _session is None:
         if db is None:
-            db = md_cfg.get('statistics', 'crunchbase_db')
-        engine = ccdb.create_engine(db)
-        ccdb.Session.configure(bind=engine)
-        _session = ccdb.Session()
+            db = md_cfg.get('location', 'crunchbase_db')
+        engine = create_engine(db)
+        Session.configure(bind=engine)
+        _session = Session()
     return _session
 
 def iter_all_companies():
@@ -97,7 +105,7 @@ def iter_interesting_companies():
     q = sess.query(Company)\
         .filter(Company.homepage_url != None)\
         .filter(Company.homepage_url != '')\
-        .join(funding_round_subq, Company.funding_round)
+        .join(funding_round_subq, Company.funding_rounds)
     return q.all()
 
 SiteCount = collections.namedtuple('SiteCount', ['site', 'cnt'])
