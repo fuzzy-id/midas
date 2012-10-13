@@ -11,7 +11,6 @@ of the Alexa Top1M sites .
 import collections
 
 import midas.tools as md_tools
-import midas.statistics as md_stats
 
 class AssociationTree(dict):
 

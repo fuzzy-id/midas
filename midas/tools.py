@@ -144,6 +144,8 @@ def make_session(db=None):
         _sess = ccdb.Session()
     return _sess
 
+
+
 SiteCount = collections.namedtuple('SiteCount', ['site', 'cnt'])
 
 def iter_site_counts(path=None):
@@ -159,7 +161,7 @@ def iter_all_sites(path=None):
     return imap(operator.attrgetter('site'), 
                 get_site_counts(path=path))
 
-def sites_of_interest(path=None):
+def iter_interesting_sites(path=None):
     " Iterate all sites not having a path. "
     return ifilter(lambda s: len(s.split('/', 1)) == 1,
                    all_sites(path))
@@ -168,4 +170,3 @@ def iter_all_companies():
     " Returns 100355 companies. "
     sess = make_session()
     return sess.query(ccdb.Company).all()
-
