@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+""" This module provides (mostly) wrappers to let our code run on
+Python 2 and Python 3.
+"""
 
 import sys
 
