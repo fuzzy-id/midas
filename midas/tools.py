@@ -19,26 +19,18 @@ from crawlcrunch.model.db import FundingRound
 
 logger = logging.getLogger(__name__)
 
-def domain(company_or_site):
-    """ Return the domain part of an Alexa Top1M site or a
-    :class:`crawlcrunch.model.db.Company` instance.
-    """
-    if isinstance(obj, Company):
-        return urlparse(company_or_site.homepage_url).netloc.lower()
-    elif isinstance(obj, str):  # This should be an Alexa Top1M site
-        return company_or_site.split('/', 1)[0].lower()
-    else:
-        raise TypeError("cannot extract domain part: '{0}'".format(type(company_or_site)))
+### Functions that work on MapReduce-style 'key\tvalue' lines ###
 
-def group_by_key(iterable, sep='\t'):
-    keyfunc = functools.partial(key, sep=sep)
+def split_key_value(line, sep='\t'):
+    return line.strip().split(sep, 1)
+
+def key(line, sep='\t'):
+    return split_key_value(line, sep)[0]
+
+### Functions that are often needed in interactive use ###
+
+def group_by_key(iterable, keyfunc):
     return imap(operator.itemgetter(1), itertools.groupby(iterable, keyfunc))
-
-def count_items(iterable):
-    try:
-        return len(iterable)
-    except TypeError:
-        return sum(1 for _ in iterable)
 
 def count_by_key(iterable, keyfunc):
     counter = collections.defaultdict(int)
@@ -52,11 +44,87 @@ def collect_by_key(iterable, keyfunc):
         collected[keyfunc(item)].append(item)
     return collected
 
-def key(line, sep='\t'):
-    return split_key_value(line, sep)[0]
+def count_items(iterable):
+    try:
+        return len(iterable)
+    except TypeError:
+        return sum(1 for _ in iterable)
 
-def split_key_value(line, sep='\t'):
-    return line.strip().split(sep, 1)
+### Functions to query sites and companies ###
+
+def domain(company_or_site):
+    """ Return the domain part of an Alexa Top1M site or a
+    :class:`crawlcrunch.model.db.Company` instance.
+    """
+    if isinstance(obj, Company):
+        return urlparse(company_or_site.homepage_url).netloc.lower()
+    elif isinstance(obj, str):  # This should be an Alexa Top1M site
+        return company_or_site.split('/', 1)[0].lower()
+    else:
+        raise TypeError(format("cannot extract domain part: '{0}'",
+                               type(company_or_site)))
+
+_session = None
+
+def db_session(db=None):
+    """ Create a session for the CrunchBase database and return
+    it. Subsequent calls will return the same session.
+    """
+    global _session
+    if _session is None:
+        if db is None:
+            db = md_cfg.get('statistics', 'crunchbase_db')
+        engine = ccdb.create_engine(db)
+        ccdb.Session.configure(bind=engine)
+        _session = ccdb.Session()
+    return _session
+
+def iter_all_companies():
+    " Returns 100355 companies. "
+    sess = db_session()
+    return sess.query(Company).all()
+
+def iter_interesting_companies():
+    """ Returns all companies having a funding round with round_level
+    'angel', 'seed' or 'a' since December 2010.
+    """
+    sess = db_session()
+    funding_round_subq = sess.query(FundingRound)\
+        .filter(FundingRound.round_code.in_(['angel', 'seed', 'a']))\
+        .filter(or_(FundingRound.funded_year>2010,
+                   and_(FundingRound.funded_year==2010,
+                        FundingRound.funded_month==12))).subquery()
+    q = sess.query(Company)\
+        .filter(Company.homepage_url != None)\
+        .filter(Company.homepage_url != '')\
+        .join(funding_round_subq, Company.funding_round)
+    return q.all()
+
+SiteCount = collections.namedtuple('SiteCount', ['site', 'cnt'])
+
+def iter_site_counts(path=None):
+    " Iterate over a site-count file. "
+    if path is None:
+        path = md_cfg.get('statistics', 'site_count')
+    with GzipFile(path) as fp:
+        for l in fp:
+            site, cnt = split_key_value(l.decode())
+            cnt = int(cnt)
+            yield SiteCount(site, cnt)
+
+def iter_all_sites(path=None):
+    " Iterate over all sites found in a site-count file. "
+    return imap(operator.attrgetter('site'), 
+                iter_site_counts(path=path))
+
+def iter_interesting_sites(path=None):
+    """ Iterate over all sites found in a site-count file. Sites that
+    have a path are filtered out.
+    """
+    return ifilter(lambda s: len(s.split('/', 1)) == 1,
+                   all_sites(path))
+
+### Useful miscelanious stuff ###
 
 def log_popen(cmd):
     """ Run `cmd` with :class:`subprocess.Popen` and log lines from
@@ -87,73 +155,3 @@ def log_popen(cmd):
         raise subprocess.CalledProcessError(proc.returncode, cmd)
     return proc.returncode
 
-VALID_CHRS = set(chr(i)
-                 for i in itertools.chain(range(ord('a'), ord('z') + 1),
-                                          range(ord('A'), ord('Z') + 1),
-                                          range(ord('0'), ord('9') + 1),
-                                          (ord(c) for c in ('-', '.', '_'))))
-
-def is_valid_site(site):
-    for n in name:
-        if n not in VALID_CHRS:
-            return False
-    return True
-
-def is_invalid_site(site):
-    return not is_valid_name(name)
-
-def filter_invalid_sites(sites):
-    return ifilter(is_invalid_site, sites)
-
-def iter_interesting_companies():
-    """ Returns all companies having a funding round with round_level
-    'angel', 'seed' or 'a' since December 2010.
-    """
-    sess = md_tools.make_session()
-    funding_round_subq = sess.query(ccdb.FundingRound).\
-        filter(ccdb.FundingRound.round_code.in_(['angel', 'seed', 'a'])).\
-        filter(or_(ccdb.FundingRound.funded_year>2010,
-                   and_(ccdb.FundingRound.funded_year==2010,
-                        ccdb.FundingRound.funded_month==12))).subquery()
-    q = sess.query(ccdb.Company).join(funding_round_subq,
-                                      ccdb.Company.funding_round)
-    return q.all()
-
-_sess = None
-
-def make_session(db=None):
-    global _sess
-    if _sess is None:
-        if db is None:
-            db = md_cfg.get('statistics', 'crunchbase_db')
-        engine = ccdb.create_engine(db)
-        ccdb.Session.configure(bind=engine)
-        _sess = ccdb.Session()
-    return _sess
-
-
-
-SiteCount = collections.namedtuple('SiteCount', ['site', 'cnt'])
-
-def iter_site_counts(path=None):
-    if path is None:
-        path = md_cfg.get('statistics', 'site_count')
-    with GzipFile(path) as fp:
-        for l in fp:
-            site, cnt = l.decode().strip().split('\t', 1)
-            cnt = int(cnt)
-            yield SiteCount(site, cnt)
-
-def iter_all_sites(path=None):
-    return imap(operator.attrgetter('site'), 
-                get_site_counts(path=path))
-
-def iter_interesting_sites(path=None):
-    " Iterate all sites not having a path. "
-    return ifilter(lambda s: len(s.split('/', 1)) == 1,
-                   all_sites(path))
-
-def iter_all_companies():
-    " Returns 100355 companies. "
-    sess = make_session()
-    return sess.query(ccdb.Company).all()
