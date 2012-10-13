@@ -13,8 +13,8 @@ import shutil
 import tempfile
 
 from midas import RankEntry
-from midas.compat import GzipFile
-from midas.compat import imap
+from vincetools.compat import GzipFile
+from vincetools.compat import imap
 from midas.scripts import MDJob
 from midas.tools import group_by_key
 from midas.tools import log_popen
