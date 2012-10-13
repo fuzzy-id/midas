@@ -12,7 +12,7 @@ else:
     import unittest
 
 from midas import RankEntry
-from midas.compat import StringIO
+from vincetools.compat import StringIO
 
 
 __here__ = os.path.abspath(os.path.dirname(__file__))

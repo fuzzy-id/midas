@@ -6,7 +6,7 @@ import datetime
 import hashlib
 import os.path
 
-from midas.compat import ZipFile
+from vincetools.compat import ZipFile
 
 import midas.config as md_cfg
 

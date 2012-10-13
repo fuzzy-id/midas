@@ -7,9 +7,9 @@ import logging
 import operator
 import subprocess
 
-from midas.compat import ifilter
-from midas.compat import imap
-from midas.compat import urlparse
+from vincetools.compat import ifilter
+from vincetools.compat import imap
+from vincetools.compat import urlparse
 
 logger = logging.getLogger(__name__)
 

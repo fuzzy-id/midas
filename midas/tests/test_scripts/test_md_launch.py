@@ -6,7 +6,7 @@ import tempfile
 
 import mock
 
-from midas.compat import StringIO
+from vincetools.compat import StringIO
 from midas.tests import unittest
 
 class MDLaunchTests(unittest.TestCase):

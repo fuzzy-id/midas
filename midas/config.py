@@ -7,8 +7,8 @@ import logging
 import logging.config
 import os
 
-from midas.compat import ConfigParser
-from midas.compat import StringIO
+from vincetools.compat import ConfigParser
+from vincetools.compat import StringIO
 
 logger = logging.getLogger(__name__)
 

@@ -10,8 +10,8 @@ import tempfile
 import mock
 
 from midas import RankEntry
-from midas.compat import GzipFile
-from midas.compat import StringIO
+from vincetools.compat import GzipFile
+from vincetools.compat import StringIO
 from midas.tests import TEST_DATA
 from midas.tests import IntegrationTestCase
 

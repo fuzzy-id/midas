@@ -21,10 +21,10 @@ from sqlalchemy import and_
 from sqlalchemy import or_
 import crawlcrunch.model.db as ccdb
 
-from midas.compat import GzipFile
-from midas.compat import ifilter
-from midas.compat import imap
-from midas.compat import urlparse
+from vincetools.compat import GzipFile
+from vincetools.compat import ifilter
+from vincetools.compat import imap
+from vincetools.compat import urlparse
 from midas.scripts.alexa_to_key_files import check_and_count_entries
 
 import midas.config as md_cfg
