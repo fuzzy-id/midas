@@ -70,3 +70,8 @@ else:
             buf = StringIO(s)
             buf.seek(0)
             self.readfp(buf)
+
+if PY26:  # pragma: no cover
+    import unittest2 as unittest
+else:
+    import unittest
