@@ -7,9 +7,6 @@ The idea is to built a tree from either the domain part of
 of the Alexa Top1M sites . 
 """
 
-
-import collections
-
 import midas.tools as md_tools
 
 class AssociationTree(dict):
@@ -33,7 +30,7 @@ class AssociationTree(dict):
         if key is None:
             if len(self.leafs) > 0:  # definite relation
                 return self.leafs
-            elif len(self) == 1:  # relation is further down
+            elif len(self) == 1:  # relation could be further down
                 return next(iter(self.values())).associate(None)
             else:  # No definite relation!
                 return None
