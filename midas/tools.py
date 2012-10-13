@@ -113,7 +113,7 @@ SiteCount = collections.namedtuple('SiteCount', ['site', 'cnt'])
 def iter_site_counts(path=None):
     " Iterate over a site-count file. "
     if path is None:
-        path = md_cfg.get('statistics', 'site_count')
+        path = md_cfg.get('location', 'site_count')
     with GzipFile(path) as fp:
         for l in fp:
             site, cnt = split_key_value(l.decode())
