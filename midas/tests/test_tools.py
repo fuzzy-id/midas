@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from midas.tests import unittest
+from vincetools.compat import unittest
 
 class GroupByKeyTests(unittest.TestCase):
 

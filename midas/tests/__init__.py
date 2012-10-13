@@ -4,16 +4,9 @@ import datetime
 import os.path
 import sys
 
-PY_VERSION = sys.version_info[:2]
-
-if PY_VERSION == (2, 6):  # pragma: no cover
-    import unittest2 as unittest
-else:
-    import unittest
-
 from midas import RankEntry
 from vincetools.compat import StringIO
-
+from vincetools.compat import unittest
 
 __here__ = os.path.abspath(os.path.dirname(__file__))
 __test_data__ = os.path.join(__here__, 'data')

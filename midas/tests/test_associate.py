@@ -3,7 +3,7 @@
 import operator
 
 from vincetools.compat import imap
-from midas.tests import unittest
+from vincetools.compat import unittest
 
 class AssociationTreeTests(unittest.TestCase):
 

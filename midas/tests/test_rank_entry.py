@@ -2,7 +2,7 @@
 
 import datetime
 
-from midas.tests import unittest
+from vincetools.compat import unittest
 from midas.tests import TEST_DATA
 
 class RankEntryTestCase(unittest.TestCase):

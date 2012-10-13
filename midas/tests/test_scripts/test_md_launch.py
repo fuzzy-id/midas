@@ -7,7 +7,7 @@ import tempfile
 import mock
 
 from vincetools.compat import StringIO
-from midas.tests import unittest
+from vincetools.compat import unittest
 
 class MDLaunchTests(unittest.TestCase):
 

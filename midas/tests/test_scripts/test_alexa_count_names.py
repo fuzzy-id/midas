@@ -2,7 +2,7 @@
 
 from midas.tests import TEST_DATA
 from midas.tests import IntegrationTestCase
-from midas.tests import unittest
+from vincetools.compat import unittest
 
 class AlexaToNamesAndOneTests(IntegrationTestCase):
 
