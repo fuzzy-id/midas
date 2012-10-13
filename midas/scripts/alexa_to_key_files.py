@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+""" This module provides interfaces to two scripts `alexa_to_key` and
+`key_to_files` with the first being the map step and the latter the
+reduce step in a MapReduce job.
+"""
 
 from __future__ import print_function
 
@@ -6,7 +10,6 @@ import collections
 import logging
 import os.path
 import shutil
-import sys
 import tempfile
 
 from midas import RankEntry
@@ -42,7 +45,7 @@ class KeyToFiles(MDJob):
     key. When no entry is given the entries are read from stdin.
     """
 
-    def __init__(self, argv=sys.argv):
+    def __init__(self, argv):
         MDJob.__init__(self, argv)
         self.tmp_files = []
         self.tmpd = None
