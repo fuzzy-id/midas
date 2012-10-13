@@ -2,10 +2,10 @@
 * Midas
 
 This is a collection of scripts used to correlate rankings of the one
-million most visited sites per day and information from
-CrunchBase [fn:1]. The final goal is to make a prediction whether an
-enterprise will receive a funding of the type ~angel~, ~seed~ or ~a~
-soon.
+million most visited sites per day (Alexa Top1M files) and information
+from CrunchBase [fn:1]. The final goal is to make a prediction whether
+an enterprise will receive a funding of the type ~angel~, ~seed~ or
+~a~ soon.
 
 The several scripts are written to run under Hadoop.
 
@@ -13,6 +13,7 @@ Further documentation is provided in the ~doc~ folder via Sphinx.
 
 * Footnotes
 
-[fn:1] To fetch the data from CrunchBase another, separate script was
-  used. It can be found on [[https://github.com/fuzzy-id/crawlcrunch]].
+[fn:1] To fetch the data from CrunchBase another, separate package
+  should be used. It can be found on
+  [[https://github.com/fuzzy-id/crawlcrunch]].
 
