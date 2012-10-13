@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+""" This module provides a :class:`midas.compat.ConfigParser` instance
+as a singleton and functions to query this instance.
+"""
 
 import logging
 import logging.config
@@ -9,6 +12,7 @@ from midas.compat import StringIO
 
 logger = logging.getLogger(__name__)
 
+#: The default configuration
 DEFAULT_CONFIG = """
 [DEFAULT]
 user_name = {env[USER]}
@@ -67,6 +71,9 @@ format = %(asctime)s %(levelname)-5.5s %(message)s
 _configparser = None
 
 def new_configparser():
+    """ Generate a new :class:`configparser.ConfigParser` instance and
+    configure it with the :attr:`DEFAULT_CONFIG`.
+    """
     cp = ConfigParser()
     cp.read_string(DEFAULT_CONFIG)
     global _configparser
@@ -88,17 +95,26 @@ def read(files):
 
 def set(section, option, value):
     """ Set an option on the current
-    :class:`configparser.Configparser` instance. 
+    :class:`configparser.ConfigParser` instance. 
     """
     return get_configparser().set(section, option, value)
 
 def get(section, option):
+    """ Get an option value for a given section from the current
+    :class:`configparser.ConfigParser` instance.
+    """
     return get_configparser().get(section, option)
 
 def getint(section, option):
+    """ Get an option value as :class:`int` for a given section from
+    the current :class:`configparser.ConfigParser` instance.
+    """
     return get_configparser().getint(section, option)
 
 def getboolean(section, option):
+    """ Get an option value as :class:`bool` for a given section from
+    the current :class:`configparser.ConfigParser` instance.
+    """
     return get_configparser().getboolean(section, option)
 
 def configure_logging():
