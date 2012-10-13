@@ -2,6 +2,8 @@
 
 from vincetools.compat import unittest
 
+from midas.tests import SITE_COUNT
+
 class KeyFuncTestCase(unittest.TestCase):
 
     @property
@@ -97,8 +99,12 @@ class DBTestCase(unittest.TestCase):
 
     def tearDown(self):
         from crawlcrunch.model.db import Session
+        import midas.tools as md_tools
+        import midas.config as md_cfg
         Session.remove()
-
+        md_tools._session = None
+        md_cfg.new_configparser()
+        
     def _make_company(self, *args, **kwargs):
         from midas.tools import Company
         c = Company(*args, **kwargs)
@@ -128,3 +134,29 @@ class IterInteresstingCompaniesTests(DBTestCase):
     def test_function_runs(self):
         c = self._make_company()
         self.assertEqual(self._run_it(), [])
+
+class SitesCountTestCase(unittest.TestCase):
+
+    def setUp(self):
+        import midas.config as md_cfg
+        md_cfg.set('location', 'site_count', SITE_COUNT[0])
+
+    def tearDown(self):
+        import midas.config as md_cfg
+        md_cfg.new_configparser()
+
+    def test_iter_site_counts(self):
+        from midas.tools import iter_site_counts
+        result = list(iter_site_counts())
+        self.assertEqual((result[0].site, result[0].count), SITE_COUNT[1][0])
+        self.assertEqual((result[1].site, result[1].count), SITE_COUNT[1][1])
+
+    def test_iter_all_sites(self):
+        from midas.tools import iter_all_sites
+        result = list(iter_all_sites())
+        self.assertEqual(result, [SITE_COUNT[1][0][0], SITE_COUNT[1][1][0]])
+
+    def test_iter_interesting_sites(self):
+        from midas.tools import iter_interesting_sites
+        result = list(iter_interesting_sites())
+        self.assertEqual(result, [SITE_COUNT[1][0][0]])

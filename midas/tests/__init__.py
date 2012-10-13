@@ -13,6 +13,9 @@ __test_data__ = os.path.join(__here__, 'data')
 TEST_DATA = (os.path.join(__test_data__, 'top-1m-2012-09-03.csv.zip'),
              (RankEntry('foo', datetime.datetime(2012, 9, 3), 1),
               RankEntry('bar', datetime.datetime(2012, 9, 3), 2)))
+SITE_COUNT = (os.path.join(__test_data__, 'site_count.gz'),
+              (('foo.example.com', 1),
+               ('bar.example.com/path', 2)))
 
 
 class IntegrationTestCase(unittest.TestCase):

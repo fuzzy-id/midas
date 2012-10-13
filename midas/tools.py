@@ -10,6 +10,7 @@ import logging
 import operator
 import subprocess
 
+from vincetools.compat import GzipFile
 from vincetools.compat import ifilter
 from vincetools.compat import imap
 from vincetools.compat import urlparse
@@ -108,7 +109,7 @@ def iter_interesting_companies():
         .join(funding_round_subq, Company.funding_rounds)
     return q.all()
 
-SiteCount = collections.namedtuple('SiteCount', ['site', 'cnt'])
+SiteCount = collections.namedtuple('SiteCount', ['site', 'count'])
 
 def iter_site_counts(path=None):
     " Iterate over a site-count file. "
@@ -130,7 +131,7 @@ def iter_interesting_sites(path=None):
     have a path are filtered out.
     """
     return ifilter(lambda s: len(s.split('/', 1)) == 1,
-                   all_sites(path))
+                   iter_all_sites(path))
 
 ### Useful miscelanious stuff ###
 
