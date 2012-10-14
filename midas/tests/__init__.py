@@ -8,12 +8,20 @@ from midas import RankEntry
 from vincetools.compat import StringIO
 from vincetools.compat import unittest
 
-__here__ = os.path.abspath(os.path.dirname(__file__))
-__test_data__ = os.path.join(__here__, 'data')
-TEST_DATA = (os.path.join(__test_data__, 'top-1m-2012-09-03.csv.zip'),
+_here = os.path.abspath(os.path.dirname(__file__))
+_test_data_home = os.path.join(_here, 'data')
+
+TEST_CONFIG = """
+[location]
+home = {0}
+key_length = 3
+""".format(_test_data_home)
+
+TEST_DATA = (os.path.join(_test_data_home, 'alexa_files', 
+                          'top-1m-2012-09-03.csv.zip'),
              (RankEntry('foo', datetime.datetime(2012, 9, 3), 1),
               RankEntry('bar', datetime.datetime(2012, 9, 3), 2)))
-SITE_COUNT = (os.path.join(__test_data__, 'site_count.gz'),
+SITE_COUNT = (os.path.join(_test_data_home, 'site_count.gz'),
               (('foo.example.com', 1),
                ('bar.example.com/path', 2)))
 
