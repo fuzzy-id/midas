@@ -10,7 +10,6 @@ import tempfile
 import mock
 
 from vincetools.compat import GzipFile
-from vincetools.compat import StringIO
 
 from midas import RankEntry
 from midas.tests import SITE_COUNT
