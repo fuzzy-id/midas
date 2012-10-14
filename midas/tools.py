@@ -10,18 +10,18 @@ import logging
 import operator
 import subprocess
 
-from vincetools.compat import GzipFile
-from vincetools.compat import ifilter
-from vincetools.compat import imap
-from vincetools.compat import urlparse
+from sqlalchemy import and_
+from sqlalchemy import or_
 
 from crawlcrunch.model.db import Company
 from crawlcrunch.model.db import FundingRound
 from crawlcrunch.model.db import Session
 from crawlcrunch.model.db import create_engine
 
-from sqlalchemy import and_
-from sqlalchemy import or_
+from vincetools.compat import GzipFile
+from vincetools.compat import ifilter
+from vincetools.compat import imap
+from vincetools.compat import urlparse
 
 import midas.config as md_cfg
 
