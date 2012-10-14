@@ -15,6 +15,16 @@ if PY3K:
 else:
     str_type = (str, unicode)
 
+if PY3K:  # pragma: no cover
+    comp_bytes = bytes
+else:
+    comp_bytes = (lambda a, _: bytes(a))
+
+if PY3K:  # pragma: no cover
+    comp_unicode = str
+else:
+    comp_unicode = unicode
+
 if PY26:  # pragma: no cover
     import zipfile
     class ZipFile(zipfile.ZipFile):
@@ -57,9 +67,24 @@ else:
     from urlparse import urlparse
 
 if PY3K:  # pragma: no cover
+    from urllib.error import HTTPError
+else:
+    from urllib2 import HTTPError
+
+if PY3K:  # pragma: no cover
+    from urllib.request import urlopen
+else:
+    from urllib2 import urlopen
+
+if PY3K:  # pragma: no cover
     from io import StringIO
 else:
     from StringIO import StringIO
+
+if PY3K:  # pragma: no cover
+    from collections import UserList
+else:
+    from UserList import UserList
 
 if PY3K:  # pragma: no cover
     from configparser import ConfigParser
