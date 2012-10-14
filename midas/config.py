@@ -73,17 +73,20 @@ def new_configparser():
     configure it with the :attr:`DEFAULT_CONFIG`.
     """
     cp = ConfigParser()
-    cp.read_string(DEFAULT_CONFIG)
     global _configparser
     _configparser = cp
+    read_string(DEFAULT_CONFIG)
 
-new_configparser()
+def read_string(s):
+    get_configparser().read_string(s)
 
 def get_configparser():
     """ Return the current :class:`configparser.ConfigParser`
     instance.
     """
     return _configparser
+
+new_configparser()
 
 def read(files):
     """ Read configuration from `files` into the modules
