@@ -17,6 +17,7 @@ from midas import RankEntry
 from midas.tests import SITE_COUNT
 from midas.tests import TEST_CONFIG
 from midas.tests import TEST_DATA
+from midas.tests import ConfiguredDBTestCase
 from midas.tests import IntegrationTestCase
 
 class AlexaToKeyTests(IntegrationTestCase):
@@ -89,15 +90,7 @@ class KeyToFilesTests(IntegrationTestCase):
         finally:
             shutil.rmtree(tmpd)
 
-class CheckTests(unittest.TestCase):
-
-    def setUp(self):
-        import midas.config as md_cfg
-        md_cfg.read_string(TEST_CONFIG)
-
-    def tearDown(self):
-        import midas.config as md_cfg
-        md_cfg.new_configparser()
+class CheckTests(ConfiguredDBTestCase):
 
     def test_check_and_calc_stats(self):
         from midas.scripts.alexa_to_key_files \
