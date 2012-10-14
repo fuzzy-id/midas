@@ -108,7 +108,7 @@ class IterInteresstingCompaniesTests(ConfiguredDBTestCase):
         self.assertEqual(self._run_it(), [])
 
 
-class SitesCountTestCase(ConfiguredDBTestCase):
+class IterSitesCountTests(ConfiguredDBTestCase):
 
     def test_iter_site_counts(self):
         from midas.tools import iter_site_counts
