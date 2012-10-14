@@ -7,7 +7,8 @@ from setuptools import setup
 
 py_version = sys.version_info[:2]
 
-install_requires = ['sqlalchemy', ]
+install_requires = ['sqlalchemy', 
+                    'vincetools']
 
 tests_require = ['mock', ]
 if py_version == (2, 6):
@@ -19,6 +20,9 @@ setup(name='crawlcrunch',
       packages=find_packages(),
       description='Crawl crunchbase.com for companies information.',
       author='Thomas Bach',
+      dependency_links = [
+        'http://github.com/fuzzy-id/vincetools/tarball/master#egg=vincetools-0.01dev'
+        ],
       install_requires=install_requires,
       tests_require=tests_require,
       test_suite='crawlcrunch.tests',
