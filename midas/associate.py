@@ -80,12 +80,12 @@ def associate_sites_to_companies(tree=None, sites=None, comps=None):
 
 def grow_tree_from_companies(comps=None):
     if comps is None:
-        comps = md_stats.iter_interesting_companies()
+        comps = md_tools.iter_interesting_companies()
     return grow_tree_from_sites_or_companies(comps)
 
 def grow_tree_from_sites(sites=None):
     if sites is None:
-        sites = md_stats.iter_interesting_sites()
+        sites = md_tools.iter_interesting_sites()
     return grow_tree_from_sites_or_companies(sites)
 
 def grow_tree_from_sites_or_companies(iterable):
