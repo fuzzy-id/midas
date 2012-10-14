@@ -9,9 +9,13 @@ import tempfile
 
 import mock
 
-from midas import RankEntry
 from vincetools.compat import GzipFile
 from vincetools.compat import StringIO
+from vincetools.compat import unittest
+
+from midas import RankEntry
+from midas.tests import SITE_COUNT
+from midas.tests import TEST_CONFIG
 from midas.tests import TEST_DATA
 from midas.tests import IntegrationTestCase
 
@@ -84,3 +88,22 @@ class KeyToFilesTests(IntegrationTestCase):
                                                    for l in bars ])
         finally:
             shutil.rmtree(tmpd)
+
+class CheckTests(unittest.TestCase):
+
+    def setUp(self):
+        import midas.config as md_cfg
+        md_cfg.read_string(TEST_CONFIG)
+
+    def tearDown(self):
+        import midas.config as md_cfg
+        md_cfg.new_configparser()
+
+    def test_check_and_calc_stats(self):
+        from midas.scripts.alexa_to_key_files \
+            import check_and_calc_mean_max_min_deviation_variance
+        result = check_and_calc_mean_max_min_deviation_variance()
+        self.assertEqual(result, (2, 2, 2, 0, 0))
+
+if __name__ == '__main__':  # pragma: no cover
+    unittest.main()
