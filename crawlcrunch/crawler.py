@@ -3,7 +3,7 @@
 import logging
 import threading
 
-from crawlcrunch.compat import HTTPError
+from vincetools.compat import HTTPError
 
 
 class Updater(object):

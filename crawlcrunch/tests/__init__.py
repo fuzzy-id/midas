@@ -9,9 +9,8 @@ import mock
 import os.path
 import sys
 
-from crawlcrunch.compat import StringIO
-from crawlcrunch.compat import comp_bytes
-
+from vincetools.compat import StringIO
+from vincetools.compat import comp_bytes
 from vincetools.compat import unittest
 
 logging.basicConfig(level=logging.CRITICAL)

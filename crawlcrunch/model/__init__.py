@@ -3,7 +3,7 @@
 import logging
 import json
 
-import crawlcrunch.compat
+from vincetools.compat import urlopen
 
 
 class CrunchBaseFetcherMixin(object):
@@ -29,7 +29,7 @@ class CrunchBaseFetcherMixin(object):
 
     def fetch(self):
         logging.info('Fetching {0}'.format(self))
-        response = crawlcrunch.compat.urlopen(self.query_url())
+        response = urlopen(self.query_url())
         content = response.read()
         s = content.decode('utf-8')
         # Some companies have control chars in theire description

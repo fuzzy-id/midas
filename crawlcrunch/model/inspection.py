@@ -4,7 +4,7 @@ from __future__ import print_function
 
 import pprint
 
-from crawlcrunch.compat import comp_unicode
+from vincetools.compat import comp_unicode
 
 
 class ModelInspector(object):

@@ -8,8 +8,9 @@ import os.path
 import shutil
 import tempfile
 
-from crawlcrunch.compat import GzipFile
-from crawlcrunch.compat import StringIO
+from vincetools.compat import GzipFile
+from vincetools.compat import StringIO
+
 from crawlcrunch.tests import COMPANIES_URL
 from crawlcrunch.tests import EXAMPLES_PATH
 from crawlcrunch.tests import FOO_URL
@@ -54,7 +55,7 @@ class CompanyTests(unittest.TestCase):
         c = self._make_one(None, 'foo')
         self.assertEqual(str(c), 'Company( foo )')
 
-    @mock.patch('crawlcrunch.compat.urlopen')
+    @mock.patch('crawlcrunch.model.urlopen')
     def test_update(self, urlopen):
         prepare_url_open(urlopen,
                          {FOO_URL: {'foo': 'bar', }})
@@ -63,7 +64,7 @@ class CompanyTests(unittest.TestCase):
         self.assertEqual(company.data, {'foo': 'bar'})
         urlopen.assert_called_once_with(FOO_URL)
 
-    @mock.patch('crawlcrunch.compat.urlopen')
+    @mock.patch('crawlcrunch.model.urlopen')
     def test_control_chars_in_response(self, urlopen):
         buf = BytesIO(b'["\x12fo\x14", "ba\x0b"]')
         buf.seek(0)
@@ -94,7 +95,7 @@ class CompanyListTests(unittest.TestCase):
         self.assertIsInstance(result, Company)
         self.assertEqual(str(result), 'Company( de-revolutione )')
 
-    @mock.patch('crawlcrunch.compat.urlopen')
+    @mock.patch('crawlcrunch.model.urlopen')
     def test_update(self, urlopen):
         prepare_url_open(urlopen,
                          {COMPANIES_URL: [{'permalink': 'foo'}]})

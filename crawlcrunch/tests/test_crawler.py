@@ -8,9 +8,10 @@ import threading
 
 import mock
 
-from crawlcrunch.compat import GzipFile
-from crawlcrunch.compat import HTTPError
-from crawlcrunch.compat import StringIO
+from vincetools.compat import GzipFile
+from vincetools.compat import HTTPError
+from vincetools.compat import StringIO
+
 from crawlcrunch.tests import FOO_URL
 from crawlcrunch.tests import DummyCompany
 from crawlcrunch.tests import DummyCompanyList
@@ -96,7 +97,7 @@ class IntegrationTests(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmpd)
 
-    @mock.patch('crawlcrunch.compat.urlopen')
+    @mock.patch('crawlcrunch.model.urlopen')
     def test_company_fetcher_and_company_list(self, urlopen):
         from crawlcrunch.crawler import Fetcher
         from crawlcrunch.model.local_files import CompanyList

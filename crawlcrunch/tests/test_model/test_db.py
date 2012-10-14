@@ -133,7 +133,7 @@ class CompanyTests(SqlTestCase):
         c = self._make_one(permalink='foo')
         self.assertEqual(str(c), 'Company(foo)')
 
-    @mock.patch('crawlcrunch.compat.urlopen')
+    @mock.patch('crawlcrunch.model.urlopen')
     def test_update_when_company_fresh(self, urlopen):
         c = self._get_target_class()(permalink='foo')
         prepare_url_open(urlopen, {FOO_URL: {'description': 'blah',
@@ -143,7 +143,7 @@ class CompanyTests(SqlTestCase):
         self.assertEqual(result.description, 'blah')
         self.assertIsNot(c, result)
 
-    @mock.patch('crawlcrunch.compat.urlopen')
+    @mock.patch('crawlcrunch.model.urlopen')
     def test_update_when_company_persisted(self, urlopen):
         c = self._make_one(permalink='foo')
         prepare_url_open(urlopen, {FOO_URL: {'description': 'blah',
@@ -173,7 +173,7 @@ class CompanyListTests(SqlTestCase):
         from crawlcrunch.model.db import CompanyList
         return CompanyList()
 
-    @mock.patch('crawlcrunch.compat.urlopen')
+    @mock.patch('crawlcrunch.model.urlopen')
     def test_update(self, urlopen):
         prepare_url_open(urlopen,
                          {COMPANIES_URL: [{'permalink': 'foo'}]})

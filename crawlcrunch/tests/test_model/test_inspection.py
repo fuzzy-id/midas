@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from crawlcrunch.compat import comp_unicode
-from crawlcrunch.tests import unittest
+from vincetools.compat import comp_unicode
+from vincetools.compat import unittest
 
 
 class BaseModelTests(unittest.TestCase):

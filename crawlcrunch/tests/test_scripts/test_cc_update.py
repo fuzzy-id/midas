@@ -8,8 +8,9 @@ import shutil
 import sys
 import tempfile
 
-from crawlcrunch.compat import GzipFile
-from crawlcrunch.compat import StringIO
+from vincetools.compat import GzipFile
+from vincetools.compat import StringIO
+
 from crawlcrunch.tests import BAR_URL
 from crawlcrunch.tests import COMPANIES_URL
 from crawlcrunch.tests import EXAMPLES_PATH
@@ -134,7 +135,7 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
     def tearDown(self):
         shutil.rmtree(self.tmpd)
 
-    @mock.patch('crawlcrunch.compat.urlopen')
+    @mock.patch('crawlcrunch.model.urlopen')
     def test_on_empty_companies_list(self, urlopen):
         url_return = {COMPANIES_URL: []}
         prepare_url_open(urlopen, url_return)
@@ -142,7 +143,7 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
         urlopen.assert_called_once_with(COMPANIES_URL)
         self.assertEqual(os.listdir(self.tmpd), [])
 
-    @mock.patch('crawlcrunch.compat.urlopen')
+    @mock.patch('crawlcrunch.model.urlopen')
     def test_on_companies_list_with_elements(self, urlopen):
         prepare_url_open(urlopen,
                          {COMPANIES_URL: [{'permalink': 'foo', },
@@ -167,14 +168,14 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
 
 class MainSqlIntegrationTests(MainIntegrationTestCase):
 
-    @mock.patch('crawlcrunch.compat.urlopen')
+    @mock.patch('crawlcrunch.model.urlopen')
     def test_on_empty_companies_list(self, urlopen):
         url_return = {COMPANIES_URL: []}
         prepare_url_open(urlopen, url_return)
         self.assertEqual(self._test_it('--sql', MEM_DB), 0)
         urlopen.assert_called_once_with(COMPANIES_URL)
 
-    @mock.patch('crawlcrunch.compat.urlopen')
+    @mock.patch('crawlcrunch.model.urlopen')
     def test_on_companies_list_with_elements(self, urlopen):
         from crawlcrunch.model.db import DataBaseRoot
         prepare_url_open(urlopen,

@@ -3,7 +3,7 @@
 import json
 import os.path
 
-from crawlcrunch.compat import GzipFile
+from vincetools.compat import GzipFile
 from crawlcrunch.model import CrunchBaseFetcherMixin
 
 class LocalFilesRoot(object):
