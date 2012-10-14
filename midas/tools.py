@@ -21,6 +21,7 @@ from crawlcrunch.model.db import create_engine
 from vincetools.compat import GzipFile
 from vincetools.compat import ifilter
 from vincetools.compat import imap
+from vincetools.compat import str_type
 from vincetools.compat import urlparse
 
 import midas.config as md_cfg
@@ -67,11 +68,11 @@ def domain(company_or_site):
     if isinstance(company_or_site, Company):
         return urlparse(company_or_site.homepage_url)\
             .netloc.lower()
-    elif isinstance(company_or_site, str):               # This should be an
+    elif isinstance(company_or_site, str_type):          # This should be an
         return company_or_site.split('/', 1)[0].lower()  # Alexa Top1M site
     else:
-        raise TypeError(format("cannot extract domain part: '{0}'",
-                               type(company_or_site)))
+        raise TypeError("cannot extract domain part: {0}".format(
+                type(company_or_site)))
 
 _session = None
 
