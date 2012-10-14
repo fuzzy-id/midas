@@ -27,15 +27,13 @@ def put(file_or_files, dst):
                 raise
         return copied
     else:
-        cmd = (md_cfg.get('hadoop', 'exec'), 
-               'fs', '-put', file_or_files, dst)
-        log_popen(cmd)
+        log_popen([md_cfg.get('hadoop', 'exec'), 
+                   'fs', '-put', file_or_files, dst])
         return file_or_files
 
 def rm(file_or_files):
     """ Remove `file_or_files` on HDFS. `file_or_files` can either be
     a :class:`str` or a :class:`list` of :class:`str`.
     """
-    cmd = (md_cfg.get('hadoop', 'exec'), 
-           'fs', '-rm', file_or_files, dst)
-    log_popen(cmd)
+    log_popen([md_cfg.get('hadoop', 'exec'), 
+               'fs', '-rm', file_or_files, dst])
