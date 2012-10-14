@@ -96,6 +96,7 @@ class IterCompaniesTests(ConfiguredDBTestCase):
         c2 = self._make_company_json({})
         self.assertEqual(self._run_it(), [c1, c2])
 
+
 class IterInteresstingCompaniesTests(ConfiguredDBTestCase):
 
     def _run_it(self):
