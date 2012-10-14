@@ -52,3 +52,35 @@ class IntegrationTestCase(unittest.TestCase):
         sys.stdout.seek(0)
         val = sys.stdout.getvalue()
         self.assertEqual(val, s)
+
+
+class ConfiguredDBTestCase(unittest.TestCase):
+
+    def setUp(self):
+        from crawlcrunch.model.db import Base
+        from crawlcrunch.model.db import Session
+        from crawlcrunch.model.db import create_engine
+        import midas.config as md_cfg
+        import midas.tools as md_tools
+        engine = create_engine('sqlite:///:memory:')
+        Session.remove()
+        Session.configure(bind=engine)
+        Base.metadata.create_all(engine, checkfirst=False)
+        md_tools._session = Session()
+        md_cfg.read_string(TEST_CONFIG)
+
+    def tearDown(self):
+        from crawlcrunch.model.db import Session
+        import midas.tools as md_tools
+        import midas.config as md_cfg
+        Session.remove()
+        md_tools._session = None
+        md_cfg.new_configparser()
+        
+    def _make_company_json(self, js):
+        from midas.tools import Company
+        c = Company.make_from_parsed_json(js)
+        from midas.tools import db_session
+        sess = db_session()
+        sess.add(c)
+        return c
