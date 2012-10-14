@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from midas.tests import TEST_DATA
-from midas.tests import IntegrationTestCase
+from midas.tests.test_scripts import IntegrationTestCase
 from vincetools.compat import unittest
 
 class AlexaToNamesAndOneTests(IntegrationTestCase):

@@ -18,7 +18,7 @@ from midas.tests import SITE_COUNT
 from midas.tests import TEST_CONFIG
 from midas.tests import TEST_DATA
 from midas.tests import ConfiguredDBTestCase
-from midas.tests import IntegrationTestCase
+from midas.tests.test_scripts import IntegrationTestCase
 
 class AlexaToKeyTests(IntegrationTestCase):
 
