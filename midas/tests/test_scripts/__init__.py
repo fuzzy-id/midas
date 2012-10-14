@@ -14,12 +14,16 @@ class IntegrationTestCase(unittest.TestCase):
         return self._get_target_func()(effargs)
         
     def setUp(self):
+        import midas.config as md_cfg
+        md_cfg.set('hadoop', 'exec', 'echo')
         self._oldout = sys.stdout
         sys.stdout = StringIO()
         self._oldin = sys.stdin
         sys.stdin = StringIO()
 
     def tearDown(self):
+        import midas.config as md_cfg
+        md_cfg.new_configparser()
         sys.stdout = self._oldout
         sys.stdin = self._oldin
 

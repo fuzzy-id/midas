@@ -47,8 +47,7 @@ class KeyToFilesTests(IntegrationTestCase):
         self.assertEqual(cm.exception.code, 0)
         self.assert_stdout_startswith('usage: ')
 
-    @mock.patch('midas.hdfs.get_hadoop_exec')
-    def test_on_test_data(self, hadoop_bin):
+    def test_on_test_data(self):
         a_date = datetime.date(1900, 1, 1)
         one_day = datetime.timedelta(days=1)
         foos = (RankEntry('foo', a_date, 2),
@@ -63,7 +62,6 @@ class KeyToFilesTests(IntegrationTestCase):
         random.shuffle(in_foos)
         in_bars = list(bars)
         random.shuffle(in_bars)
-        hadoop_bin.return_value = 'echo'
         tmpd = tempfile.mkdtemp()
         try:
             with mock.patch('midas.scripts.alexa_to_key_files.tempfile.mkdtemp') as mkdtemp:

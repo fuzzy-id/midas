@@ -8,9 +8,6 @@ import midas.config as md_cfg
 
 logger = logging.getLogger(__name__)
 
-def get_hadoop_exec():
-    return md_cfg.get('hadoop', 'exec')
-
 def put(file_or_files, dst):
     """ Put `files` to HDFS. `files` can either be a :class:`str` or a
     :class:`list` of :class:`str`.
@@ -30,7 +27,8 @@ def put(file_or_files, dst):
                 raise
         return copied
     else:
-        cmd = (get_hadoop_exec(), 'fs', '-put', file_or_files, dst)
+        cmd = (md_cfg.get('hadoop', 'exec'), 
+               'fs', '-put', file_or_files, dst)
         log_popen(cmd)
         return file_or_files
 
@@ -38,5 +36,6 @@ def rm(file_or_files):
     """ Remove `file_or_files` on HDFS. `file_or_files` can either be
     a :class:`str` or a :class:`list` of :class:`str`.
     """
-    cmd = (get_hadoop_exec(), 'fs', '-rm', file_or_files, dst)
+    cmd = (md_cfg.get('hadoop', 'exec'), 
+           'fs', '-rm', file_or_files, dst)
     log_popen(cmd)
