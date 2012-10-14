@@ -5,11 +5,9 @@ from midas.tests.test_scripts import IntegrationTestCase
 
 class AlexaToNamesAndOneTests(IntegrationTestCase):
 
-    def _run_it(self, *args):
-        effargs = ['alexa_to_names_and_one']
-        effargs.extend(args)
+    def _get_target_func(self):
         from midas.scripts.alexa_count_names import AlexaToNamesAndOne
-        return AlexaToNamesAndOne.cmd(effargs)
+        return AlexaToNamesAndOne.cmd
 
     def test_on_file(self):
         ret_code = self._run_it('-q', TEST_DATA[0])
@@ -19,11 +17,9 @@ class AlexaToNamesAndOneTests(IntegrationTestCase):
 
 class SumValues(IntegrationTestCase):
 
-    def _run_it(self, *args):
-        effargs = ['md_sum_values']
-        effargs.extend(args)
+    def _get_target_func(self):
         from midas.scripts.alexa_count_names import SumValues
-        return SumValues.cmd(effargs)
+        return SumValues.cmd
 
     def test_simple(self):
         ret_code = self._run_it(*('{0}\t1\n'.format(name) 
