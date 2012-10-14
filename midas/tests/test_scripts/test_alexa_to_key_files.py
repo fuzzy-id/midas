@@ -4,7 +4,6 @@ import datetime
 import os
 import random
 import shutil
-import sys
 import tempfile
 
 import mock
