@@ -8,7 +8,7 @@ from vincetools.compat import unittest
 
 class IntegrationTestCase(unittest.TestCase):
 
-    def _run(self, *args):
+    def _run_it(self, *args):
         effargs = ['script_name']
         effargs.extend(args)
         return self._get_target_func()(effargs)

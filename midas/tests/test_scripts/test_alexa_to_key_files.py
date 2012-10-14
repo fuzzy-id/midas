@@ -24,12 +24,12 @@ class AlexaToKeyTests(IntegrationTestCase):
 
     def test_help_flag(self):
         with self.assertRaises(SystemExit) as cm:
-            self._run('-h')
+            self._run_it('-h')
         self.assertEqual(cm.exception.code, 0)
         self.assert_stdout_startswith('usage: ')
 
     def test_on_test_data(self):
-        ret_code = self._run('-q', TEST_DATA[0])
+        ret_code = self._run_it('-q', TEST_DATA[0])
         self.assertEqual(ret_code, 0)
         self.assert_stdout_equal('\n'.join(e.format_w_key 
                                            for e in TEST_DATA[1]) + '\n')
@@ -43,7 +43,7 @@ class KeyToFilesTests(IntegrationTestCase):
 
     def test_help_flag(self):
         with self.assertRaises(SystemExit) as cm:
-            self._run('-h')
+            self._run_it('-h')
         self.assertEqual(cm.exception.code, 0)
         self.assert_stdout_startswith('usage: ')
 
@@ -69,8 +69,9 @@ class KeyToFilesTests(IntegrationTestCase):
             with mock.patch('midas.scripts.alexa_to_key_files.tempfile.mkdtemp') as mkdtemp:
                 mkdtemp.return_value = tmpd
                 with mock.patch('midas.scripts.alexa_to_key_files.shutil.rmtree') as rmtree:
-                    ret_code = self._run('-q', '-d', tmpd, 
-                                         *( e.format_w_key for e in in_foos + in_bars ))
+                    ret_code = self._run_it('-q', '-d', tmpd, 
+                                            *( e.format_w_key 
+                                               for e in in_foos + in_bars ))
                     rmtree.assert_called_with(tmpd)
             self.assertEqual(ret_code, 0)
             listing = os.listdir(tmpd)
