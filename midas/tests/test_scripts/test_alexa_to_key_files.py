@@ -79,11 +79,13 @@ class KeyToFilesTests(IntegrationTestCase):
             # foo -> 0be; bar -> 62c
             self.assertEqual(listing, ['0be.gz', '62c.gz']) 
             with GzipFile(os.path.join(tmpd, '0be.gz')) as fp:
-                self.assertEqual(fp.readlines(), [ (l.format_std + '\n').encode()
-                                                   for l in foos ])
+                self.assertEqual(fp.readlines(), 
+                                 [ (l.format_std + '\n').encode()
+                                   for l in foos ])
             with GzipFile(os.path.join(tmpd, '62c.gz')) as fp:
-                self.assertEqual(fp.readlines(), [ (l.format_std + '\n').encode()
-                                                   for l in bars ])
+                self.assertEqual(fp.readlines(), 
+                                 [ (l.format_std + '\n').encode()
+                                   for l in bars ])
         finally:
             shutil.rmtree(tmpd)
 
