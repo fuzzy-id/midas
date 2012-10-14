@@ -22,6 +22,7 @@ Documentation of the API.
    :maxdepth: 2
 
    api/midas
+   api/config
 
 Indices and tables
 ==================
