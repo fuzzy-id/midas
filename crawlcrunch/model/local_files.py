@@ -34,13 +34,13 @@ class ZippedJsonFile(object):
     def load(self):
         if self.data is None:
             with GzipFile(self.path, 'rb') as fp:
-                self.data = json.load(fp)
+                self.data = json.loads(fp.read().decode())
 
     def dump(self, data=None):
         if data is not None:
             self.data = data
         with GzipFile(self.path, 'wb') as fp:
-            json.dump(self.data, fp)
+            fp.write(json.dumps(self.data).encode())
 
 
 class Company(CrunchBaseFetcherMixin):

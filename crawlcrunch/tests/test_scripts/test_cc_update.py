@@ -157,10 +157,12 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
                                    'foo.json.gz'])
         with GzipFile(os.path.join(self.tmpd,
                                    'bar.json.gz')) as fp:
-            self.assertEqual(json.load(fp), ['some_bar', ])
+            self.assertEqual(json.loads(fp.read().decode()),
+                             ['some_bar', ])
         with GzipFile(os.path.join(self.tmpd,
                                    'foo.json.gz')) as fp:
-            self.assertEqual(json.load(fp), ['some_foo', ])
+            self.assertEqual(json.loads(fp.read().decode()), 
+                             ['some_foo', ])
 
 
 class MainSqlIntegrationTests(MainIntegrationTestCase):

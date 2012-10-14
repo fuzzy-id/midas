@@ -9,15 +9,10 @@ import mock
 import os.path
 import sys
 
-from crawlcrunch.compat import PY_VERSION
 from crawlcrunch.compat import StringIO
 from crawlcrunch.compat import comp_bytes
 
-if PY_VERSION == (2, 6):  # pragma: no cover
-    import unittest2 as unittest
-else:
-    import unittest
-
+from vincetools.compat import unittest
 
 logging.basicConfig(level=logging.CRITICAL)
 

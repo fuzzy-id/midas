@@ -108,7 +108,7 @@ class IntegrationTests(unittest.TestCase):
         cf.run()
         urlopen.assert_called_once_with(FOO_URL)
         with GzipFile(dump_file) as fp:
-            self.assertEqual(json.load(fp), {'foo': 'bar'})
+            self.assertEqual(json.loads(fp.read().decode()), {'foo': 'bar'})
 
     def test_crawler_and_company_fetcher_play_together(self):
         from crawlcrunch.crawler import Updater
