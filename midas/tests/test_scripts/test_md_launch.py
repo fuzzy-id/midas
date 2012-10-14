@@ -38,7 +38,6 @@ class MDLaunchTests(unittest.TestCase):
         self.assertIn(os.path.basename('_{0}_'.format(fp.name)), out_dst)
         self.assertIn(datetime.date.today().strftime('_%Y-%m-%d_'), out_dst)
             
-
     @mock.patch('midas.tools.logger')
     def test_echo_line_to_stdout(self, logger):
         with tempfile.NamedTemporaryFile('w+') as fp:
