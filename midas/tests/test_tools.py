@@ -78,7 +78,8 @@ class DomainTests(unittest.TestCase):
 
     def test_on_site(self):
         from midas.tools import Company
-        self.assertEqual(self._run_it('example.com/foo'), 'example.com')
+        self.assertEqual(self._run_it('example.com/foo'), 
+                         'example.com')
 
     def test_on_object(self):
         with self.assertRaises(TypeError):
