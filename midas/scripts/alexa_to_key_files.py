@@ -78,10 +78,8 @@ class KeyToFiles(MDJob):
         logger.info('Generated {0}'.format(tmpfile))
         return tmpfile
 
-def check_and_calc_mean_max_min_deviation_variance(root_dir=None):
-    if root_dir is None:
-        root_dir = md_cfg.get('location', 'key_files')
-    counter = check_and_count_entries(glob.glob(os.path.join(root_dir, '*')))
+def check_and_calc_mean_max_min_deviation_variance(dir_or_files=None):
+    counter = check_and_count_entries(dir_or_files)
     mean = sum(counter.values()) / len(counter) * 1.0
     max_ = max(counter.values())
     min_ = min(counter.values())
@@ -90,13 +88,17 @@ def check_and_calc_mean_max_min_deviation_variance(root_dir=None):
     variance = deviation**2
     return (mean, max_, min_, deviation, variance)
 
-def check_and_count_entries(files):
+def check_and_count_entries(dir_or_files):
+    if dir_or_files is None:
+        dir_or_files = md_cfg.get('location', 'key_files')
+    if isinstance(dir_or_files, str):
+        dir_or_files = glob.glob(os.path.join(dir_or_files, '*'))
     counter = collections.defaultdict(int)
-    for f in files:
+    for f in dir_or_files:
         f_name = os.path.basename(f)
         f_sha = f_name[:3]
         with GzipFile(f) as fp:
-            print("Processing {0}".format(f_sha))
+            logger.info("Processing {0}".format(f_sha))
             for line in fp:
                 entry = RankEntry.parse_std(line.decode())
                 if entry.key != f_sha:
