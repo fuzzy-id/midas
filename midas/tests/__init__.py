@@ -56,6 +56,13 @@ class IntegrationTestCase(unittest.TestCase):
 
 class ConfiguredDBTestCase(unittest.TestCase):
 
+    companies_js = [{'name': 'foo',
+                     'homepage_url': 'http://foo.example.com/path',
+                     'funding_rounds': [{'funded_year': 2012,
+                                         'round_code': 'seed'}]},
+                    {'name': 'baz-bar',
+                     'homepage_url': 'http://baz.bar.example.com/'}]
+
     def setUp(self):
         from crawlcrunch.model.db import Base
         from crawlcrunch.model.db import Session
