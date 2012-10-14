@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from vincetools.compat import unittest
-
 from midas.tests import TEST_DATA
 from midas.tests.test_scripts import IntegrationTestCase
 
