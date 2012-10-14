@@ -3,6 +3,7 @@
 from vincetools.compat import unittest
 
 from midas.tests import SITE_COUNT
+from midas.tests import ConfiguredDBTestCase
 
 class KeyFuncTestCase(unittest.TestCase):
 
@@ -84,55 +85,25 @@ class DomainTests(unittest.TestCase):
             self._run_it(object())
 
 
-class DBTestCase(unittest.TestCase):
-
-    def setUp(self):
-        from crawlcrunch.model.db import Base
-        from crawlcrunch.model.db import Session
-        from crawlcrunch.model.db import create_engine
-        import midas.tools as md_tools
-        engine = create_engine('sqlite:///:memory:')
-        Session.remove()
-        Session.configure(bind=engine)
-        Base.metadata.create_all(engine, checkfirst=False)
-        md_tools._session = Session()
-
-    def tearDown(self):
-        from crawlcrunch.model.db import Session
-        import midas.tools as md_tools
-        import midas.config as md_cfg
-        Session.remove()
-        md_tools._session = None
-        md_cfg.new_configparser()
-        
-    def _make_company(self, *args, **kwargs):
-        from midas.tools import Company
-        c = Company(*args, **kwargs)
-        from midas.tools import db_session
-        sess = db_session()
-        sess.add(c)
-        return c
-
-
-class IterCompaniesTests(DBTestCase):
+class IterCompaniesTests(ConfiguredDBTestCase):
 
     def _run_it(self):
         from midas.tools import iter_all_companies
         return list(iter_all_companies())
 
     def test_iter_all_companies(self):
-        c1 = self._make_company()
-        c2 = self._make_company()
+        c1 = self._make_company_json({})
+        c2 = self._make_company_json({})
         self.assertEqual(self._run_it(), [c1, c2])
 
-class IterInteresstingCompaniesTests(DBTestCase):
+class IterInteresstingCompaniesTests(ConfiguredDBTestCase):
 
     def _run_it(self):
         from midas.tools import iter_interesting_companies
         return list(iter_interesting_companies())
 
     def test_function_runs(self):
-        c = self._make_company()
+        c = self._make_company_json({})
         self.assertEqual(self._run_it(), [])
 
 class SitesCountTestCase(unittest.TestCase):
