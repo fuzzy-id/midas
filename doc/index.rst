@@ -23,6 +23,7 @@ Documentation of the API.
 
    api/midas
    api/config
+   api/associate
 
 Indices and tables
 ==================
