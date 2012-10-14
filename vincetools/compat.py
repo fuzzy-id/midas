@@ -10,6 +10,11 @@ PY26 = sys.version_info[:2] == (2, 6)
 #: True if the current interpreter is of version 3
 PY3K = sys.version_info[0] == 3
 
+if PY3K:
+    str_type = str
+else:
+    str_type = (str, unicode)
+
 if PY26:  # pragma: no cover
     import zipfile
     class ZipFile(zipfile.ZipFile):
