@@ -107,15 +107,8 @@ class IterInteresstingCompaniesTests(ConfiguredDBTestCase):
         c = self._make_company_json({})
         self.assertEqual(self._run_it(), [])
 
-class SitesCountTestCase(unittest.TestCase):
 
-    def setUp(self):
-        import midas.config as md_cfg
-        md_cfg.set('location', 'site_count', SITE_COUNT[0])
-
-    def tearDown(self):
-        import midas.config as md_cfg
-        md_cfg.new_configparser()
+class SitesCountTestCase(ConfiguredDBTestCase):
 
     def test_iter_site_counts(self):
         from midas.tools import iter_site_counts
