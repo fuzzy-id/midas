@@ -7,20 +7,24 @@ reduce step in a MapReduce job.
 from __future__ import print_function
 
 import collections
+import glob
 import logging
+import math
 import os.path
 import shutil
 import tempfile
 
-from midas import RankEntry
 from vincetools.compat import GzipFile
 from vincetools.compat import imap
+
+from midas import RankEntry
 from midas.scripts import MDJob
 from midas.tools import get_key
 from midas.tools import group_by_key
 from midas.tools import log_popen
 
 import midas.hdfs as md_hdfs
+import midas.config as md_cfg
 
 logger = logging.getLogger(__name__)
 
@@ -76,12 +80,12 @@ class KeyToFiles(MDJob):
 
 def check_and_calc_mean_max_min_deviation_variance(root_dir=None):
     if root_dir is None:
-        root_dir = md_cfg.get('statistics', 'key_files')
+        root_dir = md_cfg.get('location', 'key_files')
     counter = check_and_count_entries(glob.glob(os.path.join(root_dir, '*')))
-    mean = sum(counter.itervalues()) / len(counter) * 1.0
-    max_ = max(counter.itervalues())
-    min_ = min(counter.itervalues())
-    deviation = (sum(math.fabs(x - mean) for x in counter.itervalues())
+    mean = sum(counter.values()) / len(counter) * 1.0
+    max_ = max(counter.values())
+    min_ = min(counter.values())
+    deviation = (sum(math.fabs(x - mean) for x in counter.values())
                  / len(counter))
     variance = deviation**2
     return (mean, max_, min_, deviation, variance)
