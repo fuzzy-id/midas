@@ -101,9 +101,9 @@ def iter_interesting_companies():
     sess = db_session()
     funding_round_subq = sess.query(FundingRound)\
         .filter(FundingRound.round_code.in_(['angel', 'seed', 'a']))\
-        .filter(or_(FundingRound.funded_year>2010,
-                   and_(FundingRound.funded_year==2010,
-                        FundingRound.funded_month==12))).subquery()
+        .filter(or_(FundingRound.funded_year > 2010,
+                   and_(FundingRound.funded_year == 2010,
+                        FundingRound.funded_month == 12))).subquery()
     q = sess.query(Company)\
         .filter(Company.homepage_url != None)\
         .filter(Company.homepage_url != '')\
