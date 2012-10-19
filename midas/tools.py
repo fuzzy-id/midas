@@ -10,8 +10,7 @@ import logging
 import operator
 import subprocess
 
-from sqlalchemy import and_
-from sqlalchemy import or_
+import sqlalchemy as sa
 
 from crawlcrunch.model.db import Company
 from crawlcrunch.model.db import FundingRound
@@ -99,11 +98,16 @@ def iter_interesting_companies():
     `round_level` ``angel``, ``seed`` or ``a`` since December 2010.
     """
     sess = db_session()
+    p_after_dec_2010 = sa.or_(
+        FundingRound.funded_year > 2010,
+        sa.and_(
+            FundingRound.funded_year == 2010,
+            FundingRound.funded_month == 12
+            )
+        )
     funding_round_subq = sess.query(FundingRound)\
         .filter(FundingRound.round_code.in_(['angel', 'seed', 'a']))\
-        .filter(or_(FundingRound.funded_year > 2010,
-                    and_(FundingRound.funded_year == 2010,
-                         FundingRound.funded_month == 12))).subquery()
+        .filter(p_after_dec_2010).subquery()
     q = sess.query(Company)\
         .filter(Company.homepage_url != None)\
         .filter(Company.homepage_url != '')\
