@@ -138,11 +138,11 @@ def iter_interesting_sites(path=None):
     return ifilter(lambda s: len(s.split('/', 1)) == 1,
                    iter_all_sites(path))
 
-def make_p_empty_field(field_name):
-    def p_empty_field(o):
-        field = getattr(o, field_name)
-        return field is None or field == ''
-    return p_empty_field
+def make_p_empty_attr(attr_name):
+    def p_empty_attr(o):
+        attr = getattr(o, attr_name)
+        return attr is None or attr == ''
+    return p_empty_attr
 
 ### Useful miscelanious stuff ###
 
