@@ -37,7 +37,7 @@ def get_key(line, sep='\t'):
 def group_by_key(iterable, keyfunc):
     return imap(operator.itemgetter(1), itertools.groupby(iterable, keyfunc))
 
-def count_by_key(iterable, keyfunc):
+def count_by_key(iterable, keyfunc=lambda o: o):
     counter = collections.defaultdict(int)
     for item in iterable:
         counter[keyfunc(item)] += 1
