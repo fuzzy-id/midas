@@ -72,7 +72,7 @@ class DomainTests(unittest.TestCase):
         return domain(company_or_site)
 
     def test_on_company(self):
-        from midas.tools import Company
+        from crawlcrunch.model.db import Company
         c = Company(homepage_url='http://example.com/foo')
         self.assertEqual(self._run_it(c), 'example.com')
 
@@ -106,6 +106,10 @@ class IterInteresstingCompaniesTests(ConfiguredDBTestCase):
     def test_function_runs(self):
         c = self._make_company_json({})
         self.assertEqual(self._run_it(), [])
+
+    def test_company_w_two_funding_rounds_is_returned_once(self):
+        c = self._make_company_json(self.companies_js[0])
+        self.assertEqual(self._run_it(), [c])
 
 
 class IterSitesCountTests(ConfiguredDBTestCase):

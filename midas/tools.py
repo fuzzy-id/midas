@@ -12,10 +12,7 @@ import subprocess
 
 import sqlalchemy as sa
 
-from crawlcrunch.model.db import Company
-from crawlcrunch.model.db import FundingRound
-from crawlcrunch.model.db import Session
-from crawlcrunch.model.db import create_engine
+import crawlcrunch.model.db as ccdb
 
 from vincetools.compat import GzipFile
 from vincetools.compat import ifilter
@@ -64,7 +61,7 @@ def domain(company_or_site):
     """ Return the domain part of an Alexa Top1M site or a
     :class:`crawlcrunch.model.db.Company` instance.
     """
-    if isinstance(company_or_site, Company):
+    if isinstance(company_or_site, ccdb.Company):
         return urlparse(company_or_site.homepage_url)\
             .netloc.lower()
     elif isinstance(company_or_site, str_type):          # This should be an
@@ -83,15 +80,15 @@ def db_session(db=None):
     if _session is None:
         if db is None:
             db = md_cfg.get('location', 'crunchbase_db')
-        engine = create_engine(db)
-        Session.configure(bind=engine)
-        _session = Session()
+        engine = ccdb.create_engine(db)
+        ccdb.Session.configure(bind=engine)
+        _session = ccdb.Session()
     return _session
 
 def iter_all_companies():
     " Returns 100355 companies. "
     sess = db_session()
-    return sess.query(Company).all()
+    return sess.query(ccdb.Company).all()
 
 def iter_interesting_companies():
     """ Returns all companies having a funding round with
@@ -99,19 +96,19 @@ def iter_interesting_companies():
     """
     sess = db_session()
     p_after_dec_2010 = sa.or_(
-        FundingRound.funded_year > 2010,
+        ccdb.FundingRound.funded_year > 2010,
         sa.and_(
-            FundingRound.funded_year == 2010,
-            FundingRound.funded_month == 12
+            ccdb.FundingRound.funded_year == 2010,
+            ccdb.FundingRound.funded_month == 12
             )
         )
-    funding_round_subq = sess.query(FundingRound)\
-        .filter(FundingRound.round_code.in_(['angel', 'seed', 'a']))\
+    funding_round_subq = sess.query(ccdb.FundingRound)\
+        .filter(ccdb.FundingRound.round_code.in_(['angel', 'seed', 'a']))\
         .filter(p_after_dec_2010).subquery()
-    q = sess.query(Company)\
-        .filter(Company.homepage_url != None)\
-        .filter(Company.homepage_url != '')\
-        .join(funding_round_subq, Company.funding_rounds)
+    q = sess.query(ccdb.Company)\
+        .filter(ccdb.Company.homepage_url != None)\
+        .filter(ccdb.Company.homepage_url != '')\
+        .join(funding_round_subq, ccdb.Company.funding_rounds)
     return q.all()
 
 SiteCount = collections.namedtuple('SiteCount', ['site', 'count'])

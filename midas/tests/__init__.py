@@ -31,7 +31,9 @@ class ConfiguredDBTestCase(unittest.TestCase):
     companies_js = [{'name': 'foo',
                      'homepage_url': 'http://foo.example.com/path',
                      'funding_rounds': [{'funded_year': 2012,
-                                         'round_code': 'seed'}]},
+                                         'round_code': 'seed'},
+                                        {'funded_year': 2011,
+                                         'round_code': 'angel'}]},
                     {'name': 'baz-bar',
                      'homepage_url': 'http://baz.bar.example.com/'}]
 
@@ -57,7 +59,7 @@ class ConfiguredDBTestCase(unittest.TestCase):
         md_cfg.new_configparser()
         
     def _make_company_json(self, js):
-        from midas.tools import Company
+        from crawlcrunch.model.db import Company
         c = Company.make_from_parsed_json(js)
         from midas.tools import db_session
         sess = db_session()
