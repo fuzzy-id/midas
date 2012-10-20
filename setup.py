@@ -18,8 +18,10 @@ if py_version == (2, 6):
 setup(name='crawlcrunch',
       version='0.2',
       packages=find_packages(),
+      license='BSD-new',
       description='Crawl crunchbase.com for companies information.',
       author='Thomas Bach',
+      author_email='thbach@students.uni-mainz.de',
       dependency_links = [
         'http://github.com/fuzzy-id/vincetools/tarball/master#egg=vincetools-0.01dev'
         ],
