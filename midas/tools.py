@@ -123,8 +123,7 @@ def iter_site_counts(path=None):
     with GzipFile(path) as fp:
         for l in fp:
             site, cnt = split_key_value(l.decode())
-            cnt = int(cnt)
-            yield SiteCount(site, cnt)
+            yield SiteCount(site, int(cnt))
 
 def iter_all_sites(path=None):
     " Iterate over all sites found in a site-count file. "
