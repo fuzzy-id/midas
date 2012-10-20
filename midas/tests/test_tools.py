@@ -125,3 +125,27 @@ class IterSitesCountTests(ConfiguredDBTestCase):
         from midas.tools import iter_interesting_sites
         result = list(iter_interesting_sites())
         self.assertEqual(result, [SITE_COUNT[1][0][0]])
+
+class MakePEmptyFieldTests(unittest.TestCase):
+
+    def _make_obj_with_attr(self, attr_val):
+        class Foo(object):
+            field = attr_val
+        return Foo()
+
+    def _run_it(self, o):
+        from midas.tools import make_p_empty_field
+        predicate = make_p_empty_field('field')
+        return predicate(o)
+
+    def test_none_returns_true(self):
+        o = self._make_obj_with_attr(None)
+        self.assertTrue(self._run_it(o))
+
+    def test_empty_str_returns_true(self):
+        o = self._make_obj_with_attr('')
+        self.assertTrue(self._run_it(o))
+
+    def test_non_empty_str_returns_false(self):
+        o = self._make_obj_with_attr('bar')
+        self.assertFalse(self._run_it(o))

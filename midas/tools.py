@@ -138,6 +138,12 @@ def iter_interesting_sites(path=None):
     return ifilter(lambda s: len(s.split('/', 1)) == 1,
                    iter_all_sites(path))
 
+def make_p_empty_field(field_name):
+    def p_empty_field(o):
+        field = getattr(o, field_name)
+        return field is None or field == ''
+    return p_empty_field
+
 ### Useful miscelanious stuff ###
 
 def log_popen(cmd):
