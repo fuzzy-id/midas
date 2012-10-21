@@ -73,6 +73,8 @@ def domain(company_or_site):
         return urlparse(company_or_site.homepage_url)\
             .netloc.lower()
     elif isinstance(company_or_site, str_type):          # This should be an
+        if 'http' in company_or_site:                    # A full URL
+            return urlparse(company_or_site).netloc.lower()
         return company_or_site.split('/', 1)[0].lower()  # Alexa Top1M site
     else:
         raise TypeError("cannot extract domain part: {0}".format(
