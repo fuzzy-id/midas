@@ -105,3 +105,12 @@ if PY26:  # pragma: no cover
     import unittest2 as unittest
 else:
     import unittest
+
+if PY3K:  # pragma: no cover
+    d_iterkeys = dict.keys
+    d_itervalues = dict.values
+    d_iteritems = dict.items
+else:
+    d_iterkeys = dict.iterkeys
+    d_itervalues = dict.itervalues
+    d_iteritems = dict.iteritems
