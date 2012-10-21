@@ -19,6 +19,7 @@ from vincetools.compat import ifilter
 from vincetools.compat import imap
 from vincetools.compat import str_type
 from vincetools.compat import urlparse
+import vincetools.compat as vt_comp
 
 import midas.config as md_cfg
 
@@ -54,6 +55,13 @@ def count_items(iterable):
         return len(iterable)
     except TypeError:
         return sum(1 for _ in iterable)
+
+def relation_stats(iterable):
+    counter = count_by_key(iterable)
+    return (sum(vt_comp.d_itervalues(counter)),
+            len(counter), 
+            sum(v for v in vt_comp.d_itervalues(counter) if v > 1), 
+            sum(1 for v in vt_comp.d_itervalues(counter) if v > 1))
 
 ### Functions to query sites and companies ###
 

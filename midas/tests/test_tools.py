@@ -130,6 +130,16 @@ class IterSitesCountTests(ConfiguredDBTestCase):
         result = list(iter_interesting_sites())
         self.assertEqual(result, [SITE_COUNT[1][0][0]])
 
+class RelationStatsTests(unittest.TestCase):
+
+    def _run_it(self, iterable):
+        from midas.tools import relation_stats
+        return relation_stats(iterable)
+
+    def test_stats_are_right(self):
+        result = self._run_it(['foo', 'bar', 'baz', 'bar', 'foo'])
+        self.assertEqual(result, (5, 3, 4, 2))
+
 class MakePEmptyAttrTests(unittest.TestCase):
 
     def _make_obj_with_attr(self, attr_val):
