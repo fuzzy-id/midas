@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import sys
+
 from midas.scripts import MDCommand
+
+import midas.config as md_cfg
 
 class MDConfig(MDCommand):
     """ Read all configuration files, print the final configuration
