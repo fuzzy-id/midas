@@ -30,7 +30,8 @@ setup(name='midas',
       test_suite='midas.tests',
       entry_points={
         'console_scripts':
-            ['md_launch=midas.scripts.md_launch:MDLaunch.cmd',
+            ['md_config=midas.scripts.md_config:MDConfig.cmd',
+             'md_launch=midas.scripts.md_launch:MDLaunch.cmd',
              'md_alexa_to_key=midas.scripts.alexa_to_key_files:AlexaToKey.cmd',
              'md_key_to_files=midas.scripts.alexa_to_key_files:KeyToFiles.cmd',
              'md_alexa_to_names_and_one=midas.scripts.alexa_count_names:AlexaToNamesAndOne.cmd',
