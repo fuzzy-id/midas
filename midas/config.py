@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-""" This module provides a :class:`midas.compat.ConfigParser` instance
-as a singleton and functions to query this instance.
+""" This module provides a :class:`configparser.ConfigParser` instance
+as a singleton and functions to query this instance. Actually this is
+an :class:`vincetools.compat.ConfigParser` instance. But, in most of
+the cases this does not matter much.
 """
 
 import logging
