@@ -35,6 +35,52 @@ class CompBytesTests(unittest.TestCase):
                          '\xc3\xa4')
 
 
+class DIterKeysTests(unittest.TestCase):
+
+    def _get(self):
+        from vincetools.compat import d_iterkeys
+        return d_iterkeys
+
+    def test_is_not_a_list(self):
+        result = self._get()({})
+        self.assertNotIsInstance(result, list)
+
+    def test_iterates_keys(self):
+        result = self._get()({'a': 1, 'b': 0})
+        self.assertEqual(sorted(result), ['a', 'b'])
+
+
+class DIterValuesTests(unittest.TestCase):
+
+    def _get(self):
+        from vincetools.compat import d_itervalues
+        return d_itervalues
+
+    def test_is_not_a_list(self):
+        result = self._get()({})
+        self.assertNotIsInstance(result, list)
+
+    def test_iterates_values(self):
+        result = self._get()({'a': 1, 'b': 0})
+        self.assertEqual(sorted(result), [0, 1])
+
+
+class DIterItemsTests(unittest.TestCase):
+
+    def _get(self):
+        from vincetools.compat import d_iteritems
+        return d_iteritems
+
+    def test_is_not_a_list(self):
+        result = self._get()({})
+        self.assertNotIsInstance(result, list)
+
+    def test_iterates_values(self):
+        result = self._get()({'a': 1, 'b': 0})
+        self.assertEqual(sorted(result), 
+                         [('a', 1), ('b', 0)])
+
+
 class IMapTests(unittest.TestCase):
 
     def _get(self):
