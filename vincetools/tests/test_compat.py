@@ -1,11 +1,47 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 import os
 import os.path
 import shutil
 import tempfile
 
 from vincetools.compat import unittest
+
+class StrTypeTests(unittest.TestCase):
+
+    def _get(self):
+        from vincetools.compat import str_type
+        return str_type
+
+    def test_unicode(self):
+        self.assertIsInstance(u'foo', self._get())
+
+    def test_str(self):
+        self.assertIsInstance('foo', self._get())
+
+class CompBytesTests(unittest.TestCase):
+
+    def _get(self):
+        from vincetools.compat import comp_bytes
+        return comp_bytes
+
+    @unittest.skip('wrong approach')
+    def test_german_umlaut(self):
+        self.assertEqual(self._get()('ä', 'utf-8'),
+                         '\xc3\xa4')
+
+class ZipFileTests(unittest.TestCase):
+
+    def _get(self):
+        from vincetools.compat import ZipFile
+        return ZipFile
+
+    def test_as_context_manager(self):
+        with tempfile.NamedTemporaryFile() as fp:
+            with self._get()(fp.name, 'w'):
+                pass
 
 class GzipFileTests(unittest.TestCase):
 
@@ -28,6 +64,26 @@ class GzipFileTests(unittest.TestCase):
         with self._get_cls()(tmpfile) as fp:
             result = fp.readlines()
         self.assertEqual(result, [b'bar'])
+
+class IMapTests(unittest.TestCase):
+
+    def _get(self):
+        from vincetools.compat import imap
+        return imap
+
+    def test_is_not_a_list(self):
+        result = self._get()(lambda x: x, range(4))
+        self.assertNotIsInstance(result, list)
+
+class IFilterTests(unittest.TestCase):
+
+    def _get(self):
+        from vincetools.compat import ifilter
+        return ifilter
+
+    def test_is_not_a_list(self):
+        result = self._get()(lambda _: True, range(4))
+        self.assertNotIsInstance(result, list)
 
 class ConfigParserTests(unittest.TestCase):
 
