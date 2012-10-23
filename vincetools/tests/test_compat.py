@@ -9,6 +9,7 @@ import tempfile
 
 from vincetools.compat import unittest
 
+
 class StrTypeTests(unittest.TestCase):
 
     def _get(self):
@@ -21,6 +22,7 @@ class StrTypeTests(unittest.TestCase):
     def test_str(self):
         self.assertIsInstance('foo', self._get())
 
+
 class CompBytesTests(unittest.TestCase):
 
     def _get(self):
@@ -32,16 +34,40 @@ class CompBytesTests(unittest.TestCase):
         self.assertEqual(self._get()('ä', 'utf-8'),
                          '\xc3\xa4')
 
-class ZipFileTests(unittest.TestCase):
+
+class IMapTests(unittest.TestCase):
 
     def _get(self):
-        from vincetools.compat import ZipFile
-        return ZipFile
+        from vincetools.compat import imap
+        return imap
 
-    def test_as_context_manager(self):
-        with tempfile.NamedTemporaryFile() as fp:
-            with self._get()(fp.name, 'w'):
-                pass
+    def test_is_not_a_list(self):
+        result = self._get()(lambda x: x, range(4))
+        self.assertNotIsInstance(result, list)
+
+
+class IFilterTests(unittest.TestCase):
+
+    def _get(self):
+        from vincetools.compat import ifilter
+        return ifilter
+
+    def test_is_not_a_list(self):
+        result = self._get()(lambda _: True, range(4))
+        self.assertNotIsInstance(result, list)
+
+
+class ConfigParserTests(unittest.TestCase):
+
+    def _get_cls(self):
+        from vincetools.compat import ConfigParser
+        return ConfigParser
+
+    def test_read_string_available(self):
+        cp = self._get_cls()()
+        cp.read_string('\n'.join(['[foo]', 'bar = baz']))
+        self.assertEqual(cp.get('foo', 'bar'), 'baz')
+
 
 class GzipFileTests(unittest.TestCase):
 
@@ -65,33 +91,14 @@ class GzipFileTests(unittest.TestCase):
             result = fp.readlines()
         self.assertEqual(result, [b'bar'])
 
-class IMapTests(unittest.TestCase):
+
+class ZipFileTests(unittest.TestCase):
 
     def _get(self):
-        from vincetools.compat import imap
-        return imap
+        from vincetools.compat import ZipFile
+        return ZipFile
 
-    def test_is_not_a_list(self):
-        result = self._get()(lambda x: x, range(4))
-        self.assertNotIsInstance(result, list)
-
-class IFilterTests(unittest.TestCase):
-
-    def _get(self):
-        from vincetools.compat import ifilter
-        return ifilter
-
-    def test_is_not_a_list(self):
-        result = self._get()(lambda _: True, range(4))
-        self.assertNotIsInstance(result, list)
-
-class ConfigParserTests(unittest.TestCase):
-
-    def _get_cls(self):
-        from vincetools.compat import ConfigParser
-        return ConfigParser
-
-    def test_read_string_available(self):
-        cp = self._get_cls()()
-        cp.read_string('\n'.join(['[foo]', 'bar = baz']))
-        self.assertEqual(cp.get('foo', 'bar'), 'baz')
+    def test_as_context_manager(self):
+        with tempfile.NamedTemporaryFile() as fp:
+            with self._get()(fp.name, 'w'):
+                pass
