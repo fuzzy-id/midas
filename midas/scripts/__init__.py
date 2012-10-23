@@ -39,7 +39,7 @@ class MDCommand(object):
         md_cfg.configure_logging()
     
     @classmethod
-    def cmd(cls, argv=sys.argv):
+    def cmd(cls, argv=None):
         """ Initiates the class and calls its :meth:`run`
         method. Returns whatever :meth:`run` returns, except for
         :obj:`None` which is interpreted as `0` (integer zero).
