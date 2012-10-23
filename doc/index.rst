@@ -25,6 +25,7 @@ Documentation of the API.
    api/config
    api/associate
    api/tools
+   api/scripts
 
 Indices and tables
 ==================
