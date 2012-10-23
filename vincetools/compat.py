@@ -25,31 +25,14 @@ if PY3K:  # pragma: no cover
 else:
     comp_unicode = unicode
 
-if PY26:  # pragma: no cover
-    import zipfile
-    class ZipFile(zipfile.ZipFile):
-        
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *exc_inf):
-            self.close()
-            return True
+if PY3K:  # pragma: no cover
+    d_iterkeys = dict.keys
+    d_itervalues = dict.values
+    d_iteritems = dict.items
 else:
-    from zipfile import ZipFile
-
-if PY26:  # pragma: no cover
-    import gzip
-    class GzipFile(gzip.GzipFile):
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *exc_inf):
-            self.close()
-            return True
-else:
-    from gzip import GzipFile
+    d_iterkeys = dict.iterkeys
+    d_itervalues = dict.itervalues
+    d_iteritems = dict.iteritems
 
 if PY3K:  # pragma: no cover
     imap = map
@@ -60,6 +43,16 @@ if PY3K:  # pragma: no cover
     ifilter = filter
 else:
     from itertools import ifilter
+
+if PY3K:  # pragma: no cover
+    from io import StringIO
+else:
+    from StringIO import StringIO
+
+if PY3K:  # pragma: no cover
+    from collections import UserList
+else:
+    from UserList import UserList
 
 if PY3K:  # pragma: no cover
     from urllib.parse import urlparse
@@ -76,15 +69,10 @@ if PY3K:  # pragma: no cover
 else:
     from urllib2 import urlopen
 
-if PY3K:  # pragma: no cover
-    from io import StringIO
+if PY26:  # pragma: no cover
+    import unittest2 as unittest
 else:
-    from StringIO import StringIO
-
-if PY3K:  # pragma: no cover
-    from collections import UserList
-else:
-    from UserList import UserList
+    import unittest
 
 if PY3K:  # pragma: no cover
     from configparser import ConfigParser
@@ -102,15 +90,27 @@ else:
             self.readfp(buf)
 
 if PY26:  # pragma: no cover
-    import unittest2 as unittest
-else:
-    import unittest
+    import gzip
+    class GzipFile(gzip.GzipFile):
 
-if PY3K:  # pragma: no cover
-    d_iterkeys = dict.keys
-    d_itervalues = dict.values
-    d_iteritems = dict.items
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc_inf):
+            self.close()
+            return True
 else:
-    d_iterkeys = dict.iterkeys
-    d_itervalues = dict.itervalues
-    d_iteritems = dict.iteritems
+    from gzip import GzipFile
+
+if PY26:  # pragma: no cover
+    import zipfile
+    class ZipFile(zipfile.ZipFile):
+        
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc_inf):
+            self.close()
+            return True
+else:
+    from zipfile import ZipFile
