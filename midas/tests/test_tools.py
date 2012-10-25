@@ -84,6 +84,9 @@ class DomainTests(unittest.TestCase):
         with self.assertRaises(TypeError):
             self._run_it(object())
 
+    def test_on_full_url(self):
+        result = self._run_it('http://example.com/foo')
+        self.assertEqual(result, 'example.com')
 
 class IterCompaniesTests(ConfiguredDBTestCase):
 

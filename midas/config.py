@@ -128,4 +128,4 @@ def configure_logging():
     buf = StringIO()
     get_configparser().write(buf)
     buf.seek(0)
-    logging.config.fileConfig(buf)
+    logging.config.fileConfig(buf, disable_existing_loggers=False)

@@ -33,7 +33,7 @@ class MDLaunchTests(unittest.TestCase):
         with tempfile.NamedTemporaryFile('w+') as fp:
             fp.writelines('\n'.join(self.config))
             fp.seek(0)
-            mdl = self._get_target_cls()(['md_launch', fp.name])
+            mdl = self._get_target_cls()(['md_launch', '-q', fp.name])
         out_dst = mdl.proc_cmd[mdl.proc_cmd.index('-output') + 1]
         self.assertIn(os.path.basename('_{0}_'.format(fp.name)), out_dst)
         self.assertIn(datetime.date.today().strftime('_%Y-%m-%d_'), out_dst)
