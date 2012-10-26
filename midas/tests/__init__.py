@@ -32,8 +32,12 @@ class ConfiguredDBTestCase(unittest.TestCase):
     companies_js = [{'name': 'foo',
                      'homepage_url': 'http://foo.example.com/path',
                      'funding_rounds': [{'funded_year': 2012,
+                                         'funded_month': 10,
+                                         'funded_day': 2,
                                          'round_code': 'seed'},
                                         {'funded_year': 2011,
+                                         'funded_month': 1,
+                                         'funded_day': 1,
                                          'round_code': 'angel'}]},
                     {'name': 'baz-bar',
                      'homepage_url': 'http://baz.bar.example.com/'}]
