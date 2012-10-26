@@ -110,7 +110,8 @@ class Association(ccdb.Base):
     site = sa.Column(sa.String)
     company = sa_orm.relationship("Company", 
                                   backref=sa_orm.backref('site', 
-                                                         uselist=False))
+                                                         uselist=False),
+                                  lazy='subquery')
 
 def make_associations():
     c2s = associate_companies_to_sites()
