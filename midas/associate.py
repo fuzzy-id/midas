@@ -7,10 +7,6 @@ The idea is to built a tree from either the domain part of
 of the Alexa Top1M sites . 
 """
 
-import sqlalchemy as sa
-import sqlalchemy.orm as sa_orm
-
-import crawlcrunch.model.db as ccdb
 import midas.db as md_db
 import midas.tools as md_tools
 import vincetools.compat as vt_comp
@@ -103,21 +99,10 @@ def grow_tree_from_sites_or_companies(iterable):
 def split_domain(site):
     return tuple(reversed(site.rsplit('.', 1)))
 
-class Association(ccdb.Base):
-    __tablename__ = 'associations'
-
-    id = sa.Column(sa.Integer, primary_key=True)
-    company_id = sa.Column(sa.Integer, sa.ForeignKey('companies.id'))
-    site = sa.Column(sa.String)
-    company = sa_orm.relationship("Company", 
-                                  backref=sa_orm.backref('site', 
-                                                         uselist=False),
-                                  lazy='subquery')
-
 def make_associations():
     c2s = associate_companies_to_sites()
     sess = md_db.db_session()
     for company, sites in vt_comp.d_iteritems(c2s):
         if len(sites) == 1:
-            sess.add(Association(site=sites[0], company=company))
+            sess.add(md_db.Association(site=sites[0], company=company))
     sess.commit()
