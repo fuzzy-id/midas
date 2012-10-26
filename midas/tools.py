@@ -10,10 +10,6 @@ import logging
 import operator
 import subprocess
 
-import sqlalchemy as sa
-
-import crawlcrunch.model.db as ccdb
-
 from vincetools.compat import GzipFile
 from vincetools.compat import ifilter
 from vincetools.compat import imap
@@ -70,7 +66,7 @@ def domain(company_or_site):
     """ Return the domain part of an Alexa Top1M site or a
     :class:`crawlcrunch.model.db.Company` instance.
     """
-    if isinstance(company_or_site, ccdb.Company):
+    if isinstance(company_or_site, md_db.Company):
         return urlparse(company_or_site.homepage_url)\
             .netloc.lower()
     elif isinstance(company_or_site, str_type):          # This should be an
@@ -84,7 +80,7 @@ def domain(company_or_site):
 def iter_all_companies():
     " Returns 100355 companies. "
     sess = md_db.db_session()
-    return sess.query(ccdb.Company).all()
+    return sess.query(md_db.Company).all()
 
 def iter_interesting_companies():
     """ Returns all companies having a funding round with
