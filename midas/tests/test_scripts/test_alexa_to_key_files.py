@@ -94,7 +94,7 @@ class CheckTests(ConfiguredDBTestCase):
         from midas.scripts.alexa_to_key_files \
             import check_and_calc_mean_max_min_deviation_variance
         result = check_and_calc_mean_max_min_deviation_variance()
-        self.assertEqual(result, (2, 2, 2, 0, 0))
+        self.assertEqual(result, (1.5, 2, 1, .5, .25))
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
