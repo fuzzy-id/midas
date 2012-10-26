@@ -47,7 +47,8 @@ class ConfiguredDBTestCase(unittest.TestCase):
         Session.remove()
         Session.configure(bind=engine)
         Base.metadata.create_all(engine, checkfirst=False)
-        md_tools._session = Session()
+        self.session = Session()
+        md_tools._session = self.session
         md_cfg.read_string(TEST_CONFIG)
 
     def tearDown(self):
@@ -61,7 +62,5 @@ class ConfiguredDBTestCase(unittest.TestCase):
     def _make_company_json(self, js):
         from crawlcrunch.model.db import Company
         c = Company.make_from_parsed_json(js)
-        from midas.tools import db_session
-        sess = db_session()
-        sess.add(c)
+        self.session.add(c)
         return c
