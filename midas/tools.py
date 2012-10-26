@@ -4,10 +4,12 @@ all other submodules or interactively.
 """
 
 import collections
+import datetime
 import functools
 import itertools
 import logging
 import operator
+import os.path
 import subprocess
 
 from vincetools.compat import GzipFile
@@ -149,3 +151,22 @@ def log_popen(cmd):
     if proc.returncode != 0:
         raise subprocess.CalledProcessError(proc.returncode, cmd)
     return proc.returncode
+
+def make_number_of_funding_rounds_plot():
+    fr_dates = [ datetime.date(fr.funded_year, 
+                               fr.funded_month, 
+                               fr.funded_day) 
+                 for fr in md_db.q_fr_of_interest().all() ]
+    cnt = count_by_key(fr_dates)
+    xs = sorted(vt_comp.d_iterkeys(cnt))
+    ys = [ cnt[x] for x in xs ]
+    import matplotlib.pyplot as plt
+    fig = plt.figure()
+
+    ax = fig.add_subplot(111)
+    ax.plot(xs, ys)
+    fig.autofmt_xdate()
+    plt.grid(True)
+    plt.xlabel('Date')
+    plt.ylabel('Number of Funding Rounds')
+    plt.show()
