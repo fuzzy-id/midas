@@ -41,12 +41,16 @@ class Association(Base):
                                                          uselist=False),
                                   lazy='subquery')
 
-p_fr_after_dec_2010 = sa.or_(
-    FundingRound.funded_year > 2010,
-    sa.and_(
-        FundingRound.funded_year == 2010,
-        FundingRound.funded_month == 12
-        )
+p_fr_after_dec_2010 = sa.and_(
+    sa.or_(
+        FundingRound.funded_year > 2010,
+        sa.and_(
+            FundingRound.funded_year == 2010,
+            FundingRound.funded_month == 12
+            )
+        ),
+    FundingRound.funded_month != None,
+    FundingRound.funded_day != None
     )
 
 p_fr_in_a_angel_seed = FundingRound.round_code.in_(
