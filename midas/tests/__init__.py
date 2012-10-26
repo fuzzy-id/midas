@@ -5,6 +5,7 @@ import os.path
 import sys
 
 from midas import RankEntry
+from midas.tools import SiteCount
 from vincetools.compat import StringIO
 from vincetools.compat import unittest
 
@@ -18,13 +19,27 @@ key_length = 3
 crunchbase_db = sqlite:///:memory:
 """.format(_test_data_home)
 
-TEST_DATA = (os.path.join(_test_data_home, 'alexa_files', 
-                          'top-1m-2012-09-03.csv.zip'),
-             (RankEntry('foo', datetime.datetime(2012, 9, 3), 1),
-              RankEntry('bar', datetime.datetime(2012, 9, 3), 2)))
-SITE_COUNT = (os.path.join(_test_data_home, 'site_count.gz'),
-              (('foo.example.com', 1),
-               ('bar.example.com/path', 2)))
+TEST_ALEXA_TOP1M_FILES = [
+    os.path.join(_test_data_home, 'alexa_files', 'top-1m-2012-09-03.csv.zip'),
+    os.path.join(_test_data_home, 'alexa_files', 'top-1m-2012-09-04.csv.zip'),
+    ]
+
+TEST_ALEXA_TOP1M = [
+    RankEntry('foo.example.com', 
+              datetime.datetime(2012, 9, 3), 
+              1),
+    RankEntry('baz.bar.example.com/path', 
+              datetime.datetime(2012, 9, 3), 
+              2),
+    RankEntry('baz.bar.example.com/path', 
+              datetime.datetime(2012, 9, 4), 
+              1),
+    ]
+
+TEST_SITE_COUNT = [
+    SiteCount('foo.example.com', 1),
+    SiteCount('baz.bar.example.com/path', 2)
+    ]
 
 
 class ConfiguredDBTestCase(unittest.TestCase):

@@ -4,7 +4,8 @@ import datetime
 
 from vincetools.compat import unittest
 
-from midas.tests import TEST_DATA
+from midas.tests import TEST_ALEXA_TOP1M
+from midas.tests import TEST_ALEXA_TOP1M_FILES
 
 class RankEntryTestCase(unittest.TestCase):
 
@@ -84,5 +85,7 @@ class RankEntryTestCase(unittest.TestCase):
         self.assertEqual(entries, [a, b, c, d])
 
     def test_iter_example_alexa_file(self):
-        result = tuple(self._get_target_cls().iter_alexa_file(TEST_DATA[0]))
-        self.assertEqual(result, TEST_DATA[1])
+        result = [ e
+                   for f in TEST_ALEXA_TOP1M_FILES 
+                   for e in self._get_target_cls().iter_alexa_file(f) ]
+        self.assertEqual(result, TEST_ALEXA_TOP1M)

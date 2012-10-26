@@ -2,7 +2,7 @@
 
 from vincetools.compat import unittest
 
-from midas.tests import SITE_COUNT
+from midas.tests import TEST_SITE_COUNT
 from midas.tests import ConfiguredDBTestCase
 
 class KeyFuncTestCase(unittest.TestCase):
@@ -120,18 +120,18 @@ class IterSitesCountTests(ConfiguredDBTestCase):
     def test_iter_site_counts(self):
         from midas.tools import iter_site_counts
         result = list(iter_site_counts())
-        self.assertEqual((result[0].site, result[0].count), SITE_COUNT[1][0])
-        self.assertEqual((result[1].site, result[1].count), SITE_COUNT[1][1])
+        self.assertEqual(result, TEST_SITE_COUNT)
 
     def test_iter_all_sites(self):
         from midas.tools import iter_all_sites
         result = list(iter_all_sites())
-        self.assertEqual(result, [SITE_COUNT[1][0][0], SITE_COUNT[1][1][0]])
+        self.assertEqual(result,
+                         [ sc.site for sc in TEST_SITE_COUNT ])
 
     def test_iter_interesting_sites(self):
         from midas.tools import iter_interesting_sites
         result = list(iter_interesting_sites())
-        self.assertEqual(result, [SITE_COUNT[1][0][0]])
+        self.assertEqual(result, ['foo.example.com'])
 
 class RelationStatsTests(unittest.TestCase):
 

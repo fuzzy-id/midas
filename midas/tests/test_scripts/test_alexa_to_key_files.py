@@ -11,8 +11,9 @@ import mock
 from vincetools.compat import GzipFile
 
 from midas import RankEntry
-from midas.tests import SITE_COUNT
-from midas.tests import TEST_DATA
+from midas.tests import TEST_SITE_COUNT
+from midas.tests import TEST_ALEXA_TOP1M
+from midas.tests import TEST_ALEXA_TOP1M_FILES
 from midas.tests import ConfiguredDBTestCase
 from midas.tests.test_scripts import IntegrationTestCase
 
@@ -29,10 +30,10 @@ class AlexaToKeyTests(IntegrationTestCase):
         self.assert_stdout_startswith('usage: ')
 
     def test_on_test_data(self):
-        ret_code = self._run_it('-q', TEST_DATA[0])
+        ret_code = self._run_it('-q', *TEST_ALEXA_TOP1M_FILES)
         self.assertEqual(ret_code, 0)
         self.assert_stdout_equal('\n'.join(e.format_w_key 
-                                           for e in TEST_DATA[1]) + '\n')
+                                           for e in TEST_ALEXA_TOP1M) + '\n')
 
 
 class KeyToFilesTests(IntegrationTestCase):
