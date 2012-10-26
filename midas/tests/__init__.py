@@ -53,7 +53,7 @@ class ConfiguredDBTestCase(unittest.TestCase):
         md_cfg.new_configparser()
         
     def _make_company_json(self, js):
-        from crawlcrunch.model.db import Company
+        from midas.db import Company
         c = Company.make_from_parsed_json(js)
         self.session.add(c)
         return c
