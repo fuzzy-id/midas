@@ -9,6 +9,7 @@ import os.path
 from vincetools.compat import ZipFile
 
 import midas.config as md_cfg
+import midas.tools as md_tools
 
 
 class RankEntry(object):
@@ -88,7 +89,7 @@ class RankEntry(object):
         `self.key` to :const:`None`.
         """
         if self._key is None:
-            self._key = self.make_key(self.site)
+            self._key = self.make_key(md_tools.domain(self.site))
         return self._key
 
     @classmethod
