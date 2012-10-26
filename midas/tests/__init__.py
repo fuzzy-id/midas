@@ -15,6 +15,7 @@ TEST_CONFIG = """
 [location]
 home = {0}
 key_length = 3
+crunchbase_db = sqlite:///:memory:
 """.format(_test_data_home)
 
 TEST_DATA = (os.path.join(_test_data_home, 'alexa_files', 
@@ -38,23 +39,16 @@ class ConfiguredDBTestCase(unittest.TestCase):
                      'homepage_url': 'http://baz.bar.example.com/'}]
 
     def setUp(self):
-        from crawlcrunch.model.db import Base
-        from crawlcrunch.model.db import Session
-        from crawlcrunch.model.db import create_engine
         import midas.config as md_cfg
         import midas.db as md_db
-        engine = create_engine('sqlite:///:memory:')
-        Session.configure(bind=engine)
-        Base.metadata.create_all(engine, checkfirst=False)
-        self.session = Session()
-        md_db._session = self.session
         md_cfg.read_string(TEST_CONFIG)
+        self.session = md_db.db_session()
 
     def tearDown(self):
         from crawlcrunch.model.db import Session
         import midas.db as md_db
         import midas.config as md_cfg
-        Session.remove()
+        md_db.Session.remove()
         md_db._session = None
         md_cfg.new_configparser()
         
