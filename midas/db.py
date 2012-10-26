@@ -4,8 +4,14 @@ provides some common queries and filter conditions.
 """
 
 import sqlalchemy as sa
+import sqlalchemy.orm as sa_orm
 
-import crawlcrunch.model.db as ccdb
+
+from crawlcrunch.model.db import Base
+from crawlcrunch.model.db import Company
+from crawlcrunch.model.db import FundingRound
+from crawlcrunch.model.db import Session
+from crawlcrunch.model.db import create_engine
 
 import midas.config as md_cfg
 
@@ -19,40 +25,50 @@ def db_session(db=None):
     if _session is None:
         if db is None:
             db = md_cfg.get('location', 'crunchbase_db')
-        import midas.associate  # Get further table definitions
-        engine = ccdb.create_engine(db)
-        ccdb.Session.configure(bind=engine)
-        ccdb.Base.metadata.create_all(engine)
-        _session = ccdb.Session()
+        engine = create_engine(db)
+        Session.configure(bind=engine)
+        Base.metadata.create_all(engine)
+        _session = Session()
     return _session
 
+class Association(Base):
+    __tablename__ = 'associations'
+
+    id = sa.Column(sa.Integer, primary_key=True)
+    company_id = sa.Column(sa.Integer, sa.ForeignKey('companies.id'))
+    site = sa.Column(sa.String)
+    company = sa_orm.relationship("Company", 
+                                  backref=sa_orm.backref('site', 
+                                                         uselist=False),
+                                  lazy='subquery')
+
 p_fr_after_dec_2010 = sa.or_(
-    ccdb.FundingRound.funded_year > 2010,
+    FundingRound.funded_year > 2010,
     sa.and_(
-        ccdb.FundingRound.funded_year == 2010,
-        ccdb.FundingRound.funded_month == 12
+        FundingRound.funded_year == 2010,
+        FundingRound.funded_month == 12
         )
     )
 
-p_fr_in_a_angel_seed = ccdb.FundingRound.round_code.in_(
+p_fr_in_a_angel_seed = FundingRound.round_code.in_(
     ['angel', 'seed', 'a']
     )
 
 p_c_has_hp_url = sa.and_(
-    ccdb.Company.homepage_url != None,
-    ccdb.Company.homepage_url != ''
+    Company.homepage_url != None,
+    Company.homepage_url != ''
     )
 
 def q_fr_of_interest():
     """ Return a query for all funding rounds since December 2010 with
     `round_level` set to either ``angel``, ``seed`` or ``a``.
     """
-    return db_session().query(ccdb.FundingRound)\
+    return db_session().query(FundingRound)\
         .filter(p_fr_in_a_angel_seed)\
         .filter(p_fr_after_dec_2010)
 
 def q_c_w_hp_url():
     """ Return a query for all the companies with a homepage URL.
     """
-    return db_session().query(ccdb.Company)\
+    return db_session().query(Company)\
         .filter(p_c_has_hp_url)

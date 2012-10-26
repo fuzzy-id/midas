@@ -84,19 +84,6 @@ class AssociateSitesToCompaniesTests(ConfiguredDBTestCase):
         self.assertEqual(self._run_it(), 
                          {'foo.example.com': [foo_comp]})
 
-class AssociationTests(ConfiguredDBTestCase):
-    " Test the proper working of the Association class. "
-
-    def test_backref_on_company(self):
-        foo_comp = self._make_company_json(self.companies_js[0])
-        from midas.associate import Association
-        assoc = Association(site='foo.example.com', company=foo_comp)
-        result = self.session.query(Association).one()
-        self.assertIs(result, assoc)
-        from crawlcrunch.model.db import Company
-        result = self.session.query(Company).one()
-        self.assertIs(result.site, assoc)
-
 class MakeAssociationsTests(ConfiguredDBTestCase):
 
     def _run_it(self):
@@ -107,7 +94,7 @@ class MakeAssociationsTests(ConfiguredDBTestCase):
         foo_comp = self._make_company_json(self.companies_js[0])
         bar_comp = self._make_company_json(self.companies_js[1])
         self._run_it()
-        from midas.associate import Association
+        from midas.db import Association
         result = self.session.query(Association).one()
         self.assertEqual(result.site, 'foo.example.com')
         self.assertIs(result.company, foo_comp)
