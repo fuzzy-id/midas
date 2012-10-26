@@ -68,14 +68,14 @@ class AssociationTree(dict):
                 result[item] = leafs
         return result
 
-def associate_companies_to_sites(tree=None, comps=None, sites=None):
+def associate_sites_to_companies(tree=None, comps=None, sites=None):
     if tree is None:
         tree = grow_tree_from_companies(comps)
     if sites is None:
         sites = md_tools.iter_interesting_sites()
     return tree.map(sites, md_tools.domain)
 
-def associate_sites_to_companies(tree=None, sites=None, comps=None):
+def associate_companies_to_sites(tree=None, sites=None, comps=None):
     if tree is None:
         tree = grow_tree_from_sites(sites)
     if comps is None:
@@ -110,3 +110,7 @@ class Association(ccdb.Base):
     company = sa_orm.relationship("Company", 
                                   backref=sa_orm.backref('site', 
                                                          uselist=False))
+
+def make_associations():
+    s2c = associate_companies_to_sites()
+    

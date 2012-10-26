@@ -59,11 +59,11 @@ class SplitDomainTests(unittest.TestCase):
     def test_on_empty_str(self):
         self.assertEqual(self._run_it(''), ('', ))
 
-class AssociateSitesToCompaniesTests(ConfiguredDBTestCase):
+class AssociateCompaniesToSitesTests(ConfiguredDBTestCase):
 
     def _run_it(self, iterable=None):
-        from midas.associate import associate_sites_to_companies
-        return associate_sites_to_companies(iterable)
+        from midas.associate import associate_companies_to_sites
+        return associate_companies_to_sites(iterable)
 
     def test_on_test_config(self):
         foo_comp = self._make_company_json(self.companies_js[0])
@@ -72,11 +72,11 @@ class AssociateSitesToCompaniesTests(ConfiguredDBTestCase):
                          {foo_comp: ['foo.example.com']})
 
 
-class AssociateCompaniesToSitesTests(ConfiguredDBTestCase):
+class AssociateSitesToCompaniesTests(ConfiguredDBTestCase):
 
     def _run_it(self, iterable=None):
-        from midas.associate import associate_companies_to_sites
-        return associate_companies_to_sites(iterable)
+        from midas.associate import associate_sites_to_companies
+        return associate_sites_to_companies(iterable)
 
     def test_on_test_config(self):
         foo_comp = self._make_company_json(self.companies_js[0])
@@ -96,6 +96,21 @@ class AssociationTests(ConfiguredDBTestCase):
         from crawlcrunch.model.db import Company
         result = self.session.query(Company).one()
         self.assertIs(result.site, assoc)
+
+class MakeAssociationsTests(ConfiguredDBTestCase):
+
+    def _run_it(self):
+        from midas.associate import make_associations
+        return make_associations()
+
+    def test_on_sample_data(self):
+        foo_comp = self._make_company_json(self.companies_js[0])
+        bar_comp = self._make_company_json(self.companies_js[1])
+        self._run_it()
+        from midas.associate import Association
+        result = self.session.query(Association).one()
+        self.assertEqual(result.site, 'foo.example.com')
+        self.assertIs(result.company, foo_comp)
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
