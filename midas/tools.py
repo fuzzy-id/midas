@@ -90,8 +90,10 @@ def db_session(db=None):
     if _session is None:
         if db is None:
             db = md_cfg.get('location', 'crunchbase_db')
+        import midas.associate  # Get further table definitions
         engine = ccdb.create_engine(db)
         ccdb.Session.configure(bind=engine)
+        ccdb.Base.metadata.create_all(engine)
         _session = ccdb.Session()
     return _session
 
