@@ -6,6 +6,7 @@ from vincetools.compat import unittest
 
 from midas.tests import TEST_ALEXA_TOP1M
 from midas.tests import TEST_ALEXA_TOP1M_FILES
+from midas.tests import ConfiguredDBTestCase
 
 class RankEntryTestCase(unittest.TestCase):
 
@@ -89,3 +90,18 @@ class RankEntryTestCase(unittest.TestCase):
                    for f in TEST_ALEXA_TOP1M_FILES 
                    for e in self._get_target_cls().iter_alexa_file(f) ]
         self.assertEqual(result, TEST_ALEXA_TOP1M)
+
+
+class LookUpRankingTests(ConfiguredDBTestCase):
+    
+    def _run_it(self, site):
+        from midas import look_up_ranking
+        return look_up_ranking(site)
+
+    def test_lookup_foo(self):
+        result = self._run_it('foo.example.com')
+        self.assertEqual(result, TEST_ALEXA_TOP1M[:1])
+
+    def test_lookup_baz_bar(self):
+        result = self._run_it('baz.bar.example.com/path')
+        self.assertEqual(result, TEST_ALEXA_TOP1M[1:3])

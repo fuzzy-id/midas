@@ -4,13 +4,16 @@
 
 import datetime
 import hashlib
+import logging
 import os.path
 
 from vincetools.compat import ZipFile
+import vincetools.compat as vt_comp
 
 import midas.config as md_cfg
 import midas.tools as md_tools
 
+logger = logging.getLogger(__name__)
 
 class RankEntry(object):
     """ Return an entry of a ranking for `site`.
@@ -89,7 +92,7 @@ class RankEntry(object):
         `self.key` to :const:`None`.
         """
         if self._key is None:
-            self._key = self.make_key(md_tools.domain(self.site))
+            self._key = self.make_key(self.site)
         return self._key
 
     @classmethod
@@ -98,7 +101,8 @@ class RankEntry(object):
         digits of the hash produced by :func:`hashlib.sha1` on the
         `site`. 
         """
-        sha1 = hashlib.sha1(s.encode()).hexdigest()
+        domain = md_tools.domain(s)
+        sha1 = hashlib.sha1(domain.encode()).hexdigest()
         return sha1[:md_cfg.getint('location', 'key_length')]
         
 
@@ -138,3 +142,16 @@ class RankEntry(object):
             for line in zf.open('top-1m.csv'):
                 rank, name = line.decode().strip().split(',', 1)
                 yield cls(name, date, int(rank))
+
+
+def look_up_ranking(site):
+    fname = os.path.join(md_cfg.get('location', 'key_files'),
+                         '{0}.gz'.format(RankEntry.make_key(site)))
+    logger.debug('Looking for {0} in {1}'.format(site, fname))
+    result = []
+    with vt_comp.GzipFile(fname) as fp:
+        for line in fp:
+            line = line.decode()
+            if md_tools.get_key(line) == site:
+                result.append(RankEntry.parse_std(line))
+    return result
