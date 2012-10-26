@@ -33,7 +33,7 @@ compress_output = true
 files = optional
 
 [location]
-top1m_files = %(hdfs_home)s/alexa-files#alexa-files
+top1m_files = %(hdfs_home)s/alexa_files#alexa_files
 key_length = 3
 home = %(local_home)s/md_data
 key_files = %(home)s/key_files
