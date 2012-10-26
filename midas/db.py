@@ -6,7 +6,6 @@ provides some common queries and filter conditions.
 import sqlalchemy as sa
 import sqlalchemy.orm as sa_orm
 
-
 from crawlcrunch.model.db import Base
 from crawlcrunch.model.db import Company
 from crawlcrunch.model.db import FundingRound
