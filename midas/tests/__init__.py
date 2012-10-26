@@ -42,21 +42,20 @@ class ConfiguredDBTestCase(unittest.TestCase):
         from crawlcrunch.model.db import Session
         from crawlcrunch.model.db import create_engine
         import midas.config as md_cfg
-        import midas.tools as md_tools
+        import midas.db as md_db
         engine = create_engine('sqlite:///:memory:')
-        Session.remove()
         Session.configure(bind=engine)
         Base.metadata.create_all(engine, checkfirst=False)
         self.session = Session()
-        md_tools._session = self.session
+        md_db._session = self.session
         md_cfg.read_string(TEST_CONFIG)
 
     def tearDown(self):
         from crawlcrunch.model.db import Session
-        import midas.tools as md_tools
+        import midas.db as md_db
         import midas.config as md_cfg
         Session.remove()
-        md_tools._session = None
+        md_db._session = None
         md_cfg.new_configparser()
         
     def _make_company_json(self, js):

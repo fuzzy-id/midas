@@ -21,6 +21,7 @@ from vincetools.compat import str_type
 from vincetools.compat import urlparse
 import vincetools.compat as vt_comp
 
+import midas.db as md_db
 import midas.config as md_cfg
 
 logger = logging.getLogger(__name__)
@@ -80,47 +81,17 @@ def domain(company_or_site):
         raise TypeError("cannot extract domain part: {0}".format(
                 type(company_or_site)))
 
-_session = None
-
-def db_session(db=None):
-    """ Create a session for the CrunchBase database and return
-    it. Subsequent calls will return the same session.
-    """
-    global _session
-    if _session is None:
-        if db is None:
-            db = md_cfg.get('location', 'crunchbase_db')
-        import midas.associate  # Get further table definitions
-        engine = ccdb.create_engine(db)
-        ccdb.Session.configure(bind=engine)
-        ccdb.Base.metadata.create_all(engine)
-        _session = ccdb.Session()
-    return _session
-
 def iter_all_companies():
     " Returns 100355 companies. "
-    sess = db_session()
+    sess = md_db.db_session()
     return sess.query(ccdb.Company).all()
 
 def iter_interesting_companies():
     """ Returns all companies having a funding round with
     `round_level` ``angel``, ``seed`` or ``a`` since December 2010.
     """
-    sess = db_session()
-    p_after_dec_2010 = sa.or_(
-        ccdb.FundingRound.funded_year > 2010,
-        sa.and_(
-            ccdb.FundingRound.funded_year == 2010,
-            ccdb.FundingRound.funded_month == 12
-            )
-        )
-    funding_round_subq = sess.query(ccdb.FundingRound)\
-        .filter(ccdb.FundingRound.round_code.in_(['angel', 'seed', 'a']))\
-        .filter(p_after_dec_2010).subquery()
-    q = sess.query(ccdb.Company)\
-        .filter(ccdb.Company.homepage_url != None)\
-        .filter(ccdb.Company.homepage_url != '')\
-        .join(funding_round_subq, ccdb.Company.funding_rounds)
+    q = md_db.q_c_w_hp_url()
+    q = q.join(md_db.q_fr_of_interest().subquery())
     return q.all()
 
 SiteCount = collections.namedtuple('SiteCount', ['site', 'count'])

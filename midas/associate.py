@@ -11,6 +11,7 @@ import sqlalchemy as sa
 import sqlalchemy.orm as sa_orm
 
 import crawlcrunch.model.db as ccdb
+import midas.db as md_db
 import midas.tools as md_tools
 import vincetools.compat as vt_comp
 
@@ -115,7 +116,7 @@ class Association(ccdb.Base):
 
 def make_associations():
     c2s = associate_companies_to_sites()
-    sess = md_tools.db_session()
+    sess = md_db.db_session()
     for company, sites in vt_comp.d_iteritems(c2s):
         if len(sites) == 1:
             sess.add(Association(site=sites[0], company=company))
