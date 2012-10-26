@@ -104,7 +104,7 @@ def split_domain(site):
 class Association(ccdb.Base):
     __tablename__ = 'associations'
 
-    id = sa.Column(Integer, primary_key=True)
+    id = sa.Column(sa.Integer, primary_key=True)
     company_id = sa.Column(sa.Integer, sa.ForeignKey('companies.id'))
     site = sa.Column(sa.String)
     company = sa_orm.relationship("Company", 
