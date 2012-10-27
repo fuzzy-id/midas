@@ -77,6 +77,11 @@ class RankEntryTestCase(unittest.TestCase):
         b = self._make_one('bar', self.a_date + self.one_day, 1)
         self.assert_lt_le_neq(a, b)
 
+    def test_cmp_different_ranks(self):
+        a = self._make_one('bar', self.a_date, 1)
+        b = self._make_one('bar', self.a_date, 2)
+        self.assert_lt_le_neq(a, b)
+
     def test_cmp_sort_a_list(self):
         a = self._make_one('foo', self.a_date, 2)
         b = self._make_one('foo', self.a_date + self.one_day, 1)
