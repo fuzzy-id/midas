@@ -40,8 +40,8 @@ class MDLaunchTests(unittest.TestCase):
             
     @mock.patch('midas.tools.logger')
     def test_echo_line_to_stdout(self, logger):
-        with tempfile.NamedTemporaryFile('w+') as fp:
-            fp.writelines('\n'.join(self.config 
+        with tempfile.NamedTemporaryFile('w+') as tmp:
+            tmp.writelines('\n'.join(self.config 
                                     + ['mapper = foo',
                                        'num_mappers = 1',
                                        'reducer = bar',
@@ -49,8 +49,8 @@ class MDLaunchTests(unittest.TestCase):
                                        'compress_output = false',
                                        'input = input_file',
                                        'output = out']))
-            fp.seek(0)
-            self.assertEqual(0, self._call_cmd(fp.name))
+            tmp.seek(0)
+            self.assertEqual(0, self._call_cmd(tmp.name))
         self.assertFalse(logger.error.called)
         self.assertTrue(logger.info.called)
         expected = ' '.join(('jar', 'a_stream', 
