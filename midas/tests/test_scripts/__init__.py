@@ -42,4 +42,4 @@ class IntegrationTestCase(unittest.TestCase):
 
     def assert_in_stdout(self, s):
         out = self._get_stdout()
-        self.assertInEqual(s, out)
+        self.assertIn(s, out)
