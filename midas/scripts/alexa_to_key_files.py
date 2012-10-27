@@ -80,7 +80,7 @@ class KeyToFiles(MDJob):
 
 def check_and_calc_mean_max_min_deviation_variance(dir_or_files=None):
     counter = check_and_count_entries(dir_or_files)
-    mean = sum(counter.values()) / len(counter) * 1.0
+    mean = sum(counter.values()) / (len(counter) * 1.0)
     max_ = max(counter.values())
     min_ = min(counter.values())
     deviation = (sum(math.fabs(x - mean) for x in counter.values())
