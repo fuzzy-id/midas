@@ -3,6 +3,7 @@
 import datetime
 
 from vincetools.compat import unittest
+import vincetools.compat as vt_comp
 
 from midas.tests import TEST_ALEXA_TOP1M
 from midas.tests import TEST_ALEXA_TOP1M_FILES
@@ -100,8 +101,10 @@ class LookUpRankingTests(ConfiguredDBTestCase):
 
     def test_lookup_foo(self):
         result = self._run_it('foo.example.com')
-        self.assertEqual(result, TEST_ALEXA_TOP1M[:1])
+        self.assertEqual(list(vt_comp.imap(str, result)), 
+                         list(vt_comp.imap(str, TEST_ALEXA_TOP1M[:1])))
 
     def test_lookup_baz_bar(self):
         result = self._run_it('baz.bar.example.com/path')
-        self.assertEqual(result, TEST_ALEXA_TOP1M[1:3])
+        self.assertEqual(list(vt_comp.imap(str, result)),
+                         list(vt_comp.imap(str, TEST_ALEXA_TOP1M[1:3])))
