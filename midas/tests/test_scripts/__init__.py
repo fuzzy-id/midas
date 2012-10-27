@@ -27,12 +27,19 @@ class IntegrationTestCase(unittest.TestCase):
         sys.stdout = self._oldout
         sys.stdin = self._oldin
 
-    def assert_stdout_startswith(self, s):
+    def _get_stdout(self):
         sys.stdout.seek(0)
-        val = sys.stdout.getvalue()
-        self.assertTrue(val.startswith(s))
+        return sys.stdout.getvalue()
+
+    def assert_stdout_startswith(self, s):
+        out = self._get_stdout()
+        self.assertTrue(out.startswith(s), 
+                        '"{0!r}" does not start with {1!r}'.format(out, s))
 
     def assert_stdout_equal(self, s):
-        sys.stdout.seek(0)
-        val = sys.stdout.getvalue()
-        self.assertEqual(val, s)
+        out = self._get_stdout()
+        self.assertEqual(out, s)
+
+    def assert_in_stdout(self, s):
+        out = self._get_stdout()
+        self.assertInEqual(s, out)
