@@ -23,10 +23,12 @@ class MDConfig(MDCommand):
                 'metavar': 'FILE',
                 'help': 'additional configuration file to read'}
 
+    out = sys.stdout
+
     def __init__(self, argv):
         MDCommand.__init__(self, argv)
         if self.args.job_cfg:
             md_cfg.read(self.args.job_cfg)
 
     def run(self):
-        md_cfg.get_configparser().write(sys.stdout)
+        md_cfg.get_configparser().write(self.out)
