@@ -26,7 +26,7 @@ class MDCommand(object):
     POS_ARG = None
 
     def __init__(self, argv=None):
-        if argv is None:
+        if argv is None:  # pragma: no cover
             argv = sys.argv
         self.args = self.parser.parse_args(argv[1:])
 
