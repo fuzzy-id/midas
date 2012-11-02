@@ -7,7 +7,7 @@ import sys
 
 PY_VERSION = sys.version_info[:2]
 
-install_requires = ['vincetools', 'crawlcrunch']
+install_requires = ['vincetools', 'crawlcrunch', 'mrjob']
 tests_require = ['mock']
 
 if PY_VERSION == (2, 6):
@@ -34,5 +34,5 @@ setup(name='midas',
              'md_launch=midas.scripts.md_launch:MDLaunch.cmd',
              'md_alexa_to_key=midas.scripts.alexa_to_key_files:AlexaToKey.cmd',
              'md_key_to_files=midas.scripts.alexa_to_key_files:KeyToFiles.cmd',
-             'md_alexa_to_names_and_one=midas.scripts.alexa_count_names:AlexaToNamesAndOne.cmd',
+             'md_alexa_to_names_and_one=midas.scripts.alexa_count_sites:AlexaCountSitesJob.run',
              'md_sum_values=midas.scripts.alexa_count_names:SumValues.cmd']})
