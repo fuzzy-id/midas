@@ -2,7 +2,7 @@
 
 import logging
 
-import mrjob.job
+import mrjob.job as mr_job
 
 from midas.scripts import MDJob
 from midas import RankEntry
@@ -12,7 +12,7 @@ from midas.tools import split_key_value
 
 logger = logging.getLogger(__name__)
 
-class AlexaCountSitesJob(mrjob.job.MRJob):
+class AlexaCountSitesJob(mr_job.MRJob):
 
     def mapper(self, key, fname):
         """ Parse Alexa Top1M files and print the names found in the
