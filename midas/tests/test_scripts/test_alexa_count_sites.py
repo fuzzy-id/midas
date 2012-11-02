@@ -2,6 +2,8 @@
 
 import vincetools.compat as vt_comp
 
+import mrjob.util as mr_util
+
 from midas.tests import TEST_ALEXA_TOP1M
 from midas.tests import TEST_ALEXA_TOP1M_FILES
 
@@ -29,8 +31,8 @@ class AlexaCountSitesJobTests(vt_comp.unittest.TestCase):
         j = self._get_target_cls()(['--no-conf', '-r', 'inline', '-'])
         j.sandbox(stdin=stdin)
         with j.make_runner() as runner:
+            mr_util.log_to_null("mrjob.inline")
             runner.run()
             result = [ line for line in runner.stream_output() ]
         self.assertEqual(sorted(result), [ '"baz.bar.example.com/path"\t2\n',
                                            '"foo.example.com"\t1\n' ])
-        
