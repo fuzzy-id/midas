@@ -10,45 +10,30 @@ import mock
 
 from vincetools.compat import GzipFile
 
+import vincetools.compat as vt_comp
+
 from midas import RankEntry
 from midas.tests import TEST_SITE_COUNT
 from midas.tests import TEST_ALEXA_TOP1M
 from midas.tests import TEST_ALEXA_TOP1M_FILES
 from midas.tests import ConfiguredDBTestCase
-from midas.tests.test_scripts import IntegrationTestCase
 
-class AlexaToKeyTests(IntegrationTestCase):
+class AlexaToKeyJobTests(vt_comp.unittest.TestCase):
 
-    def _get_target_func(self):
-        from midas.scripts.alexa_to_key_files import AlexaToKey
-        return AlexaToKey.cmd
+    def _get_target_cls(self):
+        from midas.scripts.alexa_to_key_files import AlexaToKeyJob
+        return AlexaToKeyJob
 
-    def test_help_flag(self):
-        with self.assertRaises(SystemExit) as cm:
-            self._run_it('-h')
-        self.assertEqual(cm.exception.code, 0)
-        self.assert_stdout_startswith('usage: ')
+    def test_mapper_on_test_data(self):
+        j = self._get_target_cls()()
+        result = []
+        for alexa_f in TEST_ALEXA_TOP1M_FILES:
+            result.extend(j.mapper(None, alexa_f))
+        self.assertEqual(sorted(result),
+                         sorted((e.key, [e.site, e.tstamp, e.rank])
+                                for e in TEST_ALEXA_TOP1M))
 
-    def test_on_test_data(self):
-        ret_code = self._run_it('-q', *TEST_ALEXA_TOP1M_FILES)
-        self.assertEqual(ret_code, 0)
-        self.assert_stdout_equal('\n'.join(e.format_w_key 
-                                           for e in TEST_ALEXA_TOP1M) + '\n')
-
-
-class KeyToFilesTests(IntegrationTestCase):
-
-    def _get_target_func(self):
-        from midas.scripts.alexa_to_key_files import KeyToFiles
-        return KeyToFiles.cmd
-
-    def test_help_flag(self):
-        with self.assertRaises(SystemExit) as cm:
-            self._run_it('-h')
-        self.assertEqual(cm.exception.code, 0)
-        self.assert_stdout_startswith('usage: ')
-
-    def test_on_test_data(self):
+    def test_reducer_on_test_data(self):
         a_date = datetime.date(1900, 1, 1)
         one_day = datetime.timedelta(days=1)
         foos = (RankEntry('foo', a_date, 2),
