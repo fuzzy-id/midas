@@ -14,6 +14,8 @@ import os.path
 import shutil
 import tempfile
 
+import mrjob.job as mr_job
+
 from vincetools.compat import GzipFile
 from vincetools.compat import imap
 
@@ -29,19 +31,17 @@ import midas.config as md_cfg
 logger = logging.getLogger(__name__)
 
 
-class AlexaToKey(MDJob):
-    """ Parse Alexa Top1M files and print the found entries in key
-    format. When no file is given the names of the files are read from
-    stdin.
-    """
+class AlexaToKeyJob(mr_job.MRJob):
 
-    def run(self):
-        for fname in self.args.stream:
-            fname = fname.strip()
-            logger.info("processing '{0}'".format(fname))
-            for entry in RankEntry.iter_alexa_file(fname):
-                print(entry.format_w_key)
-        return 0
+    def mapper(self, key, fname):
+        """ Parse Alexa Top1M files and print the found entries in key
+        format. When no file is given the names of the files are read
+        from stdin.  
+        """
+        fname = fname.strip()
+        logger.info("processing '{0}'".format(fname))
+        for entry in RankEntry.iter_alexa_file(fname):
+            yield entry.key, [entry.site, entry.tstamp, entry.rank]
 
 
 class KeyToFiles(MDJob):
