@@ -24,7 +24,6 @@ class AlexaZipToGzipTests(IntegrationTestCaseNG):
         from midas.scripts.alexa_zip_to_gzip import AlexaZipToGzip
         return AlexaZipToGzip
 
-    @vt_comp.unittest.skip('Not ready, yet!')
     def test_on_test_data(self):
         ret_code = self._call_cmd(
             os.path.basename(md_tests.TEST_ALEXA_TOP1M_FILES[0]),
