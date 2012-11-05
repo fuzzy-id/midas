@@ -6,7 +6,7 @@ import vincetools.compat as vt_comp
 
 from midas.tests.test_scripts import IntegrationTestCase
 
-class MDConfigTests(vt_comp.unittest.TestCase):
+class IntegrationTestCaseNG(vt_comp.unittest.TestCase):
 
     def setUp(self):
         import midas.config as md_cfg
@@ -20,10 +20,6 @@ class MDConfigTests(vt_comp.unittest.TestCase):
         effargs.extend(args)
         return cls.cmd(effargs)
 
-    def _get_target_cls(self):
-        from midas.scripts.md_config import MDConfig
-        return MDConfig
-
     def _get_value(self, buf):
         buf.seek(0)
         return buf.getvalue()
@@ -36,6 +32,13 @@ class MDConfigTests(vt_comp.unittest.TestCase):
     def assert_in_cls_out(self, s):
         out = self._get_value(self.out)
         self.assertIn(s, out)
+
+
+class MDConfigTests(IntegrationTestCaseNG):
+
+    def _get_target_cls(self):
+        from midas.scripts.md_config import MDConfig
+        return MDConfig
 
     def test_without_arguments(self):
         self.assertEqual(self._call_cmd(), 0)
