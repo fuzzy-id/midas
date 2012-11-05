@@ -2,8 +2,6 @@
 
 import tempfile
 
-import vincetools.compat as vt_comp
-
 from midas.tests.test_scripts import IntegrationTestCaseNG
 
 class MDConfigTests(IntegrationTestCaseNG):
