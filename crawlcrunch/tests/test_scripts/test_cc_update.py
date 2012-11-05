@@ -151,7 +151,10 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
                           FOO_URL: ['some_foo'],
                           BAR_URL: ['some_bar']})
         self.assertEqual(self._test_it(self.tmpd), 0)
-        urlopen.assert_called_with(BAR_URL)
+        try:
+            urlopen.assert_called_with(BAR_URL)
+        except AssertionError:
+            urlopen.assert_called_with(FOO_URL)
         listing = os.listdir(self.tmpd)
         listing.sort()
         self.assertEqual(listing, ['bar.json.gz',
