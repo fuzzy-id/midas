@@ -25,8 +25,6 @@ class MDConfigTests(IntegrationTestCaseNG):
         self.assert_cls_out_startswith('[DEFAULT]\n')
         self.assert_in_cls_out('user_name = foo')
 
-    def test_check_cfg(self):
-        pass
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
