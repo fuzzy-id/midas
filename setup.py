@@ -37,7 +37,7 @@ setup(
             'md_key_to_files=midas.scripts.alexa_to_key_files:KeyToFiles.cmd',
             'md_alexa_to_names_and_one=midas.scripts.alexa_count_names:AlexaToNamesAndOne.cmd',
             'md_sum_values=midas.scripts.alexa_count_names:SumValues.cmd',
-            'md_alexa_zip_to_gzip=midas.scripts.alexa_zip_to_gzip.cmd'
+            'md_alexa_zip_to_gzip=midas.scripts.alexa_zip_to_gzip:AlexaZipToGzip.cmd'
             ]
         }
     )
