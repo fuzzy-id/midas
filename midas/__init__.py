@@ -4,6 +4,7 @@
 
 import datetime
 import hashlib
+import json
 import logging
 import os.path
 
@@ -84,6 +85,15 @@ class RankEntry(object):
         return '{e.key}\t{e.format_std}'.format(e=self)
 
     @property
+    def format_json(self):
+        """ Return the ``name``, ``rank`` and ``tstamp`` as dictionary
+        in JSON representation.
+        """
+        return json.dumps({'site': self.site,
+                           'rank': self.rank,
+                           'tstamp': self.tstamp})
+
+    @property
     def key(self):
         """ The cached key as computed by
         :meth:`RankEntry.make_key`. Note that the key is cached: even
@@ -104,7 +114,6 @@ class RankEntry(object):
         domain = md_tools.domain(s)
         sha1 = hashlib.sha1(domain.encode()).hexdigest()
         return sha1[:md_cfg.getint('location', 'key_length')]
-        
 
     @classmethod
     def parse_key(cls, s):
@@ -119,6 +128,13 @@ class RankEntry(object):
         date, rank = tail.split(', ')
         date = datetime.datetime.strptime(date, cls.TS_FORMAT)
         return cls(site=site, date=date, rank=rank)
+
+    @classmethod
+    def parse_json(cls, s):
+        " Parse back :meth:`RankEntry.format_json`. "
+        d = json.loads(s)
+        date = datetime.datetime.strptime(d['tstamp'], cls.TS_FORMAT)
+        return cls(site=d['site'], date=date, rank=d['rank'])
 
     @classmethod
     def iter_alexa_file(cls, fname):
