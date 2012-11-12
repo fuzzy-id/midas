@@ -192,7 +192,7 @@ def make_number_of_funding_rounds_plot(interactive=True):
 def iter_associated_time_series():
     sites = set(md_db.iter_sites_in_associations())
     sites_f = md_cfg.get('location', 'sites')
-    with vt_comp.GzipFile(site_f) as fp:
+    with vt_comp.GzipFile(sites_f) as fp:
         for line in fp:
             site, tstamp, rank = line.decode().strip().split('\t')
             if site in sites:
