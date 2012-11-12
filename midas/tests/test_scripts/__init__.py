@@ -7,6 +7,8 @@ from vincetools.compat import unittest
 
 import vincetools.compat as vt_comp
 
+import midas.tests as md_tests
+
 class IntegrationTestCase(unittest.TestCase):
 
     def _run_it(self, *args):
@@ -46,11 +48,10 @@ class IntegrationTestCase(unittest.TestCase):
         self.assertIn(s, out)
 
 
-class IntegrationTestCaseNG(vt_comp.unittest.TestCase):
+class IntegrationTestCaseNG(md_tests.ConfiguredDBTestCase):
 
     def setUp(self):
-        import midas.config as md_cfg
-        md_cfg.new_configparser()
+        md_tests.ConfiguredDBTestCase.setUp(self)
         self.out = vt_comp.StringIO()
 
     def _call_cmd(self, *args):
