@@ -36,6 +36,7 @@ class Association(Base):
     id = sa.Column(sa.Integer, primary_key=True)
     company_id = sa.Column(sa.Integer, sa.ForeignKey('companies.id'))
     site = sa.Column(sa.String)
+    data_set = sa.Column(sa.Enum('test', 'training', name='data_type'))
     company = sa_orm.relationship("Company",
                                   backref=sa_orm.backref('site', 
                                                          uselist=False),
