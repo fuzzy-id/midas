@@ -32,6 +32,7 @@ setup(
     entry_points={
         'console_scripts': [
             'md_config=midas.scripts.md_config:MDConfig.cmd',
+            'md_associate=midas.scripts.md_associate:MDAssociate.cmd',
             'md_launch=midas.scripts.md_launch:MDLaunch.cmd',
             'md_alexa_to_key=midas.scripts.alexa_to_key_files:AlexaToKey.cmd',
             'md_key_to_files=midas.scripts.alexa_to_key_files:KeyToFiles.cmd',
