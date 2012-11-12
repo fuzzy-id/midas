@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 #: The default configuration
 DEFAULT_CONFIG = """
 [DEFAULT]
-user_name = {env[USER]}
+user_name = {env[LOGNAME]}
 hdfs_home = hdfs://localhost:9000/user/%(user_name)s
 local_home = {env[HOME]}
 virt_env = %(local_home)s/py_envs/py26
