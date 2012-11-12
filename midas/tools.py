@@ -26,6 +26,13 @@ import midas.config as md_cfg
 
 logger = logging.getLogger(__name__)
 
+def interactive():
+    """ Saves us a few lines of typing when using midas
+    interactively.
+    """
+    md_cfg.new_configparser()
+    md_cfg.read(os.path.join(os.environ['HOME']), '.midas')
+
 ### Functions that work on MapReduce-style 'key\tvalue' lines ###
 
 def split_key_value(line, sep='\t'):
