@@ -9,6 +9,7 @@ import functools
 import itertools
 import logging
 import operator
+import os
 import os.path
 import subprocess
 
@@ -158,6 +159,9 @@ def make_number_of_funding_rounds_plot(interactive=True):
     cnt = count_by_key(fr_dates)
     xs = sorted(vt_comp.d_iterkeys(cnt))
     ys = [ cnt[x] for x in xs ]
+    if not 'DISPLAY' in os.environ:
+        import matplotlib as mpl
+        mpl.use('Agg')
     import matplotlib.pyplot as plt
     fig = plt.figure()
 
