@@ -126,14 +126,14 @@ class RankEntry(object):
         " Parse back :meth:`RankEntry.format_std`. "
         site, tail = s.strip().split('\t')
         date, rank = tail.split(', ')
-        date = datetime.datetime.strptime(date, cls.TS_FORMAT)
+        date = parse_tstamp(date)
         return cls(site=site, date=date, rank=rank)
 
     @classmethod
     def parse_json(cls, s):
         " Parse back :meth:`RankEntry.format_json`. "
         d = json.loads(s)
-        date = datetime.datetime.strptime(d['tstamp'], cls.TS_FORMAT)
+        date = parse_tstamp(d['tstamp'])
         return cls(site=d['site'], date=date, rank=d['rank'])
 
     @classmethod
@@ -152,7 +152,7 @@ class RankEntry(object):
         """
         fname = fname.strip()
         fname_last = os.path.basename(fname)
-        date = datetime.datetime.strptime(fname_last, cls.ALEXA_TS_FORMAT)
+        date = parse_tstamp(fname_last, cls.ALEXA_TS_FORMAT)
         with ZipFile(fname) as zf:
             # The archive contains one file named ``top-1m.csv``
             for line in zf.open('top-1m.csv'):
@@ -171,3 +171,7 @@ def look_up_ranking(site):
             if md_tools.get_key(line) == site:
                 result.append(RankEntry.parse_std(line))
     return result
+
+def parse_tstamp(s, fmt=RankEntry.TS_FORMAT):
+    return datetime.datetime.strptime(s, fmt)
+
