@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import vincetools.compat as vt_comp
+
 from midas.tests.test_scripts import IntegrationTestCaseNG
 
 class MdAssociateTests(IntegrationTestCaseNG):
@@ -13,6 +15,9 @@ class MdAssociateTests(IntegrationTestCaseNG):
         baz_bar_c = self._make_company_json(self.companies_js[1])
         self.assertEqual(self._call_cmd(), 0)
         from midas.db import Association
-        self.assertEqual(self.session.query(Association).count(), 2)
-        result = self.session.query(Association).filter(company=foo_c).one()
+        self.assertEqual(self.session.query(Association).count(), 1)
+        result = self.session.query(Association).one()
         self.assertEqual(result.site, 'foo.example.com')
+
+if __name__ == '__main__':
+    vt_comp.unittest.main()
