@@ -81,5 +81,5 @@ def iter_sites_in_associations():
     """ Return all sites that can be found in the ``associations``
     table.
     """
-    for s in db_session().query(Associations.site).all():
+    for s in db_session().query(Association.site).all():
         yield s[0]
