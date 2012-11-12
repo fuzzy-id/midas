@@ -76,3 +76,10 @@ def q_c_w_hp_url():
     """
     return db_session().query(Company)\
         .filter(p_c_has_hp_url)
+
+def iter_sites_in_associations():
+    """ Return all sites that can be found in the ``associations``
+    table.
+    """
+    for s in db_session().query(Associations.site).all():
+        yield s[0]
