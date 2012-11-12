@@ -31,7 +31,7 @@ def interactive():
     interactively.
     """
     md_cfg.new_configparser()
-    md_cfg.read(os.path.join(os.environ['HOME']), '.midas')
+    md_cfg.read(os.path.join(os.environ['HOME'], '.midas'))
 
 ### Functions that work on MapReduce-style 'key\tvalue' lines ###
 
