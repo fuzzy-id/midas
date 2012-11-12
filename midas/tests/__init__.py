@@ -74,6 +74,9 @@ class ConfiguredDBTestCase(unittest.TestCase):
     def _make_company_json(self, js):
         from midas.db import Company
         c = Company.make_from_parsed_json(js)
-        self.session.add(c)
-        self.session.commit()
+        self._add_to_db(c)
         return c
+
+    def _add_to_db(self, obj):
+        self.session.add(obj)
+        self.session.commit()
