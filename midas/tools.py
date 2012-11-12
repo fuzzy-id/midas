@@ -161,7 +161,10 @@ def make_number_of_funding_rounds_plot(interactive=True):
     ys = [ cnt[x] for x in xs ]
     if not 'DISPLAY' in os.environ:
         import matplotlib as mpl
-        mpl.use('Agg')
+        try:
+            mpl.use('Agg')
+        except UserWarning:
+            pass
     import matplotlib.pyplot as plt
     fig = plt.figure()
 
@@ -174,6 +177,6 @@ def make_number_of_funding_rounds_plot(interactive=True):
     if interactive:
         plt.show()
     else:
-        img = os.path.join(md_config.get('location', 'home'),
+        img = os.path.join(md_cfg.get('location', 'home'),
                            'funding_rounds_per_date.png')
         plt.savefig(img, bbox_inches=0)
