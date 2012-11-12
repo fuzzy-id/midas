@@ -20,6 +20,7 @@ from vincetools.compat import str_type
 from vincetools.compat import urlparse
 import vincetools.compat as vt_comp
 
+import midas as md
 import midas.db as md_db
 import midas.config as md_cfg
 
@@ -180,3 +181,13 @@ def make_number_of_funding_rounds_plot(interactive=True):
                            'funding_rounds_per_date.png')
         plt.savefig(img, bbox_inches=0)
         plt.close()
+
+def iter_associated_time_series():
+    sites = set(md_db.iter_sites_in_associations())
+    sites_f = md_cfg.get('location', 'sites')
+    with vt_comp.GzipFile(site_f) as fp:
+        for line in fp:
+            site, tstamp, rank = line.decode().strip().split('\t')
+            if site in sites:
+                date = md.parse_tstamp(date)
+                yield RankEntry(site, date, rank)
