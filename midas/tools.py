@@ -153,9 +153,7 @@ def log_popen(cmd):
     return proc.returncode
 
 def make_number_of_funding_rounds_plot():
-    fr_dates = [ datetime.date(fr.funded_year, 
-                               fr.funded_month, 
-                               fr.funded_day) 
+    fr_dates = [ datetime.date(fr.funded_year, fr.funded_month, fr.funded_day)
                  for fr in md_db.q_fr_of_interest().all() ]
     cnt = count_by_key(fr_dates)
     xs = sorted(vt_comp.d_iterkeys(cnt))
