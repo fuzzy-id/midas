@@ -196,5 +196,5 @@ def iter_associated_time_series():
         for line in fp:
             site, tstamp, rank = line.decode().strip().split('\t')
             if site in sites:
-                date = md.parse_tstamp(date)
-                yield RankEntry(site, date, rank)
+                date = md.parse_tstamp(tstamp)
+                yield md.RankEntry(site, date, int(rank))
