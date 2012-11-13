@@ -202,7 +202,8 @@ def make_ts_length_plot(interactive=True):
                              for fr in md_db.q_fr_of_interest().all()
                              if fr.company.site is not None )
     data = [ list(filter(lambda e: e.date <= date, ts_d[site]))
-             for site, date in funds_site_date_iter ]
+             for site, date in funds_site_date_iter 
+             if site in ts_d ]
     data_n_empty = [ sorted(e.date for e in l)
                      for l in data if len(l) > 0 ]
     dates = all_dates()
