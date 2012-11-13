@@ -235,7 +235,7 @@ def make_ts_length_plot(interactive=True):
         plt.show()
     else:
         img = os.path.join(md_cfg.get('location', 'home'),
-                           'funding_rounds_per_date.png')
+                           'occurences_per_timedelta.png')
         plt.savefig(img, bbox_inches=0)
         plt.close()
     
