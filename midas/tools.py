@@ -201,13 +201,14 @@ def make_ts_length_plot(interactive=True):
                                                 fr.funded_day))
                              for fr in md_db.q_fr_of_interest().all()
                              if fr.company.site is not None )
-    data = [ list(filter(lambda e: e.date <= date, ts_d[site]))
+    data = ( list(filter(lambda e: e.date <= date, ts_d[site]))
              for site, date in funds_site_date_iter 
-             if site in ts_d ]
+             if site in ts_d )
     data_n_empty = [ sorted(e.date for e in l)
                      for l in data if len(l) > 0 ]
     dates = all_dates()
-    iter_pessimistic = ( iter_ts_until_gap(l, dates) for l in data_n_empty )
+    iter_pessimistic = ( list(iter_ts_until_gap(l, dates))
+                         for l in data_n_empty )
     cnt_pessimistic = count_by_key(iter_pessimistic, lambda l: l[0] - l[-1])
     cnt_optimistic = count_by_key(data_n_empty, lambda l: l[-1] - l[0])
     xs = sorted(cnt_pessimistic.keys())
