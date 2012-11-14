@@ -240,7 +240,7 @@ def make_ts_length_plot(interactive=True):
                            'occurences_per_timedelta.png')
         plt.savefig(img, bbox_inches=0)
         plt.close()
-    
+
 
 def iter_associated_time_series():
     sites = set(md_db.iter_sites_in_associations())
@@ -251,18 +251,6 @@ def iter_associated_time_series():
             if site in sites:
                 date = md.parse_tstamp(tstamp)
                 yield md.RankEntry(site, date, int(rank))
-
-def make_filter_by_date(start, end):
-    def date_filter(funding_round, entries):
-        funding_date = datetime.datetime(funding_round.funded_year,
-                                         funding_round.funded_month,
-                                         funding_round.funded_day)
-        for entry in entries:
-            if ((funding_date - start) 
-                <= entry.date 
-                <= (funding_date - end)):
-                yield entry
-    return date_filter
 
 def all_dates():
     return sorted( md.parse_tstamp(d.split('_')[-1].split('.')[0])
