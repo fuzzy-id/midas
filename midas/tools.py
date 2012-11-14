@@ -171,7 +171,7 @@ def make_number_of_funding_rounds_plot(interactive=True):
         import matplotlib
         try:
             matplotlib.use('Agg')
-        except UserWarning:
+        except UserWarning:  # pragma: no cover
             pass
     import matplotlib.pyplot as plt
     fig = plt.figure()
