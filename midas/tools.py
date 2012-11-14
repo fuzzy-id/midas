@@ -168,9 +168,9 @@ def make_number_of_funding_rounds_plot(interactive=True):
     xs = sorted(vt_comp.d_iterkeys(cnt))
     ys = [ cnt[x] for x in xs ]
     if not 'DISPLAY' in os.environ:
-        import matplotlib as mpl
+        import matplotlib
         try:
-            mpl.use('Agg')
+            matplotlib.use('Agg')
         except UserWarning:
             pass
     import matplotlib.pyplot as plt
