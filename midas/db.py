@@ -42,12 +42,12 @@ class Association(Base):
                                                          uselist=False),
                                   lazy='subquery')
 
-p_fr_after_dec_2010 = sa.and_(
+p_fr_after_mar_2011 = sa.and_(
     sa.or_(
-        FundingRound.funded_year > 2010,
+        FundingRound.funded_year > 2011,
         sa.and_(
-            FundingRound.funded_year == 2010,
-            FundingRound.funded_month == 12
+            FundingRound.funded_year == 2011,
+            FundingRound.funded_month >= 3
             )
         ),
     FundingRound.funded_month != None,
@@ -69,11 +69,11 @@ def q_fr_of_interest():
     """
     return db_session().query(FundingRound)\
         .filter(p_fr_in_a_angel_seed)\
-        .filter(p_fr_after_dec_2010)
+        .filter(p_fr_after_mar_2011)
 
 def q_c_w_hp_url():
     """ Return a query for all the companies with a homepage URL.
-    """
+8    """
     return db_session().query(Company)\
         .filter(p_c_has_hp_url)
 
