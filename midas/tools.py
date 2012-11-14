@@ -221,7 +221,7 @@ def make_ts_length_plot(interactive=True):
         import matplotlib
         try:
             matplotlib.use('Agg')
-        except UserWarning:
+        except UserWarning:  # pragma: no cover
             pass
     import matplotlib.pyplot as plt
     fig = plt.figure()
