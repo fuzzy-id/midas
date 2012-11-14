@@ -211,12 +211,16 @@ def make_ts_length_plot(interactive=True):
                          for l in data_n_empty )
     cnt_pessimistic = count_by_key(iter_pessimistic, lambda l: l[0] - l[-1])
     cnt_optimistic = count_by_key(data_n_empty, lambda l: l[-1] - l[0])
-    xs = sorted(cnt_pessimistic.keys())
-    ys_pessimistic = [ cnt_pessimistic[x] for x in xs ]
-    xs_pessimistic = [ x.days for x in xs ]
-    xs = sorted(cnt_optimistic.keys())
-    ys_optimistic = [ cnt_optimistic[x] for x in xs ]
-    xs_optimistic = [ x.days for x in xs ]
+    ys_pessimistic = [ 
+        cnt_pessimistic.get(datetime.timedelta(x), 0)
+        for x in range(min(vt_comp.d_iterkeys(cnt_pessimistic)).days,
+                       max(vt_comp.d_iterkeys(cnt_pessimistic)).days) 
+        ]
+    ys_optimistic = [ 
+        cnt_optimistic.get(datetime.timedelta(x), 0)
+        for x in range(min(vt_comp.d_iterkeys(cnt_optimistic)).days,
+                       max(vt_comp.d_iterkeys(cnt_optimistic)).days) 
+        ]
     if not 'DISPLAY' in os.environ:
         import matplotlib
         try:
@@ -226,18 +230,20 @@ def make_ts_length_plot(interactive=True):
     import matplotlib.pyplot as plt
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.plot(xs_pessimistic, ys_pessimistic, 'r.', 
-            label='w/o Gaps until Fund Raise')
-    ax.plot(xs_optimistic, ys_optimistic, 'b.',
-            label='First Occurence until Fund Raise')
+    ax.hist(ys_pessimistic, label='First Gap to Fund Raise',
+            cumulative=True, histtype='step', 
+            bins=len(ys_pessimistic)/15)
+    ax.hist(ys_optimistic, label='First Occurence to Fund Raise',
+            cumulative=True, histtype='step',
+            bins=len(ys_optimistic)/15)
     plt.grid(True)
-    plt.xlabel('Number of Days')
-    plt.ylabel('Occurences')
+    plt.xlabel('Available Days')
+    plt.ylabel('Count')
     if interactive:
         plt.show()
     else:
         img = os.path.join(md_cfg.get('location', 'home'),
-                           'occurences_per_timedelta.png')
+                           'hist_count_available_days.png')
         plt.savefig(img, bbox_inches=0)
         plt.close()
 
