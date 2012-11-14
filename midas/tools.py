@@ -180,7 +180,8 @@ def make_number_of_funding_rounds_plot(interactive=True):
     ax.plot(xs, ys)
     fig.autofmt_xdate()
     plt.grid(True)
-    plt.ylabel('Raised Fundings with Code A, Angel or Seed')
+    plt.ylabel('Funding Rounds with Code A, Angel or Seed')
+    plt.title('Number of Funding Rounds per Date')
     if interactive:
         plt.show()
     else:
