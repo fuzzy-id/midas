@@ -13,3 +13,5 @@ vincetools-*-py?.?.egg/
 
 # Files created when running sphinx (`make html' in the doc folder)
 doc/_build/*
+pig_*.log
+*$py.class

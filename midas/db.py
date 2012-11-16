@@ -36,17 +36,18 @@ class Association(Base):
     id = sa.Column(sa.Integer, primary_key=True)
     company_id = sa.Column(sa.Integer, sa.ForeignKey('companies.id'))
     site = sa.Column(sa.String)
-    company = sa_orm.relationship("Company", 
+    data_set = sa.Column(sa.Enum('test', 'training', name='data_type'))
+    company = sa_orm.relationship("Company",
                                   backref=sa_orm.backref('site', 
                                                          uselist=False),
                                   lazy='subquery')
 
-p_fr_after_dec_2010 = sa.and_(
+p_fr_after_mar_2011 = sa.and_(
     sa.or_(
-        FundingRound.funded_year > 2010,
+        FundingRound.funded_year > 2011,
         sa.and_(
-            FundingRound.funded_year == 2010,
-            FundingRound.funded_month == 12
+            FundingRound.funded_year == 2011,
+            FundingRound.funded_month >= 3
             )
         ),
     FundingRound.funded_month != None,
@@ -68,10 +69,17 @@ def q_fr_of_interest():
     """
     return db_session().query(FundingRound)\
         .filter(p_fr_in_a_angel_seed)\
-        .filter(p_fr_after_dec_2010)
+        .filter(p_fr_after_mar_2011)
 
 def q_c_w_hp_url():
     """ Return a query for all the companies with a homepage URL.
-    """
+8    """
     return db_session().query(Company)\
         .filter(p_c_has_hp_url)
+
+def iter_sites_in_associations():
+    """ Return all sites that can be found in the ``associations``
+    table.
+    """
+    for s in db_session().query(Association.site).all():
+        yield s[0]

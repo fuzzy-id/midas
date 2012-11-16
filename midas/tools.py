@@ -9,6 +9,7 @@ import functools
 import itertools
 import logging
 import operator
+import os
 import os.path
 import subprocess
 
@@ -19,10 +20,18 @@ from vincetools.compat import str_type
 from vincetools.compat import urlparse
 import vincetools.compat as vt_comp
 
+import midas as md
 import midas.db as md_db
 import midas.config as md_cfg
 
 logger = logging.getLogger(__name__)
+
+def interactive():
+    """ Saves us a few lines of typing when using midas
+    interactively.
+    """
+    md_cfg.new_configparser()
+    md_cfg.read(os.path.join(os.environ['HOME'], '.midas'))
 
 ### Functions that work on MapReduce-style 'key\tvalue' lines ###
 
@@ -152,14 +161,18 @@ def log_popen(cmd):
         raise subprocess.CalledProcessError(proc.returncode, cmd)
     return proc.returncode
 
-def make_number_of_funding_rounds_plot():
-    fr_dates = [ datetime.date(fr.funded_year, 
-                               fr.funded_month, 
-                               fr.funded_day) 
+def make_number_of_funding_rounds_plot(interactive=True):
+    fr_dates = [ datetime.date(fr.funded_year, fr.funded_month, fr.funded_day)
                  for fr in md_db.q_fr_of_interest().all() ]
     cnt = count_by_key(fr_dates)
     xs = sorted(vt_comp.d_iterkeys(cnt))
     ys = [ cnt[x] for x in xs ]
+    if not 'DISPLAY' in os.environ:
+        import matplotlib
+        try:
+            matplotlib.use('Agg')
+        except UserWarning:  # pragma: no cover
+            pass
     import matplotlib.pyplot as plt
     fig = plt.figure()
 
@@ -167,6 +180,95 @@ def make_number_of_funding_rounds_plot():
     ax.plot(xs, ys)
     fig.autofmt_xdate()
     plt.grid(True)
-    plt.xlabel('Date')
-    plt.ylabel('Number of Funding Rounds')
-    plt.show()
+    plt.ylabel('Funding Rounds with Code A, Angel or Seed')
+    plt.title('Number of Funding Rounds per Date')
+    if interactive:
+        plt.show()
+    else:
+        img = os.path.join(md_cfg.get('location', 'home'),
+                           'funding_rounds_per_date.png')
+        plt.savefig(img, bbox_inches=0)
+        plt.close()
+
+def make_ts_length_plot(interactive=True):
+    ts_d = dict(
+        (site, list(sub_iter))
+        for site, sub_iter in itertools.groupby(iter_associated_time_series(),
+                                                operator.attrgetter('site'))
+        )
+    funds_site_date_iter = ( (fr.company.site.site, 
+                              datetime.datetime(fr.funded_year,
+                                                fr.funded_month,
+                                                fr.funded_day))
+                             for fr in md_db.q_fr_of_interest().all()
+                             if fr.company.site is not None )
+    data = ( list(filter(lambda e: e.date <= date, ts_d[site]))
+             for site, date in funds_site_date_iter 
+             if site in ts_d )
+    data_n_empty = [ sorted(e.date for e in l)
+                     for l in data if len(l) > 0 ]
+    dates = all_dates()
+    iter_pessimistic = ( list(iter_ts_until_gap(l, dates))
+                         for l in data_n_empty )
+    cnt_pessimistic = count_by_key(iter_pessimistic, lambda l: l[0] - l[-1])
+    cnt_optimistic = count_by_key(data_n_empty, lambda l: l[-1] - l[0])
+    ys_pessimistic = [ 
+        cnt_pessimistic.get(datetime.timedelta(x), 0)
+        for x in range(min(vt_comp.d_iterkeys(cnt_pessimistic)).days,
+                       max(vt_comp.d_iterkeys(cnt_pessimistic)).days) 
+        ]
+    ys_optimistic = [ 
+        cnt_optimistic.get(datetime.timedelta(x), 0)
+        for x in range(min(vt_comp.d_iterkeys(cnt_optimistic)).days,
+                       max(vt_comp.d_iterkeys(cnt_optimistic)).days) 
+        ]
+    if not 'DISPLAY' in os.environ:
+        import matplotlib
+        try:
+            matplotlib.use('Agg')
+        except UserWarning:  # pragma: no cover
+            pass
+    import matplotlib.pyplot as plt
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.hist(ys_pessimistic, label='First Gap to Fund Raise',
+            cumulative=True, histtype='step', 
+            bins=len(ys_pessimistic)/15)
+    ax.hist(ys_optimistic, label='First Occurence to Fund Raise',
+            cumulative=True, histtype='step',
+            bins=len(ys_optimistic)/15)
+    plt.grid(True)
+    plt.xlabel('Available Days')
+    plt.ylabel('Count')
+    if interactive:
+        plt.show()
+    else:
+        img = os.path.join(md_cfg.get('location', 'home'),
+                           'hist_count_available_days.png')
+        plt.savefig(img, bbox_inches=0)
+        plt.close()
+
+
+def iter_associated_time_series():
+    sites = set(md_db.iter_sites_in_associations())
+    sites_f = md_cfg.get('location', 'sites')
+    with vt_comp.GzipFile(sites_f) as fp:
+        for line in fp:
+            site, tstamp, rank = line.decode().strip().split('\t')
+            if site in sites:
+                date = md.parse_tstamp(tstamp)
+                yield md.RankEntry(site, date, int(rank))
+
+def all_dates():
+    return sorted( md.parse_tstamp(d.split('_')[-1].split('.')[0])
+                   for d in os.listdir('/data0/alexa_files/') )
+
+def takewhile_common(list1, list2):
+    for a, b in zip(list1, list2):
+        if a != b:
+            break
+        yield a
+
+def iter_ts_until_gap(ts, all_dates):
+    first_common = all_dates.index(ts[-1])
+    return takewhile_common(ts[::-1], all_dates[first_common::-1])

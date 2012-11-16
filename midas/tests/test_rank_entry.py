@@ -97,6 +97,13 @@ class RankEntryTestCase(unittest.TestCase):
                    for e in self._get_target_cls().iter_alexa_file(f) ]
         self.assertEqual(result, TEST_ALEXA_TOP1M)
 
+    def test_format_and_parse_json(self):
+        a = self._make_one('foo', self.a_date, 2)
+        cls = self._get_target_cls()
+        b = cls.parse_json(a.format_json)
+        self.assertIsNot(a, b)
+        self.assertEqual(a, b)
+
 
 class LookUpRankingTests(ConfiguredDBTestCase):
     
