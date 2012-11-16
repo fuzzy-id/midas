@@ -84,20 +84,5 @@ class AssociateSitesToCompaniesTests(ConfiguredDBTestCase):
         self.assertEqual(self._run_it(), 
                          {'foo.example.com': [foo_comp]})
 
-class MakeAssociationsTests(ConfiguredDBTestCase):
-
-    def _run_it(self):
-        from midas.associate import make_associations
-        return make_associations()
-
-    def test_on_sample_data(self):
-        foo_comp = self._make_company_json(self.companies_js[0])
-        bar_comp = self._make_company_json(self.companies_js[1])
-        self._run_it()
-        from midas.db import Association
-        result = self.session.query(Association).one()
-        self.assertEqual(result.site, 'foo.example.com')
-        self.assertIs(result.company, foo_comp)
-
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
