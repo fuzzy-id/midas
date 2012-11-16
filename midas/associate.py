@@ -99,11 +99,3 @@ def grow_tree_from_sites_or_companies(iterable):
 
 def split_domain(site):
     return tuple(reversed(site.rsplit('.', 1)))
-
-def make_associations():
-    c2s = associate_companies_to_sites()
-    sess = md_db.db_session()
-    for company, sites in vt_comp.d_iteritems(c2s):
-        if len(sites) == 1:
-            sess.add(md_db.Association(site=sites[0], company=company))
-    sess.commit()
