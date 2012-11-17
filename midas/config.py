@@ -17,9 +17,11 @@ local_home = {env[HOME]}
 
 [location]
 data_home = %(local_home)s/md_data
-crunchbase_db = sqlite:///%(data_home)s/crunchbase_db.sql
+alexa_zip_files = %(data_home)s/alexa_zip_files
+alexa_files = %(data_home)s/alexa_files
 site_count = %(data_home)s/site_count.gz
 sites = %(data_home)s/sites.gz
+crunchbase_db = sqlite:///%(data_home)s/crunchbase_db.sql
 """.format(env=os.environ)
 
 _configparser = None
@@ -49,6 +51,12 @@ def read(files):
     :class:`configparser.ConfigParser` instance.
     """
     get_configparser().read(files)
+
+def set(section, option, value):
+    """ Set an option on the current
+    :class:`configparser.ConfigParser` instance. 
+    """
+    return get_configparser().set(section, option, value)
 
 def get(section, option):
     """ Get an option value for a given section from the current

@@ -19,8 +19,8 @@ crunchbase_db = sqlite:///:memory:
 """.format(_test_data_home)
 
 TEST_ALEXA_TOP1M_FILES = [
-    os.path.join(_test_data_home, 'alexa_files', 'top-1m-2012-09-03.csv.zip'),
-    os.path.join(_test_data_home, 'alexa_files', 'top-1m-2012-09-04.csv.zip'),
+    os.path.join(_test_data_home, 'alexa_zip_files', 'top-1m-2012-09-03.csv.zip'),
+    os.path.join(_test_data_home, 'alexa_zip_files', 'top-1m-2012-09-04.csv.zip'),
     ]
 
 TEST_ALEXA_TOP1M = [

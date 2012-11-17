@@ -9,6 +9,7 @@ import os.path
 import vincetools.compat as vt_comp
 
 import midas
+import midas.config as md_cfg
 import midas.scripts as md_scripts
 
 class AlexaZipToGzip(md_scripts.MDCommand):
@@ -19,17 +20,19 @@ class AlexaZipToGzip(md_scripts.MDCommand):
 
     def add_argument(self):
         self.parser.add_argument(
-            'src', nargs=1, metavar='SOURCE',
+            'src', nargs='?', metavar='SOURCE',
+            default=md_cfg.get('location', 'alexa_zip_files'),
             help='The directory where ZIP files can be found'
             )
         self.parser.add_argument(
-            'dst', nargs=1, metavar='DEST',
+            'dst', nargs='?', metavar='DEST',
+            default=md_cfg.get('location', 'alexa_files'),
             help='The directory to put the gzip files'
             )
 
     def run(self):
         zip_files = glob.glob(
-            os.path.join(self.args.src[0], 'top-1m-????-??-??.csv.zip')
+            os.path.join(self.args.src, 'top-1m-????-??-??.csv.zip')
             )
         zip_files.sort()
         for zip_f in zip_files:
@@ -37,7 +40,7 @@ class AlexaZipToGzip(md_scripts.MDCommand):
             f_iter = midas.RankEntry.iter_alexa_file(zip_f)
             first_entry = next(f_iter)
             gz_fname = 'top_1m_{0}.gz'.format(first_entry.tstamp)
-            gz_f = os.path.join(self.args.dst[0], gz_fname)
+            gz_f = os.path.join(self.args.dst, gz_fname)
             if os.path.isfile(gz_f):
                 print('SKIP', file=self.out)
             else:
