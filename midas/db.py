@@ -81,5 +81,16 @@ def iter_sites_in_associations():
     """ Return all sites that can be found in the ``associations``
     table.
     """
-    for s in db_session().query(Association.site).all():
-        yield s[0]
+    return db_session().query(Association.site).all()
+
+def iter_all_companies():
+    " Returns 100355 companies. "
+    return db_session().query(Company).all()
+
+def iter_interesting_companies():
+    """ Returns all companies having a funding round with
+    `round_level` ``angel``, ``seed`` or ``a`` since December 2010.
+    """
+    q = q_c_w_hp_url().join(q_fr_of_interest().subquery())
+    return q.all()
+

@@ -77,19 +77,6 @@ def domain(company_or_site):
         raise TypeError("cannot extract domain part: {0}".format(
                 type(company_or_site)))
 
-def iter_all_companies():
-    " Returns 100355 companies. "
-    sess = md_db.db_session()
-    return sess.query(md_db.Company).all()
-
-def iter_interesting_companies():
-    """ Returns all companies having a funding round with
-    `round_level` ``angel``, ``seed`` or ``a`` since December 2010.
-    """
-    q = md_db.q_c_w_hp_url()
-    q = q.join(md_db.q_fr_of_interest().subquery())
-    return q.all()
-
 SiteCount = collections.namedtuple('SiteCount', ['site', 'count'])
 
 def iter_site_counts(path=None):

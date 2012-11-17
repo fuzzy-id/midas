@@ -76,7 +76,7 @@ class DomainTests(unittest.TestCase):
 class IterCompaniesTests(ConfiguredDBTestCase):
 
     def _run_it(self):
-        from midas.tools import iter_all_companies
+        from midas.db import iter_all_companies
         return list(iter_all_companies())
 
     def test_iter_all_companies(self):
@@ -88,7 +88,7 @@ class IterCompaniesTests(ConfiguredDBTestCase):
 class IterInteresstingCompaniesTests(ConfiguredDBTestCase):
 
     def _run_it(self):
-        from midas.tools import iter_interesting_companies
+        from midas.db import iter_interesting_companies
         return list(iter_interesting_companies())
 
     def test_function_runs(self):
