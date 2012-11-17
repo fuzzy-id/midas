@@ -18,33 +18,13 @@ logger = logging.getLogger(__name__)
 DEFAULT_CONFIG = """
 [DEFAULT]
 user_name = {env[LOGNAME]}
-hdfs_home = hdfs://localhost:9000/user/%(user_name)s
 local_home = {env[HOME]}
-virt_env = %(local_home)s/py_envs/py26
-
-[job]
-mapper = /path/to/mapper
-num_mappers = 16
-reducer = /path/to/reducer
-num_reducers = 28
-input = /path/to/input
-output = optional
-compress_output = true
-files = optional
 
 [location]
-top1m_files = %(hdfs_home)s/alexa_files#alexa_files
-key_length = 3
 home = %(local_home)s/md_data
-key_files = %(home)s/key_files
 crunchbase_db = sqlite:///%(home)s/crunchbase_db.sql
 site_count = %(home)s/site_count.gz
 sites = %(home)s/sites.gz
-
-[hadoop]
-home = %(local_home)s/opt/hadoop-1.0.3
-exec = %(home)s/bin/hadoop
-streaming = %(home)s/contrib/streaming/hadoop-streaming-1.0.3.jar
 
 [loggers]
 keys = root
