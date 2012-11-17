@@ -33,12 +33,8 @@ setup(
         'console_scripts': [
             'md_config=midas.scripts.md_config:MDConfig.cmd',
             'md_associate=midas.scripts.md_associate:MDAssociate.cmd',
-            'md_launch=midas.scripts.md_launch:MDLaunch.cmd',
-            'md_alexa_to_key=midas.scripts.alexa_to_key_files:AlexaToKey.cmd',
-            'md_key_to_files=midas.scripts.alexa_to_key_files:KeyToFiles.cmd',
-            'md_alexa_to_names_and_one=midas.scripts.alexa_count_sites:AlexaCountSitesJob.run',
-            'md_sum_values=midas.scripts.alexa_count_names:SumValues.cmd',
-            'md_alexa_zip_to_gzip=midas.scripts.alexa_zip_to_gzip:AlexaZipToGzip.cmd'
+            'md_alexa_zip_to_gzip=midas.scripts.alexa_zip_to_gzip:AlexaZipToGzip.cmd',
+            'md_invert_index=midas.scripts.invert_index.InvertIndex.run'
             ]
         }
     )
