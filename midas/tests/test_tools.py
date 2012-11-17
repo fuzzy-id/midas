@@ -171,18 +171,5 @@ class MakePEmptyAttrTests(unittest.TestCase):
         o = self._make_obj_with_attr('bar')
         self.assertFalse(self._run_it(o))
 
-class IterAssociatedTimeSeriesTests(ConfiguredDBTestCase):
-
-    def test_on_test_data(self):
-        from midas.db import Association
-        c = self._make_company_json(self.companies_js[0])
-        a = Association(company=c, site='foo.example.com')
-        self._add_to_db(a)
-        from midas.tools import iter_associated_time_series
-        result = list(iter_associated_time_series())
-        self.assertEqual(len(result), 1)
-        assert result[0] == md_tests.TEST_ALEXA_TOP1M[0]
-        self.assertEqual(result[0], md_tests.TEST_ALEXA_TOP1M[0])
-
 if __name__ == '__main__':  # pragma: no cover
     vt_comp.unittest.main()
