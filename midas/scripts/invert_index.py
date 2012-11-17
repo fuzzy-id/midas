@@ -13,5 +13,5 @@ class InvertIndex(mr_job.MRJob):
     def reducer(self, site, tstamp_ranks):
         yield (site, sorted(tstamp_ranks))
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     InvertIndex.run()
