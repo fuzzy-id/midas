@@ -39,10 +39,6 @@ class RankEntryTestCase(unittest.TestCase):
         entry = self._make_one('foo', self.a_date, 1)
         self.assertEqual(entry.format_std, 'foo\t1900-01-01, 1')
 
-    def test_format_w_key(self):
-        entry = self._make_one('foo', self.a_date, 1)
-        self.assertEqual(entry.format_w_key, '0be\tfoo\t1900-01-01, 1')
-
     def test_str_representation(self):
         entry = self._make_one('foo', self.a_date, 1)
         self.assertEqual(str(entry), 'RankEntry(foo, 1900-01-01, 1)')
@@ -103,20 +99,3 @@ class RankEntryTestCase(unittest.TestCase):
         b = cls.parse_json(a.format_json)
         self.assertIsNot(a, b)
         self.assertEqual(a, b)
-
-
-class LookUpRankingTests(ConfiguredDBTestCase):
-    
-    def _run_it(self, site):
-        from midas import look_up_ranking
-        return look_up_ranking(site)
-
-    def test_lookup_foo(self):
-        result = self._run_it('foo.example.com')
-        self.assertEqual(list(vt_comp.imap(str, result)), 
-                         list(vt_comp.imap(str, TEST_ALEXA_TOP1M[:1])))
-
-    def test_lookup_baz_bar(self):
-        result = self._run_it('baz.bar.example.com/path')
-        self.assertEqual(list(vt_comp.imap(str, result)),
-                         list(vt_comp.imap(str, TEST_ALEXA_TOP1M[1:3])))
