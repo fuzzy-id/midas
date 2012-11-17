@@ -34,7 +34,7 @@ setup(
             'md_config=midas.scripts.md_config:MDConfig.cmd',
             'md_associate=midas.scripts.md_associate:MDAssociate.cmd',
             'md_alexa_zip_to_gzip=midas.scripts.alexa_zip_to_gzip:AlexaZipToGzip.cmd',
-            'md_invert_index=midas.scripts.invert_index.InvertIndex.run'
+            'md_invert_index=midas.scripts.invert_index:InvertIndex.run'
             ]
         }
     )
