@@ -21,5 +21,5 @@ class MdAssociateTests(IntegrationTestCaseNG):
         result = self.session.query(Association).one()
         self.assertEqual(result.site, 'foo.example.com')
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     vt_comp.unittest.main()
