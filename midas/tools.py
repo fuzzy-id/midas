@@ -24,7 +24,7 @@ import midas.db as md_db
 import midas.config as md_cfg
 
 
-def interactive():
+def interactive():  # pragma: no cover
     """ Saves us a few lines of typing when using midas
     interactively.
     """
