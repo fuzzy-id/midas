@@ -35,10 +35,6 @@ class RankEntryTestCase(unittest.TestCase):
         self.assertFalse(lesser >= greater)
         self.assertFalse(lesser >  greater)
 
-    def test_format_std(self):
-        entry = self._make_one('foo', self.a_date, 1)
-        self.assertEqual(entry.format_std, 'foo\t1900-01-01, 1')
-
     def test_str_representation(self):
         entry = self._make_one('foo', self.a_date, 1)
         self.assertEqual(str(entry), 'RankEntry(foo, 1900-01-01, 1)')

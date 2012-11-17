@@ -3,16 +3,10 @@
 """
 
 import datetime
-import hashlib
 import json
 import os.path
 
-from vincetools.compat import ZipFile
 import vincetools.compat as vt_comp
-
-import midas.config as md_cfg
-import midas.tools as md_tools
-
 
 class RankEntry(object):
     """ Return an entry of a ranking for `site`.
@@ -68,11 +62,6 @@ class RankEntry(object):
         return not self <= other
 
     @property
-    def format_std(self):
-        " `'site[TAB]tstamp,[SPACE]rank'`. "
-        return '{e.site}\t{e.tstamp}, {e.rank}'.format(e=self)
-
-    @property
     def tstamp(self):
         " Return the `date` formated as defined in :attr:`TS_FORMAT`. "
         return self.date.strftime(self.TS_FORMAT)
@@ -85,20 +74,6 @@ class RankEntry(object):
         return json.dumps({'site': self.site,
                            'rank': self.rank,
                            'tstamp': self.tstamp})
-
-    @classmethod
-    def parse_key(cls, s):
-        " Parse back :meth:`RankEntry.format_key`. "
-        key, std = s.strip().split('\t', 1)
-        return cls.parse_std(std)
-        
-    @classmethod
-    def parse_std(cls, s):
-        " Parse back :meth:`RankEntry.format_std`. "
-        site, tail = s.strip().split('\t')
-        date, rank = tail.split(', ')
-        date = parse_tstamp(date)
-        return cls(site=site, date=date, rank=rank)
 
     @classmethod
     def parse_json(cls, s):
@@ -124,12 +99,11 @@ class RankEntry(object):
         fname = fname.strip()
         fname_last = os.path.basename(fname)
         date = parse_tstamp(fname_last, cls.ALEXA_TS_FORMAT)
-        with ZipFile(fname) as zf:
+        with vt_comp.ZipFile(fname) as zf:
             # The archive contains one file named ``top-1m.csv``
             for line in zf.open('top-1m.csv'):
                 rank, name = line.decode().strip().split(',', 1)
                 yield cls(name, date, int(rank))
-
 
 def parse_tstamp(s, fmt=RankEntry.TS_FORMAT):
     return datetime.datetime.strptime(s, fmt)
