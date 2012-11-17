@@ -13,14 +13,13 @@ from vincetools.compat import StringIO
 #: The default configuration
 DEFAULT_CONFIG = """
 [DEFAULT]
-user_name = {env[LOGNAME]}
 local_home = {env[HOME]}
 
 [location]
-home = %(local_home)s/md_data
-crunchbase_db = sqlite:///%(home)s/crunchbase_db.sql
-site_count = %(home)s/site_count.gz
-sites = %(home)s/sites.gz
+data_home = %(local_home)s/md_data
+crunchbase_db = sqlite:///%(data_home)s/crunchbase_db.sql
+site_count = %(data_home)s/site_count.gz
+sites = %(data_home)s/sites.gz
 """.format(env=os.environ)
 
 _configparser = None

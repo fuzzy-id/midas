@@ -14,8 +14,7 @@ _test_data_home = os.path.join(_here, 'data')
 
 TEST_CONFIG = """
 [location]
-home = {0}
-key_length = 3
+data_home = {0}
 crunchbase_db = sqlite:///:memory:
 """.format(_test_data_home)
 
