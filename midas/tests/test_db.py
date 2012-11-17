@@ -15,3 +15,29 @@ class AssociationTests(ConfiguredDBTestCase):
         result = self.session.query(Company).one()
         self.assertIs(result.site, assoc)
 
+
+class IterCompaniesTests(ConfiguredDBTestCase):
+
+    def _run_it(self):
+        from midas.db import iter_all_companies
+        return list(iter_all_companies())
+
+    def test_iter_all_companies(self):
+        c1 = self._make_company_json({})
+        c2 = self._make_company_json({})
+        self.assertEqual(self._run_it(), [c1, c2])
+
+
+class IterInteresstingCompaniesTests(ConfiguredDBTestCase):
+
+    def _run_it(self):
+        from midas.db import iter_interesting_companies
+        return list(iter_interesting_companies())
+
+    def test_function_runs(self):
+        c = self._make_company_json({})
+        self.assertEqual(self._run_it(), [])
+
+    def test_company_w_two_funding_rounds_is_returned_once(self):
+        c = self._make_company_json(self.companies_js[0])
+        self.assertEqual(self._run_it(), [c])
