@@ -2,11 +2,9 @@
 
 from __future__ import print_function
 
-import datetime
 import itertools
 import glob
 import os.path
-import sys
 
 import vincetools.compat as vt_comp
 
@@ -18,8 +16,6 @@ class AlexaZipToGzip(md_scripts.MDCommand):
     files. The content is copied as is. The 'csv.zip' extension of the
     file is replaced by 'gz'.
     """
-
-    out = sys.stdout
 
     def add_argument(self):
         self.parser.add_argument(

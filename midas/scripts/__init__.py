@@ -21,6 +21,7 @@ class MDCommand(object):
     """
 
     POS_ARG = None
+    out = sys.stdout
 
     def __init__(self, argv=None):
         if argv is None:  # pragma: no cover

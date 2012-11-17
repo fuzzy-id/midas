@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import logging
-import sys
-
 from midas.scripts import MDCommand
 
 import midas.config as md_cfg
@@ -20,8 +17,6 @@ class MDConfig(MDCommand):
                 'nargs': '?',
                 'metavar': 'FILE',
                 'help': 'additional configuration file to read'}
-
-    out = sys.stdout
 
     def __init__(self, argv):
         MDCommand.__init__(self, argv)
