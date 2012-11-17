@@ -53,12 +53,6 @@ def collect_by_key(iterable, keyfunc):
         collected[keyfunc(item)].append(item)
     return collected
 
-def count_items(iterable):
-    try:
-        return len(iterable)
-    except TypeError:
-        return sum(1 for _ in iterable)
-
 def relation_stats(iterable):
     counter = count_by_key(iterable)
     return (sum(vt_comp.d_itervalues(counter)),
