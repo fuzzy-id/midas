@@ -10,9 +10,6 @@ import sys
 
 import midas.config as md_cfg
 
-logger = logging.getLogger(__name__)
-
-
 class MDCommand(object):
     """ Initializes the :class:`MDCommand` instance by passing `argv`
     to :meth:`parser` and configuring :mod:`logging`. If `argv` is
@@ -31,12 +28,6 @@ class MDCommand(object):
         self.args = self.parser.parse_args(argv[1:])
 
         md_cfg.read(os.path.expanduser(self.args.cfg))
-
-        self.args.verbosity.append(
-            logging.getLevelName(md_cfg.get('handler_console', 'level')))
-        md_cfg.set('handler_console', 'level', 
-                   logging.getLevelName(sum(self.args.verbosity)))
-        md_cfg.configure_logging()
     
     @classmethod
     def cmd(cls, argv=None):
@@ -63,13 +54,9 @@ class MDCommand(object):
         """
         if not hasattr(self, '_parser'):
             parser = argparse.ArgumentParser(description=self.__doc__)
-            parser.add_argument('-v', '--verbose', dest='verbosity',
-                                action='append_const', const=-10,
-                                help='decrease the severity of the console handler',
-                                default=[0])
             parser.add_argument('-q', '--quiet', dest='verbosity',
                                 action='append_const', const=10,
-                                help='increase the severity of the console handler')
+                                help='suppress messages to STDOUT')
             parser.add_argument('-c', '--cfg', default='~/.midas',
                                 help=' '.join(('the midas configuration file,',
                                                'default is "~/.midas"')))

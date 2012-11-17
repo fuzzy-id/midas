@@ -5,14 +5,10 @@ an :class:`vincetools.compat.ConfigParser` instance. But, in most of
 the cases this does not matter much.
 """
 
-import logging
-import logging.config
 import os
 
 from vincetools.compat import ConfigParser
 from vincetools.compat import StringIO
-
-logger = logging.getLogger(__name__)
 
 #: The default configuration
 DEFAULT_CONFIG = """
@@ -25,28 +21,6 @@ home = %(local_home)s/md_data
 crunchbase_db = sqlite:///%(home)s/crunchbase_db.sql
 site_count = %(home)s/site_count.gz
 sites = %(home)s/sites.gz
-
-[loggers]
-keys = root
-
-[handlers]
-keys = console
-
-[formatters]
-keys = generic
-
-[logger_root]
-level = DEBUG
-handlers = console
-
-[handler_console]
-class = StreamHandler
-args = (sys.stderr, )
-level = INFO
-formatter = generic
-
-[formatter_generic]
-format = %(asctime)s %(levelname)-5.5s %(message)s
 """.format(env=os.environ)
 
 _configparser = None
@@ -100,13 +74,3 @@ def getboolean(section, option):
     the current :class:`configparser.ConfigParser` instance.
     """
     return get_configparser().getboolean(section, option)
-
-def configure_logging():
-    """ Configure logging by passing the configuration of the current
-    :class:`configparser.ConfigParser` instance to
-    :mod:`logging.config`.
-    """
-    buf = StringIO()
-    get_configparser().write(buf)
-    buf.seek(0)
-    logging.config.fileConfig(buf, disable_existing_loggers=False)

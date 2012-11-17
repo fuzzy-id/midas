@@ -7,8 +7,6 @@ from midas.scripts import MDCommand
 
 import midas.config as md_cfg
 
-logger = logging.getLogger(__name__)
-
 class MDConfig(MDCommand):
     """ Read all configuration files, print the final configuration
     and exit. 

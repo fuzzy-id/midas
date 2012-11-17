@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import mrjob.util as mr_util
+
 import vincetools.compat as vt_comp
 
 class InvertIndexTests(vt_comp.unittest.TestCase):
@@ -34,6 +36,7 @@ class InvertIndexTests(vt_comp.unittest.TestCase):
         j = self._get_target_cls()(['-r', 'inline', '--no-conf', '-'])
         j.sandbox(stdin=stdin)
         with j.make_runner() as runner:
+            mr_util.log_to_null()
             runner.run()
             result = [ j.parse_output_line(line) 
                        for line in runner.stream_output() ]

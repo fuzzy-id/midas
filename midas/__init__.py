@@ -5,7 +5,6 @@
 import datetime
 import hashlib
 import json
-import logging
 import os.path
 
 from vincetools.compat import ZipFile
@@ -14,7 +13,6 @@ import vincetools.compat as vt_comp
 import midas.config as md_cfg
 import midas.tools as md_tools
 
-logger = logging.getLogger(__name__)
 
 class RankEntry(object):
     """ Return an entry of a ranking for `site`.

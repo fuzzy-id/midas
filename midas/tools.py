@@ -7,7 +7,6 @@ import collections
 import datetime
 import functools
 import itertools
-import logging
 import operator
 import os
 import os.path
@@ -24,7 +23,6 @@ import midas as md
 import midas.db as md_db
 import midas.config as md_cfg
 
-logger = logging.getLogger(__name__)
 
 def interactive():
     """ Saves us a few lines of typing when using midas
@@ -131,35 +129,6 @@ def make_p_empty_attr(attr_name):
     return p_empty_attr
 
 ### Useful miscelanious stuff ###
-
-def log_popen(cmd):
-    """ Run `cmd` with :class:`subprocess.Popen` and log lines from
-    stdout with severity INFO and lines from stderr with severity
-    CRITICAL.
-
-    Raises :exc:`subprocess.CalledProcessError` if the return code of
-    the subprocess is not `0`.
-    """
-    logger.info("Executing '{0}'".format(' '.join(cmd)))
-    proc = subprocess.Popen(cmd, 
-                            stdout=subprocess.PIPE, 
-                            stderr=subprocess.PIPE)
-
-    def _log_proc():
-       for l in proc.stderr:
-          logger.error(l.decode().strip())
-       for l in proc.stdout:
-          logger.info(l.decode().strip())
-
-    while proc.poll() is None:
-        _log_proc()
-    _log_proc()
-    proc.stdout.close()
-    proc.stderr.close()
-
-    if proc.returncode != 0:
-        raise subprocess.CalledProcessError(proc.returncode, cmd)
-    return proc.returncode
 
 def make_number_of_funding_rounds_plot(interactive=True):
     fr_dates = [ datetime.date(fr.funded_year, fr.funded_month, fr.funded_day)
