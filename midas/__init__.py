@@ -8,6 +8,14 @@ import os.path
 
 import vincetools.compat as vt_comp
 
+#: The standard format we use to produce and parse time-stamps.
+TS_FORMAT = '%Y-%m-%d'
+#: The time-stamp format as encoded in Alexa's Top1M files.
+ALEXA_TS_FORMAT = 'top-1m-%Y-%m-%d.csv.zip'
+
+def parse_tstamp(s, fmt=TS_FORMAT):
+    return datetime.datetime.strptime(s, fmt)
+
 class RankEntry(object):
     """ Return an entry of a ranking for `site`.
 
@@ -19,10 +27,6 @@ class RankEntry(object):
     Methods are provided both, to format a :class:`RankEntry` in
     standardized manners and to parse these formats back.
     """ 
-    #: The standard format we use to produce and parse time-stamps.
-    TS_FORMAT = '%Y-%m-%d'
-    #: The time-stamp format as encoded in Alexa's Top1M files.
-    ALEXA_TS_FORMAT = 'top-1m-%Y-%m-%d.csv.zip'
 
     def __init__(self, site, date, rank):
         self.site = site
@@ -64,7 +68,7 @@ class RankEntry(object):
     @property
     def tstamp(self):
         " Return the `date` formated as defined in :attr:`TS_FORMAT`. "
-        return self.date.strftime(self.TS_FORMAT)
+        return self.date.strftime(TS_FORMAT)
 
     @property
     def format_json(self):
@@ -98,13 +102,9 @@ class RankEntry(object):
         """
         fname = fname.strip()
         fname_last = os.path.basename(fname)
-        date = parse_tstamp(fname_last, cls.ALEXA_TS_FORMAT)
+        date = parse_tstamp(fname_last, ALEXA_TS_FORMAT)
         with vt_comp.ZipFile(fname) as zf:
             # The archive contains one file named ``top-1m.csv``
             for line in zf.open('top-1m.csv'):
                 rank, name = line.decode().strip().split(',', 1)
                 yield cls(name, date, int(rank))
-
-def parse_tstamp(s, fmt=RankEntry.TS_FORMAT):
-    return datetime.datetime.strptime(s, fmt)
-
