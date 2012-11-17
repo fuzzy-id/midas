@@ -50,12 +50,6 @@ def read(files):
     """
     get_configparser().read(files)
 
-def set(section, option, value):
-    """ Set an option on the current
-    :class:`configparser.ConfigParser` instance. 
-    """
-    return get_configparser().set(section, option, value)
-
 def get(section, option):
     """ Get an option value for a given section from the current
     :class:`configparser.ConfigParser` instance.
@@ -67,9 +61,3 @@ def getint(section, option):
     the current :class:`configparser.ConfigParser` instance.
     """
     return get_configparser().getint(section, option)
-
-def getboolean(section, option):
-    """ Get an option value as :class:`bool` for a given section from
-    the current :class:`configparser.ConfigParser` instance.
-    """
-    return get_configparser().getboolean(section, option)
