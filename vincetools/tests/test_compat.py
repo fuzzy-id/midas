@@ -17,7 +17,9 @@ class StrTypeTests(unittest.TestCase):
         return str_type
 
     def test_unicode(self):
-        self.assertIsInstance(u'foo', self._get())
+        from vincetools.compat import PY3K
+        if not PY3K:
+            self.assertIsInstance(unicode('foo'), self._get())
 
     def test_str(self):
         self.assertIsInstance('foo', self._get())
@@ -102,6 +104,17 @@ class IFilterTests(unittest.TestCase):
         result = self._get()(lambda _: True, range(4))
         self.assertNotIsInstance(result, list)
 
+
+class OrderedDictTests(unittest.TestCase):
+
+    def _get_cls(self):
+        from vincetools.compat import OrderedDict
+        return OrderedDict
+
+    def test_basic_behavior(self):
+        data = [('foo', 1), ('bar', 2)]
+        od = self._get_cls()(data)
+        self.assertEqual(list(od.items()), data)
 
 class ConfigParserTests(unittest.TestCase):
 
