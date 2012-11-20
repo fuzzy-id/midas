@@ -49,6 +49,11 @@ if PY3K:  # pragma: no cover
 else:
     from StringIO import StringIO
 
+if PY26:
+    from ordereddict import OrderedDict
+else:
+    from collections import OrderedDict
+
 if PY3K:  # pragma: no cover
     from collections import UserList
 else:
