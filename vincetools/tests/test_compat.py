@@ -31,11 +31,6 @@ class CompBytesTests(unittest.TestCase):
         from vincetools.compat import comp_bytes
         return comp_bytes
 
-    @unittest.skip('wrong approach')
-    def test_german_umlaut(self):
-        self.assertEqual(self._get()('ä', 'utf-8'),
-                         '\xc3\xa4')
-
 
 class DIterKeysTests(unittest.TestCase):
 
