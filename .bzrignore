@@ -1,1 +1,3 @@
 vincetools.egg-info
+.tox/
+.coverage
