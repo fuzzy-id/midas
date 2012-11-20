@@ -10,7 +10,7 @@ PY26 = sys.version_info[:2] == (2, 6)
 #: True if the current interpreter is of version 3
 PY3K = sys.version_info[0] == 3
 
-if PY3K:
+if PY3K:  # pragma: no cover
     str_type = str
 else:
     str_type = (str, unicode)
@@ -49,7 +49,7 @@ if PY3K:  # pragma: no cover
 else:
     from StringIO import StringIO
 
-if PY26:
+if PY26:  # pragma: no cover
     from ordereddict import OrderedDict
 else:
     from collections import OrderedDict
