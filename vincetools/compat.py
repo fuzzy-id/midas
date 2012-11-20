@@ -79,6 +79,9 @@ if PY26:  # pragma: no cover
 else:
     import unittest
 
+if not PY3K:
+    unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
+
 if PY3K:  # pragma: no cover
     from configparser import ConfigParser
 else:

@@ -6,6 +6,7 @@ import os
 import os.path
 import shutil
 import tempfile
+import types
 
 from vincetools.compat import unittest
 
@@ -110,6 +111,18 @@ class OrderedDictTests(unittest.TestCase):
         data = [('foo', 1), ('bar', 2)]
         od = self._get_cls()(data)
         self.assertEqual(list(od.items()), data)
+
+
+class UnittestTests(unittest.TestCase):
+
+    def _get_target(self):
+        from vincetools.compat import unittest
+        return unittest
+
+    def test_provides_assertRaisesRegex(self):
+        with self.assertRaisesRegex(TypeError, 'list indices .*'):
+            list()['foo']
+
 
 class ConfigParserTests(unittest.TestCase):
 
