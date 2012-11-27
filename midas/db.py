@@ -81,7 +81,8 @@ def iter_sites_in_associations():
     """ Return all sites that can be found in the ``associations``
     table.
     """
-    return db_session().query(Association.site).all()
+    for site in db_session().query(Association.site).all():
+        yield site[0]
 
 def iter_all_companies():
     " Returns 100355 companies. "
