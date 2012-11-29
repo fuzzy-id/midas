@@ -5,10 +5,9 @@ import matplotlib.pyplot as plt
 
 def get_available_days_before_fr(ts, fr):
     site, date, code = fr
-    ts_site = ts[site][:date].dropna()
-    if ts_site.count() > 0:
-        return code, (ts_site.index[-1] - ts_site.index[0]).days
-    return code, 0
+    date = pandas.Timestamp(date)
+    ts_site = ts[site].dropna()
+    return code, (ts_site.index[0] - date).days
 
 def make_available_days_before_funding_rounds_plot(data):
     arr = [numpy.array(data[key]) for key in ('seed', 'angel', 'a')]
