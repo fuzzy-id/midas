@@ -4,7 +4,6 @@ import os
 import os.path
 import shutil
 import tempfile
-import types
 
 from midas.compat import unittest
 
