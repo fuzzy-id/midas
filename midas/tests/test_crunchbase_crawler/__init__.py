@@ -11,7 +11,6 @@ import sys
 
 from midas.compat import StringIO
 from midas.compat import comp_bytes
-from midas.compat import unittest
 
 logging.basicConfig(level=logging.CRITICAL)
 
