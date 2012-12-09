@@ -157,7 +157,7 @@ class ZipFileTests(unittest.TestCase):
         from midas.compat import ZipFile
         return ZipFile
 
-    def test_as_context_manager(self):
+    def test_usable_as_context_manager(self):
         with tempfile.NamedTemporaryFile() as fp:
             with self._get()(fp.name, 'w'):
                 pass
