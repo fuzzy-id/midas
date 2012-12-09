@@ -138,7 +138,7 @@ class GzipFileTests(unittest.TestCase):
         from midas.compat import GzipFile
         return GzipFile
 
-    def test_writing(self):
+    def test_write_and_read(self):
         tmpfile = os.path.join(self.tmpd, 'foo.gz')
         with self._get_cls()(tmpfile, 'wb') as fp:
             fp.write(b'bar')
