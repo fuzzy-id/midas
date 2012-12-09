@@ -28,6 +28,7 @@ class SqlTestCase(unittest.TestCase):
     def tearDown(self):
         Session.remove()
 
+
 class FundingTests(SqlTestCase):
 
     def _get_target_class(self):
@@ -60,6 +61,7 @@ class FundingTests(SqlTestCase):
             self._make_one(foo='bar')
         with self.assertRaises(TypeError):
             self._make_one(**{'foo': 'bar'})
+
 
 class CompanyTests(SqlTestCase):
 
