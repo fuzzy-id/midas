@@ -153,7 +153,7 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
         self.assertEqual(self._test_it(self.tmpd), 0)
         try:
             urlopen.assert_called_with(BAR_URL)
-        except AssertionError:
+        except AssertionError:  # pragma: no cover
             urlopen.assert_called_with(FOO_URL)
         listing = os.listdir(self.tmpd)
         listing.sort()
