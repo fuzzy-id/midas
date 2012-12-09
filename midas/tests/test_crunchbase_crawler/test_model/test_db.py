@@ -5,11 +5,11 @@ import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm.exc import MultipleResultsFound
 
+from midas.compat import unittest
 from midas.tests.test_crunchbase_crawler import COMPANIES_URL
 from midas.tests.test_crunchbase_crawler import FOO_URL
 from midas.tests.test_crunchbase_crawler import MEM_DB
 from midas.tests.test_crunchbase_crawler import prepare_url_open
-from midas.tests.test_crunchbase_crawler import unittest
 from midas.crunchbase_crawler.model.db import Session
 from midas.crunchbase_crawler.model.db import Base
 
