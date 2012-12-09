@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-<<<<<<< HEAD
 import sys
 
 from setuptools import find_packages
