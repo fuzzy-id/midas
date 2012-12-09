@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+<<<<<<< HEAD
 import sys
 
 from setuptools import find_packages
@@ -8,6 +9,7 @@ from setuptools import setup
 py_version = sys.version_info[:2]
 
 install_requires = ['sqlalchemy']
+install_requires.append('ordereddict')
 
 tests_require = ['mock']
 
