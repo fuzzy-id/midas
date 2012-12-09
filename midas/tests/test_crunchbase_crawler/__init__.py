@@ -2,14 +2,11 @@
 
 from io import BytesIO
 
-import collections
 import json
 import logging
 import mock
 import os.path
-import sys
 
-from midas.compat import StringIO
 from midas.compat import comp_bytes
 
 logging.basicConfig(level=logging.CRITICAL)
