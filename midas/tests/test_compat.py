@@ -142,8 +142,10 @@ class GzipFileTests(unittest.TestCase):
         tmpfile = os.path.join(self.tmpd, 'foo.gz')
         with self._get_cls()(tmpfile, 'wb') as fp:
             fp.write(b'bar')
+
         self.assertEqual(os.listdir(self.tmpd), ['foo.gz'])
         self.assertNotEqual(os.stat(tmpfile).st_size, 0)
+
         with self._get_cls()(tmpfile) as fp:
             result = fp.readlines()
         self.assertEqual(result, [b'bar'])
