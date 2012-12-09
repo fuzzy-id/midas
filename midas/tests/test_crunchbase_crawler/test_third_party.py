@@ -3,7 +3,7 @@
 import json
 import threading
 
-from crawlcrunch.tests import unittest
+from midas.compat import unittest
 
 
 class StdLibTests(unittest.TestCase):

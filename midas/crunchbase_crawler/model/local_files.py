@@ -3,8 +3,8 @@
 import json
 import os.path
 
-from vincetools.compat import GzipFile
-from crawlcrunch.model import CrunchBaseFetcherMixin
+from midas.compat import GzipFile
+from midas.crunchbase_crawler.model import CrunchBaseFetcherMixin
 
 class LocalFilesRoot(object):
     """ This is the root object of all data traversal.

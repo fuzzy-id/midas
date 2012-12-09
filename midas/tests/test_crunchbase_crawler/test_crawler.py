@@ -8,22 +8,22 @@ import threading
 
 import mock
 
-from vincetools.compat import GzipFile
-from vincetools.compat import HTTPError
-from vincetools.compat import StringIO
+from midas.compat import GzipFile
+from midas.compat import HTTPError
+from midas.compat import StringIO
 
-from crawlcrunch.tests import FOO_URL
-from crawlcrunch.tests import DummyCompany
-from crawlcrunch.tests import DummyCompanyList
-from crawlcrunch.tests import DummyRoot
-from crawlcrunch.tests import prepare_url_open
-from crawlcrunch.tests import unittest
+from midas.tests.test_crunchbase_crawler import FOO_URL
+from midas.tests.test_crunchbase_crawler import DummyCompany
+from midas.tests.test_crunchbase_crawler import DummyCompanyList
+from midas.tests.test_crunchbase_crawler import DummyRoot
+from midas.tests.test_crunchbase_crawler import prepare_url_open
+from midas.tests.test_crunchbase_crawler import unittest
 
 
 class UpdaterTests(unittest.TestCase):
 
     def test_update_on_companies_list_is_called(self):
-        from crawlcrunch.crawler import Updater
+        from midas.crunchbase_crawler.crawler import Updater
         dcl = DummyCompanyList()
         dcl.list_not_local.return_value = []
         updater = Updater(dcl)
@@ -34,7 +34,7 @@ class UpdaterTests(unittest.TestCase):
 class FetcherTests(unittest.TestCase):
 
     def _test_it(self, company):
-        from crawlcrunch.crawler import Fetcher
+        from midas.crunchbase_crawler.crawler import Fetcher
         semaphore = mock.MagicMock()
         cf = Fetcher(company, semaphore)
         cf.run()
@@ -97,10 +97,10 @@ class IntegrationTests(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmpd)
 
-    @mock.patch('crawlcrunch.model.urlopen')
+    @mock.patch('midas.crunchbase_crawler.model.urlopen')
     def test_company_fetcher_and_company_list(self, urlopen):
-        from crawlcrunch.crawler import Fetcher
-        from crawlcrunch.model.local_files import CompanyList
+        from midas.crunchbase_crawler.crawler import Fetcher
+        from midas.crunchbase_crawler.model.local_files import CompanyList
         prepare_url_open(urlopen, {FOO_URL: {'foo': 'bar'}, })
         dump_file = os.path.join(self.tmpd, 'foo.json.gz')
         cl = CompanyList(DummyRoot(), self.tmpd)
@@ -112,7 +112,7 @@ class IntegrationTests(unittest.TestCase):
             self.assertEqual(json.loads(fp.read().decode()), {'foo': 'bar'})
 
     def test_crawler_and_company_fetcher_play_together(self):
-        from crawlcrunch.crawler import Updater
+        from midas.crunchbase_crawler.crawler import Updater
         cl = DummyCompanyList()
         cl.list_not_local.return_value = (cl.get('facebook'), )
         crawler = Updater(cl)

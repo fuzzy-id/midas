@@ -4,7 +4,7 @@ from __future__ import print_function
 
 import pprint
 
-from vincetools.compat import comp_unicode
+from midas.compat import comp_unicode
 
 
 class ModelInspector(object):

@@ -20,7 +20,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import MultipleResultsFound
 from sqlalchemy.orm.exc import NoResultFound
 
-from crawlcrunch.model import CrunchBaseFetcherMixin
+from midas.crunchbase_crawler.model import CrunchBaseFetcherMixin
 
 Base = declarative_base()
 Session = scoped_session(sessionmaker())

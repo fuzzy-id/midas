@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from vincetools.compat import comp_unicode
-from vincetools.compat import unittest
+from midas.compat import comp_unicode
+from midas.compat import unittest
 
 
 class BaseModelTests(unittest.TestCase):
 
     def _get_target_class(self):
-        from crawlcrunch.model.inspection import Model
+        from midas.crunchbase_crawler.model.inspection import Model
         return Model
 
     def _make_model(self, m):
@@ -156,7 +156,7 @@ class MergeModelTests(BaseModelTests):
 class ModelInspectorTests(BaseModelTests):
 
     def __get_target_class(self):
-        from crawlcrunch.model.inspection import ModelInspector
+        from midas.crunchbase_crawler.model.inspection import ModelInspector
         return ModelInspector
 
     def _make_one(self, obj_iter, root_access=(lambda x: x)):

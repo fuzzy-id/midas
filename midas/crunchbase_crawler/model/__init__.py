@@ -3,7 +3,7 @@
 import logging
 import json
 
-from vincetools.compat import urlopen
+from midas.compat import urlopen
 
 
 class CrunchBaseFetcherMixin(object):

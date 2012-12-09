@@ -8,17 +8,17 @@ import shutil
 import tempfile
 import types
 
-from vincetools.compat import unittest
+from midas.compat import unittest
 
 
 class StrTypeTests(unittest.TestCase):
 
     def _get(self):
-        from vincetools.compat import str_type
+        from midas.compat import str_type
         return str_type
 
     def test_unicode(self):
-        from vincetools.compat import PY3K
+        from midas.compat import PY3K
         if not PY3K:
             self.assertIsInstance(unicode('foo'), self._get())
 
@@ -36,7 +36,7 @@ class CompBytesTests(unittest.TestCase):
 class DIterKeysTests(unittest.TestCase):
 
     def _get(self):
-        from vincetools.compat import d_iterkeys
+        from midas.compat import d_iterkeys
         return d_iterkeys
 
     def test_is_not_a_list(self):
@@ -51,7 +51,7 @@ class DIterKeysTests(unittest.TestCase):
 class DIterValuesTests(unittest.TestCase):
 
     def _get(self):
-        from vincetools.compat import d_itervalues
+        from midas.compat import d_itervalues
         return d_itervalues
 
     def test_is_not_a_list(self):
@@ -66,7 +66,7 @@ class DIterValuesTests(unittest.TestCase):
 class DIterItemsTests(unittest.TestCase):
 
     def _get(self):
-        from vincetools.compat import d_iteritems
+        from midas.compat import d_iteritems
         return d_iteritems
 
     def test_is_not_a_list(self):
@@ -82,7 +82,7 @@ class DIterItemsTests(unittest.TestCase):
 class IMapTests(unittest.TestCase):
 
     def _get(self):
-        from vincetools.compat import imap
+        from midas.compat import imap
         return imap
 
     def test_is_not_a_list(self):
@@ -93,7 +93,7 @@ class IMapTests(unittest.TestCase):
 class IFilterTests(unittest.TestCase):
 
     def _get(self):
-        from vincetools.compat import ifilter
+        from midas.compat import ifilter
         return ifilter
 
     def test_is_not_a_list(self):
@@ -104,7 +104,7 @@ class IFilterTests(unittest.TestCase):
 class OrderedDictTests(unittest.TestCase):
 
     def _get_cls(self):
-        from vincetools.compat import OrderedDict
+        from midas.compat import OrderedDict
         return OrderedDict
 
     def test_basic_behavior(self):
@@ -127,7 +127,7 @@ class UnittestTests(unittest.TestCase):
 class ConfigParserTests(unittest.TestCase):
 
     def _get_cls(self):
-        from vincetools.compat import ConfigParser
+        from midas.compat import ConfigParser
         return ConfigParser
 
     def test_read_string_available(self):
@@ -145,7 +145,7 @@ class GzipFileTests(unittest.TestCase):
         shutil.rmtree(self.tmpd)
 
     def _get_cls(self):
-        from vincetools.compat import GzipFile
+        from midas.compat import GzipFile
         return GzipFile
 
     def test_writing(self):
@@ -162,7 +162,7 @@ class GzipFileTests(unittest.TestCase):
 class ZipFileTests(unittest.TestCase):
 
     def _get(self):
-        from vincetools.compat import ZipFile
+        from midas.compat import ZipFile
         return ZipFile
 
     def test_as_context_manager(self):

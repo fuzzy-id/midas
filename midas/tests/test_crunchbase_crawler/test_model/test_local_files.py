@@ -8,15 +8,15 @@ import os.path
 import shutil
 import tempfile
 
-from vincetools.compat import GzipFile
-from vincetools.compat import StringIO
+from midas.compat import GzipFile
+from midas.compat import StringIO
+from midas.compat import unittest
 
-from crawlcrunch.tests import COMPANIES_URL
-from crawlcrunch.tests import EXAMPLES_PATH
-from crawlcrunch.tests import FOO_URL
-from crawlcrunch.tests import DummyRoot
-from crawlcrunch.tests import prepare_url_open
-from crawlcrunch.tests import unittest
+from midas.tests.test_crunchbase_crawler import COMPANIES_URL
+from midas.tests.test_crunchbase_crawler import EXAMPLES_PATH
+from midas.tests.test_crunchbase_crawler import FOO_URL
+from midas.tests.test_crunchbase_crawler import DummyRoot
+from midas.tests.test_crunchbase_crawler import prepare_url_open
 
 import mock
 
@@ -24,11 +24,11 @@ import mock
 class LocalFilesRootTests(unittest.TestCase):
 
     def _make_one(self, path):
-        from crawlcrunch.model.local_files import LocalFilesRoot
+        from midas.crunchbase_crawler.model.local_files import LocalFilesRoot
         return LocalFilesRoot(path)
 
     def test_companies_list_creation(self):
-        from crawlcrunch.model.local_files import CompanyList
+        from midas.crunchbase_crawler.model.local_files import CompanyList
         root = self._make_one('foo')
         self.assertIsInstance(root.get('companies'), CompanyList)
 
@@ -36,7 +36,7 @@ class LocalFilesRootTests(unittest.TestCase):
 class CompanyTests(unittest.TestCase):
 
     def _make_one(self, local_data, name):
-        from crawlcrunch.model.local_files import Company
+        from midas.crunchbase_crawler.model.local_files import Company
         return Company(local_data, name)
 
     def test_url_generation(self):
@@ -44,7 +44,7 @@ class CompanyTests(unittest.TestCase):
         self.assertEqual(company.query_url(), FOO_URL)
 
     def _make_update(self):
-        from crawlcrunch.model.local_files import ZippedJsonFile
+        from midas.crunchbase_crawler.model.local_files import ZippedJsonFile
         with tempfile.NamedTemporaryFile() as fp:
             local_data = ZippedJsonFile(fp.name)
             company = self._make_one(local_data, 'foo')
@@ -55,7 +55,7 @@ class CompanyTests(unittest.TestCase):
         c = self._make_one(None, 'foo')
         self.assertEqual(str(c), 'Company( foo )')
 
-    @mock.patch('crawlcrunch.model.urlopen')
+    @mock.patch('midas.crunchbase_crawler.model.urlopen')
     def test_update(self, urlopen):
         prepare_url_open(urlopen,
                          {FOO_URL: {'foo': 'bar', }})
@@ -64,7 +64,7 @@ class CompanyTests(unittest.TestCase):
         self.assertEqual(company.data, {'foo': 'bar'})
         urlopen.assert_called_once_with(FOO_URL)
 
-    @mock.patch('crawlcrunch.model.urlopen')
+    @mock.patch('midas.crunchbase_crawler.model.urlopen')
     def test_control_chars_in_response(self, urlopen):
         buf = BytesIO(b'["\x12fo\x14", "ba\x0b"]')
         buf.seek(0)
@@ -76,7 +76,7 @@ class CompanyTests(unittest.TestCase):
 class CompanyListTests(unittest.TestCase):
 
     def _make_one(self, path):
-        from crawlcrunch.model.local_files import CompanyList
+        from midas.crunchbase_crawler.model.local_files import CompanyList
         return CompanyList(DummyRoot(), path)
 
     def test_local_list_when_company_files_empty(self):
@@ -91,11 +91,11 @@ class CompanyListTests(unittest.TestCase):
     def test_get(self):
         cl = self._make_one(EXAMPLES_PATH['company_files_empty'])
         result = cl.get('de-revolutione')
-        from crawlcrunch.model.local_files import Company
+        from midas.crunchbase_crawler.model.local_files import Company
         self.assertIsInstance(result, Company)
         self.assertEqual(str(result), 'Company( de-revolutione )')
 
-    @mock.patch('crawlcrunch.model.urlopen')
+    @mock.patch('midas.crunchbase_crawler.model.urlopen')
     def test_update(self, urlopen):
         prepare_url_open(urlopen,
                          {COMPANIES_URL: [{'permalink': 'foo'}]})
@@ -112,7 +112,7 @@ class ZippedJsonFileTests(unittest.TestCase):
         shutil.rmtree(self.tmpd)
 
     def _make_one(self, path):
-        from crawlcrunch.model.local_files import ZippedJsonFile
+        from midas.crunchbase_crawler.model.local_files import ZippedJsonFile
         return ZippedJsonFile(path)
 
     def test_dump_and_load(self):

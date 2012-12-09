@@ -8,16 +8,16 @@ import shutil
 import sys
 import tempfile
 
-from vincetools.compat import GzipFile
-from vincetools.compat import StringIO
+from midas.compat import GzipFile
+from midas.compat import StringIO
 
-from crawlcrunch.tests import BAR_URL
-from crawlcrunch.tests import COMPANIES_URL
-from crawlcrunch.tests import EXAMPLES_PATH
-from crawlcrunch.tests import FOO_URL
-from crawlcrunch.tests import MEM_DB
-from crawlcrunch.tests import prepare_url_open
-from crawlcrunch.tests import unittest
+from midas.tests.test_crunchbase_crawler import BAR_URL
+from midas.tests.test_crunchbase_crawler import COMPANIES_URL
+from midas.tests.test_crunchbase_crawler import EXAMPLES_PATH
+from midas.tests.test_crunchbase_crawler import FOO_URL
+from midas.tests.test_crunchbase_crawler import MEM_DB
+from midas.tests.test_crunchbase_crawler import prepare_url_open
+from midas.tests.test_crunchbase_crawler import unittest
 
 import mock
 
@@ -32,7 +32,7 @@ class ArgumentParserTests(unittest.TestCase):
         sys.stderr = self._old_err
 
     def _make_one(self, *args):
-        from crawlcrunch.scripts.cc_update import CCUpdateCommand
+        from midas.scripts.cc_update import CCUpdateCommand
         effargs = ['crawlcrunch', ]
         effargs.extend(args)
         return CCUpdateCommand(effargs)
@@ -91,7 +91,7 @@ class MainTests(unittest.TestCase):
         sys.stderr = self._old_err
 
     def _test_it(self, *args):
-        from crawlcrunch.scripts.cc_update import main
+        from midas.scripts.cc_update import main
         effargs = ['cc_update']
         effargs.extend(args)
         return main(effargs)
@@ -121,7 +121,7 @@ class MainTests(unittest.TestCase):
 class MainIntegrationTestCase(unittest.TestCase):
 
     def _test_it(self, *args):
-        from crawlcrunch.scripts.cc_update import main
+        from midas.scripts.cc_update import main
         effargs = ['cc_update', '-qqq']
         effargs.extend(args)
         return main(effargs)
@@ -135,7 +135,7 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
     def tearDown(self):
         shutil.rmtree(self.tmpd)
 
-    @mock.patch('crawlcrunch.model.urlopen')
+    @mock.patch('midas.crunchbase_crawler.model.urlopen')
     def test_on_empty_companies_list(self, urlopen):
         url_return = {COMPANIES_URL: []}
         prepare_url_open(urlopen, url_return)
@@ -143,7 +143,7 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
         urlopen.assert_called_once_with(COMPANIES_URL)
         self.assertEqual(os.listdir(self.tmpd), [])
 
-    @mock.patch('crawlcrunch.model.urlopen')
+    @mock.patch('midas.crunchbase_crawler.model.urlopen')
     def test_on_companies_list_with_elements(self, urlopen):
         prepare_url_open(urlopen,
                          {COMPANIES_URL: [{'permalink': 'foo', },
@@ -171,16 +171,16 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
 
 class MainSqlIntegrationTests(MainIntegrationTestCase):
 
-    @mock.patch('crawlcrunch.model.urlopen')
+    @mock.patch('midas.crunchbase_crawler.model.urlopen')
     def test_on_empty_companies_list(self, urlopen):
         url_return = {COMPANIES_URL: []}
         prepare_url_open(urlopen, url_return)
         self.assertEqual(self._test_it('--sql', MEM_DB), 0)
         urlopen.assert_called_once_with(COMPANIES_URL)
 
-    @mock.patch('crawlcrunch.model.urlopen')
+    @mock.patch('midas.crunchbase_crawler.model.urlopen')
     def test_on_companies_list_with_elements(self, urlopen):
-        from crawlcrunch.model.db import DataBaseRoot
+        from midas.crunchbase_crawler.model.db import DataBaseRoot
         prepare_url_open(urlopen,
                          {COMPANIES_URL: [{'permalink': 'foo', },
                                           {'permalink': 'bar', }],

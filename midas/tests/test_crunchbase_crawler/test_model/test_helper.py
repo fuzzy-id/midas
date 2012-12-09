@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from crawlcrunch.tests import unittest
+from midas.compat import unittest
 
 COMPANY_DATA = {'acquisition': {},
                 'acquisitions': [],
@@ -54,9 +54,9 @@ COMPANY_DATA = {'acquisition': {},
 class LocalFileCompanyToDbModelTests(unittest.TestCase):
 
     def test_company_creation(self):
-        from crawlcrunch.model.helper import local_file_company_to_db_model
-        from crawlcrunch.model.db import Company
-        from crawlcrunch.model.db import FundingRound
+        from midas.crunchbase_crawler.model.helper import local_file_company_to_db_model
+        from midas.crunchbase_crawler.model.db import Company
+        from midas.crunchbase_crawler.model.db import FundingRound
         result = local_file_company_to_db_model(COMPANY_DATA)
         self.assertIsInstance(result, Company)
         self.assertIsInstance(result.funding_rounds[0], FundingRound)

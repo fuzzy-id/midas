@@ -3,8 +3,8 @@
 interacting with the data on the command line.
 """
 
-from crawlcrunch.model.db import Company
-from crawlcrunch.model.db import FundingRound
+from midas.crunchbase_crawler.model.db import Company
+from midas.crunchbase_crawler.model.db import FundingRound
 
 def help_find_invalid_chars(company_name, line, column):  # pragma: no cover
     """ The CrunchBase API returns JSON which from time to time

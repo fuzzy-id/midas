@@ -3,7 +3,7 @@
 import logging
 import threading
 
-from vincetools.compat import HTTPError
+from midas.compat import HTTPError
 
 
 class Updater(object):

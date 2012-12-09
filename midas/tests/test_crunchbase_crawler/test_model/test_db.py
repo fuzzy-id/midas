@@ -5,13 +5,13 @@ import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm.exc import MultipleResultsFound
 
-from crawlcrunch.tests import COMPANIES_URL
-from crawlcrunch.tests import FOO_URL
-from crawlcrunch.tests import MEM_DB
-from crawlcrunch.tests import prepare_url_open
-from crawlcrunch.tests import unittest
-from crawlcrunch.model.db import Session
-from crawlcrunch.model.db import Base
+from midas.tests.test_crunchbase_crawler import COMPANIES_URL
+from midas.tests.test_crunchbase_crawler import FOO_URL
+from midas.tests.test_crunchbase_crawler import MEM_DB
+from midas.tests.test_crunchbase_crawler import prepare_url_open
+from midas.tests.test_crunchbase_crawler import unittest
+from midas.crunchbase_crawler.model.db import Session
+from midas.crunchbase_crawler.model.db import Base
 
 import mock
 
@@ -31,7 +31,7 @@ class SqlTestCase(unittest.TestCase):
 class FundingTests(SqlTestCase):
 
     def _get_target_class(self):
-        from crawlcrunch.model.db import FundingRound
+        from midas.crunchbase_crawler.model.db import FundingRound
         return FundingRound
 
     def _make_one(self, *args, **kwargs):
@@ -65,7 +65,7 @@ class FundingTests(SqlTestCase):
 class CompanyTests(SqlTestCase):
 
     def _get_target_class(self):
-        from crawlcrunch.model.db import Company
+        from midas.crunchbase_crawler.model.db import Company
         return Company
 
     def _make_one(self, *args, **kwargs):
@@ -87,7 +87,7 @@ class CompanyTests(SqlTestCase):
         self.assertEqual(c.updated_at, expected)
         
     def test_company_with_fundings_list(self):
-        from crawlcrunch.model.db import FundingRound
+        from midas.crunchbase_crawler.model.db import FundingRound
         f1 = FundingRound(funded_year=40)
         f2 = FundingRound(funded_year=30)
         c = self._make_one(funding_rounds=[f1, f2])
@@ -121,7 +121,7 @@ class CompanyTests(SqlTestCase):
         c = self._make_one_from_parsed_json(
             {'funding_rounds': [ {'funded_day': 30} ]})
         self.session.delete(c)
-        from crawlcrunch.model.db import FundingRound
+        from midas.crunchbase_crawler.model.db import FundingRound
         result = self.session.query(FundingRound).all()
         self.assertEqual(result, [])
 
@@ -133,7 +133,7 @@ class CompanyTests(SqlTestCase):
         c = self._make_one(permalink='foo')
         self.assertEqual(str(c), 'Company(foo)')
 
-    @mock.patch('crawlcrunch.model.urlopen')
+    @mock.patch('midas.crunchbase_crawler.model.urlopen')
     def test_update_when_company_fresh(self, urlopen):
         c = self._get_target_class()(permalink='foo')
         prepare_url_open(urlopen, {FOO_URL: {'description': 'blah',
@@ -143,7 +143,7 @@ class CompanyTests(SqlTestCase):
         self.assertEqual(result.description, 'blah')
         self.assertIsNot(c, result)
 
-    @mock.patch('crawlcrunch.model.urlopen')
+    @mock.patch('midas.crunchbase_crawler.model.urlopen')
     def test_update_when_company_persisted(self, urlopen):
         c = self._make_one(permalink='foo')
         prepare_url_open(urlopen, {FOO_URL: {'description': 'blah',
@@ -160,20 +160,20 @@ class CompanyTests(SqlTestCase):
 class DataBaseRootTests(unittest.TestCase):
 
     def test_companies_list_creation(self):
-        from crawlcrunch.model.db import DataBaseRoot
+        from midas.crunchbase_crawler.model.db import DataBaseRoot
         root = DataBaseRoot(MEM_DB)
         cl = root.get('companies')
-        from crawlcrunch.model.db import CompanyList
+        from midas.crunchbase_crawler.model.db import CompanyList
         self.assertIsInstance(cl, CompanyList)
 
 
 class CompanyListTests(SqlTestCase):
 
     def _make_one(self):
-        from crawlcrunch.model.db import CompanyList
+        from midas.crunchbase_crawler.model.db import CompanyList
         return CompanyList()
 
-    @mock.patch('crawlcrunch.model.urlopen')
+    @mock.patch('midas.crunchbase_crawler.model.urlopen')
     def test_update(self, urlopen):
         prepare_url_open(urlopen,
                          {COMPANIES_URL: [{'permalink': 'foo'}]})
@@ -184,7 +184,7 @@ class CompanyListTests(SqlTestCase):
     def test_get_on_new_company(self):
         cl = self._make_one()
         result = cl.get('foo')
-        from crawlcrunch.model.db import Company
+        from midas.crunchbase_crawler.model.db import Company
         self.assertIsInstance(result, Company)
         self.assertEqual(str(result), 'Company(foo)')
         self.assertIsNone(result.id)
