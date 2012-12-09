@@ -10,6 +10,7 @@ import tempfile
 
 from midas.compat import GzipFile
 from midas.compat import StringIO
+from midas.compat import unittest
 
 from midas.tests.test_crunchbase_crawler import BAR_URL
 from midas.tests.test_crunchbase_crawler import COMPANIES_URL
@@ -17,7 +18,6 @@ from midas.tests.test_crunchbase_crawler import EXAMPLES_PATH
 from midas.tests.test_crunchbase_crawler import FOO_URL
 from midas.tests.test_crunchbase_crawler import MEM_DB
 from midas.tests.test_crunchbase_crawler import prepare_url_open
-from midas.tests.test_crunchbase_crawler import unittest
 
 import mock
 
