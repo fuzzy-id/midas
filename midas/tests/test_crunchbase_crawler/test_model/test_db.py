@@ -239,5 +239,6 @@ class CompanyListTests(SqlTestCase):
                      for n in ('bar', 'foo') ]
         self.assertEqual(result, expected)
 
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
