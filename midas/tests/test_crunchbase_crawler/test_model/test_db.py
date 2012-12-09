@@ -51,8 +51,7 @@ class FundingTests(SqlTestCase):
         self.assertEqual(f.funded_year, 50)
 
     def test_instantiation_by_dict(self):
-        f = self._make_one(**{'funded_day': 80,
-                              'funded_year': 50})
+        f = self._make_one(**{'funded_day': 80, 'funded_year': 50})
         self.assertEqual(f.funded_day, 80)
         self.assertEqual(f.funded_year, 50)
 
