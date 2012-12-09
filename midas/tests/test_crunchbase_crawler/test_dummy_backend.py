@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from midas.compat import unittest
 
 
