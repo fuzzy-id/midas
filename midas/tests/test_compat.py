@@ -23,13 +23,6 @@ class StrTypeTests(unittest.TestCase):
         self.assertIsInstance('foo', self._get())
 
 
-class CompBytesTests(unittest.TestCase):
-
-    def _get(self):
-        from vincetools.compat import comp_bytes
-        return comp_bytes
-
-
 class DIterKeysTests(unittest.TestCase):
 
     def _get(self):
