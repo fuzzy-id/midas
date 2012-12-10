@@ -2,10 +2,10 @@
 
 import sys
 
-from vincetools.compat import StringIO
-from vincetools.compat import unittest
+from midas.compat import StringIO
+from midas.compat import unittest
 
-import vincetools.compat as vt_comp
+import midas.compat as vt_comp
 
 import midas.tests as md_tests
 

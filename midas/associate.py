@@ -7,7 +7,7 @@ The idea is to built a tree from either the domain part of
 of the Alexa Top1M sites . 
 """
 
-import vincetools.compat as vt_comp
+import midas.compat as vt_comp
 
 import midas.db as md_db
 import midas.tools as md_tools

@@ -6,7 +6,7 @@ import datetime
 import json
 import os.path
 
-import vincetools.compat as vt_comp
+import midas.compat as vt_comp
 
 #: The standard format we use to produce and parse time-stamps.
 TS_FORMAT = '%Y-%m-%d'

@@ -2,8 +2,8 @@
 
 import operator
 
-from vincetools.compat import imap
-from vincetools.compat import unittest
+from midas.compat import imap
+from midas.compat import unittest
 from midas.tests import ConfiguredDBTestCase
 
 class AssociationTreeTests(unittest.TestCase):

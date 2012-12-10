@@ -2,7 +2,7 @@
 
 import tempfile
 
-import vincetools.compat as vt_comp
+import midas.compat as vt_comp
 
 import midas.tests.test_scripts as md_test_scripts
 import midas.config as md_cfg

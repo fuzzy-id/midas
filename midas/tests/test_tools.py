@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from vincetools.compat import unittest
+from midas.compat import unittest
 
-import vincetools.compat as vt_comp
+import midas.compat as vt_comp
 
 from midas.tests import TEST_SITE_COUNT
 from midas.tests import ConfiguredDBTestCase
@@ -57,7 +57,7 @@ class DomainTests(unittest.TestCase):
         return domain(company_or_site)
 
     def test_on_company(self):
-        from crawlcrunch.model.db import Company
+        from midas.crunchbase_crawler.model.db import Company
         c = Company(homepage_url='http://example.com/foo')
         self.assertEqual(self._run_it(c), 'example.com')
 

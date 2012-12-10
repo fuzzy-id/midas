@@ -2,8 +2,8 @@
 
 import datetime
 
-from vincetools.compat import unittest
-import vincetools.compat as vt_comp
+from midas.compat import unittest
+import midas.compat as vt_comp
 
 from midas.tests import TEST_ALEXA_TOP1M
 from midas.tests import TEST_ALEXA_TOP1M_FILES

@@ -6,7 +6,7 @@ import itertools
 import glob
 import os.path
 
-import vincetools.compat as vt_comp
+import midas.compat as vt_comp
 
 import midas
 import midas.config as md_cfg

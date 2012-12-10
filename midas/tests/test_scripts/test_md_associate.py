@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import vincetools.compat as vt_comp
+import midas.compat as vt_comp
 
 from midas.tests.test_scripts import IntegrationTestCaseNG
 

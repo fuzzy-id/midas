@@ -7,8 +7,8 @@ the cases this does not matter much.
 
 import os
 
-from vincetools.compat import ConfigParser
-from vincetools.compat import StringIO
+from midas.compat import ConfigParser
+from midas.compat import StringIO
 
 #: The default configuration
 DEFAULT_CONFIG = """

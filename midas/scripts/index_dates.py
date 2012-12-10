@@ -3,7 +3,7 @@
 import glob
 import os.path
 
-import vincetools.compat as vt_comp
+import midas.compat as vt_comp
 
 import midas as md
 import midas.config as md_cfg

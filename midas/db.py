@@ -6,11 +6,11 @@ provides some common queries and filter conditions.
 import sqlalchemy as sa
 import sqlalchemy.orm as sa_orm
 
-from crawlcrunch.model.db import Base
-from crawlcrunch.model.db import Company
-from crawlcrunch.model.db import FundingRound
-from crawlcrunch.model.db import Session
-from crawlcrunch.model.db import create_engine
+from midas.crunchbase_crawler.model.db import Base
+from midas.crunchbase_crawler.model.db import Company
+from midas.crunchbase_crawler.model.db import FundingRound
+from midas.crunchbase_crawler.model.db import Session
+from midas.crunchbase_crawler.model.db import create_engine
 
 import midas.config as md_cfg
 

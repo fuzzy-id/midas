@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import vincetools.compat as vt_comp
+import midas.compat as vt_comp
 
 import midas.associate as md_assoc
 import midas.db as md_db

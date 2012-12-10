@@ -6,8 +6,8 @@ import sys
 
 from midas import RankEntry
 from midas.tools import SiteCount
-from vincetools.compat import StringIO
-from vincetools.compat import unittest
+from midas.compat import StringIO
+from midas.compat import unittest
 
 _here = os.path.abspath(os.path.dirname(__file__))
 _test_data_home = os.path.join(_here, 'data')
@@ -63,7 +63,7 @@ class ConfiguredDBTestCase(unittest.TestCase):
         self.session = md_db.db_session()
 
     def tearDown(self):
-        from crawlcrunch.model.db import Session
+        from midas.crunchbase_crawler.model.db import Session
         import midas.db as md_db
         import midas.config as md_cfg
         md_db.Session.remove()

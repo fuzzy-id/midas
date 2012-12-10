@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import mrjob.util as mr_util
+#import mrjob.util as mr_util
 
-import vincetools.compat as vt_comp
+import midas.compat as vt_comp
 
+@vt_comp.unittest.skip('Is going to be removed')
 class InvertIndexTests(vt_comp.unittest.TestCase):
 
     def _get_target_cls(self):

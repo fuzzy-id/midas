@@ -12,12 +12,12 @@ import os
 import os.path
 import subprocess
 
-from vincetools.compat import GzipFile
-from vincetools.compat import ifilter
-from vincetools.compat import imap
-from vincetools.compat import str_type
-from vincetools.compat import urlparse
-import vincetools.compat as vt_comp
+from midas.compat import GzipFile
+from midas.compat import ifilter
+from midas.compat import imap
+from midas.compat import str_type
+from midas.compat import urlparse
+import midas.compat as vt_comp
 
 import midas as md
 import midas.db as md_db
