@@ -8,13 +8,13 @@ from setuptools import setup
 PY_VERSION = sys.version_info[:2]
 
 INSTALL_REQUIRES = ['sqlalchemy']
-INSTALL_REQUIRES.append('ordereddict')
 
 TESTS_REQUIRE = ['mock']
 
 if PY_VERSION == (2, 6):
     TESTS_REQUIRE.append('unittest2')
     INSTALL_REQUIRES.append('argparse')
+    INSTALL_REQUIRES.append('ordereddict')
 
 setup(name='midas',
       version='0.1a1',
