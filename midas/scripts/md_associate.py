@@ -15,6 +15,7 @@ class MDAssociate(md_scripts.MDCommand):
         sess = md_db.db_session()
         for comp, sites in vt_comp.d_iteritems(s2c):
             for site in sites:
-                association = md_db.Association(company=comp, site=site)
-                sess.add(association)
-        sess.commit()
+                #association = md_db.Association(company=comp, site=site)
+                #sess.add(association)
+                print(','.join([comp.permalink, site]))
+        #sess.commit()
