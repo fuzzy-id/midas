@@ -7,6 +7,8 @@ import datetime
 import json
 import sys
 
+FR_OF_INTEREST = set(['seed', 'angel', 'a'])
+
 def prepare(data):
     for js in data:
         d = json.loads(js)
@@ -15,12 +17,26 @@ def prepare(data):
             hp = d['homepage_url']
         else:
             hp = ''
-        if len(d.get('funding_rounds', [])) > 0:
-            funding = max((datetime.date(fr['funded_year'],
-                                         fr['funded_month'], 
-                                         fr['funded_day']), fr['round_code'])
-                          for fr in d.get('funding_rounds', []))
-            funding = '\t'.join((funding[1], funding[0].strftime('%Y-%m-%d')))
+        if d.get('funding_rounds') and len(d['funding_rounds']) > 0:
+            try:
+                fundings = []
+                for fr in d['funding_rounds']:
+                    if fr['round_code'] in FR_OF_INTEREST:
+                        if fr['funded_year'] and fr['funded_month'] and fr['funded_day']:
+                            funding = (datetime.date(fr['funded_year'],
+                                                     fr['funded_month'],
+                                                     fr['funded_day']), 
+                                       fr['round_code'])
+                            fundings.append(funding)
+                if len(fundings) > 0:
+                    tstamp, code = max(fundings)
+                    funding = '\t'.join(code, tstamp.strftime('%Y-%m-%d')))
+                else:
+                    funding = ''
+            except:
+                print(d['funding_rounds'], file=sys.stderr)
+                print(d, file=sys.stderr)
+                raise
         else:
             funding = ''
         
