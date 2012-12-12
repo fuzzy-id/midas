@@ -7,3 +7,6 @@ midas.egg-info/
 *-py2.6*.egg/
 *-py2.7.egg/
 *-py3.2.egg/
+
+build/
+dist/
