@@ -30,7 +30,7 @@ def prepare(data):
                             fundings.append(funding)
                 if len(fundings) > 0:
                     tstamp, code = max(fundings)
-                    funding = '\t'.join(code, tstamp.strftime('%Y-%m-%d')))
+                    funding = '\t'.join((code, tstamp.strftime('%Y-%m-%d')))
                 else:
                     funding = ''
             except:
