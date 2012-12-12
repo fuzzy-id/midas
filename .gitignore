@@ -10,3 +10,5 @@ midas.egg-info/
 
 build/
 dist/
+
+pig_*.log
