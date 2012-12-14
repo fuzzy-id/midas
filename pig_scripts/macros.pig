@@ -9,6 +9,6 @@ DEFINE load_filtered_cb() RETURNS cb {
 };
 
 DEFINE load_associations() RETURNS assocs {
-       $assocs = LOAD 'associations' AS
+       $assocs = LOAD 'associations' USING PigStorage(',') AS
        	       (company: chararray, site: chararray);
 };
