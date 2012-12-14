@@ -8,7 +8,7 @@ DEFINE load_filtered_cb() RETURNS cb {
        	   (company: chararray, hp: chararray, code: chararray, tstamp: chararray);
 };
 
-DEFINE load_assocs() RETURNS assocs {
+DEFINE load_associations() RETURNS assocs {
        $assocs = LOAD 'associations' AS
        	       (company: chararray, site: chararray);
 };
