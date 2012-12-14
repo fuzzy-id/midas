@@ -8,7 +8,7 @@ from midas.compat import HTTPError
 
 class Updater(object):
 
-    def __init__(self, inst_list, num_threads=20):
+    def __init__(self, inst_list, num_threads=1):
         self.inst_list = inst_list
         self.num_threads = num_threads
         self.semaphore = threading.Semaphore(num_threads)
