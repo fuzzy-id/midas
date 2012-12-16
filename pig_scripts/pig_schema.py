@@ -195,7 +195,8 @@ def pig_input(schema):
     def decorator(fn):
         def iter_input(iterator):
             for i in iterator:
-                yield fn(parser(i))
+                for result in fn(parser(i)):
+                    yield result
         return iter_input
     return decorator
 
@@ -214,8 +215,8 @@ class InputDecoratorTests(unittest.TestCase):
     def test_on_a_single_string(self):
 
         @pig_input('a: chararray')
-        def a_func(s):
-            return s
+        def a_func(d):
+            yield d
 
         result = list(a_func(['foo\n', 'bar\n']))
         self.assertEqual(result, ['foo', 'bar'])
@@ -250,7 +251,18 @@ class OutputDecoratorTests(unittest.TestCase):
 
         a_func()
         self.assertEqual(self.out, ['foo', 'bar'])
+
+    def test_input_and_output_decorator(self):
+
+        @pig_output('(s: chararray, i: int)')
+        @pig_input('(b: bag{(s: chararray, i: int)})')
+        def a_func(row):
+            for entry in row.b:
+                yield entry
         
+        a_func(['{(foo,8),(bar,9)}\n', '{(baz,7),(froz,6)}\n'])
+        self.assertEqual(self.out, ['foo\t8', 'bar\t9', 'baz\t7', 'froz\t6'])
+
 
 class PigSchemaToPyStructTests(unittest.TestCase):
     
