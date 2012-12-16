@@ -40,7 +40,7 @@ def pig_schema_to_py_struct(schema):
         # The name actually doesn't matter in this case
         name, typ = get_field_name(schema)
         typ = typ.strip()
-        if typ not in ('chararray', 'int'):
+        if typ not in SIMPLE_PARSER:
             raise TypeError("Unknown schema '{}'".format(schema))
     return typ
 
