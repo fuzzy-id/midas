@@ -7,6 +7,29 @@ import collections
 import functools
 import unittest
 
+def pig_input(schema):
+    as_struct = pig_schema_to_py_struct(schema)
+    parser = make_parser(as_struct)
+    def decorator(fn):
+        @functools.wraps(fn)
+        def iter_input(iterator, *args, **kwargs):
+            for i in iterator:
+                for result in fn(parser(i), *args, **kwargs):
+                    yield result
+        return iter_input
+    return decorator
+
+def pig_output(schema):
+    as_struct = pig_schema_to_py_struct(schema)
+    serializer = make_serializer(as_struct)
+    def decorator(fn):
+        @functools.wraps(fn)
+        def func(*args, **kwargs):
+            for i in fn(*args, **kwargs):
+                print(serializer(i))
+        return func
+    return decorator
+
 def pig_schema_to_py_struct(schema):
     if schema.startswith('('):
         # We interpret this as a Tuple
@@ -47,6 +70,10 @@ def pig_schema_to_py_struct_bag(schema):
     tail = tail[1:]
     return [typ, ], tail
     
+def get_field_name(schema):
+    name, _, tail = schema.partition(':')
+    return name.strip(), tail.lstrip()
+
 def get_field_type(schema):
     typ, _, tail = schema.partition(',')
     typ = typ.strip()
@@ -66,47 +93,18 @@ def get_field_type(schema):
         typ = 'bag'
     return typ, tail
 
-def get_field_name(schema):
-    name, _, tail = schema.partition(':')
-    return name.strip(), tail.lstrip()
-
-def chararray_parser(s, end):
-    head, _, tail = s.partition(end)
-    if head == '':
-        return None, tail
-    return head, tail
-
-def int_parser(s, end):
-    head, _, tail = s.partition(end)
-    if head == '':
-        return None, tail
-    return int(head), tail
-
-SIMPLE_PARSER = {
-    'chararray': chararray_parser,
-    'int': int_parser,
-    }
-
-def make_bag_parser(schema):
-    """ A Bag i a collection of tuples. `schema` is a list with one
-    entry which defines the tuples in the bag.
-    """
-    assert len(schema) == 1
-    sub_parser = make_tuple_parser(schema[0], '(', ',', ')')
-    def bag_parser(tail, end):
-        fields = []
-        if tail.startswith(end):
-            return fields, tail[len(end):]
-        while not tail.startswith('}'):
-            assert tail.startswith(',') or tail.startswith('{')
-            tail = tail[1:]
-            field, tail = sub_parser(tail, '')
-            fields.append(field)
-        tail = tail[1:]
-        assert tail.startswith(end)
-        tail = tail[len(end):]
-        return fields, tail
-    return bag_parser
+def make_parser(schema):
+    if isinstance(schema, str):
+        # Just a Atom
+        parser = SIMPLE_PARSER[schema]
+        def root_parser(s):
+            return parser(s, '\n')[0]
+    else:
+        # Everything else is wrapped in a tuple
+        parser = make_tuple_parser(schema, '', '\t', '\n')
+        def root_parser(s):
+            return parser(s, '')[0]
+    return root_parser
 
 def make_tuple_parser(schema, tuple_start, delimiter, tuple_end):
     parser = []
@@ -137,32 +135,42 @@ def make_tuple_parser(schema, tuple_start, delimiter, tuple_end):
         return cls(*fields), tail
     return tuple_parser
 
-def make_parser(schema):
-    if isinstance(schema, str):
-        # Just a Atom
-        parser = SIMPLE_PARSER[schema]
-        def root_parser(s):
-            return parser(s, '\n')[0]
-    else:
-        # Everything else is wrapped in a tuple
-        parser = make_tuple_parser(schema, '', '\t', '\n')
-        def root_parser(s):
-            return parser(s, '')[0]
-    return root_parser
+def make_bag_parser(schema):
+    """ A Bag i a collection of tuples. `schema` is a list with one
+    entry which defines the tuples in the bag.
+    """
+    assert len(schema) == 1
+    sub_parser = make_tuple_parser(schema[0], '(', ',', ')')
+    def bag_parser(tail, end):
+        fields = []
+        if tail.startswith(end):
+            return fields, tail[len(end):]
+        while not tail.startswith('}'):
+            assert tail.startswith(',') or tail.startswith('{')
+            tail = tail[1:]
+            field, tail = sub_parser(tail, '')
+            fields.append(field)
+        tail = tail[1:]
+        assert tail.startswith(end)
+        tail = tail[len(end):]
+        return fields, tail
+    return bag_parser
 
-def chararray_serializer(s):
-    if s is None:
-        return ''
-    return s
+def chararray_parser(s, end):
+    head, _, tail = s.partition(end)
+    if head == '':
+        return None, tail
+    return head, tail
 
-def int_serializer(s):
-    if s is None:
-        return ''
-    return str(s)
+def int_parser(s, end):
+    head, _, tail = s.partition(end)
+    if head == '':
+        return None, tail
+    return int(head), tail
 
-SIMPLE_SERIALIZER = {
-    'chararray': chararray_serializer,
-    'int': int_serializer,
+SIMPLE_PARSER = {
+    'chararray': chararray_parser,
+    'int': int_parser,
     }
 
 def make_serializer(schema):
@@ -189,26 +197,25 @@ def make_tuple_serializer(schema, start, delimiter, end):
         return '{}{}{}'.format(start, delimiter.join(fields), end)
     return tuple_serializer
 
-def pig_input(schema):
-    as_struct = pig_schema_to_py_struct(schema)
-    parser = make_parser(as_struct)
-    def decorator(fn):
-        def iter_input(iterator):
-            for i in iterator:
-                for result in fn(parser(i)):
-                    yield result
-        return iter_input
-    return decorator
+def chararray_serializer(s):
+    if s is None:
+        return ''
+    return s
 
-def pig_output(schema):
-    as_struct = pig_schema_to_py_struct(schema)
-    serializer = make_serializer(as_struct)
-    def decorator(fn):
-        def func(*args, **kwargs):
-            for i in fn(*args, **kwargs):
-                print(serializer(i))
-        return func
-    return decorator
+def int_serializer(s):
+    if s is None:
+        return ''
+    return str(s)
+
+SIMPLE_SERIALIZER = {
+    'chararray': chararray_serializer,
+    'int': int_serializer,
+    }
+
+
+#
+# Tests
+#
 
 class InputDecoratorTests(unittest.TestCase):
 
