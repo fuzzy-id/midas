@@ -16,8 +16,8 @@ public class TestAlexaCountRankPerSite {
 	};
 
 	String[] output = {
-	    "foo.example.com\t3",
-	    "bar.example.com\t2",
+	    "(foo.example.com,3)",
+	    "(bar.example.com,3)",
 	};
 
 	test.assertOutput("sites", input, "site_count", output);
