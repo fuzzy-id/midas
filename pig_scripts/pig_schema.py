@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import collections
 import functools
 import unittest
@@ -148,6 +150,27 @@ def make_parser(schema):
             return parser(s, '')[0]
     return root_parser
 
+def chararray_serializer(s):
+    if s is None:
+        return ''
+    return s
+
+def int_serializer(s):
+    if s is None:
+        return ''
+    return str(s)
+
+SIMPLE_SERIALIZER = {
+    'chararray': chararray_serializer,
+    'int': int_serializer,
+    }
+
+def make_serializer(schema):
+    if isinstance(schema, str):
+        serializer = SIMPLE_SERIALIZER[schema]
+        def root_serializer(s):
+            return serializer(s)
+    return root_serializer
 
 def pig_input(schema):
     as_struct = pig_schema_to_py_struct(schema)
@@ -157,6 +180,16 @@ def pig_input(schema):
             for i in iterator:
                 yield fn(parser(i))
         return iter_input
+    return decorator
+
+def pig_output(schema):
+    as_struct = pig_schema_to_py_struct(schema)
+    serializer = make_serializer(as_struct)
+    def decorator(fn):
+        def func(*args, **kwargs):
+            for i in fn(*args, **kwargs):
+                print(serializer(i))
+        return func
     return decorator
 
 class InputDecoratorTests(unittest.TestCase):
@@ -170,6 +203,38 @@ class InputDecoratorTests(unittest.TestCase):
         result = list(a_func(['foo\n', 'bar\n']))
         self.assertEqual(result, ['foo', 'bar'])
 
+
+class OutputDecoratorTests(unittest.TestCase):
+
+    def setUp(self):
+        self.out = []
+
+        def print_mock(s):
+            self.out.append(s)
+
+        global print
+        self.old_print = print
+        print = print_mock
+
+    def tearDown(self):
+        global print
+        print = self.old_print
+
+    def test_print_mock(self):
+        print('foo')
+        self.assertEqual(self.out, ['foo'])
+        
+    @unittest.skip('later')
+    def test_on_single_str(self):
+        
+        @pig_output('a: chararray')
+        def a_func():
+            yield 'foo'
+            yield 'bar'
+
+        result = a_func()
+        self.assertEqual(result, ['foo', 'bar'])
+        
 
 class PigSchemaToPyStructTests(unittest.TestCase):
     
@@ -247,6 +312,13 @@ class MakeParserTests(unittest.TestCase):
         self.assertEqual(parser('{(foo,8)}\n'), ([('foo', 8)], ))
         self.assertEqual(parser('{(foo,8),(bar,10)}\n'), 
                          ([('foo', 8), ('bar', 10)], ))
+
+
+class SerializerTests(unittest.TestCase):
+
+    def test_on_simple_str(self):
+        serializer = make_serializer('chararray')
+        self.assertEqual(serializer('foo'), 'foo')
 
 
 class FunctionalTests(unittest.TestCase):
