@@ -167,10 +167,27 @@ SIMPLE_SERIALIZER = {
 
 def make_serializer(schema):
     if isinstance(schema, str):
-        serializer = SIMPLE_SERIALIZER[schema]
-        def root_serializer(s):
-            return serializer(s)
+        root_serializer = SIMPLE_SERIALIZER[schema]
+    else:
+        root_serializer = make_tuple_serializer(schema, '', '\t', '')
     return root_serializer
+
+def make_tuple_serializer(schema, start, delimiter, end):
+    serializer = []
+    attrs = []
+    for name, typ in schema:
+        attrs.append(name)
+        if isinstance(typ, str):
+            serializer.append(SIMPLE_SERIALIZER[typ])
+        elif isinstance(typ, tuple):
+            serializer.append(make_tuple_serializer(typ, '(', ',', ')'))
+        else:
+            raise TypeError("Cannot serialize '{}'".format(typ))
+    def tuple_serializer(t):
+        fields = ( s(getattr(t, n))
+                   for s, n in zip(serializer, attrs) )
+        return '{}{}{}'.format(start, delimiter.join(fields), end)
+    return tuple_serializer
 
 def pig_input(schema):
     as_struct = pig_schema_to_py_struct(schema)
@@ -224,7 +241,6 @@ class OutputDecoratorTests(unittest.TestCase):
         print('foo')
         self.assertEqual(self.out, ['foo'])
         
-    @unittest.skip('later')
     def test_on_single_str(self):
         
         @pig_output('a: chararray')
@@ -232,8 +248,8 @@ class OutputDecoratorTests(unittest.TestCase):
             yield 'foo'
             yield 'bar'
 
-        result = a_func()
-        self.assertEqual(result, ['foo', 'bar'])
+        a_func()
+        self.assertEqual(self.out, ['foo', 'bar'])
         
 
 class PigSchemaToPyStructTests(unittest.TestCase):
@@ -325,6 +341,27 @@ class SerializerTests(unittest.TestCase):
         serializer = make_serializer('int')
         self.assertEqual(serializer(8), '8')
         self.assertEqual(serializer(None), '')
+
+    def test_on_tuple_with_str(self):
+        nt = collections.namedtuple('Tuple', 's i')
+        serializer = make_serializer((('s', 'chararray'), ('i', 'int')))
+        self.assertEqual(serializer(nt('foo', 8)), 'foo\t8')
+        self.assertEqual(serializer(nt(None, 8)), '\t8')
+        self.assertEqual(serializer(nt('foo', None)), 'foo\t')
+
+    def test_on_tuple_with_tuples(self):
+        outer = collections.namedtuple('Tuple', 't1 t2')
+        inner = collections.namedtuple('Tuple', 's i')
+        serializer = make_serializer((('t1', (('s', 'chararray'), 
+                                              ('i', 'int'))),
+                                      ('t2', (('s', 'chararray'), 
+                                              ('i', 'int')))))
+        self.assertEqual(serializer(outer(inner('foo', 8), 
+                                          inner('bar', 9))), 
+                                    '(foo,8)\t(bar,9)')
+        self.assertEqual(serializer(outer(inner(None, 8),
+                                          inner('foo', None))), 
+                                    '(,8)\t(foo,)')
 
 
 class FunctionalTests(unittest.TestCase):
