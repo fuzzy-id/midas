@@ -14,3 +14,5 @@ dist/
 pig_*.log
 
 *.class
+pig_scripts/.pigunit-input-overriden.txt.crc
+pig_scripts/pigunit-input-overriden.txt
