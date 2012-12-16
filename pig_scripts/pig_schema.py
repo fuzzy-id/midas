@@ -319,6 +319,12 @@ class SerializerTests(unittest.TestCase):
     def test_on_simple_str(self):
         serializer = make_serializer('chararray')
         self.assertEqual(serializer('foo'), 'foo')
+        self.assertEqual(serializer(None), '')
+
+    def test_on_simple_int(self):
+        serializer = make_serializer('int')
+        self.assertEqual(serializer(8), '8')
+        self.assertEqual(serializer(None), '')
 
 
 class FunctionalTests(unittest.TestCase):
