@@ -8,8 +8,18 @@ A = JOIN cb BY company, assocs BY company USING 'replicated';
 B = JOIN sites BY site LEFT OUTER, 
   A BY assocs::site USING 'replicated';
 
-sites_companies = FOREACH B GENERATE sites::site AS site,
-		  	    	     sites::ranking AS ranking,
-				     A::cb::company AS company,
-				     A::cb::code AS code,
-				     A::cb::tstamp AS tstamp;
+SPLIT B INTO in_crunchbase IF A::cb::company is not null, 
+             not_in_crunchbase OTHERWISE;
+
+sites_companies = FOREACH in_crunchbase GENERATE sites::site AS site,
+		    	                         sites::ranking AS ranking,
+						 A::cb::company AS company,
+						 A::cb::code AS code,
+				     		 A::cb::tstamp AS tstamp;
+
+STORE sites_companies INTO 'sites_w_companies';
+
+remaining_sites = FOREACH not_in_crunchbase GENERATE sites::site AS site,
+		                                     sites::ranking AS ranking;
+
+STORE remaining_sites INTO 'sites_wo_companies';
