@@ -194,7 +194,7 @@ def make_tuple_serializer(schema, start, delimiter, end):
     def tuple_serializer(t):
         fields = ( s(getattr(t, n))
                    for s, n in zip(serializer, attrs) )
-        return '{}{}{}'.format(start, delimiter.join(fields), end)
+        return '{0}{1}{2}'.format(start, delimiter.join(fields), end)
     return tuple_serializer
 
 def chararray_serializer(s):
