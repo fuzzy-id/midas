@@ -25,7 +25,7 @@ SCHEMA = pig_schema.pig_schema_to_py_struct(
               'tstamp: chararray)'])
     )
 PARSER = pig_schema.make_parser(SCHEMA)
-FILES = '/home/vince/tmp/sync/sites_w_company'
+FILES = '/data0/sites_w_company'
 
 DATE_INTERVAL = pandas.DateOffset(days=3)
 OFFSET = pandas.DateOffset(days=90)
