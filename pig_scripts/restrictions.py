@@ -3,6 +3,7 @@
 have to go in their own module.
 """
 
+import numpy
 import pandas
 
 class MeanRankInRangeAtDate(object):
