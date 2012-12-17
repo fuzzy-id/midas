@@ -11,7 +11,7 @@ import pandas
 
 import pig_schema
 
-SHELVE_FILE = 'a_shelve'
+SHELVE_FILE = 'restrictions_shelve'
 
 OUT_TUPLE = collections.namedtuple('Tuple', 'site company tstamp')
 

@@ -50,7 +50,7 @@ def main(iterator):
 if __name__ == '__main__':
     if os.path.isdir(FILES):
         FILES = [ os.path.join(FILES, f) for f in os.listdir(FILES) ]
-    SHELF = shelve.open('a_shelve')
+    SHELF = shelve.open('restrictions_shelve')
     main(fileinput.input(FILES))
     SHELF.sync()
     SHELF.close()
