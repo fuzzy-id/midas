@@ -20,8 +20,8 @@ public class TestAlexaTop1mGroupBySite {
 	};
 
 	String[] output = {
-	    "(foo.example.com,{(2012-12-16,1),(2012-12-15,1),(2012-12-14,1)})",
 	    "(bar.example.com,{(2012-12-16,2),(2012-12-15,2),(2012-12-14,2)})",
+	    "(foo.example.com,{(2012-12-16,1),(2012-12-15,1),(2012-12-14,1)})",
 	};
 
 	test.assertOutput("top1m", input, "row", output);
