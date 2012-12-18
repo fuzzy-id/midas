@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
+import argparse
 import datetime
 import fileinput
 import math
@@ -25,7 +26,10 @@ SCHEMA = pig_schema.pig_schema_to_py_struct(
               'tstamp: chararray)'])
     )
 PARSER = pig_schema.make_parser(SCHEMA)
-FILES = '/data0/sites_w_company'
+
+ARGPARSER = argparse.ArgumentParser()
+ARGPARSER.add_argument('files', metavar='FILE', nargs='+', 
+                       help='The `sites_w_company` files to extract restrictions from.')
 
 DATE_INTERVAL = pandas.DateOffset(days=3)
 OFFSET = pandas.DateOffset(days=90)
@@ -48,10 +52,9 @@ def main(iterator):
         
 
 if __name__ == '__main__':
-    if os.path.isdir(FILES):
-        FILES = [ os.path.join(FILES, f) for f in os.listdir(FILES) ]
+    args = ARGPARSER.parse_args()
     SHELF = shelve.open('restrictions_shelve')
-    main(fileinput.input(FILES))
+    main(fileinput.input(args.files))
     SHELF.sync()
     SHELF.close()
 
