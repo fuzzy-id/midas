@@ -1,5 +1,3 @@
--- Generate 10 Samples per Company
-set default_parallel 10;
 
 DEFINE sample_script `python_wrapper.sh generate_samples.py` 
        SHIP('python_wrapper.sh',
