@@ -24,10 +24,9 @@ OUT_TUPLE = collections.namedtuple('Tuple', 'site company tstamp')
 def main(field):
     series = pandas.Series(dict((pandas.Timestamp(d), r)
                                 for d, r in field.ranking))
-    if random.random() < 0.05:
-        random.shuffle(RESTRICTIONS)
-    for company, restriction in RESTRICTIONS:
+    for i, (company, restriction) in enumerate(RESTRICTIONS):
         if restriction.fulfills(series):
+            RESTRICTIONS.pop(i)
             out = OUT_TUPLE(field.site, 
                             company, 
                             restriction.tstamp.date().isoformat())
