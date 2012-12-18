@@ -39,5 +39,4 @@ if __name__ == '__main__':
     RESTRICTIONS = SHELF.items()
     random.shuffle(RESTRICTIONS)
     SHELF.close()
-    for i in main(sys.stdin):
-        pass
+    main(sys.stdin)
