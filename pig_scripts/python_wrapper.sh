@@ -4,11 +4,11 @@
 MPLCONFIGDIR="/home/thomasba/.matplotlib"
 export MPLCONFIGDIR
 
-if [ -z $CLASSPATH ]; then
-    CLASSPATH="."
+if [ -z ${PYTHONPATH} ]; then
+    PYTHONPATH="."
 else
-    CLASSPATH=".:${CLASSPATH}"
+    PYTHONPATH=".:${PYTHONPATH}"
 fi
-export CLASSPATH
+export PYTHONPATH
 
 python $@
