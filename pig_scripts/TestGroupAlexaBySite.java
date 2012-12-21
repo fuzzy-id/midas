@@ -4,9 +4,9 @@ import org.junit.Test;
 import org.apache.pig.pigunit.PigTest;
 import org.apache.pig.tools.parameters.ParseException;
 
-public class TestAlexaTop1mGroupBySite {
+public class TestGroupAlexaBySite {
     private PigTest test;
-    private static final String SCRIPT = "alexa_top1m_group_by_site.pig";
+    private static final String SCRIPT = "group_alexa_by_site.pig";
 
     @Test public void testSampleData() throws IOException, ParseException {
 	String[] args = {
