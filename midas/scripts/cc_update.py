@@ -51,12 +51,8 @@ database.
     def run(self):
         logging.basicConfig(level=self.args.verbosity)
         root = LocalFilesRoot(self.args.location)
-        try:
-            for cls_name in self.args.classes:
-                cls_inst = root.get(cls_name)
-                updater = Updater(cls_inst)
-                updater.run()
-        finally:
-            if hasattr(root, 'clean_up'):
-                root.clean_up()
+        for cls_name in self.args.classes:
+            cls_inst = root.get(cls_name)
+            updater = Updater(cls_inst)
+            updater.run()
         return 0
