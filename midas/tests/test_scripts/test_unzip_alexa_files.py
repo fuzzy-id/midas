@@ -51,6 +51,7 @@ class UnzipAlexaFilesTests(IntegrationTestCaseNG):
         self.assert_in_cls_out('Skipping top-1m-2012-09-03.csv.zip\n')
         self.assert_in_cls_out('Skipping top-1m-2012-09-04.csv.zip\n')
 
+
 if __name__ == '__main__':  # pragma: no cover
     from midas.compat import unittest
     unittest.main()
