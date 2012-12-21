@@ -33,14 +33,17 @@ class UnzipAlexaFilesTests(IntegrationTestCaseNG):
         for fname in results:
             res = os.path.join(self.tmpd, fname)
             exp = os.path.join(TEST_DATA_PATH['alexa_files'], fname)
-            with open(res) as fp1, open(exp) as fp2:
-                for entry1, entry2 in zip(fp1, fp2):
-                    self.assertEqual(entry1, entry2)
+            with open(res) as fp1:
+                with open(exp) as fp2:
+                    for entry1, entry2 in zip(fp1, fp2):
+                        self.assertEqual(entry1, entry2)
 
     def test_skip_already_present_files(self):
         first = os.path.join(self.tmpd, 'top_1m_2012-09-03')
         snd = os.path.join(self.tmpd, 'top_1m_2012-09-04')
-        with open(first, 'w'), open(snd, 'w'):
+        with open(first, 'w'):
+            pass
+        with open(snd, 'w'):
             pass
         self.assertEqual(self._call_cmd(TEST_DATA_PATH['alexa_zip_files'], 
                                         self.tmpd), 0)
