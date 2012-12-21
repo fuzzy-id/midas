@@ -94,39 +94,6 @@ class FetcherBehaviourOnErrorTests(unittest.TestCase):
         self.assertEqual(semaphore.release.call_count, 3)
 
 
-class IntegrationTests(unittest.TestCase):
-
-    def setUp(self):
-        self.tmpd = tempfile.mkdtemp()
-
-    def tearDown(self):
-        shutil.rmtree(self.tmpd)
-
-    @mock.patch('midas.crunchbase_crawler.urlopen')
-    def test_company_fetcher_and_company_list(self, urlopen):
-        from midas.crunchbase_crawler import Fetcher
-        from midas.crunchbase_crawler import CompanyList
-        prepare_url_open(urlopen, {FOO_URL: {'foo': 'bar'}, })
-        dump_file = os.path.join(self.tmpd, 'foo.json.gz')
-        cl = CompanyList(DummyRoot(), self.tmpd)
-        cf = Fetcher(cl.get('foo'),
-                            threading.Semaphore(1))
-        cf.run()
-        urlopen.assert_called_once_with(FOO_URL)
-        with GzipFile(dump_file) as fp:
-            self.assertEqual(json.loads(fp.read().decode()), {'foo': 'bar'})
-
-    def test_crawler_and_company_fetcher_play_together(self):
-        from midas.crunchbase_crawler import Updater
-        cl = DummyCompanyList()
-        cl.list_not_local.return_value = (cl.get('facebook'), )
-        crawler = Updater(cl)
-        crawler.run()
-        fb = cl.get.assert_called_once_with('facebook')
-        fb = cl.get('facebook')
-        fb.update.assert_called_once_with()
-
-
 class LocalFilesRootTests(unittest.TestCase):
 
     def _make_one(self, path):
@@ -231,3 +198,36 @@ class ZippedJsonFileTests(unittest.TestCase):
         zjf = self._make_one(dump_file)
         zjf.load()
         self.assertEqual(zjf.data, data)
+
+
+class IntegrationTests(unittest.TestCase):
+
+    def setUp(self):
+        self.tmpd = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpd)
+
+    @mock.patch('midas.crunchbase_crawler.urlopen')
+    def test_company_fetcher_and_company_list(self, urlopen):
+        from midas.crunchbase_crawler import Fetcher
+        from midas.crunchbase_crawler import CompanyList
+        prepare_url_open(urlopen, {FOO_URL: {'foo': 'bar'}, })
+        dump_file = os.path.join(self.tmpd, 'foo.json.gz')
+        cl = CompanyList(DummyRoot(), self.tmpd)
+        cf = Fetcher(cl.get('foo'),
+                            threading.Semaphore(1))
+        cf.run()
+        urlopen.assert_called_once_with(FOO_URL)
+        with GzipFile(dump_file) as fp:
+            self.assertEqual(json.loads(fp.read().decode()), {'foo': 'bar'})
+
+    def test_crawler_and_company_fetcher_play_together(self):
+        from midas.crunchbase_crawler import Updater
+        cl = DummyCompanyList()
+        cl.list_not_local.return_value = (cl.get('facebook'), )
+        crawler = Updater(cl)
+        crawler.run()
+        fb = cl.get.assert_called_once_with('facebook')
+        fb = cl.get('facebook')
+        fb.update.assert_called_once_with()
