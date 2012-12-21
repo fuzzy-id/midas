@@ -45,7 +45,7 @@ class UnzipAlexaFiles(md_scripts.MDCommand):
             else:
                 with open(dst_f, 'w') as fp:
                     for site, rank in iter_alexa_zip_file(zip_f):
-                        fp.write('{0},{1},{2}\n'.format(site, tstamp, rank))
+                        fp.write('{0}\t{1}\t{2}\n'.format(site, tstamp, rank))
                 self.out('Processed {0}'.format(basename))
 
 
