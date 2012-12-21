@@ -3,9 +3,9 @@ import java.io.IOException;
 import org.apache.pig.pigunit.PigTest;
 import org.junit.Test;
 
-public class TestAlexaCountRankPerSite {
+public class TestCountEntriesPerSite {
     private PigTest test;
-    private static final String SCRIPT = "alexa_count_rank_per_site.pig";
+    private static final String SCRIPT = "count_entries_per_site.pig";
 
     @Test public void testSampleData() throws IOException, ParseException {
 	PigTest test = new PigTest(SCRIPT);
