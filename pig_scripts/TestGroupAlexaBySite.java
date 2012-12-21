@@ -31,7 +31,6 @@ public class TestGroupAlexaBySite {
 
     @Test public void testTestDataWithFixedOutput() throws IOException, ParseException {
 	String[] args = {
-	    "reducers=1",
 	    "input=../test_data/alexa_files/",
 	    "output=rows",
 	};
