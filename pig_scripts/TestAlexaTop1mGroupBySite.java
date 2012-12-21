@@ -9,7 +9,6 @@ public class TestAlexaTop1mGroupBySite {
 
     @Test public void testSampleData() throws IOException, ParseException {
 	PigTest test = new PigTest(SCRIPT);
-	
 	String[] input = {
 	    "foo.example.com\t1\t2012-12-16",
 	    "foo.example.com\t1\t2012-12-15",
@@ -18,13 +17,10 @@ public class TestAlexaTop1mGroupBySite {
 	    "bar.example.com\t2\t2012-12-15",
 	    "bar.example.com\t2\t2012-12-14",
 	};
-
 	String[] output = {
 	    "(bar.example.com,{(2012-12-16,2),(2012-12-15,2),(2012-12-14,2)})",
 	    "(foo.example.com,{(2012-12-16,1),(2012-12-15,1),(2012-12-14,1)})",
 	};
-
 	test.assertOutput("top1m", input, "row", output);
-
     }
 }
