@@ -1,7 +1,7 @@
-top1m = LOAD 'alexa_files' AS
-      (site:chararray, rank:int, tstamp:chararray);
+top1m = LOAD '$input' AS
+      (site:chararray, tstamp:chararray, rank:int);
 
 sites = GROUP top1m BY site;
-row = foreach sites generate group, top1m.(tstamp, rank);
+rows = foreach sites generate group, top1m.(tstamp, rank);
 
-STORE row INTO 'alexa_sites';
+STORE rows INTO '$output';
