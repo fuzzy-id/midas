@@ -6,7 +6,7 @@ from midas.compat import unittest
 class DummyRootTests(unittest.TestCase):
 
     def _make_one(self):
-        from midas.tests.test_crunchbase_crawler import DummyRoot
+        from midas.tests import DummyRoot
         return DummyRoot()
 
     def test_root_is_instance_of_local_files_dir_class(self):

@@ -12,11 +12,11 @@ from midas.compat import GzipFile
 from midas.compat import StringIO
 from midas.compat import unittest
 
-from midas.tests.test_crunchbase_crawler import BAR_URL
-from midas.tests.test_crunchbase_crawler import COMPANIES_URL
-from midas.tests.test_crunchbase_crawler import EXAMPLES_PATH
-from midas.tests.test_crunchbase_crawler import FOO_URL
-from midas.tests.test_crunchbase_crawler import prepare_url_open
+from midas.tests import BAR_URL
+from midas.tests import COMPANIES_URL
+from midas.tests import EXAMPLES_PATH
+from midas.tests import FOO_URL
+from midas.tests import prepare_url_open
 
 import mock
 

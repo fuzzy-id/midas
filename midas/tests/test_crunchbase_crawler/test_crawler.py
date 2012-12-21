@@ -13,11 +13,11 @@ from midas.compat import HTTPError
 from midas.compat import StringIO
 from midas.compat import unittest
 
-from midas.tests.test_crunchbase_crawler import FOO_URL
-from midas.tests.test_crunchbase_crawler import DummyCompany
-from midas.tests.test_crunchbase_crawler import DummyCompanyList
-from midas.tests.test_crunchbase_crawler import DummyRoot
-from midas.tests.test_crunchbase_crawler import prepare_url_open
+from midas.tests import FOO_URL
+from midas.tests import DummyCompany
+from midas.tests import DummyCompanyList
+from midas.tests import DummyRoot
+from midas.tests import prepare_url_open
 
 
 class UpdaterTests(unittest.TestCase):
