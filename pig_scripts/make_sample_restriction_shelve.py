@@ -34,13 +34,17 @@ ARGPARSER.add_argument('files', metavar='FILE', nargs='+',
 DATE_INTERVAL = pandas.DateOffset(days=3)
 OFFSET = pandas.DateOffset(days=90)
 
+def get_median_rank_at_funding_date(field):
+    fund_date = pandas.Timestamp(field.tstamp) - OFFSET
+    s = pandas.Series(dict((pandas.Timestamp(d), r)
+                           for d, r in field.ranking))
+    r = s[fund_date-DATE_INTERVAL:fund_date+DATE_INTERVAL].median()
+    return fund_date, r
+
 def main(iterator):
     for i in iterator:
         field = PARSER(i)
-        fund_date = pandas.Timestamp(field.tstamp) - OFFSET
-        s = pandas.Series(dict((pandas.Timestamp(d), r)
-                               for d, r in field.ranking))
-        mean_rank = s[fund_date-DATE_INTERVAL:fund_date+DATE_INTERVAL].median()
+        fund_date, mean_rank = get_median_rank_at_funding_date(field)
         if numpy.isnan(mean_rank):
             continue
         mean_rank = int(mean_rank)
