@@ -36,7 +36,7 @@ class UpdaterTests(unittest.TestCase):
         dcl.update.assert_called_once_with()
 
 
-class FetcherTests(unittest.TestCase):
+class FetcherBehaviourOnErrorTests(unittest.TestCase):
 
     def _test_it(self, company):
         from midas.crunchbase_crawler import Fetcher
