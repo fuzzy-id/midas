@@ -16,7 +16,6 @@ from midas.tests.test_crunchbase_crawler import BAR_URL
 from midas.tests.test_crunchbase_crawler import COMPANIES_URL
 from midas.tests.test_crunchbase_crawler import EXAMPLES_PATH
 from midas.tests.test_crunchbase_crawler import FOO_URL
-from midas.tests.test_crunchbase_crawler import MEM_DB
 from midas.tests.test_crunchbase_crawler import prepare_url_open
 
 import mock
