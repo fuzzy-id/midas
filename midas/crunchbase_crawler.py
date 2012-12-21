@@ -51,20 +51,16 @@ class CrunchBaseFetchable(object):
     """ A mixin that sums up the general way to fetch data from
     crunchbase.
     """
-    to_replace = set(['\x00', '\x03', '\x0b', '\x0e',
+    TO_REPLACE = set(['\x00', '\x03', '\x0b', '\x0e',
                       '\x12', '\x14', '\x1d', '\x1e', '\x1f'])
-    api_key = 'vqrwexbhj9s2d7fbzzj9cg57'
-    companies_list_url = '?'.join(('http://api.crunchbase.com/v/1/companies.js',
-                                   'api_key={0}'.format(api_key)))
-    company_url_tpl = '?'.join(('http://api.crunchbase.com/v/1/company/{0}.js',
-                                'api_key={0}'.format(api_key)))
+    API_KEY = 'vqrwexbhj9s2d7fbzzj9cg57'
 
     def query_url(self):  # pragma: no cover
         raise NotImplementedError()
 
     @classmethod
     def replace_control_chars(cls, s):
-        for c in cls.to_replace:
+        for c in cls.TO_REPLACE:
             s = s.replace(c, '')
         return s
 
@@ -100,7 +96,8 @@ class Company(CrunchBaseFetchable):
         self.data = self.local_data.data
 
     def query_url(self):
-        return self.company_url_tpl.format(self.name)
+        return '?'.join(('http://api.crunchbase.com/v/1/company/{0}.js',
+                         'api_key={1}')).format(self.name, self.API_KEY)
 
 
 class CompanyList(CrunchBaseFetchable):
@@ -139,7 +136,8 @@ class CompanyList(CrunchBaseFetchable):
         return ZippedJsonFile(fname)
 
     def query_url(self):
-        return self.companies_list_url
+        return '?'.join(('http://api.crunchbase.com/v/1/companies.js',
+                         'api_key={0}'.format(self.API_KEY)))
 
     def update(self):
         data = self.fetch()
