@@ -47,7 +47,7 @@ class ZippedJsonFile(object):
             fp.write(json.dumps(self.data).encode())
 
 
-class CrunchBaseFetcherMixin(object):
+class CrunchBaseFetchable(object):
     """ A mixin that sums up the general way to fetch data from
     crunchbase.
     """
@@ -79,7 +79,7 @@ class CrunchBaseFetcherMixin(object):
         return json.loads(s)
 
 
-class Company(CrunchBaseFetcherMixin):
+class Company(CrunchBaseFetchable):
 
     def __init__(self, local_data, name):
         self.local_data = local_data
@@ -103,7 +103,7 @@ class Company(CrunchBaseFetcherMixin):
         return self.company_url_tpl.format(self.name)
 
 
-class CompanyList(CrunchBaseFetcherMixin):
+class CompanyList(CrunchBaseFetchable):
 
     name='companies'
     suffix = '.json.gz'
