@@ -9,19 +9,19 @@ from midas.tests.test_scripts import IntegrationTestCaseNG
 from midas.tests import TEST_DATA_PATH
 
 
-class AlexaZipToGzipTests(IntegrationTestCaseNG):
+class UnzipAlexaFilesTests(IntegrationTestCaseNG):
 
     def setUp(self):
-        super(AlexaZipToGzipTests, self).setUp()
+        super(UnzipAlexaFilesTests, self).setUp()
         self.tmpd = tempfile.mkdtemp()
 
     def tearDown(self):
         shutil.rmtree(self.tmpd)
-        super(AlexaZipToGzipTests, self).tearDown()
+        super(UnzipAlexaFilesTests, self).tearDown()
 
     def _get_target_cls(self):
-        from midas.scripts.alexa_zip_to_gzip import AlexaZipToGzip
-        return AlexaZipToGzip
+        from midas.scripts.unzip_alexa_files import UnzipAlexaFiles
+        return UnzipAlexaFiles
 
     def test_on_test_data(self):
         ret_code = self._call_cmd(TEST_DATA_PATH['alexa_zip_files'],

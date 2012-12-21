@@ -14,7 +14,7 @@ ALEXA_ZIP_FILE_FORMAT='top-1m-????-??-??.csv.zip'
 #: The time-stamp format as encoded in Alexa's Top1M files.
 ALEXA_TS_FORMAT='top-1m-%Y-%m-%d.csv.zip'
 
-class AlexaZipToGzip(md_scripts.MDCommand):
+class UnzipAlexaFiles(md_scripts.MDCommand):
     """ Unzip Alexa Top 1M ZIP files and put the content in gzip
     files. The content is copied as is. The 'csv.zip' extension of the
     file is replaced by 'gz'.
