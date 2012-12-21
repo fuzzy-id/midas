@@ -51,8 +51,8 @@ class CrunchBaseFetcherMixin(object):
     """ A mixin that sums up the general way to fetch data from
     crunchbase.
     """
-    to_replace = ('\x00', '\x03', '\x0b', '\x0e',
-                  '\x12', '\x14', '\x1d', '\x1e', '\x1f')
+    to_replace = set(['\x00', '\x03', '\x0b', '\x0e',
+                      '\x12', '\x14', '\x1d', '\x1e', '\x1f'])
     api_key = 'vqrwexbhj9s2d7fbzzj9cg57'
     companies_list_url = '?'.join(('http://api.crunchbase.com/v/1/companies.js',
                                    'api_key={0}'.format(api_key)))
