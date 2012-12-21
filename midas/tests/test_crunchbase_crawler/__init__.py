@@ -25,7 +25,7 @@ FOO_URL = 'http://api.crunchbase.com/v/1/company/foo.js?api_key=vqrwexbhj9s2d7fb
 BAR_URL = 'http://api.crunchbase.com/v/1/company/bar.js?api_key=vqrwexbhj9s2d7fbzzj9cg57'
 
 def DummyRoot(path=None):
-    from midas.crunchbase_crawler.model.local_files import LocalFilesRoot
+    from midas.crunchbase_crawler import LocalFilesRoot
     dr = mock.Mock(spec=LocalFilesRoot, path=path)
     dcl = DummyCompanyList(path)
 
@@ -39,7 +39,7 @@ def DummyRoot(path=None):
     return dr
 
 def DummyCompanyList(path=None):
-    from midas.crunchbase_crawler.model.local_files import CompanyList
+    from midas.crunchbase_crawler import CompanyList
     dcl = mock.Mock(spec=CompanyList)
     d = dict()
 
@@ -52,7 +52,7 @@ def DummyCompanyList(path=None):
     return dcl
 
 def DummyCompany(name='dummy_company'):
-    from midas.crunchbase_crawler.model.local_files import Company
+    from midas.crunchbase_crawler import Company
     dc = mock.Mock(spec=Company)
     dc.name = name
     return dc

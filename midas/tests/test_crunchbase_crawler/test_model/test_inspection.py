@@ -7,7 +7,7 @@ from midas.compat import unittest
 class BaseModelTests(unittest.TestCase):
 
     def _get_target_class(self):
-        from midas.crunchbase_crawler.model.inspection import Model
+        from midas.helper.inspection import Model
         return Model
 
     def _make_model(self, m):
@@ -156,7 +156,7 @@ class MergeModelTests(BaseModelTests):
 class ModelInspectorTests(BaseModelTests):
 
     def __get_target_class(self):
-        from midas.crunchbase_crawler.model.inspection import ModelInspector
+        from midas.helper.inspection import ModelInspector
         return ModelInspector
 
     def _make_one(self, obj_iter, root_access=(lambda x: x)):

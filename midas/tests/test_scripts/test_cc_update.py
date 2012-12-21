@@ -123,7 +123,7 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
     def tearDown(self):
         shutil.rmtree(self.tmpd)
 
-    @mock.patch('midas.crunchbase_crawler.model.urlopen')
+    @mock.patch('midas.crunchbase_crawler.urlopen')
     def test_on_empty_companies_list(self, urlopen):
         url_return = {COMPANIES_URL: []}
         prepare_url_open(urlopen, url_return)
@@ -131,7 +131,7 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
         urlopen.assert_called_once_with(COMPANIES_URL)
         self.assertEqual(os.listdir(self.tmpd), [])
 
-    @mock.patch('midas.crunchbase_crawler.model.urlopen')
+    @mock.patch('midas.crunchbase_crawler.urlopen')
     def test_on_companies_list_with_elements(self, urlopen):
         prepare_url_open(urlopen,
                          {COMPANIES_URL: [{'permalink': 'foo', },

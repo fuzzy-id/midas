@@ -2,6 +2,7 @@
 
 import json
 import logging
+import os.path
 import threading
 
 from midas.compat import GzipFile

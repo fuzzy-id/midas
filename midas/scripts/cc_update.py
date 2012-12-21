@@ -7,8 +7,8 @@ import logging
 import os.path
 import sys
 
-from midas.crunchbase_crawler.crawler import Updater
-from midas.crunchbase_crawler.model.local_files import LocalFilesRoot
+from midas.crunchbase_crawler import Updater
+from midas.crunchbase_crawler import LocalFilesRoot
 
 def main(argv=sys.argv):
     command = CCUpdateCommand(argv)

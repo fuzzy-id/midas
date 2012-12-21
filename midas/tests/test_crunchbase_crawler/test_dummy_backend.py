@@ -11,10 +11,10 @@ class DummyRootTests(unittest.TestCase):
 
     def test_root_is_instance_of_local_files_dir_class(self):
         root = self._make_one()
-        from midas.crunchbase_crawler.model.local_files import LocalFilesRoot
+        from midas.crunchbase_crawler import LocalFilesRoot
         self.assertIsInstance(root, LocalFilesRoot)
 
     def test_get_companies_returns_instance_of_company_list(self):
         root = self._make_one()
-        from midas.crunchbase_crawler.model.local_files import CompanyList
+        from midas.crunchbase_crawler import CompanyList
         self.assertIsInstance(root.get('companies'), CompanyList)
