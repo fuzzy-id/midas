@@ -10,7 +10,7 @@ from midas.compat import StringIO
 from midas.compat import unittest
 
 _here = os.path.abspath(os.path.dirname(__file__))
-_test_data_home = os.path.join(_here, 'data')
+_test_data_home = os.path.join(_here, '..', '..', 'test_data')
 
 TEST_CONFIG = """
 [location]
