@@ -209,6 +209,7 @@ class CompanyListTests(unittest.TestCase):
         cl.update()
         urlopen.assert_called_once_with(COMPANIES_URL)
 
+
 class ZippedJsonFileTests(unittest.TestCase):
 
     def setUp(self):
