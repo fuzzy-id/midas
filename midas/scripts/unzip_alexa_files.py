@@ -13,9 +13,9 @@ ALEXA_ZIP_FILE_FORMAT='top-1m-????-??-??.csv.zip'
 ALEXA_TS_FORMAT='top-1m-%Y-%m-%d.csv.zip'
 
 class UnzipAlexaFiles(midas.scripts.MDCommand):
-    """ Unzip Alexa Top 1M ZIP files and put the content in gzip
-    files. The content is copied as is. The 'csv.zip' extension of the
-    file is replaced by 'gz'.
+    """ Unzip Alexa Top 1M ZIP files and put the content in tab ('\t')
+    separated files. The content is copied as is. The 'csv.zip'
+    extension of the file is omitted.
     """
 
     def add_argument(self):
@@ -50,16 +50,12 @@ class UnzipAlexaFiles(midas.scripts.MDCommand):
 
 
 def iter_alexa_zip_file(fname):
-    """ Returns an iterator yielding a :class:`RankEntry` for
-    every line it finds in the file in the archive `fname`.
+    """ Returns an iterator yielding a tuple `(rank, entry)` for every
+    line it finds in the file in the archive `fname`.
 
     The standard Alexa Top1M data is a :class:`zipfile.ZipFile`. The
     archive contains one file named `top-1m.csv`. The lines in this
     file have the form `rank,site` (no spaces!).
-
-    As the time-stamp is encoded in the file name (defined by
-    :attr:`ALEXA_TS_FORMAT`) and not in the line, parsing cannot be
-    done line-by-line but needs to be done on a per file basis.
     """
     with ZipFile(fname) as zf:
         # The archive contains one file named ``top-1m.csv``
