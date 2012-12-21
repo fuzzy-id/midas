@@ -6,11 +6,8 @@ used from the command-line.
 from __future__ import print_function
 
 import argparse
-import logging
-import os.path
 import sys
 
-import midas.config as md_cfg
 
 class MDCommand(object):
     """ Initializes the :class:`MDCommand` instance by passing `argv`

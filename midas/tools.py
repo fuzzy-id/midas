@@ -20,15 +20,7 @@ from midas.compat import urlparse
 import midas.compat as vt_comp
 
 import midas as md
-import midas.config as md_cfg
 
-
-def interactive():  # pragma: no cover
-    """ Saves us a few lines of typing when using midas
-    interactively.
-    """
-    md_cfg.new_configparser()
-    md_cfg.read(os.path.join(os.environ['HOME'], '.midas'))
 
 ### Functions that work on MapReduce-style 'key\tvalue' lines ###
 
