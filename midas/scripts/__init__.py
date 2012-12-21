@@ -3,6 +3,8 @@
 used from the command-line.
 """
 
+from __future__ import print_function
+
 import argparse
 import logging
 import os.path
@@ -20,15 +22,12 @@ class MDCommand(object):
     :meth:`__init__` method when over-writing it.
     """
 
-    POS_ARG = None
-    out = sys.stdout
+    _out = sys.stdout
 
     def __init__(self, argv=None):
         if argv is None:  # pragma: no cover
             argv = sys.argv
         self.args = self.parser.parse_args(argv[1:])
-
-        md_cfg.read(os.path.expanduser(self.args.cfg))
     
     @classmethod
     def cmd(cls, argv=None):
@@ -55,14 +54,8 @@ class MDCommand(object):
         """
         if not hasattr(self, '_parser'):
             parser = argparse.ArgumentParser(description=self.__doc__)
-            parser.add_argument('-q', '--quiet', dest='verbosity',
-                                action='append_const', const=10,
-                                help='suppress messages to STDOUT')
-            parser.add_argument('-c', '--cfg', default='~/.midas',
-                                help=' '.join(('the midas configuration file,',
-                                               'default is "~/.midas"')))
-            if self.POS_ARG:
-                parser.add_argument(**self.POS_ARG)
+            parser.add_argument('-q', '--quiet', action='store_true',
+                                help='Suppress status messages')
             self._parser = parser
             self.add_argument()
         return self._parser
@@ -73,6 +66,10 @@ class MDCommand(object):
         arguments are passed in :meth:`__init__`.
         """
         pass
+
+    def out(self, msg):
+        if not self.args.quiet:
+            print(msg, file=self._out)
 
 
 class MDJob(MDCommand):

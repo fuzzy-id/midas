@@ -4,8 +4,6 @@ from midas.compat import unittest
 
 import midas.compat as vt_comp
 
-from midas.tests import TEST_SITE_COUNT
-
 import midas.tests as md_tests
 
 class KeyFuncTestCase(unittest.TestCase):

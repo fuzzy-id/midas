@@ -18,7 +18,7 @@ class IntegrationTestCaseNG(unittest.TestCase):
 
     def _call_cmd(self, *args):
         cls = self._get_target_cls()
-        cls.out = self.out
+        cls._out = self.out
         effargs = [cls.__name__]
         effargs.extend(args)
         return cls.cmd(effargs)

@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import shutil
+import os
 import os.path
 import tempfile
 
-import midas.compat as vt_comp
-
 from midas.tests.test_scripts import IntegrationTestCaseNG
+from midas.tests import TEST_DATA_PATH
 
-import midas
-import midas.config as md_cfg
-import midas.tests as md_tests
 
 class AlexaZipToGzipTests(IntegrationTestCaseNG):
 
@@ -27,39 +24,33 @@ class AlexaZipToGzipTests(IntegrationTestCaseNG):
         return AlexaZipToGzip
 
     def test_on_test_data(self):
-        ret_code = self._call_cmd(
-            os.path.dirname(md_tests.TEST_ALEXA_TOP1M_FILES[0]),
-            self.tmpd
-            )
+        ret_code = self._call_cmd(TEST_DATA_PATH['alexa_zip_files'],
+                                  self.tmpd)
         self.assertEqual(ret_code, 0)
-        first = os.path.join(self.tmpd, 'top_1m_2012-09-03.gz')
-        snd = os.path.join(self.tmpd, 'top_1m_2012-09-04.gz')
-        self.assertTrue(os.path.isfile(first))
-        self.assertTrue(os.path.isfile(snd))
-        with vt_comp.GzipFile(first) as fp:
-            entries = [ midas.RankEntry.parse_json(l.decode('utf-8'))
-                        for l in fp ]
-        self.assertEqual(entries, md_tests.TEST_ALEXA_TOP1M[:2])
-        with vt_comp.GzipFile(snd) as fp:
-            entries = [ midas.RankEntry.parse_json(l.decode('utf-8'))
-                        for l in fp ]
-        self.assertEqual(entries, md_tests.TEST_ALEXA_TOP1M[2:])
+        results = sorted(os.listdir(self.tmpd))
+        expected = sorted(os.listdir(TEST_DATA_PATH['alexa_files']))
+        self.assertEqual(results, expected)
+        for fname in results:
+            res = os.path.join(self.tmpd, fname)
+            exp = os.path.join(TEST_DATA_PATH['alexa_files'], fname)
+            with open(res) as fp1, open(exp) as fp2:
+                for entry1, entry2 in zip(fp1, fp2):
+                    self.assertEqual(entry1, entry2)
 
     def test_skip_already_present_files(self):
-        md_cfg.set('location', 'alexa_files', self.tmpd)
-        first = os.path.join(self.tmpd, 'top_1m_2012-09-03.gz')
-        snd = os.path.join(self.tmpd, 'top_1m_2012-09-04.gz')
-        with open(first, 'w'):
+        first = os.path.join(self.tmpd, 'top_1m_2012-09-03')
+        snd = os.path.join(self.tmpd, 'top_1m_2012-09-04')
+        with open(first, 'w'), open(snd, 'w'):
             pass
-        with open(snd, 'w'):
-            pass
-        self.assertEqual(self._call_cmd(), 0)
+        self.assertEqual(self._call_cmd(TEST_DATA_PATH['alexa_zip_files'], 
+                                        self.tmpd), 0)
         with open(first) as fp:
             self.assertEqual(fp.readlines(), [])
         with open(snd) as fp:
             self.assertEqual(fp.readlines(), [])
-        self.assert_in_cls_out('top-1m-2012-09-03.csv.zip SKIP\n')
-        self.assert_in_cls_out('top-1m-2012-09-04.csv.zip SKIP\n')
+        self.assert_in_cls_out('Skipping top-1m-2012-09-03.csv.zip\n')
+        self.assert_in_cls_out('Skipping top-1m-2012-09-04.csv.zip\n')
 
 if __name__ == '__main__':  # pragma: no cover
-    vt_comp.unittest.main()
+    from midas.compat import unittest
+    unittest.main()

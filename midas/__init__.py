@@ -10,11 +10,12 @@ import midas.compat as vt_comp
 
 #: The standard format we use to produce and parse time-stamps.
 TS_FORMAT = '%Y-%m-%d'
-#: The time-stamp format as encoded in Alexa's Top1M files.
-ALEXA_TS_FORMAT = 'top-1m-%Y-%m-%d.csv.zip'
 
 def parse_tstamp(s, fmt=TS_FORMAT):
     return datetime.datetime.strptime(s, fmt)
+
+def serialize_tstamp(tstamp, fmt=TS_FORMAT):
+    return tstamp.strftime(fmt)
 
 class RankEntry(object):
     """ Return an entry of a ranking for `site`.
