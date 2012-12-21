@@ -20,10 +20,11 @@ _test_data_home = os.path.join(_here, '..', '..', 'test_data')
 TEST_DATA_PATH = {
     'alexa_zip_files': os.path.join(_test_data_home, 'alexa_zip_files'),
     'alexa_files': os.path.join(_test_data_home, 'alexa_files'),
+    'crunchbase': os.path.join(_test_data_home, 'crunchbase'),
     }
 
 
-__test_examples__ = os.path.join(_here, 'test_crunchbase_crawler', 'destinations')
+__test_examples__ = TEST_DATA_PATH['crunchbase']
 EXAMPLES_PATH = {
     'company_files_empty': os.path.join(__test_examples__, 
                                         'company_files_empty'),
