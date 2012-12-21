@@ -67,13 +67,3 @@ class MDCommand(object):
     def out(self, msg):
         if not self.args.quiet:
             print(msg, file=self._out)
-
-
-class MDJob(MDCommand):
-    " Provides :class:`MDCommand` with a positional argument. "
-    
-    POS_ARG = {'dest': 'stream', 
-               'nargs': '*',
-               'metavar': 'RECORD', 
-               'default': sys.stdin, 
-               'help': 'the records to read'}
