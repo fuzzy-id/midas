@@ -4,7 +4,6 @@ import datetime
 import os.path
 import sys
 
-from midas import RankEntry
 from midas.tools import SiteCount
 from midas.compat import StringIO
 from midas.compat import unittest
