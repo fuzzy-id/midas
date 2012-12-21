@@ -8,11 +8,12 @@ from midas.compat import unittest
 import midas.compat as vt_comp
 
 import midas.tests as md_tests
+import midas.config as md_cfg
 
-class IntegrationTestCaseNG(md_tests.ConfiguredDBTestCase):
+class IntegrationTestCaseNG(unittest.TestCase):
 
     def setUp(self):
-        md_tests.ConfiguredDBTestCase.setUp(self)
+        md_cfg.set('location', 'data_home', md_tests._test_data_home)
         self.out = vt_comp.StringIO()
 
     def _call_cmd(self, *args):

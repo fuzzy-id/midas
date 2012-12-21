@@ -41,7 +41,6 @@ class ArgumentParserTests(unittest.TestCase):
         cmd = self._make_one('.')
         self.assertEqual(cmd.args.location, '.')
         self.assertEqual(cmd.args.classes, ['companies'])
-        self.assertFalse(cmd.args.sql)
 
     def test_missing_argument(self):
         with self.assertRaises(SystemExit):
@@ -71,10 +70,6 @@ class ArgumentParserTests(unittest.TestCase):
         self.assertEqual(cmd.args.verbosity, logging.getLevelName('CRITICAL'))
         cmd = self._make_one('-qqvq', EXAMPLES_PATH['company_files_empty'])
         self.assertEqual(cmd.args.verbosity, logging.getLevelName('ERROR'))
-
-    def test_passing_in_db_uri(self):
-        cmd = self._make_one('--sql', 'sqlite:///:memory:')
-        self.assertEqual(cmd.args.location, 'sqlite:///:memory:')
 
     def test_classes_flag(self):
         cmd = self._make_one('.', 'foo', 'bar')
@@ -106,13 +101,6 @@ class MainTests(unittest.TestCase):
     def test_with_wrong_class(self):
         with self.assertRaises(ValueError) as cm:
             self._test_it('-qqq', '.', 'no_such_class')
-        e = cm.exception
-        self.assertEqual(len(e.args), 1)
-        self.assertTrue(e.args[0].endswith("'no_such_class'"))
-
-    def test_with_wrong_class_on_sql(self):
-        with self.assertRaises(ValueError) as cm:
-            self._test_it('-qqq', '--sql', MEM_DB, 'no_such_class')
         e = cm.exception
         self.assertEqual(len(e.args), 1)
         self.assertTrue(e.args[0].endswith("'no_such_class'"))
@@ -167,36 +155,6 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
                                    'foo.json.gz')) as fp:
             self.assertEqual(json.loads(fp.read().decode()), 
                              ['some_foo', ])
-
-
-class MainSqlIntegrationTests(MainIntegrationTestCase):
-
-    @mock.patch('midas.crunchbase_crawler.model.urlopen')
-    def test_on_empty_companies_list(self, urlopen):
-        url_return = {COMPANIES_URL: []}
-        prepare_url_open(urlopen, url_return)
-        self.assertEqual(self._test_it('--sql', MEM_DB), 0)
-        urlopen.assert_called_once_with(COMPANIES_URL)
-
-    @mock.patch('midas.crunchbase_crawler.model.urlopen')
-    def test_on_companies_list_with_elements(self, urlopen):
-        from midas.crunchbase_crawler.model.db import DataBaseRoot
-        prepare_url_open(urlopen,
-                         {COMPANIES_URL: [{'permalink': 'foo', },
-                                          {'permalink': 'bar', }],
-                          FOO_URL: {'permalink': 'foo'},
-                          BAR_URL: {'permalink': 'bar'}})
-        with tempfile.NamedTemporaryFile() as fp:
-            db_file = 'sqlite:///{0}'.format(fp.name)
-            self.assertEqual( self._test_it('--sql', db_file), 0)
-            urlopen.assert_called_with(BAR_URL)
-            root = DataBaseRoot(db_file)
-            try:
-                cl = root.get('companies')
-                self.assertIsNotNone(cl.get('bar').id)
-                self.assertIsNotNone(cl.get('foo').id)
-            finally:
-                root.clean_up()
 
 
 if __name__ == '__main__':  # pragma: no cover

@@ -4,7 +4,7 @@ import operator
 
 from midas.compat import imap
 from midas.compat import unittest
-from midas.tests import ConfiguredDBTestCase
+
 
 class AssociationTreeTests(unittest.TestCase):
 
@@ -59,30 +59,6 @@ class SplitDomainTests(unittest.TestCase):
     def test_on_empty_str(self):
         self.assertEqual(self._run_it(''), ('', ))
 
-class AssociateCompaniesToSitesTests(ConfiguredDBTestCase):
-
-    def _run_it(self, iterable=None):
-        from midas.associate import associate_companies_to_sites
-        return associate_companies_to_sites(iterable)
-
-    def test_on_test_config(self):
-        foo_comp = self._make_company_json(self.companies_js[0])
-        bar_comp = self._make_company_json(self.companies_js[1])
-        self.assertEqual(self._run_it(), 
-                         {foo_comp: ['foo.example.com']})
-
-
-class AssociateSitesToCompaniesTests(ConfiguredDBTestCase):
-
-    def _run_it(self, iterable=None):
-        from midas.associate import associate_sites_to_companies
-        return associate_sites_to_companies(iterable)
-
-    def test_on_test_config(self):
-        foo_comp = self._make_company_json(self.companies_js[0])
-        bar_comp = self._make_company_json(self.companies_js[1])
-        self.assertEqual(self._run_it(), 
-                         {'foo.example.com': [foo_comp]})
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

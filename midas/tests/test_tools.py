@@ -5,7 +5,6 @@ from midas.compat import unittest
 import midas.compat as vt_comp
 
 from midas.tests import TEST_SITE_COUNT
-from midas.tests import ConfiguredDBTestCase
 
 import midas.tests as md_tests
 
@@ -56,11 +55,6 @@ class DomainTests(unittest.TestCase):
         from midas.tools import domain
         return domain(company_or_site)
 
-    def test_on_company(self):
-        from midas.crunchbase_crawler.model.db import Company
-        c = Company(homepage_url='http://example.com/foo')
-        self.assertEqual(self._run_it(c), 'example.com')
-
     def test_on_site(self):
         self.assertEqual(self._run_it('example.com/foo'), 
                          'example.com')
@@ -73,24 +67,6 @@ class DomainTests(unittest.TestCase):
         result = self._run_it('http://example.com/foo')
         self.assertEqual(result, 'example.com')
 
-
-class IterSitesCountTests(ConfiguredDBTestCase):
-
-    def test_iter_site_counts(self):
-        from midas.tools import iter_site_counts
-        result = list(iter_site_counts())
-        self.assertEqual(result, TEST_SITE_COUNT)
-
-    def test_iter_all_sites(self):
-        from midas.tools import iter_all_sites
-        result = list(iter_all_sites())
-        self.assertEqual(result,
-                         [ sc.site for sc in TEST_SITE_COUNT ])
-
-    def test_iter_interesting_sites(self):
-        from midas.tools import iter_interesting_sites
-        result = list(iter_interesting_sites())
-        self.assertEqual(result, ['foo.example.com'])
 
 class RelationStatsTests(unittest.TestCase):
 

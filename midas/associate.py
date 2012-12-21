@@ -9,7 +9,6 @@ of the Alexa Top1M sites .
 
 import midas.compat as vt_comp
 
-import midas.db as md_db
 import midas.tools as md_tools
 
 class AssociationTree(dict):

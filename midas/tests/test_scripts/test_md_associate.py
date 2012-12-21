@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from midas.compat import unittest
 import midas.compat as vt_comp
 
 from midas.tests.test_scripts import IntegrationTestCaseNG
 
 import midas.tests as md_tests
 
+@unittest.skip('this has to be reworked entirely')
 class MdAssociateTests(IntegrationTestCaseNG):
 
     def _get_target_cls(self):
