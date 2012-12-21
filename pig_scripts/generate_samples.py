@@ -1,5 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""
+This script ideally creates one sample for each company with an
+associated sites that has restrictions stored in the shelve. Hence,
+you first have to merge/split the original files containing the data
+(this should be `sites_wo_company`) into the right amount of splits,
+e.g. if your data is located in files /data/sites_wo_company/part-*
+
+DATA=/data/sites_wo_company/part-*
+split_size=$(( $(cat ${DATA} | wc -l) / 10 + 1)); cat ${DATA} | split -l ${split_size} - splitted_
+
+This will generate files with the naming scheme `splitted_aa`,
+`splitted_ab`, etc. in your current working directory. Now start this
+very script once per file:
+
+for f in /path/to/splitted_*; do out=/data/results/result_$(basename ${f}); cat ${f} | ./generate_samples.py > ${out} & done
+"""
 
 import collections
 import shelve
