@@ -46,12 +46,12 @@ class UnzipAlexaFiles(md_scripts.MDCommand):
                 self.out('Skipping {0}'.format(basename))
             else:
                 with open(dst_f, 'w') as fp:
-                    for site, rank in iter_alexa_file(zip_f):
+                    for site, rank in iter_alexa_zip_file(zip_f):
                         fp.write('{0},{1},{2}\n'.format(site, tstamp, rank))
                 self.out('Processed {0}'.format(basename))
 
 
-def iter_alexa_file(fname):
+def iter_alexa_zip_file(fname):
     """ Returns an iterator yielding a :class:`RankEntry` for
     every line it finds in the file in the archive `fname`.
 
