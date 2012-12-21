@@ -57,7 +57,7 @@ class MDCommand(object):
             self.add_argument()
         return self._parser
 
-    def add_argument(self):
+    def add_argument(self):  # pragma: no cover
         """ Overwrite this function to add further arguments to
         :attr:`self.parser`. This function is called before the actual
         arguments are passed in :meth:`__init__`.
