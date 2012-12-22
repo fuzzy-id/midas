@@ -4,6 +4,7 @@ import logging
 import threading
 
 from midas.compat import HTTPError
+from midas.compat import Queue
 from midas.crunchbase_crawler import CompanyList
 
 import midas.scripts
@@ -15,9 +16,11 @@ class CCUpdateCommand(midas.scripts.MDCommand):
     locally.
     """
     def add_argument(self):
+        self.parser.add_argument('-p', '--num_threads', default=1,
+                                 help='How many threads should crawl in parallel')
         self.parser.add_argument('location', 
                                  action=midas.scripts.CheckDirectoryAction,
-                                 help='the location to save the crawled data')
+                                 help='The location to save the crawled data')
 
     def run(self):
         if self.args.quiet:
@@ -26,38 +29,29 @@ class CCUpdateCommand(midas.scripts.MDCommand):
             log_level = logging.INFO
         logging.basicConfig(level=log_level)
         cl = CompanyList(self.args.location)
-        updater = Updater(cl)
-        updater.run()
+        q = Queue()
+        for _ in range(self.args.num_threads):
+            t = Fetcher(q)
+            t.daemon = True
+            t.start()
+        for company in cl.list_not_local():
+            q.put(company)
+        q.join()
         return 0
-
-
-class Updater(object):
-
-    def __init__(self, inst_list, num_threads=1):
-        self.inst_list = inst_list
-        self.num_threads = num_threads
-        self.semaphore = threading.Semaphore(num_threads)
-
-    def run(self):
-        self.inst_list.update()
-        for inst in self.inst_list.list_not_local():
-            self.semaphore.acquire()
-            fetcher = Fetcher(inst, self.semaphore)
-            fetcher.start()
-        # Wait 'til all threads finished
-        for _ in range(self.num_threads):
-            self.semaphore.acquire()
 
 
 class Fetcher(threading.Thread):
 
-    def __init__(self, inst, semaphore):
+    def __init__(self, queue):
         super(Fetcher, self).__init__()
-        self.inst = inst
-        self.semaphore = semaphore
+        self.q = queue
+        self.inst = None
 
     def run(self):
-        self.make_update(0)
+        while True:
+            self.inst = self.q.get()
+            self.make_update(0)
+            self.q.task_done()
 
     def make_update(self, tries=0):
         try:
