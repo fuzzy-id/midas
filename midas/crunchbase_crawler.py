@@ -8,19 +8,6 @@ from midas.compat import urlopen
 from midas.compat import HTTPError
 
 
-class LocalFilesRoot(object):
-    """ This is the root object of all data traversal.
-    """
-
-    def __init__(self, path):
-        self.path = path
-
-    def get(self, name):
-        if name == 'companies':
-            return CompanyList(self, self.path)
-        raise ValueError("No such class '{0}'".format(name))
-
-
 class CrunchBaseFetchable(object):
     """ A mixin that sums up the general way to fetch data from
     crunchbase.
