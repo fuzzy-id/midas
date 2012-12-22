@@ -5,7 +5,6 @@ import os.path
 
 from midas.compat import GzipFile
 from midas.compat import urlopen
-from midas.compat import HTTPError
 
 
 class CrunchBaseFetchable(object):
