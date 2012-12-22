@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from midas.compat import unittest
-import midas.compat as vt_comp
 
-from midas.tests.test_scripts import IntegrationTestCaseNG
+from midas.tests import IntegrationTestCaseNG
 
 import midas.tests as md_tests
 
@@ -24,4 +22,5 @@ class MdAssociateTests(IntegrationTestCaseNG):
         self.assertEqual(result.site, 'foo.example.com')
 
 if __name__ == '__main__':  # pragma: no cover
-    vt_comp.unittest.main()
+    from midas.compat import unittest
+    unittest.main()
