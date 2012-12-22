@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function
-
-import argparse
 import logging
-import os.path
 import threading
 
 from midas.compat import HTTPError
@@ -13,22 +9,14 @@ from midas.crunchbase_crawler import CompanyList
 import midas.scripts
 
 
-class CheckDirectoryAction(argparse.Action):
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        if not os.path.isdir(values):
-            parser.error("the directory '{0}' does not exist".format(
-                    values))
-        setattr(namespace, self.dest, values)
-
-
 class CCUpdateCommand(midas.scripts.MDCommand):
     """
     Crawl the companies information from crunchbase.com and save it
     locally.
     """
     def add_argument(self):
-        self.parser.add_argument('location', action=CheckDirectoryAction,
+        self.parser.add_argument('location', 
+                                 action=midas.scripts.CheckDirectoryAction,
                                  help='the location to save the crawled data')
 
     def run(self):

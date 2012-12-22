@@ -19,27 +19,23 @@ class UnzipAlexaFiles(midas.scripts.MDCommand):
     """
 
     def add_argument(self):
-        self.parser.add_argument(
-            'src', nargs=1, metavar='SOURCE',
-            help='The directory where ZIP files can be found'
-            )
-        self.parser.add_argument(
-            'dst', nargs=1, metavar='DEST',
-            help='The directory to put the unzipped files'
-            )
+        self.parser.add_argument('src', metavar='SOURCE',
+                                 action=midas.scripts.CheckDirectoryAction,
+                                 help='The directory where ZIP files can be found')
+        self.parser.add_argument('dst', metavar='DEST',
+                                 action=midas.scripts.CheckDirectoryAction,
+                                 help='The directory to put the unzipped files')
 
     def run(self):
-        src, dst = self.args.src[0], self.args.dst[0]
-        zip_files = glob.glob(
-            os.path.join(src, ALEXA_ZIP_FILE_FORMAT)
-            )
+        zip_files = glob.glob(os.path.join(self.args.src, 
+                                           ALEXA_ZIP_FILE_FORMAT))
         zip_files.sort()
         for zip_f in zip_files:
             basename = os.path.basename(zip_f)
             date = midas.parse_tstamp(basename, ALEXA_TS_FORMAT)
             tstamp = midas.serialize_tstamp(date)
             dst_fname = 'top_1m_{0}'.format(tstamp)
-            dst_f = os.path.join(dst, dst_fname)
+            dst_f = os.path.join(self.args.dst, dst_fname)
             if os.path.isfile(dst_f):
                 self.out('Skipping {0}'.format(basename))
             else:

@@ -6,7 +6,17 @@ used from the command-line.
 from __future__ import print_function
 
 import argparse
+import os.path
 import sys
+
+
+class CheckDirectoryAction(argparse.Action):
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        if not os.path.isdir(values):
+            parser.error("the directory '{0}' does not exist".format(
+                    values))
+        setattr(namespace, self.dest, values)
 
 
 class MDCommand(object):

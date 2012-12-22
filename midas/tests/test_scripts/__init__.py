@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import shutil
+import tempfile
+
 from midas.compat import StringIO
 from midas.compat import unittest
 
