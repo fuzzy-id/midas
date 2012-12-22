@@ -29,6 +29,7 @@ class CCUpdateCommand(midas.scripts.MDCommand):
             log_level = logging.INFO
         logging.basicConfig(level=log_level)
         cl = CompanyList(self.args.location)
+        cl.update()
         q = Queue()
         for _ in range(self.args.num_threads):
             t = Fetcher(q)
