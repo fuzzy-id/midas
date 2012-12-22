@@ -5,7 +5,6 @@ from __future__ import print_function
 import argparse
 import logging
 import os.path
-import sys
 import threading
 
 from midas.compat import HTTPError
