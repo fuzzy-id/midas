@@ -60,6 +60,11 @@ else:
     from UserList import UserList
 
 if PY3K:  # pragma: no cover
+    from queue import Queue
+else:
+    from Queue import Queue
+
+if PY3K:  # pragma: no cover
     from urllib.parse import urlparse
 else:
     from urlparse import urlparse
