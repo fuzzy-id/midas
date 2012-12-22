@@ -25,32 +25,29 @@ from midas.tests import prepare_url_open
 
 class CompanyTests(unittest.TestCase):
 
-    def _make_one(self, local_data, name):
+    def _make_one(self, name, fname):
         from midas.crunchbase_crawler import Company
-        return Company(local_data, name)
-
-    def test_url_generation(self):
-        company = self._make_one('foo', 'foo')
-        self.assertEqual(company.query_url(), FOO_URL)
+        return Company(name, fname)
 
     def _make_update(self):
-        from midas.crunchbase_crawler import ZippedJsonFile
+        from midas.crunchbase_crawler import Company
         with tempfile.NamedTemporaryFile() as fp:
-            local_data = ZippedJsonFile(fp.name)
-            company = self._make_one(local_data, 'foo')
+            company = self._make_one('foo', fp.name)
             company.update()
-        return local_data, company
+        return company
+
+    def test_url_generation(self):
+        company = self._make_one('foo', None)
+        self.assertEqual(company.query_url(), FOO_URL)
 
     def test_str(self):
-        c = self._make_one(None, 'foo')
+        c = self._make_one('foo', None)
         self.assertEqual(str(c), 'Company( foo )')
 
     @mock.patch('midas.crunchbase_crawler.urlopen')
     def test_update(self, urlopen):
-        prepare_url_open(urlopen,
-                         {FOO_URL: {'foo': 'bar', }})
-        local_data, company = self._make_update()
-        self.assertEqual(local_data.data, {'foo': 'bar'})
+        prepare_url_open(urlopen, {FOO_URL: {'foo': 'bar', }})
+        company = self._make_update()
         self.assertEqual(company.data, {'foo': 'bar'})
         urlopen.assert_called_once_with(FOO_URL)
 
@@ -59,8 +56,8 @@ class CompanyTests(unittest.TestCase):
         buf = BytesIO(b'["\x12fo\x14", "ba\x0b"]')
         buf.seek(0)
         urlopen.return_value = buf
-        local_data, _ = self._make_update()
-        self.assertEqual(local_data.data, ['fo', 'ba'])
+        company = self._make_update()
+        self.assertEqual(company.data, ['fo', 'ba'])
 
 
 class CompanyListTests(unittest.TestCase):
@@ -92,26 +89,3 @@ class CompanyListTests(unittest.TestCase):
         cl = self._make_one(None)
         cl.update()
         urlopen.assert_called_once_with(COMPANIES_URL)
-
-
-class ZippedJsonFileTests(unittest.TestCase):
-
-    def setUp(self):
-        self.tmpd = tempfile.mkdtemp()
-
-    def tearDown(self):
-        shutil.rmtree(self.tmpd)
-
-    def _make_one(self, path):
-        from midas.crunchbase_crawler import ZippedJsonFile
-        return ZippedJsonFile(path)
-
-    def test_dump_and_load(self):
-        data = {'foo': ['bar', 'baz']}
-        dump_file = os.path.join(self.tmpd, 'dump.json.gz')
-        zjf = self._make_one(dump_file)
-        zjf.dump(data)
-        del zjf
-        zjf = self._make_one(dump_file)
-        zjf.load()
-        self.assertEqual(zjf.data, data)

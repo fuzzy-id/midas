@@ -57,16 +57,11 @@ class CompanyList(CrunchBaseFetchable):
                 yield company
 
     def get(self, company_name):
-        local_data = self.get_local_data(company_name)
-        return Company(local_data, company_name)
+        return Company(company_name, self.expand(company_name))
 
     def expand(self, fname):
         return os.path.join(self.path,
                             '{0}{1}'.format(fname, self.suffix))
-
-    def get_local_data(self, name):
-        fname = self.expand(name)
-        return ZippedJsonFile(fname)
 
     def query_url(self):
         return '?'.join(('http://api.crunchbase.com/v/1/companies.js',
@@ -80,48 +75,27 @@ class CompanyList(CrunchBaseFetchable):
 
 class Company(CrunchBaseFetchable):
 
-    def __init__(self, local_data, name):
-        self.local_data = local_data
+    def __init__(self, name, fname):
         self.name = name
+        self.fname = fname
 
     def __str__(self):
         return 'Company( {0} )'.format(self.name)
 
     def update(self):
-        self.local_data.dump(self.fetch())
-        self.load()
+        self.data = self.fetch()
+        with GzipFile(self.fname, 'wb') as fp:
+            fp.write(json.dumps(self.data).encode())
 
     def is_local(self):
+        return os.path.isfile(self.fname)
         return self.local_data.exists()
 
     def load(self):
-        self.local_data.load()
-        self.data = self.local_data.data
+        if self.data is None:
+            with GzipFile(self.fname, 'rb') as fp:
+                self.data = json.loads(fp.read().decode())
 
     def query_url(self):
         return '?'.join(('http://api.crunchbase.com/v/1/company/{0}.js',
                          'api_key={1}')).format(self.name, self.API_KEY)
-
-
-class ZippedJsonFile(object):
-    """ Implements access to local stored data, which is realized via
-    compressed (gzipped) JSON files.
-    """
-
-    def __init__(self, path):
-        self.path = path
-        self.data = None
-
-    def exists(self):
-        return os.path.isfile(self.path)
-
-    def load(self):
-        if self.data is None:
-            with GzipFile(self.path, 'rb') as fp:
-                self.data = json.loads(fp.read().decode())
-
-    def dump(self, data=None):
-        if data is not None:
-            self.data = data
-        with GzipFile(self.path, 'wb') as fp:
-            fp.write(json.dumps(self.data).encode())
