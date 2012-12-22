@@ -21,6 +21,7 @@ from midas.tests import FOO_URL
 from midas.tests import DummyCompany
 from midas.tests import DummyCompanyList
 from midas.tests import prepare_url_open
+from midas.tests.test_scripts import IntegrationTestCaseNG
 
 import mock
 
@@ -33,7 +34,7 @@ class FetcherBehaviourOnErrorTests(unittest.TestCase):
         q = Queue()
         q.put(company)
         cf = Fetcher(q)
-        cf.daemonize = True
+        cf.daemon = True
         cf.start()
         return q
 
@@ -42,26 +43,29 @@ class FetcherBehaviourOnErrorTests(unittest.TestCase):
         dc = DummyCompany()
         dc.update.side_effect = Exception()
         q = self._test_it(dc)
-        critical.assert_called_once()
+        q.join()
         self.assertTrue(q.empty())
+        critical.assert_called_once()
 
     @mock.patch('logging.critical')
     def test_404_is_properly_handled(self, critical):
         dc = DummyCompany()
         dc.update.side_effect = HTTPError(None, 404, 'Not Found', None, None)
         q = self._test_it(dc)
+        q.join()
+        self.assertTrue(q.empty())
         critical.assert_has_calls([])
         critical.assert_called_once()
-        self.assertTrue(q.empty())
 
     @mock.patch('logging.exception')
     def test_not_404_is_logged(self, exc):
         dc = DummyCompany()
         dc.update.side_effect = HTTPError(None, 400, None, None, None)
         q = self._test_it(dc)
+        q.join()
+        self.assertTrue(q.empty())
         dc.update.assert_called_once()
         exc.assert_called_once()
-        self.assertTrue(q.empty())
 
     @mock.patch('logging.critical')
     @mock.patch('logging.exception')
@@ -69,10 +73,11 @@ class FetcherBehaviourOnErrorTests(unittest.TestCase):
         dc = DummyCompany()
         dc.update.side_effect = HTTPError(None, 504, None, None, None)
         q = self._test_it(dc)
+        q.join()
+        self.assertTrue(q.empty())
         dc.update.assert_called_once()
         exc.assert_called_once()
         self.assertEqual(critical.call_count, 2)
-        self.assertTrue(q.empty())
 
     @mock.patch('logging.critical')
     @mock.patch('logging.exception')
@@ -80,10 +85,11 @@ class FetcherBehaviourOnErrorTests(unittest.TestCase):
         dc = DummyCompany()
         dc.update.side_effect = HTTPError(None, 503, None, None, None)
         q = self._test_it(dc)
+        q.join()
+        self.assertTrue(q.empty())
         dc.update.assert_called_once()
         exc.assert_called_once()
         self.assertEqual(critical.call_count, 2)
-        self.assertTrue(q.empty())
 
 
 class ArgumentParserTests(unittest.TestCase):
@@ -117,28 +123,17 @@ class ArgumentParserTests(unittest.TestCase):
                     .format(dst)))
 
 
-class MainIntegrationTestCase(unittest.TestCase):
+class MainLocalFilesIntegrationTests(IntegrationTestCaseNG):
 
-    def _test_it(self, *args):
+    def _get_target_cls(self):
         from midas.scripts.cc_update import CCUpdateCommand
-        effargs = ['cc_update', '-q']
-        effargs.extend(args)
-        return CCUpdateCommand.cmd(effargs)
-
-
-class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
-
-    def setUp(self):
-        self.tmpd = tempfile.mkdtemp()
-
-    def tearDown(self):
-        shutil.rmtree(self.tmpd)
+        return CCUpdateCommand
 
     @mock.patch('midas.crunchbase_crawler.urlopen')
     def test_on_empty_companies_list(self, urlopen):
         url_return = {COMPANIES_URL: []}
         prepare_url_open(urlopen, url_return)
-        self.assertEqual(self._test_it(self.tmpd), 0)
+        self.assertEqual(self._call_cmd(self.tmpd), 0)
         urlopen.assert_called_once_with(COMPANIES_URL)
         self.assertEqual(os.listdir(self.tmpd), [])
 
@@ -149,7 +144,7 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
                                           {'permalink': 'bar', }],
                           FOO_URL: ['some_foo'],
                           BAR_URL: ['some_bar']})
-        self.assertEqual(self._test_it(self.tmpd), 0)
+        self.assertEqual(self._call_cmd(self.tmpd), 0)
         try:
             urlopen.assert_called_with(BAR_URL)
         except AssertionError:  # pragma: no cover
@@ -166,39 +161,6 @@ class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
                                    'foo.json.gz')) as fp:
             self.assertEqual(json.loads(fp.read().decode()), 
                              ['some_foo', ])
-
-
-class IntegrationTests(unittest.TestCase):
-
-    def setUp(self):
-        self.tmpd = tempfile.mkdtemp()
-
-    def tearDown(self):
-        shutil.rmtree(self.tmpd)
-
-    @mock.patch('midas.crunchbase_crawler.urlopen')
-    def test_company_fetcher_and_company_list(self, urlopen):
-        from midas.scripts.cc_update import Fetcher
-        from midas.crunchbase_crawler import CompanyList
-        prepare_url_open(urlopen, {FOO_URL: {'foo': 'bar'}, })
-        dump_file = os.path.join(self.tmpd, 'foo.json.gz')
-        cl = CompanyList(self.tmpd)
-        cf = Fetcher(cl.get('foo'),
-                            threading.Semaphore(1))
-        cf.run()
-        urlopen.assert_called_once_with(FOO_URL)
-        with GzipFile(dump_file) as fp:
-            self.assertEqual(json.loads(fp.read().decode()), {'foo': 'bar'})
-
-    def test_crawler_and_company_fetcher_play_together(self):
-        from midas.scripts.cc_update import Updater
-        cl = DummyCompanyList()
-        cl.list_not_local.return_value = (cl.get('facebook'), )
-        crawler = Updater(cl)
-        crawler.run()
-        fb = cl.get.assert_called_once_with('facebook')
-        fb = cl.get('facebook')
-        fb.update.assert_called_once_with()
 
 
 if __name__ == '__main__':  # pragma: no cover
