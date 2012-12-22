@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
-import logging
 import os.path
-import threading
 
 from midas.compat import GzipFile
 from midas.compat import urlopen
@@ -41,7 +39,6 @@ class CrunchBaseFetchable(object):
         return s
 
     def fetch(self):
-        logging.info('Fetching {0}'.format(self))
         response = urlopen(self.query_url())
         content = response.read()
         s = content.decode('utf-8')
