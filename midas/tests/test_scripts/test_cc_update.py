@@ -45,7 +45,7 @@ class FetcherBehaviourOnErrorTests(unittest.TestCase):
         q = self._test_it(dc)
         q.join()
         self.assertTrue(q.empty())
-        critical.assert_called_once()
+        self.assertEqual(critical.call_count, 1)
 
     @mock.patch('logging.critical')
     def test_404_is_properly_handled(self, critical):
@@ -55,7 +55,7 @@ class FetcherBehaviourOnErrorTests(unittest.TestCase):
         q.join()
         self.assertTrue(q.empty())
         critical.assert_has_calls([])
-        critical.assert_called_once()
+        self.assertEqual(critical.call_count, 1)
 
     @mock.patch('logging.exception')
     def test_not_400_is_logged(self, exc):
@@ -64,8 +64,8 @@ class FetcherBehaviourOnErrorTests(unittest.TestCase):
         q = self._test_it(dc)
         q.join()
         self.assertTrue(q.empty())
-        dc.update.assert_called_once()
-        exc.assert_called_once()
+        self.assertEqual(dc.update.call_count, 1)
+        self.assertEqual(exc.call_count, 1)
 
     @mock.patch('logging.critical')
     @mock.patch('logging.exception')
@@ -75,9 +75,9 @@ class FetcherBehaviourOnErrorTests(unittest.TestCase):
         q = self._test_it(dc)
         q.join()
         self.assertTrue(q.empty())
-        dc.update.assert_called_once()
-        exc.assert_called_once()
+        self.assertEqual(dc.update.call_count, 3)
         self.assertEqual(critical.call_count, 2)
+        self.assertEqual(exc.call_count, 1)
 
     @mock.patch('logging.critical')
     @mock.patch('logging.exception')
@@ -87,9 +87,9 @@ class FetcherBehaviourOnErrorTests(unittest.TestCase):
         q = self._test_it(dc)
         q.join()
         self.assertTrue(q.empty())
-        dc.update.assert_called_once()
-        exc.assert_called_once()
+        self.assertEqual(dc.update.call_count, 3)
         self.assertEqual(critical.call_count, 2)
+        self.assertEqual(exc.call_count, 1)
 
 
 class ArgumentParserTests(unittest.TestCase):
