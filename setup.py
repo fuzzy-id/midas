@@ -28,7 +28,7 @@ setup(name='midas',
       test_suite='midas.tests',
       entry_points={
         'console_scripts':
-            ['md_cc_update=midas.scripts.cc_update:main',
+            ['md_cc_update=midas.scripts.cc_update:CCUpdateCommand.cmd',
              'md_associate=midas.scripts.md_associate:MDAssociate.cmd',
              'md_alexa_zip_to_gzip=midas.scripts.alexa_zip_to_gzip:AlexaZipToGzip.cmd',
              ],

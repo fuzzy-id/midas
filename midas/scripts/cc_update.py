@@ -13,9 +13,6 @@ from midas.crunchbase_crawler import CompanyList
 
 import midas.scripts
 
-def main(argv=sys.argv):
-    return CCUpdateCommand.cmd(argv)
-
 
 class CheckDirectoryAction(argparse.Action):
 

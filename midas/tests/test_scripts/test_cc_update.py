@@ -56,36 +56,13 @@ class ArgumentParserTests(unittest.TestCase):
                     .format(dst)))
 
 
-class MainTests(unittest.TestCase):
-
-    def setUp(self):
-        self._old_err = sys.stderr
-        sys.stderr = StringIO()
-
-    def tearDown(self):
-        sys.stderr = self._old_err
-
-    def _test_it(self, *args):
-        from midas.scripts.cc_update import main
-        effargs = ['cc_update']
-        effargs.extend(args)
-        return main(effargs)
-
-    def test_missing_argument(self):
-        with self.assertRaises(SystemExit) as cm:
-            self._test_it()
-        self.assertEqual(cm.exception.code, 2)
-        err = sys.stderr.getvalue()
-        self.assertTrue(err.endswith('too few arguments\n'))
-
-
 class MainIntegrationTestCase(unittest.TestCase):
 
     def _test_it(self, *args):
-        from midas.scripts.cc_update import main
-        effargs = ['cc_update', '-qqq']
+        from midas.scripts.cc_update import CCUpdateCommand
+        effargs = ['cc_update', '-q']
         effargs.extend(args)
-        return main(effargs)
+        return CCUpdateCommand.cmd(effargs)
 
 
 class MainLocalFilesIntegrationTests(MainIntegrationTestCase):
