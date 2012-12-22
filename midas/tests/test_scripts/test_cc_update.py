@@ -54,7 +54,6 @@ class FetcherBehaviourOnErrorTests(unittest.TestCase):
         q = self._test_it(dc)
         q.join()
         self.assertTrue(q.empty())
-        critical.assert_has_calls([])
         self.assertEqual(critical.call_count, 1)
 
     @mock.patch('logging.exception')
