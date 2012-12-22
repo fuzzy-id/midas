@@ -8,6 +8,10 @@ class IntegrationTestCaseNG(unittest.TestCase):
 
     def setUp(self):
         self.out = StringIO()
+        self.tmpd = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpd)
 
     def _call_cmd(self, *args):
         cls = self._get_target_cls()

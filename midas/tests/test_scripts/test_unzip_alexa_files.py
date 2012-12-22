@@ -11,14 +11,6 @@ from midas.tests import TEST_DATA_PATH
 
 class UnzipAlexaFilesTests(IntegrationTestCaseNG):
 
-    def setUp(self):
-        super(UnzipAlexaFilesTests, self).setUp()
-        self.tmpd = tempfile.mkdtemp()
-
-    def tearDown(self):
-        shutil.rmtree(self.tmpd)
-        super(UnzipAlexaFilesTests, self).tearDown()
-
     def _get_target_cls(self):
         from midas.scripts.unzip_alexa_files import UnzipAlexaFiles
         return UnzipAlexaFiles
