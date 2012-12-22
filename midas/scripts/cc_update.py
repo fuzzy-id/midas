@@ -5,7 +5,7 @@ import threading
 
 from midas.compat import HTTPError
 from midas.compat import Queue
-from midas.crunchbase_crawler import CompanyList
+from midas.crunchbase_company import CompanyList
 
 import midas.scripts
 

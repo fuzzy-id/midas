@@ -15,11 +15,11 @@ from midas.tests import prepare_url_open
 class CompanyTests(unittest.TestCase):
 
     def _make_one(self, name, fname):
-        from midas.crunchbase_crawler import Company
+        from midas.crunchbase_company import Company
         return Company(name, fname)
 
     def _make_update(self):
-        from midas.crunchbase_crawler import Company
+        from midas.crunchbase_company import Company
         with tempfile.NamedTemporaryFile() as fp:
             company = self._make_one('foo', fp.name)
             company.update()
@@ -33,14 +33,14 @@ class CompanyTests(unittest.TestCase):
         c = self._make_one('foo', None)
         self.assertEqual(str(c), 'Company( foo )')
 
-    @mock.patch('midas.crunchbase_crawler.urlopen')
+    @mock.patch('midas.crunchbase_company.urlopen')
     def test_update(self, urlopen):
         prepare_url_open(urlopen, {FOO_URL: {'foo': 'bar', }})
         company = self._make_update()
         self.assertEqual(company.data, {'foo': 'bar'})
         urlopen.assert_called_once_with(FOO_URL)
 
-    @mock.patch('midas.crunchbase_crawler.urlopen')
+    @mock.patch('midas.crunchbase_company.urlopen')
     def test_control_chars_in_response(self, urlopen):
         buf = BytesIO(b'["\x12fo\x14", "ba\x0b"]')
         buf.seek(0)
@@ -52,7 +52,7 @@ class CompanyTests(unittest.TestCase):
 class CompanyListTests(unittest.TestCase):
 
     def _make_one(self, path):
-        from midas.crunchbase_crawler import CompanyList
+        from midas.crunchbase_company import CompanyList
         return CompanyList(path)
 
     def test_local_list_when_company_files_empty(self):
@@ -67,11 +67,11 @@ class CompanyListTests(unittest.TestCase):
     def test_get(self):
         cl = self._make_one('non/existent/path')
         result = cl.get('foo')
-        from midas.crunchbase_crawler import Company
+        from midas.crunchbase_company import Company
         self.assertIsInstance(result, Company)
         self.assertEqual(str(result), 'Company( foo )')
 
-    @mock.patch('midas.crunchbase_crawler.urlopen')
+    @mock.patch('midas.crunchbase_company.urlopen')
     def test_update(self, urlopen):
         prepare_url_open(urlopen, {COMPANIES_URL: [{'permalink': 'foo'}]})
         cl = self._make_one(None)

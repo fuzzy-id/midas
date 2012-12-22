@@ -49,7 +49,7 @@ def DummyCompanyList(path=None):
     return dcl
 
 def DummyCompany(name='dummy_company'):
-    from midas.crunchbase_crawler import Company
+    from midas.crunchbase_company import Company
     dc = mock.Mock(spec=Company)
     dc.name = name
     return dc
