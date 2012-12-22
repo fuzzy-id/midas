@@ -58,7 +58,7 @@ class FetcherBehaviourOnErrorTests(unittest.TestCase):
         critical.assert_called_once()
 
     @mock.patch('logging.exception')
-    def test_not_404_is_logged(self, exc):
+    def test_not_400_is_logged(self, exc):
         dc = DummyCompany()
         dc.update.side_effect = HTTPError(None, 400, None, None, None)
         q = self._test_it(dc)
