@@ -9,7 +9,8 @@ import sys
 import threading
 
 from midas.compat import HTTPError
-from midas.crunchbase_crawler import LocalFilesRoot
+from midas.crunchbase_crawler import CompanyList
+
 
 def main(argv=sys.argv):
     command = CCUpdateCommand(argv)
@@ -51,11 +52,9 @@ database.
 
     def run(self):
         logging.basicConfig(level=self.args.verbosity)
-        root = LocalFilesRoot(self.args.location)
-        for cls_name in self.args.classes:
-            cls_inst = root.get(cls_name)
-            updater = Updater(cls_inst)
-            updater.run()
+        cl = CompanyList(self.args.location)
+        updater = Updater(cl)
+        updater.run()
         return 0
 
 

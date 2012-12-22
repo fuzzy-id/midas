@@ -20,7 +20,6 @@ from midas.tests import EXAMPLES_PATH
 from midas.tests import FOO_URL
 from midas.tests import DummyCompany
 from midas.tests import DummyCompanyList
-from midas.tests import DummyRoot
 from midas.tests import prepare_url_open
 
 import mock
@@ -101,13 +100,6 @@ class MainTests(unittest.TestCase):
         self.assertEqual(cm.exception.code, 2)
         err = sys.stderr.getvalue()
         self.assertTrue(err.endswith('too few arguments\n'))
-
-    def test_with_wrong_class(self):
-        with self.assertRaises(ValueError) as cm:
-            self._test_it('-qqq', '.', 'no_such_class')
-        e = cm.exception
-        self.assertEqual(len(e.args), 1)
-        self.assertTrue(e.args[0].endswith("'no_such_class'"))
 
 
 class MainIntegrationTestCase(unittest.TestCase):
@@ -244,7 +236,7 @@ class IntegrationTests(unittest.TestCase):
         from midas.crunchbase_crawler import CompanyList
         prepare_url_open(urlopen, {FOO_URL: {'foo': 'bar'}, })
         dump_file = os.path.join(self.tmpd, 'foo.json.gz')
-        cl = CompanyList(DummyRoot(), self.tmpd)
+        cl = CompanyList(self.tmpd)
         cf = Fetcher(cl.get('foo'),
                             threading.Semaphore(1))
         cf.run()

@@ -20,20 +20,7 @@ from midas.tests import EXAMPLES_PATH
 from midas.tests import FOO_URL
 from midas.tests import DummyCompany
 from midas.tests import DummyCompanyList
-from midas.tests import DummyRoot
 from midas.tests import prepare_url_open
-
-
-class LocalFilesRootTests(unittest.TestCase):
-
-    def _make_one(self, path):
-        from midas.crunchbase_crawler import LocalFilesRoot
-        return LocalFilesRoot(path)
-
-    def test_companies_list_creation(self):
-        from midas.crunchbase_crawler import CompanyList
-        root = self._make_one('foo')
-        self.assertIsInstance(root.get('companies'), CompanyList)
 
 
 class CompanyTests(unittest.TestCase):
@@ -80,7 +67,7 @@ class CompanyListTests(unittest.TestCase):
 
     def _make_one(self, path):
         from midas.crunchbase_crawler import CompanyList
-        return CompanyList(DummyRoot(), path)
+        return CompanyList(path)
 
     def test_local_list_when_company_files_empty(self):
         cl = self._make_one(EXAMPLES_PATH['company_files_empty'])

@@ -35,20 +35,6 @@ COMPANIES_URL = 'http://api.crunchbase.com/v/1/companies.js?api_key=vqrwexbhj9s2
 FOO_URL = 'http://api.crunchbase.com/v/1/company/foo.js?api_key=vqrwexbhj9s2d7fbzzj9cg57'
 BAR_URL = 'http://api.crunchbase.com/v/1/company/bar.js?api_key=vqrwexbhj9s2d7fbzzj9cg57'
 
-def DummyRoot(path=None):
-    from midas.crunchbase_crawler import LocalFilesRoot
-    dr = mock.Mock(spec=LocalFilesRoot, path=path)
-    dcl = DummyCompanyList(path)
-
-    def dummy_get(name):
-        if name == 'companies':
-            return dcl
-        raise NotImplementedError(
-            "Unknown class '{0}'".format(name))  # pragma: no cover
-
-    dr.get.side_effect = dummy_get
-    return dr
-
 def DummyCompanyList(path=None):
     from midas.crunchbase_crawler import CompanyList
     dcl = mock.Mock(spec=CompanyList)

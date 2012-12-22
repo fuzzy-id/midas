@@ -53,8 +53,7 @@ class CompanyList(CrunchBaseFetchable):
     name='companies'
     suffix = '.json.gz'
 
-    def __init__(self, root, path):
-        self.root = root
+    def __init__(self, path):
         self.path = path
         self._remote_nodes = set()
 
