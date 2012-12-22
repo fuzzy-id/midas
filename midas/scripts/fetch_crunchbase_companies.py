@@ -10,7 +10,7 @@ from midas.crunchbase_company import CompanyList
 import midas.scripts
 
 
-class CCUpdateCommand(midas.scripts.MDCommand):
+class FetchCrunchbaseCompanies(midas.scripts.MDCommand):
     """
     Crawl the companies information from crunchbase.com and save it
     locally.
@@ -29,6 +29,7 @@ class CCUpdateCommand(midas.scripts.MDCommand):
             log_level = logging.INFO
         logging.basicConfig(level=log_level)
         cl = CompanyList(self.args.location)
+        logging.info('Updating CompanyList')
         cl.update()
         q = Queue()
         for _ in range(self.args.num_threads):
@@ -51,6 +52,7 @@ class Fetcher(threading.Thread):
     def run(self):
         while True:
             self.inst = self.q.get()
+            logging.info('{0}: Updating'.format(self.inst))
             self.make_update(0)
             self.q.task_done()
 

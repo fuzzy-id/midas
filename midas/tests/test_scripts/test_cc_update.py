@@ -29,7 +29,7 @@ import mock
 class FetcherBehaviourOnErrorTests(unittest.TestCase):
 
     def _test_it(self, company):
-        from midas.scripts.cc_update import Fetcher
+        from midas.scripts.fetch_crunchbase_companies import Fetcher
         from midas.compat import Queue
         q = Queue()
         q.put(company)
@@ -101,10 +101,10 @@ class ArgumentParserTests(unittest.TestCase):
         sys.stderr = self._old_err
 
     def _make_one(self, *args):
-        from midas.scripts.cc_update import CCUpdateCommand
+        from midas.scripts.fetch_crunchbase_companies import FetchCrunchbaseCompanies
         effargs = ['crawlcrunch', ]
         effargs.extend(args)
-        return CCUpdateCommand(effargs)
+        return FetchCrunchbaseCompanies(effargs)
 
     def test_missing_argument(self):
         with self.assertRaises(SystemExit):
@@ -125,8 +125,8 @@ class ArgumentParserTests(unittest.TestCase):
 class MainLocalFilesIntegrationTests(IntegrationTestCaseNG):
 
     def _get_target_cls(self):
-        from midas.scripts.cc_update import CCUpdateCommand
-        return CCUpdateCommand
+        from midas.scripts.fetch_crunchbase_companies import FetchCrunchbaseCompanies
+        return FetchCrunchbaseCompanies
 
     @mock.patch('midas.crunchbase_company.urlopen')
     def test_on_empty_companies_list(self, urlopen):
