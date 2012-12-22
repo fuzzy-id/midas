@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import sys
-
 from midas.compat import StringIO
 from midas.compat import unittest
 
-import midas.compat as vt_comp
-
-import midas.tests as md_tests
 
 class IntegrationTestCaseNG(unittest.TestCase):
 
     def setUp(self):
-        self.out = vt_comp.StringIO()
+        self.out = StringIO()
 
     def _call_cmd(self, *args):
         cls = self._get_target_cls()
