@@ -74,10 +74,6 @@ class ArgumentParserTests(unittest.TestCase):
         cmd = self._make_one('-qqvq', EXAMPLES_PATH['company_files_empty'])
         self.assertEqual(cmd.args.verbosity, logging.getLevelName('ERROR'))
 
-    def test_classes_flag(self):
-        cmd = self._make_one('.', 'foo', 'bar')
-        self.assertEqual(cmd.args.classes, ['foo', 'bar'])
-
 
 class MainTests(unittest.TestCase):
 
