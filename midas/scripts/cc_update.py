@@ -70,5 +70,3 @@ class Fetcher(threading.Thread):
             logging.critical(
                 '{0}: An exception occured'.format(self.inst))
             logging.exception(e)
-        finally:
-            self.semaphore.release()
