@@ -7,7 +7,7 @@ from setuptools import setup
 
 PY_VERSION = sys.version_info[:2]
 
-INSTALL_REQUIRES = ['sqlalchemy']
+INSTALL_REQUIRES = []
 
 TESTS_REQUIRE = ['mock']
 
