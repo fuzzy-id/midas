@@ -25,7 +25,7 @@ class CheckDirectoryAction(argparse.Action):
 class CCUpdateCommand(midas.scripts.MDCommand):
     """
     Crawl the companies information from crunchbase.com and save it
-    locally, either in the file system or in a database.
+    locally.
     """
     def add_argument(self):
         self.parser.add_argument('location', action=CheckDirectoryAction,
