@@ -76,16 +76,15 @@ class CompanyListTests(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_get(self):
-        cl = self._make_one(EXAMPLES_PATH['company_files_empty'])
-        result = cl.get('de-revolutione')
+        cl = self._make_one('non/existent/path')
+        result = cl.get('foo')
         from midas.crunchbase_crawler import Company
         self.assertIsInstance(result, Company)
-        self.assertEqual(str(result), 'Company( de-revolutione )')
+        self.assertEqual(str(result), 'Company( foo )')
 
     @mock.patch('midas.crunchbase_crawler.urlopen')
     def test_update(self, urlopen):
-        prepare_url_open(urlopen,
-                         {COMPANIES_URL: [{'permalink': 'foo'}]})
+        prepare_url_open(urlopen, {COMPANIES_URL: [{'permalink': 'foo'}]})
         cl = self._make_one(None)
         cl.update()
         urlopen.assert_called_once_with(COMPANIES_URL)
