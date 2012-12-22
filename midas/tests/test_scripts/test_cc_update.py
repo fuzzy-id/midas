@@ -40,11 +40,6 @@ class ArgumentParserTests(unittest.TestCase):
         effargs.extend(args)
         return CCUpdateCommand(effargs)
 
-    def test_defaults(self):
-        cmd = self._make_one('.')
-        self.assertEqual(cmd.args.location, '.')
-        self.assertEqual(cmd.args.classes, ['companies'])
-
     def test_missing_argument(self):
         with self.assertRaises(SystemExit):
             self._make_one()
@@ -59,20 +54,6 @@ class ArgumentParserTests(unittest.TestCase):
         self.assertTrue(err.endswith(
                 "the directory 'non/existent/path' does not exist\n"\
                     .format(dst)))
-
-    def test_verboseness_quietness_flags(self):
-        cmd = self._make_one('-v', EXAMPLES_PATH['company_files_empty'])
-        self.assertEqual(cmd.args.verbosity, logging.getLevelName('DEBUG'))
-        cmd = self._make_one(EXAMPLES_PATH['company_files_empty'])
-        self.assertEqual(cmd.args.verbosity, logging.getLevelName('INFO'))
-        cmd = self._make_one('-q', EXAMPLES_PATH['company_files_empty'])
-        self.assertEqual(cmd.args.verbosity, logging.getLevelName('WARNING'))
-        cmd = self._make_one('-qq', EXAMPLES_PATH['company_files_empty'])
-        self.assertEqual(cmd.args.verbosity, logging.getLevelName('ERROR'))
-        cmd = self._make_one('-qqq', EXAMPLES_PATH['company_files_empty'])
-        self.assertEqual(cmd.args.verbosity, logging.getLevelName('CRITICAL'))
-        cmd = self._make_one('-qqvq', EXAMPLES_PATH['company_files_empty'])
-        self.assertEqual(cmd.args.verbosity, logging.getLevelName('ERROR'))
 
 
 class MainTests(unittest.TestCase):
