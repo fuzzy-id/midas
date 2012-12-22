@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-
-from midas.tests import IntegrationTestCaseNG
+from midas.compat import unittest
+from midas.tests.test_scripts import IntegrationTestCaseNG
 
 import midas.tests as md_tests
+
 
 @unittest.skip('this has to be reworked entirely')
 class MdAssociateTests(IntegrationTestCaseNG):
@@ -22,5 +23,4 @@ class MdAssociateTests(IntegrationTestCaseNG):
         self.assertEqual(result.site, 'foo.example.com')
 
 if __name__ == '__main__':  # pragma: no cover
-    from midas.compat import unittest
     unittest.main()
