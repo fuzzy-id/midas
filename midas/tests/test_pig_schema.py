@@ -1,226 +1,12 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function
+from midas.compat import unittest
 
-import collections
-import functools
-import unittest
-
-def pig_input(schema):
-    as_struct = pig_schema_to_py_struct(schema)
-    parser = make_parser(as_struct)
-    def decorator(fn):
-        @functools.wraps(fn)
-        def iter_input(iterator, *args, **kwargs):
-            for i in iterator:
-                for result in fn(parser(i), *args, **kwargs):
-                    yield result
-        return iter_input
-    return decorator
-
-def pig_output(schema):
-    as_struct = pig_schema_to_py_struct(schema)
-    serializer = make_serializer(as_struct)
-    def decorator(fn):
-        @functools.wraps(fn)
-        def func(*args, **kwargs):
-            for i in fn(*args, **kwargs):
-                print(serializer(i))
-        return func
-    return decorator
-
-def pig_schema_to_py_struct(schema):
-    if schema.startswith('('):
-        # We interpret this as a Tuple
-        assert schema.endswith(')')
-        typ, tail = pig_schema_to_py_struct_tuple(schema)
-        assert tail == ''
-    else:
-        # The name actually doesn't matter in this case
-        name, typ = get_field_name(schema)
-        typ = typ.strip()
-        if typ not in SIMPLE_PARSER:
-            raise TypeError("Unknown schema '{}'".format(schema))
-    return typ
-
-def pig_schema_to_py_struct_tuple(schema):
-    tail = schema[1:]  # cut off the first parenthesis
-    fields = []
-    while True:
-        if tail.startswith(')'):
-            tail = tail[1:]
-            break
-        name, tail = get_field_name(tail)
-        typ, tail = get_field_type(tail)
-        if typ == 'tuple':
-            typ, tail = pig_schema_to_py_struct_tuple(tail)
-        if typ == 'bag':
-            typ, tail = pig_schema_to_py_struct_bag(tail)
-        fields.append((name, typ))
-    return tuple(fields), tail
-    
-def pig_schema_to_py_struct_bag(schema):
-    tail = schema[1:]  # cut off opening curly bracket
-    tail.lstrip()
-    if tail.startswith('tuple'):
-        tail = tail[5:]
-    typ, tail = pig_schema_to_py_struct_tuple(tail)
-    assert tail.startswith('}')
-    tail = tail[1:]
-    return [typ, ], tail
-    
-def get_field_name(schema):
-    name, _, tail = schema.partition(':')
-    return name.strip(), tail.lstrip()
-
-def get_field_type(schema):
-    typ, _, tail = schema.partition(',')
-    typ = typ.strip()
-    if typ.endswith(')'):
-        first_par = typ.find(')')
-        tail = typ[first_par:] + tail
-        typ = typ[:first_par]
-    elif typ.endswith('}'):
-        first_par = typ.find(')')
-        tail = typ[first_par:] + tail
-        typ = typ[:first_par]
-    elif typ.startswith('tuple'):
-        tail = ','.join([typ[5:], tail])
-        typ = 'tuple'
-    elif typ.startswith('bag'):
-        tail = ','.join([typ[3:], tail])
-        typ = 'bag'
-    return typ, tail
-
-def make_parser(schema):
-    if isinstance(schema, str):
-        # Just a Atom
-        parser = SIMPLE_PARSER[schema]
-        def root_parser(s):
-            return parser(s, '\n')[0]
-    else:
-        # Everything else is wrapped in a tuple
-        parser = make_tuple_parser(schema, '', '\t', '\n')
-        def root_parser(s):
-            return parser(s, '')[0]
-    return root_parser
-
-def make_tuple_parser(schema, tuple_start, delimiter, tuple_end):
-    parser = []
-    names = []
-    for name, typ in schema:
-        names.append(name)
-        if isinstance(typ, tuple):
-            parser.append(make_tuple_parser(typ, '(', ',', ')'))
-        elif isinstance(typ, list):
-            parser.append(make_bag_parser(typ))
-        elif typ in SIMPLE_PARSER:
-            parser.append(SIMPLE_PARSER[typ])
-        else:
-            raise TypeError("Cannot make parser for '{}'".format(typ))
-    cls = collections.namedtuple('Tuple', ' '.join(names))
-    def tuple_parser(s, end):
-        assert s.startswith(tuple_start)
-        tail = s[len(tuple_start):]
-        fields = []
-        for i, p in enumerate(parser):
-            if i == len(parser) - 1:
-                field, tail = p(tail, tuple_end)
-                assert tail.startswith(end)
-                tail = tail[len(end):]
-            else:
-                field, tail = p(tail, delimiter)
-            fields.append(field)
-        return cls(*fields), tail
-    return tuple_parser
-
-def make_bag_parser(schema):
-    """ A Bag i a collection of tuples. `schema` is a list with one
-    entry which defines the tuples in the bag.
-    """
-    assert len(schema) == 1
-    sub_parser = make_tuple_parser(schema[0], '(', ',', ')')
-    def bag_parser(tail, end):
-        fields = []
-        if tail.startswith(end):
-            return fields, tail[len(end):]
-        while not tail.startswith('}'):
-            assert tail.startswith(',') or tail.startswith('{')
-            tail = tail[1:]
-            field, tail = sub_parser(tail, '')
-            fields.append(field)
-        tail = tail[1:]
-        assert tail.startswith(end)
-        tail = tail[len(end):]
-        return fields, tail
-    return bag_parser
-
-def chararray_parser(s, end):
-    head, _, tail = s.partition(end)
-    if head == '':
-        return None, tail
-    return head, tail
-
-def int_parser(s, end):
-    head, _, tail = s.partition(end)
-    if head == '':
-        return None, tail
-    return int(head), tail
-
-SIMPLE_PARSER = {
-    'chararray': chararray_parser,
-    'int': int_parser,
-    }
-
-def make_serializer(schema):
-    if isinstance(schema, str):
-        root_serializer = SIMPLE_SERIALIZER[schema]
-    else:
-        root_serializer = make_tuple_serializer(schema, '', '\t', '')
-    return root_serializer
-
-def make_tuple_serializer(schema, start, delimiter, end):
-    serializer = []
-    attrs = []
-    for name, typ in schema:
-        attrs.append(name)
-        if isinstance(typ, str):
-            serializer.append(SIMPLE_SERIALIZER[typ])
-        elif isinstance(typ, tuple):
-            serializer.append(make_tuple_serializer(typ, '(', ',', ')'))
-        else:
-            raise TypeError("Cannot serialize '{}'".format(typ))
-    def tuple_serializer(t):
-        fields = ( s(getattr(t, n))
-                   for s, n in zip(serializer, attrs) )
-        return '{0}{1}{2}'.format(start, delimiter.join(fields), end)
-    return tuple_serializer
-
-def chararray_serializer(s):
-    if s is None:
-        return ''
-    return s
-
-def int_serializer(s):
-    if s is None:
-        return ''
-    return str(s)
-
-SIMPLE_SERIALIZER = {
-    'chararray': chararray_serializer,
-    'int': int_serializer,
-    }
-
-
-#
-# Tests
-#
 
 class InputDecoratorTests(unittest.TestCase):
 
     def test_on_a_single_string(self):
-
+        from midas.pig_schema import pig_input
         @pig_input('a: chararray')
         def a_func(d):
             yield d
@@ -250,6 +36,7 @@ class OutputDecoratorTests(unittest.TestCase):
         self.assertEqual(self.out, ['foo'])
         
     def test_on_single_str(self):
+        from midas.pig_schema import pig_output
         
         @pig_output('a: chararray')
         def a_func():
@@ -260,6 +47,8 @@ class OutputDecoratorTests(unittest.TestCase):
         self.assertEqual(self.out, ['foo', 'bar'])
 
     def test_input_and_output_decorator(self):
+        from midas.pig_schema import pig_input
+        from midas.pig_schema import pig_output
 
         @pig_output('(s: chararray, i: int)')
         @pig_input('(b: bag{(s: chararray, i: int)})')
@@ -272,25 +61,34 @@ class OutputDecoratorTests(unittest.TestCase):
 
 
 class PigSchemaToPyStructTests(unittest.TestCase):
+
+    def _get_target(self):
+        from midas.pig_schema import pig_schema_to_py_struct
+        return pig_schema_to_py_struct
     
     def test_one_simple_type(self):
+        pig_schema_to_py_struct = self._get_target()
         self.assertEqual(pig_schema_to_py_struct('a: chararray'), 'chararray')
         self.assertEqual(pig_schema_to_py_struct('i: int'), 'int')
 
     def test_simple_outer_tuple(self):
+        pig_schema_to_py_struct = self._get_target()
         self.assertEqual(pig_schema_to_py_struct('()'), ())
 
     def test_tuple_with_fields(self):
+        pig_schema_to_py_struct = self._get_target()
         self.assertEqual(pig_schema_to_py_struct('(a: chararray, i: int)'),
                          (('a', 'chararray'), ('i', 'int')))
     
     def test_tuple_with_tuples(self):
+        pig_schema_to_py_struct = self._get_target()
         s = '(t1: tuple(a: chararray, b: int), t2: tuple(b: chararray, c: int))'
         self.assertEqual(pig_schema_to_py_struct(s), 
                          (('t1', (('a', 'chararray'), ('b', 'int'))),
                           ('t2', (('b', 'chararray'), ('c', 'int')))))
 
     def test_tuple_with_bag(self):
+        pig_schema_to_py_struct = self._get_target()
         s = '(b: bag{(a: chararray, b: int)})'
         expected = (('b', [(('a', 'chararray'), ('b', 'int'))]), )
         self.assertEqual(pig_schema_to_py_struct(s), expected)
@@ -298,6 +96,7 @@ class PigSchemaToPyStructTests(unittest.TestCase):
         self.assertEqual(pig_schema_to_py_struct(s), expected)
 
     def test_mixed_complex(self):
+        pig_schema_to_py_struct = self._get_target()
         s = ','.join(['(s: chararray, t: tuple(i: int, s: chararray)',
                       'b: bag{(s: chararray, i: int)})'])
         expected = (('s', 'chararray'), 
@@ -308,7 +107,12 @@ class PigSchemaToPyStructTests(unittest.TestCase):
 
 class MakeParserTests(unittest.TestCase):
 
+    def _get_target(self):
+        from midas.pig_schema import make_parser
+        return make_parser
+
     def test_just_a_str(self):
+        make_parser = self._get_target()
         parser = make_parser('chararray')
         self.assertEqual(parser('\n'), None)
         self.assertEqual(parser('\t\n'), '\t')
@@ -318,22 +122,26 @@ class MakeParserTests(unittest.TestCase):
         self.assertEqual(parser('\tfoo\t\n'), '\tfoo\t')
 
     def test_just_a_int(self):
+        make_parser = self._get_target()
         parser = make_parser('int')
         self.assertEqual(parser('8\n'), 8)
         self.assertEqual(parser('\n'), None)
 
     def test_a_tuple_with_str(self):
+        make_parser = self._get_target()
         parser = make_parser((('s', 'chararray'), ))
         self.assertEqual(parser('foo\n'), ('foo', ))
         self.assertEqual(parser('foo\n'), ('foo', ))
         self.assertEqual(parser('foo\t\n'), ('foo\t', ))
 
     def test_a_tuple_with_str_and_int(self):
+        make_parser = self._get_target()
         parser = make_parser((('s', 'chararray'), ('i', 'int')))
         self.assertEqual(parser('foo\t8\n'), ('foo', 8))
         self.assertEqual(parser('foo\t\n'), ('foo', None))
 
     def test_tuple_with_tuples(self):
+        make_parser = self._get_target()
         schema = (('t1', (('s', 'chararray'), ('i', 'int'))), 
                   ('t2', (('s', 'chararray'), ('i', 'int'))))
         parser = make_parser(schema)
@@ -341,6 +149,7 @@ class MakeParserTests(unittest.TestCase):
                          (('foo', 8), ('braz', 9)))
 
     def test_tuple_with_bag_with_tuple(self):
+        make_parser = self._get_target()
         schema = (('b', [(('s', 'chararray'), ('i', 'int'))]), )
         parser = make_parser(schema)
         self.assertEqual(parser('\n'), ([], ))
@@ -351,17 +160,24 @@ class MakeParserTests(unittest.TestCase):
 
 class SerializerTests(unittest.TestCase):
 
+    def _get_target(self):
+        from midas.pig_schema import make_serializer
+        return make_serializer
+
     def test_on_simple_str(self):
+        make_serializer = self._get_target()
         serializer = make_serializer('chararray')
         self.assertEqual(serializer('foo'), 'foo')
         self.assertEqual(serializer(None), '')
 
     def test_on_simple_int(self):
+        make_serializer = self._get_target()
         serializer = make_serializer('int')
         self.assertEqual(serializer(8), '8')
         self.assertEqual(serializer(None), '')
 
     def test_on_tuple_with_str(self):
+        make_serializer = self._get_target()
         nt = collections.namedtuple('Tuple', 's i')
         serializer = make_serializer((('s', 'chararray'), ('i', 'int')))
         self.assertEqual(serializer(nt('foo', 8)), 'foo\t8')
@@ -369,6 +185,7 @@ class SerializerTests(unittest.TestCase):
         self.assertEqual(serializer(nt('foo', None)), 'foo\t')
 
     def test_on_tuple_with_tuples(self):
+        make_serializer = self._get_target()
         outer = collections.namedtuple('Tuple', 't1 t2')
         inner = collections.namedtuple('Tuple', 's i')
         serializer = make_serializer((('t1', (('s', 'chararray'), 
@@ -386,6 +203,8 @@ class SerializerTests(unittest.TestCase):
 class FunctionalTests(unittest.TestCase):
 
     def test_do_not_know_why_this_should_fail(self):
+        from midas.pig_schema import pig_schema_to_py_struct
+        from midas.pig_schema import make_parser
         s = '(b: bag{tuple(i: int, s: chararray)}, s: chararray)'
         expected = (('b', [(('i', 'int'), ('s', 'chararray'))]), 
                     ('s', 'chararray'))
@@ -400,5 +219,5 @@ class FunctionalTests(unittest.TestCase):
         self.assertEqual(parser('\t\n'), ([], None))
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

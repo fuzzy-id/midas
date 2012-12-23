@@ -16,7 +16,7 @@ class FetchCrunchbaseCompanies(midas.scripts.MDCommand):
     locally.
     """
     def add_argument(self):
-        self.parser.add_argument('-p', '--num_threads', default=1,
+        self.parser.add_argument('-p', '--num_threads', default=1, type=int,
                                  help='How many threads should crawl in parallel')
         self.parser.add_argument('location', 
                                  action=midas.scripts.CheckDirectoryAction,

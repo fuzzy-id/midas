@@ -21,15 +21,14 @@ TEST_DATA_PATH = {
     'alexa_zip_files': os.path.join(_test_data_home, 'alexa_zip_files'),
     'alexa_files': os.path.join(_test_data_home, 'alexa_files'),
     'crunchbase': os.path.join(_test_data_home, 'crunchbase'),
+    'crunchbase_companies': os.path.join(_test_data_home, 'crunchbase_companies'),
     }
-
 
 __test_examples__ = TEST_DATA_PATH['crunchbase']
 EXAMPLES_PATH = {
-    'company_files_empty': os.path.join(__test_examples__, 
-                                        'company_files_empty'),
-    'no_company_files': os.path.join(__test_examples__, 
-                                     'no_company_files') }
+    'company_files_empty': os.path.join(__test_examples__, 'company_files_empty'),
+    'no_company_files': os.path.join(__test_examples__, 'no_company_files')
+    }
 
 COMPANIES_URL = 'http://api.crunchbase.com/v/1/companies.js?api_key=vqrwexbhj9s2d7fbzzj9cg57'
 FOO_URL = 'http://api.crunchbase.com/v/1/company/foo.js?api_key=vqrwexbhj9s2d7fbzzj9cg57'
