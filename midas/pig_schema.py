@@ -5,7 +5,6 @@ from __future__ import print_function
 
 import collections
 import functools
-import unittest
 
 def pig_input(schema):
     as_struct = pig_schema_to_py_struct(schema)
@@ -26,7 +25,7 @@ def pig_output(schema):
         @functools.wraps(fn)
         def func(*args, **kwargs):
             for i in fn(*args, **kwargs):
-                print(serializer(i))
+                yield serializer(i)
         return func
     return decorator
 
@@ -41,7 +40,7 @@ def pig_schema_to_py_struct(schema):
         name, typ = get_field_name(schema)
         typ = typ.strip()
         if typ not in SIMPLE_PARSER:
-            raise TypeError("Unknown schema '{}'".format(schema))
+            raise TypeError("Unknown schema '{0}'".format(schema))
     return typ
 
 def pig_schema_to_py_struct_tuple(schema):

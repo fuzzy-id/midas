@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+import collections
+
+import mock
+
 from midas.compat import unittest
 
 
@@ -17,24 +22,6 @@ class InputDecoratorTests(unittest.TestCase):
 
 class OutputDecoratorTests(unittest.TestCase):
 
-    def setUp(self):
-        self.out = []
-
-        def print_mock(s):
-            self.out.append(s)
-
-        global print
-        self.old_print = print
-        print = print_mock
-
-    def tearDown(self):
-        global print
-        print = self.old_print
-
-    def test_print_mock(self):
-        print('foo')
-        self.assertEqual(self.out, ['foo'])
-        
     def test_on_single_str(self):
         from midas.pig_schema import pig_output
         
@@ -43,8 +30,8 @@ class OutputDecoratorTests(unittest.TestCase):
             yield 'foo'
             yield 'bar'
 
-        a_func()
-        self.assertEqual(self.out, ['foo', 'bar'])
+        result = list(a_func())
+        self.assertEqual(result, ['foo', 'bar'])
 
     def test_input_and_output_decorator(self):
         from midas.pig_schema import pig_input
@@ -56,8 +43,8 @@ class OutputDecoratorTests(unittest.TestCase):
             for entry in row.b:
                 yield entry
         
-        a_func(['{(foo,8),(bar,9)}\n', '{(baz,7),(froz,6)}\n'])
-        self.assertEqual(self.out, ['foo\t8', 'bar\t9', 'baz\t7', 'froz\t6'])
+        result = list(a_func(['{(foo,8),(bar,9)}\n', '{(baz,7),(froz,6)}\n']))
+        self.assertEqual(result, ['foo\t8', 'bar\t9', 'baz\t7', 'froz\t6'])
 
 
 class PigSchemaToPyStructTests(unittest.TestCase):
