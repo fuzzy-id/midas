@@ -2,10 +2,11 @@
 
 import datetime
 
-import pandas
+#import pandas
 
 from midas.compat import unittest
 
+@unittest.skip('numpy fails to compile with current distribute')
 class MeanRankInRangeAtDateTests(unittest.TestCase):
 
     def _make_one(self, *args, **kwargs):
