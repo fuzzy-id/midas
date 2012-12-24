@@ -30,6 +30,7 @@ class MDCommand(object):
     """
 
     _out = sys.stdout
+    _in = sys.stdin
 
     def __init__(self, argv=None):
         if argv is None:  # pragma: no cover
@@ -77,3 +78,8 @@ class MDCommand(object):
     def out(self, msg):
         if not self.args.quiet:
             print(msg, file=self._out)
+
+    @property
+    def stdin(self):
+        for line in self._in:
+            yield line
