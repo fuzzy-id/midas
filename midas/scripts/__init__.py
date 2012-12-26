@@ -6,17 +6,33 @@ used from the command-line.
 from __future__ import print_function
 
 import argparse
+import fileinput
+import functools
 import os.path
 import sys
 
+import midas.compat
 
 class CheckDirectoryAction(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
         if not os.path.isdir(values):
-            parser.error("the directory '{0}' does not exist".format(
-                    values))
+            parser.error("'{0}' is not a directory".format(values))
         setattr(namespace, self.dest, values)
+
+
+class StoreSingleFileOrDirectoryAction(argparse.Action):
+
+    def __call__(self, parser, namespace, value, option_string=None):
+        if os.path.isdir(value):
+            files = []
+            make_abs = functools.partial(os.path.join, value)
+            for path in midas.compat.imap(make_abs, os.listdir(value)):
+                if os.path.isfile(path):
+                    files.append(path)
+        else:
+            files = [value, ]
+        setattr(namespace, self.dest, fileinput.input(files))
 
 
 class MDCommand(object):
