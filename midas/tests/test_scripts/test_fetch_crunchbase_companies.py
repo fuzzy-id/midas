@@ -118,7 +118,7 @@ class ArgumentParserTests(unittest.TestCase):
         self.assertEqual(e.code, 2)
         err = sys.stderr.getvalue()
         self.assertTrue(err.endswith(
-                "the directory 'non/existent/path' does not exist\n"\
+                "'non/existent/path' is not a directory\n"\
                     .format(dst)))
 
 
