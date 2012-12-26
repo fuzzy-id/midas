@@ -31,6 +31,7 @@ setup(name='midas',
             ['md_fetch_crunchbase_companies=midas.scripts.fetch_crunchbase_companies:FetchCrunchbaseCompanies.cmd',
              'md_associate=midas.scripts.md_associate:MDAssociate.cmd',
              'md_alexa_zip_to_gzip=midas.scripts.alexa_zip_to_gzip:AlexaZipToGzip.cmd',
+             'md_flatten_companies=midas.scripts.flatten_companies:FlattenCompanies.cmd',
              ],
         },
       )
