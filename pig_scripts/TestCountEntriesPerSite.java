@@ -31,6 +31,6 @@ public class TestCountEntriesPerSite {
 	    "output=site_count",
 	};
 	PigTest test = new PigTest(SCRIPT, args);
-	test.assertOutput(new File("../test_data/site_count/expected_by_pig"));
+	test.assertOutput(new File("../test_data/site_count.expected"));
     }
 }
