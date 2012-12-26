@@ -1,10 +1,12 @@
 #!/bin/sh
 
-. /home/thomasba/py_envs/py26_sys/bin/activate
-MPLCONFIGDIR="/home/thomasba/.matplotlib"
+home="/home/thomasba"
+
+. ${home}/py_envs/py26_sys/bin/activate
+MPLCONFIGDIR="${home}/.matplotlib"
 export MPLCONFIGDIR
 
-if [ -z ${PYTHONPATH} ]; then
+if [ -z "${PYTHONPATH}" ]; then
     PYTHONPATH="."
 else
     PYTHONPATH=".:${PYTHONPATH}"
