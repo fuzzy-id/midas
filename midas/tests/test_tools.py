@@ -47,25 +47,6 @@ class CollectByKeyTests(KeyFuncTestCase):
                                ('bar', ['bar\tblah']*3)]))
                          
 
-class DomainTests(unittest.TestCase):
-
-    def _run_it(self, company_or_site):
-        from midas.tools import domain
-        return domain(company_or_site)
-
-    def test_on_site(self):
-        self.assertEqual(self._run_it('example.com/foo'), 
-                         'example.com')
-
-    def test_on_object(self):
-        with self.assertRaises(TypeError):
-            self._run_it(object())
-
-    def test_on_full_url(self):
-        result = self._run_it('http://example.com/foo')
-        self.assertEqual(result, 'example.com')
-
-
 class RelationStatsTests(unittest.TestCase):
 
     def _run_it(self, iterable):

@@ -7,6 +7,25 @@ from midas.tests import TEST_DATA_PATH
 from midas.tests.test_scripts import MDCommandTestCase
 
 
+class DomainTests(unittest.TestCase):
+
+    def _run_it(self, company_or_site):
+        from midas.scripts.associate import domain
+        return domain(company_or_site)
+
+    def test_on_site(self):
+        self.assertEqual(self._run_it('example.com/foo'), 
+                         'example.com')
+
+    def test_on_object(self):
+        with self.assertRaises(TypeError):
+            self._run_it(object())
+
+    def test_on_full_url(self):
+        result = self._run_it('http://example.com/foo')
+        self.assertEqual(result, 'example.com')
+
+
 class AssociationTreeTests(unittest.TestCase):
 
     def _get_target_cls(self):
@@ -70,6 +89,9 @@ class AssociateTests(MDCommandTestCase):
 
     def test_on_data(self):
         self._call_cmd(TEST_DATA_PATH['site_count'], TEST_DATA_PATH['companies'])
+        self.assert_stdout_equal('\n'.join(['baz-bar,baz.bar.example.com/path',
+                                            'foo,foo.example.com', 
+                                            '']))
 
 
 if __name__ == '__main__':  # pragma: no cover

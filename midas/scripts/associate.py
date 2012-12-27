@@ -6,10 +6,13 @@ The idea is to built a tree from either the domain part of
 :meth:`crawlcrunch.model.db.Company.homepage_url` or the domain part
 of the Alexa Top1M sites . 
 """
+
+from midas.compat import str_type
 from midas.compat import d_iteritems
+from midas.compat import urlparse
+
 from midas.pig_schema import pig_schema_to_py_struct
 from midas.pig_schema import make_parser
-from midas.tools import domain
 
 import midas.scripts
 
@@ -45,14 +48,29 @@ class Associate(midas.scripts.MDCommand):
 
         companies = ( COMPANY_PARSER(c)
                       for c in self.args.companies)
-        s2c = tree.map(companies, domain)
+        s2c = tree.map(companies, lambda c: domain(c.hp))
         for company, sites in d_iteritems(s2c):
             for site in sites:
-                self.out(','.join([company.permalink, site]))
+                self.out(','.join([company.permalink, site.site]))
 
 
 def split_domain(site):
     return tuple(reversed(site.rsplit('.', 1)))
+
+
+def domain(company_or_site):
+    """ Return the domain part of an Alexa Top1M site or a
+    :class:`crawlcrunch.model.db.Company` instance.
+    """
+    if isinstance(company_or_site, str_type):          # This should be an
+        if 'http' in company_or_site:                    # A full URL
+            return urlparse(company_or_site).netloc.lower()
+        return company_or_site.split('/', 1)[0].lower()  # Alexa Top1M site
+    else:
+        raise TypeError("cannot extract domain part: {0}".format(
+                type(company_or_site)
+                ))
+
 
 class AssociationTree(dict):
 
