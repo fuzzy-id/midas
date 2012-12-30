@@ -8,12 +8,11 @@ public class TestSplitSitesWAndWoCompanies {
     private PigTest test;
     private static final String SCRIPT = "split_sites_w_and_wo_companies.pig";
 
-    @Ignore("Fails and don't know why")
     @Test public void testSampleData() throws IOException, ParseException {
         String[] params = {
-            "assocs=test_data/associations",
-            "sites=test_data/alexa_sites",
-	    "cb=test_data/filtered_cb",
+            "associations=../test_data/associations",
+            "alexa_sites=../test_data/alexa_grouped_by_site",
+	    "filtered_cb=../test_data/companies",
 	    "output=sites_w_company",
         };
 
