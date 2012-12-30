@@ -1,8 +1,10 @@
-import 'macros.pig';
+sites = LOAD '$alexa_sites' AS 
+      (site: chararray, ranking: bag{(tstamp: chararray, rank: int)});
+cb = LOAD '$filtered_cb' AS
+   (company: chararray, hp: chararray, code: chararray, tstamp: chararray);
+assocs = LOAD '$associations' AS
+       (company: chararray, site: chararray);
 
-assocs = load_associations();
-sites = load_sites();
-cb = load_filtered_cb();
 
 A = JOIN cb BY company, assocs BY company USING 'replicated';
 B = JOIN sites BY site LEFT OUTER, 
