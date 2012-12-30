@@ -49,6 +49,6 @@ public class TestGroupAlexaBySite {
 	    "output=rows",
 	};
 	PigTest test = new PigTest(SCRIPT, args);
-	test.assertOutput(new File("../test_data/alexa_grouped_by_site/expected_by_pig"));
+	test.assertOutput(new File("../test_data/alexa_grouped_by_site.expected"));
     }
 }
