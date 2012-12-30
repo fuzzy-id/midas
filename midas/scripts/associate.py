@@ -51,7 +51,7 @@ class Associate(midas.scripts.MDCommand):
         s2c = tree.map(companies, lambda c: domain(c.hp))
         for company, sites in d_iteritems(s2c):
             for site in sites:
-                self.out(','.join([company.permalink, site.site]))
+                self.out('\t'.join([company.permalink, site.site]))
 
 
 def split_domain(site):

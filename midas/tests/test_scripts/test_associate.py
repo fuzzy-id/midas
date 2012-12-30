@@ -89,8 +89,8 @@ class AssociateTests(MDCommandTestCase):
 
     def test_on_data(self):
         self._call_cmd(TEST_DATA_PATH['site_count'], TEST_DATA_PATH['companies'])
-        self.assert_stdout_equal('\n'.join(['baz-bar,baz.bar.example.com/path',
-                                            'foo,foo.example.com', 
+        self.assert_stdout_equal('\n'.join(['baz-bar\tbaz.bar.example.com/path',
+                                            'foo\tfoo.example.com', 
                                             '']))
 
 
