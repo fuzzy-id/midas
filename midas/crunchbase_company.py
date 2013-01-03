@@ -89,7 +89,6 @@ class Company(CrunchBaseFetchable):
 
     def is_local(self):
         return os.path.isfile(self.fname)
-        return self.local_data.exists()
 
     def load(self):
         if self.data is None:
