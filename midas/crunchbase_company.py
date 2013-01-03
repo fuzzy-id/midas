@@ -78,6 +78,7 @@ class Company(CrunchBaseFetchable):
     def __init__(self, name, fname):
         self.name = name
         self.fname = fname
+        self.data = None
 
     def __str__(self):
         return 'Company( {0} )'.format(self.name)
