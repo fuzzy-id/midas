@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from io import BytesIO
+import json
 import tempfile
 
 import mock
 
+from midas.compat import GzipFile
 from midas.compat import unittest
 from midas.tests import COMPANIES_URL
 from midas.tests import EXAMPLES_PATH
@@ -47,6 +49,15 @@ class CompanyTests(unittest.TestCase):
         urlopen.return_value = buf
         company = self._make_update()
         self.assertEqual(company.data, ['fo', 'ba'])
+
+    def test_loading_data_from_file(self):
+        with tempfile.NamedTemporaryFile() as fp:
+            with GzipFile(mode='wb', fileobj=fp) as zipf:
+                zipf.write(json.dumps({'foo': 'bar'}).encode())
+            fp.seek(0)
+            c = self._make_one('TestCompany', fp.name)
+            c.load()
+        self.assertEqual(c.data, {'foo': 'bar'})
 
 
 class CompanyListTests(unittest.TestCase):
