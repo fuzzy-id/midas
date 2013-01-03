@@ -91,6 +91,12 @@ class PigSchemaToPyStructTests(unittest.TestCase):
                     ('b', [(('s', 'chararray'), ('i', 'int'))]))
         self.assertEqual(pig_schema_to_py_struct(s), expected)
 
+    def test_invalid_schema(self):
+        pig_schema_to_py_struct = self._get_target()
+        s = 'foo: bar'
+        with self.assertRaisesRegex(TypeError, 'Unknown schema'): 
+            pig_schema_to_py_struct(s)
+
 
 class MakeParserTests(unittest.TestCase):
 
