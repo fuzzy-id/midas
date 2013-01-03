@@ -61,11 +61,11 @@ class Fetcher(threading.Thread):
             self.inst.update()
         except HTTPError as e:
             if e.code == 404:
-                logging.critical(
-                    '{0}: Got 404'.format(self.inst))
+                logging.critical('{0}: Got 404'.format(self.inst))
             elif tries < 2 and (e.code == 503 or e.code == 504):
                 logging.critical(
-                    '{0}: Got 504 ({1} attempt[s])'.format(self.inst, tries + 1))
+                    '{0}: Got 504 ({1} attempt[s])'.format(self.inst, tries + 1)
+                    )
                 self.make_update(tries + 1)
             else:
                 logging.exception(e)
