@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
@@ -117,7 +116,7 @@ def make_tuple_parser(schema, tuple_start, delimiter, tuple_end):
         elif typ in SIMPLE_PARSER:
             parser.append(SIMPLE_PARSER[typ])
         else:
-            raise TypeError("Cannot make parser for '{}'".format(typ))
+            raise TypeError("Cannot make parser for '{0}'".format(typ))
     cls = collections.namedtuple('Tuple', ' '.join(names))
     def tuple_parser(s, end):
         assert s.startswith(tuple_start)
@@ -189,7 +188,7 @@ def make_tuple_serializer(schema, start, delimiter, end):
         elif isinstance(typ, tuple):
             serializer.append(make_tuple_serializer(typ, '(', ',', ')'))
         else:
-            raise TypeError("Cannot serialize '{}'".format(typ))
+            raise TypeError("Cannot serialize '{0}'".format(typ))
     def tuple_serializer(t):
         fields = ( s(getattr(t, n))
                    for s, n in zip(serializer, attrs) )
