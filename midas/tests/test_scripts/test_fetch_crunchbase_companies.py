@@ -143,7 +143,7 @@ class MainLocalFilesIntegrationTests(IntegrationTestCaseNG):
                                           {'permalink': 'bar', }],
                           FOO_URL: ['some_foo'],
                           BAR_URL: ['some_bar']})
-        self.assertEqual(self._call_cmd(self.tmpd), 0)
+        self.assertEqual(self._call_cmd('-q', self.tmpd), 0)
         try:
             urlopen.assert_called_with(BAR_URL)
         except AssertionError:  # pragma: no cover
