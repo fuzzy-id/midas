@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
+import datetime
 import collections
 
 import mock
@@ -118,6 +119,12 @@ class MakeParserTests(unittest.TestCase):
         make_parser = self._get_target()
         parser = make_parser('int')
         self.assertEqual(parser('8\n'), 8)
+        self.assertEqual(parser('\n'), None)
+
+    def test_just_a_date(self):
+        make_parser = self._get_target()
+        parser = make_parser('date')
+        self.assertEqual(parser('2013-01-07\n'), datetime.date(2013, 1, 7))
         self.assertEqual(parser('\n'), None)
 
     def test_a_tuple_with_str(self):
