@@ -23,7 +23,8 @@ TEST_DATA_PATH = {
     'site_count': os.path.join(_test_data_home, 'site_count'),
     'crunchbase': os.path.join(_test_data_home, 'crunchbase'),
     'companies': os.path.join(_test_data_home, 'companies'),
-    'crunchbase_companies': os.path.join(_test_data_home, 'crunchbase_companies'),
+    'crunchbase_companies': os.path.join(_test_data_home, 
+                                         'crunchbase_companies'),
     }
 
 __test_examples__ = TEST_DATA_PATH['crunchbase']
