@@ -3,7 +3,7 @@
 returned by the crunchbase API.
 """
 
-from crawlcrunch.model.inspection import Model
+from midas.helper.crunchbase_inspection import Model
 
 
 def make_root_acces(root):
