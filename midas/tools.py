@@ -83,7 +83,9 @@ def make_p_empty_attr(attr_name):
 
 ### Useful miscelanious stuff ###
 
-def make_number_of_funding_rounds_plot(interactive=True):
+def make_number_of_funding_rounds_plot(
+    companies, plot_name='./funding_rounds_per_date.png'
+    ):
     fr_dates = [ datetime.date(fr.funded_year, fr.funded_month, fr.funded_day)
                  for fr in md_db.q_fr_of_interest().all() ]
     cnt = count_by_key(fr_dates)
