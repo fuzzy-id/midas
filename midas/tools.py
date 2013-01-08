@@ -4,22 +4,8 @@ all other submodules or interactively.
 """
 
 import collections
-import datetime
-import functools
-import itertools
-import operator
-import os
-import os.path
-import subprocess
 
-from midas.compat import GzipFile
-from midas.compat import ifilter
-from midas.compat import imap
-from midas.compat import urlparse
-import midas.compat as vt_comp
-
-import midas as md
-
+from midas.compat import d_itervalues
 
 ### Functions that work on MapReduce-style 'key\tvalue' lines ###
 
@@ -45,14 +31,12 @@ def collect_by_key(iterable, keyfunc):
 
 def relation_stats(iterable):
     counter = count_by_key(iterable)
-    return (sum(vt_comp.d_itervalues(counter)),
+    return (sum(d_itervalues(counter)),
             len(counter), 
-            sum(v for v in vt_comp.d_itervalues(counter) if v > 1), 
-            sum(1 for v in vt_comp.d_itervalues(counter) if v > 1))
+            sum(v for v in d_itervalues(counter) if v > 1), 
+            sum(1 for v in d_itervalues(counter) if v > 1))
 
 ### Functions to query sites and companies ###
-
-SiteCount = collections.namedtuple('SiteCount', ['site', 'count'])
 
 def make_p_empty_attr(attr_name):
     def p_empty_attr(o):
