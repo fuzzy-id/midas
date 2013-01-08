@@ -46,15 +46,3 @@ def make_p_empty_attr(attr_name):
         attr = getattr(o, attr_name)
         return attr is None or attr == ''
     return p_empty_attr
-
-### Useful miscelanious stuff ###
-
-def takewhile_common(list1, list2):
-    for a, b in zip(list1, list2):
-        if a != b:
-            break
-        yield a
-
-def iter_ts_until_gap(ts, all_dates):
-    first_common = all_dates.index(ts[-1])
-    return takewhile_common(ts[::-1], all_dates[first_common::-1])
