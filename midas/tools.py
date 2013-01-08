@@ -38,11 +38,3 @@ def relation_stats(iterable):
             len(counter), 
             sum(v for v in d_itervalues(counter) if v > 1), 
             sum(1 for v in d_itervalues(counter) if v > 1))
-
-### Functions to query sites and companies ###
-
-def make_p_empty_attr(attr_name):
-    def p_empty_attr(o):
-        attr = getattr(o, attr_name)
-        return attr is None or attr == ''
-    return p_empty_attr
