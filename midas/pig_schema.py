@@ -222,3 +222,8 @@ FLATTENED_SCHEMA = pig_schema_to_py_struct(
     '(id: chararray, hp: chararray, code: chararray, tstamp: date)'
     )
 FLATTENED_PARSER = make_parser(FLATTENED_SCHEMA)
+
+SITE_COUNT_SCHEMA = pig_schema_to_py_struct(
+    '(site: chararray, count: int)'
+    )
+SITE_COUNT_PARSER = make_parser(SITE_COUNT_SCHEMA)
