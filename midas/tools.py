@@ -17,7 +17,10 @@ def get_key(line, sep='\t'):
 
 ### Functions that are often needed in interactive use ###
 
-def count_by_key(iterable, keyfunc=lambda o: o):
+def identity(o):
+    return o
+
+def count_by_key(iterable, keyfunc=identity):
     counter = collections.defaultdict(int)
     for item in iterable:
         counter[keyfunc(item)] += 1
