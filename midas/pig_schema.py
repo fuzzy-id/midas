@@ -3,6 +3,7 @@
 from __future__ import print_function
 
 import collections
+import datetime
 import functools
 
 def pig_input(schema):
@@ -166,9 +167,16 @@ def int_parser(s, end):
         return None, tail
     return int(head), tail
 
+def date_parser(s, end):
+    head, _, tail = s.partition(end)
+    if head == '':
+        return None, tail
+    return datetime.date(*map(int, head.split('-'))), tail
+
 SIMPLE_PARSER = {
     'chararray': chararray_parser,
     'int': int_parser,
+    'date': date_parser,
     }
 
 def make_serializer(schema):
@@ -210,3 +218,7 @@ SIMPLE_SERIALIZER = {
     'int': int_serializer,
     }
 
+FLATTENED_SCHEMA = pig_schema_to_py_struct(
+    '(id: chararray, hp: chararray, code: chararray, tstamp: date)'
+    )
+FLATTENED_PARSER = make_parser(FLATTENED_SCHEMA)
