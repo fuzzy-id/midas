@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from midas.compat import unittest
+import os.path
 
-import midas.compat as vt_comp
+import midas
+
+from midas.compat import unittest
 
 import midas.tests as md_tests
 
@@ -58,5 +60,21 @@ class RelationStatsTests(unittest.TestCase):
         self.assertEqual(result, (5, 3, 4, 2))
 
 
+class IterFilesContentTests(unittest.TestCase):
+
+    def _get_target(self):
+        from midas.tools import iter_files_content
+        return iter_files_content
+
+    def test_on_site_count(self):
+        path_pattern = os.path.join(md_tests.TEST_DATA_PATH['site_count'], 
+                                    'data')
+        func = self._get_target()
+        result = [ line for line in func(path_pattern) ]
+        with open(path_pattern) as fp:
+            expected = fp.readlines()
+        self.assertEqual(result, expected)
+            
+
 if __name__ == '__main__':  # pragma: no cover
-    vt_comp.unittest.main()
+    unittest.main()

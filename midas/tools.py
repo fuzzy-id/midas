@@ -4,6 +4,8 @@ all other submodules or interactively.
 """
 
 import collections
+import fileinput
+import glob
 
 from midas.compat import d_itervalues
 
@@ -38,3 +40,8 @@ def relation_stats(iterable):
             len(counter), 
             sum(v for v in d_itervalues(counter) if v > 1), 
             sum(1 for v in d_itervalues(counter) if v > 1))
+
+def iter_files_content(path_pattern):
+    files = glob.glob(path_pattern)
+    contents = fileinput.input(files)
+    return contents
