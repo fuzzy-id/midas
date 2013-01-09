@@ -1,7 +1,53 @@
 # -*- coding: utf-8 -*-
 
+import collections
+import datetime
 import numpy
+import matplotlib.dates
 import matplotlib.pyplot as plt
+
+from midas.compat import imap
+from midas.tools import iter_files_content
+from midas.pig_schema import FLATTENED_PARSER
+
+def make_fr_per_date_plot(site_count_files,
+                          plot_file=None):
+    contents = iter_files_content(site_count_files)
+    d = collections.defaultdict(list)
+    min_date = datetime.date(2011, 3, 1)
+    months = set()
+    for c in imap(FLATTENED_PARSER, contents):
+        if c.tstamp >= min_date:
+            d[c.code].append(matplotlib.dates.date2num(c.tstamp))
+            months.add(datetime.date(c.tstamp.year, c.tstamp.month, 1))
+    
+    months = sorted(months)
+
+    right_border = months[-1] + datetime.timedelta(31)
+    right_border = datetime.date(right_border.year, right_border.month, 1)
+    months.append(right_border)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.hist(d.values(), label=map(str.title, d.keys()),
+            bins=matplotlib.dates.date2num(months))
+    ax.set_xlim(matplotlib.dates.date2num(months[0]),
+                matplotlib.dates.date2num(months[-1]))
+    ax.legend()
+    ax.xaxis.set_major_locator(
+        matplotlib.dates.MonthLocator(bymonthday=15, interval=2)
+        )
+    ax.xaxis.set_major_formatter(
+        matplotlib.ticker.FuncFormatter(
+            lambda d, _: matplotlib.dates.num2date(d).strftime('%B %Y')
+            )
+        )
+    fig.autofmt_xdate()
+    ax.set_ylabel('Number of Funding Rounds')
+    ax.grid(True, axis='y')
+    if plot_file:
+        plt.savefig(plot_file)
+    return fig
 
 def get_available_days_before_fr(ts, fr):
     site, date, code = fr
