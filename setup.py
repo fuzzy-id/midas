@@ -30,7 +30,7 @@ setup(name='midas',
         'console_scripts':
             ['md_fetch_crunchbase_companies=midas.scripts.fetch_crunchbase_companies:FetchCrunchbaseCompanies.cmd',
              'md_associate=midas.scripts.associate:Associate.cmd',
-             'md_alexa_zip_to_gzip=midas.scripts.alexa_zip_to_gzip:AlexaZipToGzip.cmd',
+             'md_unzip_alexa_files=midas.scripts.unzip_alexa_files:UnzipAlexaFiles.cmd',
              'md_flatten_companies=midas.scripts.flatten_companies:FlattenCompanies.cmd',
              ],
         },
