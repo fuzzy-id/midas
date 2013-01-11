@@ -39,7 +39,7 @@ class FlattenCompanies(MDCommand):
                 funding = ''
             try:
                 self.out('\t'.join((permalink, hp, funding)))
-            except:
+            except:  # pragma: no cover
                 print(permalink, file=sys.stderr)
                 print(hp, file=sys.stderr)
                 print(funding, file=sys.stderr)
