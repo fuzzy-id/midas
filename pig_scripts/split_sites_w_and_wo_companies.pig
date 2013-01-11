@@ -19,9 +19,8 @@ sites_w_company = FOREACH in_crunchbase GENERATE sites::site AS site,
 						 A::cb::code AS code,
 				     		 A::cb::tstamp AS tstamp;
 
-STORE sites_w_company INTO '$sites_w_company';
-
 sites_wo_company = FOREACH not_in_crunchbase GENERATE sites::site AS site,
 		                                     sites::ranking AS ranking;
 
+STORE sites_w_company INTO '$sites_w_company';
 STORE sites_wo_company INTO '$sites_wo_company';
