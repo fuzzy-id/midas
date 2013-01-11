@@ -41,14 +41,6 @@ BAR_URL = 'http://api.crunchbase.com/v/1/company/bar.js?api_key=vqrwexbhj9s2d7fb
 def DummyCompanyList(path=None):
     from midas.crunchbase_crawler import CompanyList
     dcl = mock.Mock(spec=CompanyList)
-    d = dict()
-
-    def side_effect(name):
-        if not name in d:
-            d[name] = DummyCompany(name)
-        return d[name]
-
-    dcl.get.side_effect = side_effect
     return dcl
 
 def DummyCompany(name='dummy_company'):
