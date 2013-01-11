@@ -13,4 +13,4 @@ else
 fi
 export PYTHONPATH
 
-python $@
+exec $@
