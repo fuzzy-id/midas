@@ -18,6 +18,8 @@ class FlattenCompanies(MDCommand):
             d = json.loads(js)
             permalink = d['permalink']
             hp = d.get('homepage_url', '')
+            if hp is None:
+                hp = ''
             fundings = []
             for fr in d.get('funding_rounds', []):
                 if (fr['round_code'] in FR_OF_INTEREST
@@ -35,4 +37,10 @@ class FlattenCompanies(MDCommand):
                 funding = '\t'.join((code, tstamp.strftime('%Y-%m-%d')))
             else:
                 funding = ''
-            self.out('\t'.join((permalink, hp, funding)))
+            try:
+                self.out('\t'.join((permalink, hp, funding)))
+            except:
+                print(permalink, file=sys.stderr)
+                print(hp, file=sys.stderr)
+                print(funding, file=sys.stderr)
+                raise
