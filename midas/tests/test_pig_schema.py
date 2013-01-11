@@ -153,9 +153,17 @@ class MakeParserTests(unittest.TestCase):
         schema = (('b', [(('s', 'chararray'), ('i', 'int'))]), )
         parser = make_parser(schema)
         self.assertEqual(parser('\n'), ([], ))
+        self.assertEqual(parser('{}\n'), ([], ))
         self.assertEqual(parser('{(foo,8)}\n'), ([('foo', 8)], ))
         self.assertEqual(parser('{(foo,8),(bar,10)}\n'), 
                          ([('foo', 8), ('bar', 10)], ))
+
+    def test_values_after_bag(self):
+        make_parser = self._get_target()
+        schema = (('b', [(('s', 'chararray'), ('i', 'int'))]), 
+                  ('s', 'chararray'))
+        parser = make_parser(schema)
+        self.assertEqual(parser('{}\tfoo\n'), ([], 'foo'))
 
 
 class SerializerTests(unittest.TestCase):
