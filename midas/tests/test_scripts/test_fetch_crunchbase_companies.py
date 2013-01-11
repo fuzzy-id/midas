@@ -21,7 +21,7 @@ from midas.tests import FOO_URL
 from midas.tests import DummyCompany
 from midas.tests import DummyCompanyList
 from midas.tests import prepare_url_open
-from midas.tests.test_scripts import IntegrationTestCaseNG
+from midas.tests.test_scripts import IntegrationTestCase
 
 import mock
 
@@ -122,7 +122,7 @@ class ArgumentParserTests(unittest.TestCase):
                     .format(dst)))
 
 
-class MainLocalFilesIntegrationTests(IntegrationTestCaseNG):
+class MainLocalFilesIntegrationTests(IntegrationTestCase):
 
     def _get_target_cls(self):
         from midas.scripts.fetch_crunchbase_companies import FetchCrunchbaseCompanies

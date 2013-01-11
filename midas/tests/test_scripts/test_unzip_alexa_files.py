@@ -5,11 +5,11 @@ import os
 import os.path
 import tempfile
 
-from midas.tests.test_scripts import IntegrationTestCaseNG
+from midas.tests.test_scripts import IntegrationTestCase
 from midas.tests import TEST_DATA_PATH
 
 
-class UnzipAlexaFilesTests(IntegrationTestCaseNG):
+class UnzipAlexaFilesTests(IntegrationTestCase):
 
     def _get_target_cls(self):
         from midas.scripts.unzip_alexa_files import UnzipAlexaFiles

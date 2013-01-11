@@ -45,7 +45,7 @@ class MDCommandTestCase(unittest.TestCase):
         self.assertEqual(out, s)
 
 
-class IntegrationTestCaseNG(MDCommandTestCase):
+class IntegrationTestCase(MDCommandTestCase):
 
     def setUp(self):
         MDCommandTestCase.setUp(self)

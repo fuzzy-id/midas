@@ -4,10 +4,10 @@ import os.path
 
 from midas.compat import unittest
 
-from midas.tests.test_scripts import IntegrationTestCaseNG
+from midas.tests.test_scripts import IntegrationTestCase
 from midas.tests import TEST_DATA_PATH
 
-class FlattenCompaniesTests(IntegrationTestCaseNG):
+class FlattenCompaniesTests(IntegrationTestCase):
 
     def _get_target_cls(self):
         from midas.scripts.flatten_companies import FlattenCompanies
