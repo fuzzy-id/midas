@@ -142,6 +142,8 @@ def make_bag_parser(schema):
     sub_parser = make_tuple_parser(schema[0], '(', ',', ')')
     def bag_parser(tail, end):
         fields = []
+        if tail.startswith('{}'):
+            tail = tail[2:]
         if tail.startswith(end):
             return fields, tail[len(end):]
         while not tail.startswith('}'):
