@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
@@ -17,6 +16,8 @@ import pandas
 import pig_schema
 
 from restrictions import MeanRankInRangeAtDate
+
+from midas.scripts import MDCommand
 
 SCHEMA = pig_schema.pig_schema_to_py_struct(
     ','.join(['(site: chararray',
