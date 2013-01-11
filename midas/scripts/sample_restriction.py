@@ -37,7 +37,7 @@ class MakeSampleRestrictionShelve(MDCommand):
 
     def add_argument(self):
         self.parser.add_argument(
-            '--shelf', metavar='FILE',
+            'shelf',
             help='The file-name of the shelve.'
             )
         self.parser.add_argument(

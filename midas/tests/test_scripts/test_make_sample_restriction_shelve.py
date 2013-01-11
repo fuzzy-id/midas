@@ -17,7 +17,7 @@ class Tests(IntegrationTestCase):
     def test_on_test_data(self):
         shelf = os.path.join(self.tmpd, 'shelf')
         self.assertEqual(
-            self._call_cmd('--shelf', shelf, TEST_DATA_PATH['sites_w_company']),
+            self._call_cmd(shelf, TEST_DATA_PATH['sites_w_company']),
             0
             )
         d = shelve.open(shelf)
