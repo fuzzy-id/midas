@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import operator
+import os.path
 
 from midas.compat import unittest
 from midas.tests import TEST_DATA_PATH
 from midas.tests.test_scripts import MDCommandTestCase
+from midas.tests.test_scripts import IntegrationTestCase
 
 
 class DomainTests(unittest.TestCase):
@@ -81,7 +83,7 @@ class SplitDomainTests(unittest.TestCase):
         self.assertEqual(self._run_it(''), ('', ))
 
 
-class AssociateTests(MDCommandTestCase):
+class AssociateOnTestDataTests(MDCommandTestCase):
 
     def _get_target_cls(self):
         from midas.scripts.associate import Associate
@@ -93,6 +95,24 @@ class AssociateTests(MDCommandTestCase):
                                             'foo\tfoo.example.com', 
                                             '']))
 
+
+class AssociateOnConstructedDataTests(IntegrationTestCase):
+
+    def _get_target_cls(self):
+        from midas.scripts.associate import Associate
+        return Associate
+
+    def test_companies_with_same_sites_are_rejected(self):
+        companies = os.path.join(self.tmpd, 'companies')
+        with open(companies, 'w') as fp:
+            fp.writelines('\n'.join(['bar\thttp://example.com/bar\ta\t2013-01-12',
+                                     'foo\thttp://example.com/foo\ta\t2013-01-12',
+                                     '']))
+        site_count = os.path.join(self.tmpd, 'site_count')
+        with open(site_count, 'w') as fp:
+            fp.write('example.com\t1\n')
+        self.assertEqual(self._call_cmd(site_count, companies), 0)
+        self.assert_stdout_equal('')
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

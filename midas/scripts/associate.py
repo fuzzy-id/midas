@@ -9,10 +9,13 @@ of the Alexa Top1M sites .
 
 from midas.compat import str_type
 from midas.compat import d_iteritems
+from midas.compat import d_itervalues
 from midas.compat import urlparse
 
 from midas.pig_schema import pig_schema_to_py_struct
 from midas.pig_schema import make_parser
+
+from midas.tools import count_by_key
 
 import midas.scripts
 
@@ -49,9 +52,13 @@ class Associate(midas.scripts.MDCommand):
         companies = ( COMPANY_PARSER(c)
                       for c in self.args.companies)
         s2c = tree.map(companies, lambda c: domain(c.hp))
+        cnt = count_by_key(s 
+                           for l in d_itervalues(s2c) 
+                           for s in l)
         for company, sites in d_iteritems(s2c):
             for site in sites:
-                self.out('\t'.join([company.permalink, site.site]))
+                if cnt[site] == 1:
+                    self.out('\t'.join([company.permalink, site.site]))
 
 
 def split_domain(site):
