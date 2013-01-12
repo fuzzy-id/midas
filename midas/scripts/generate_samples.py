@@ -34,9 +34,9 @@ class GenerateSamples(MDCommand):
     `splitted_ab`, etc. in your current working directory. Now start
     this very script once per file:
 
-    for f in /path/to/splitted_*; do \
-      out=/data/results/result_$(basename ${f}) \
-      cat ${f} | ./generate_samples.py restrictions_shelve > ${out} & \
+    for f in /path/to/splitted_*; do \\
+      out=/data/results/result_$(basename ${f}) \\
+      cat ${f} | ./generate_samples.py restrictions_shelve > ${out} & \\
     done
     """
 
