@@ -33,6 +33,7 @@ setup(name='midas',
              'md_unzip_alexa_files=midas.scripts.unzip_alexa_files:UnzipAlexaFiles.cmd',
              'md_flatten_companies=midas.scripts.flatten_companies:FlattenCompanies.cmd',
              'md_make_restrictions=midas.scripts.sample_restriction:MakeSampleRestrictionShelve.cmd',
+             'md_generate_samples=midas.scripts.generate_samples:GenerateSamples.cmd',
              ],
         },
       )
