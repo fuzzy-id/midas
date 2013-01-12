@@ -28,7 +28,8 @@ SITE_COUNT_PARSER = make_parser(SITE_COUNT_SCHEMA)
 COMPANY_PARSER = make_parser(COMPANY_SCHEMA)
 
 class Associate(midas.scripts.MDCommand):
-    """ Tries to associate sites from the Alexa Top 1M data-set with
+    """ 
+    Tries to associate sites from the Alexa Top 1M data-set with
     Companies from CrunchBase. The association is printed to stdout in
     the form 'Permalink,Site\n'.
     """

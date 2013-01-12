@@ -13,7 +13,8 @@ ALEXA_ZIP_FILE_FORMAT='top-1m-????-??-??.csv.zip'
 ALEXA_TS_FORMAT='top-1m-%Y-%m-%d.csv.zip'
 
 class UnzipAlexaFiles(midas.scripts.MDCommand):
-    """ Unzip Alexa Top 1M ZIP files and put the content in tab ('\t')
+    """ 
+    Unzip Alexa Top 1M ZIP files and put the content in tab ('\t')
     separated files. The content is copied as is. The 'csv.zip'
     extension of the file is omitted.
     """

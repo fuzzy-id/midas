@@ -18,8 +18,9 @@ PARSER = make_parser(
     )
 
 class GenerateSamples(MDCommand):
-    """ This script ideally creates one sample for each company with
-    an associated sites that has restrictions stored in the
+    """ 
+    This script ideally creates one sample for each company with an
+    associated sites that has restrictions stored in the
     shelve. Hence, you first have to merge/split the original files
     containing the data (this should be `sites_wo_company`) into the
     right amount of splits, e.g. if your data is located in files

@@ -11,7 +11,8 @@ from midas.scripts import MDCommand
 FR_OF_INTEREST = set(['seed', 'angel', 'a'])
 
 class FlattenCompanies(MDCommand):
-    """ Flatten the crawled CrunchBase companies.
+    """ 
+    Flatten the crawled CrunchBase companies.
     """
 
     def run(self):
