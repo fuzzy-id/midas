@@ -10,6 +10,7 @@ import fileinput
 import functools
 import os.path
 import sys
+import textwrap
 
 import midas.compat
 
@@ -77,7 +78,9 @@ class MDCommand(object):
         `--verbose`, `--quiet` flags and reads from `stdin`.
         """
         if not hasattr(self, '_parser'):
-            parser = argparse.ArgumentParser(description=self.__doc__)
+            parser = argparse.ArgumentParser(
+                description=textwrap.dedent(self.__doc__)
+                )
             parser.add_argument('-q', '--quiet', action='store_true',
                                 help='Suppress status messages')
             self._parser = parser
