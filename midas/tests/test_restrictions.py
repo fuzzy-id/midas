@@ -13,7 +13,7 @@ class MeanRankInRangeAtDateTests(unittest.TestCase):
         return MeanRankInRangeAtDate(*args, **kwargs)
 
     def test_fulfill(self):
-        restr = self._make_one(datetime.date(2012, 12, 24), 10, 12)
+        restr = self._make_one('foo', datetime.date(2012, 12, 24), 10, 12)
         s = pandas.Series([8, 11, 15], 
                           pandas.date_range('2012-12-22', '2012-12-24'))
         self.assertTrue(restr.fulfills(s))
@@ -25,7 +25,7 @@ class MeanRankInRangeAtDateTests(unittest.TestCase):
         self.assertFalse(restr.fulfills(s))
 
     def test_zero_days_offset(self):
-        restr = self._make_one(datetime.date(2012, 12, 24), 10, 12, 
+        restr = self._make_one('foo', datetime.date(2012, 12, 24), 10, 12, 
                                pandas.DateOffset(0))
         s = pandas.Series([8, 11, 12], 
                           pandas.date_range('2012-12-22', '2012-12-24'))

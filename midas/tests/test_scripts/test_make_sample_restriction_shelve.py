@@ -24,6 +24,7 @@ class Tests(IntegrationTestCase):
         self.assertEqual(len(d), 1)
         self.assertTrue(d.has_key('foo'))
         restr = d['foo']
+        self.assertEqual(restr.site, 'foo.example.com')
         self.assertEqual(restr.tstamp, pandas.Timestamp('2012-09-03'))
         self.assertEqual(restr.date_lower, pandas.Timestamp('2012-08-31'))
         self.assertEqual(restr.date_upper, pandas.Timestamp('2012-09-06'))
