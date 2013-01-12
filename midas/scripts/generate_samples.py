@@ -61,4 +61,5 @@ class GenerateSamples(MDCommand):
                                 [data.site, 
                                  restriction.tstamp.date().isoformat()]
                                 ))
+                        break
         shelf.close()
