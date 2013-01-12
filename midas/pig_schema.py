@@ -229,3 +229,12 @@ SITE_COUNT_SCHEMA = pig_schema_to_py_struct(
     '(site: chararray, count: int)'
     )
 SITE_COUNT_PARSER = make_parser(SITE_COUNT_SCHEMA)
+
+SITES_W_COMPANY_SCHEMA = pig_schema_to_py_struct(
+    ','.join(['(site: chararray',
+              'ranking: bag{(tstamp: chararray, rank: int)}',
+              'company: chararray',
+              'code: chararray',
+              'tstamp: chararray)'])
+    )
+SITES_W_COMPANY_PARSER = make_parser(SITES_W_COMPANY_SCHEMA)

@@ -8,20 +8,10 @@ import shelve
 import numpy
 import pandas
 
-from midas.pig_schema import pig_schema_to_py_struct
-from midas.pig_schema import make_parser
+from midas.pig_schema import SITES_W_COMPANY_PARSER
 from midas.restrictions import MeanRankInRangeAtDate
 from midas.scripts import MDCommand
 from midas.scripts import StoreSingleFileOrDirectoryAction
-
-SCHEMA = pig_schema_to_py_struct(
-    ','.join(['(site: chararray',
-              'ranking: bag{(tstamp: chararray, rank: int)}',
-              'company: chararray',
-              'code: chararray',
-              'tstamp: chararray)'])
-    )
-PARSER = make_parser(SCHEMA)
 
 DATE_INTERVAL = pandas.DateOffset(days=3)
 OFFSET = pandas.DateOffset(days=90)
@@ -48,7 +38,7 @@ class MakeSampleRestrictionShelve(MDCommand):
     def run(self):
         shelf = shelve.open(self.args.shelf)
         for i in self.args.sites_w_company:
-            field = PARSER(i)
+            field = SITES_W_COMPANY_PARSER(i)
             fund_date, mean_rank = get_median_rank_at_funding_date(field)
             if numpy.isnan(mean_rank):
                 continue
