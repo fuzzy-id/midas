@@ -24,6 +24,9 @@ def get_median_rank_at_funding_date(field):
     return fund_date, r
 
 class MakeSampleRestrictionShelve(MDCommand):
+    """ Create a Python shelve whith restrictions to select negative
+    samples.
+    """
 
     def add_argument(self):
         self.parser.add_argument(
