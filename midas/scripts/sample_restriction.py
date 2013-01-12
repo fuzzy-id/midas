@@ -48,7 +48,7 @@ class MakeSampleRestrictionShelve(MDCommand):
                 continue
             mean_rank = int(mean_rank)
             border = int(2 ** math.log(mean_rank))
-            restr = MeanRankInRangeAtDate(fund_date, 
+            restr = MeanRankInRangeAtDate(field.site, fund_date,
                                           mean_rank - border,
                                           mean_rank + border)
             shelf[field.company] = restr

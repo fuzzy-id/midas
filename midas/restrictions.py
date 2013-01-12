@@ -8,8 +8,9 @@ import pandas
 
 class MeanRankInRangeAtDate(object):
 
-    def __init__(self, date, rank_lower, rank_upper, 
+    def __init__(self, site, date, rank_lower, rank_upper, 
                  date_offset=pandas.DateOffset(days=3)):
+        self.site = site
         self.tstamp = date
         self.date_lower = date - date_offset
         self.date_upper = date + date_offset
