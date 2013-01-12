@@ -35,6 +35,7 @@ setup(name='midas',
              'md_make_restrictions=midas.scripts.sample_restriction:MakeSampleRestrictionShelve.cmd',
              'md_generate_samples=midas.scripts.generate_samples:GenerateSamples.cmd',
              'md_tstamp_to_secs=midas.scripts.tstamp_to_secs:TstampToSecs.cmd',
+             'md_generate_negative_samples=midas.scripts.generate_negative_samples:GenerateNegativeSamples.cmd',
              ],
         },
       )
