@@ -34,6 +34,7 @@ setup(name='midas',
              'md_flatten_companies=midas.scripts.flatten_companies:FlattenCompanies.cmd',
              'md_make_restrictions=midas.scripts.sample_restriction:MakeSampleRestrictionShelve.cmd',
              'md_generate_samples=midas.scripts.generate_samples:GenerateSamples.cmd',
+             'md_tstamp_to_secs=midas.scripts.tstamp_to_secs:TstampToSecs.cmd',
              ],
         },
       )
