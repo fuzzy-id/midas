@@ -79,6 +79,7 @@ class MDCommand(object):
         """
         if not hasattr(self, '_parser'):
             parser = argparse.ArgumentParser(
+                formatter_class=argparse.RawDescriptionHelpFormatter,
                 description=textwrap.dedent(self.__doc__)
                 )
             parser.add_argument('-q', '--quiet', action='store_true',
