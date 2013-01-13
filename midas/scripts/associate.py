@@ -37,7 +37,7 @@ class Associate(MDCommand):
             )
         self.parser.add_argument(
             'companies', action=StoreSingleFileOrDirectoryAction,
-            help='The directory where the flattened and filtered crunchbase companies reside'
+            help='The directory where the flattened and filtered CrunchBase companies reside'
             )
 
     def run(self):
