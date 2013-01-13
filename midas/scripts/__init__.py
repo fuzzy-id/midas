@@ -68,7 +68,9 @@ class MDCommand(object):
         obj = cls(argv)
         ret_val = obj.run()
         # `None` means everything's fine
-        return 0 if ret_val is None else ret_val
+        if ret_val is None:
+            return 0 
+        return ret_val
 
     def run(self):  # pragma: no cover
         """
