@@ -88,21 +88,6 @@ else:
 if not PY3K:
     unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
 
-if PY3K:  # pragma: no cover
-    from configparser import ConfigParser
-else:
-    from ConfigParser import SafeConfigParser
-
-    class ConfigParser(SafeConfigParser):
-
-        def read_string(self, s):
-            """ Puts the string `s` into a :class:`StringIO.StringIO`
-            instance and passes it to :meth:`readfp`.
-            """
-            buf = StringIO(s)
-            buf.seek(0)
-            self.readfp(buf)
-
 if PY26:  # pragma: no cover
     import gzip
     class GzipFile(gzip.GzipFile):

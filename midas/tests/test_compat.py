@@ -110,18 +110,6 @@ class UnittestTests(unittest.TestCase):
             list()['foo']
 
 
-class ConfigParserTests(unittest.TestCase):
-
-    def _get_cls(self):
-        from midas.compat import ConfigParser
-        return ConfigParser
-
-    def test_read_string_available(self):
-        cp = self._get_cls()()
-        cp.read_string('\n'.join(['[foo]', 'bar = baz']))
-        self.assertEqual(cp.get('foo', 'bar'), 'baz')
-
-
 class GzipFileTests(unittest.TestCase):
 
     def setUp(self):
