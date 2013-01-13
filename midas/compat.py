@@ -56,11 +56,6 @@ else:
     from collections import OrderedDict
 
 if PY3K:  # pragma: no cover
-    from collections import UserList
-else:
-    from UserList import UserList
-
-if PY3K:  # pragma: no cover
     from queue import Queue
 else:
     from Queue import Queue
