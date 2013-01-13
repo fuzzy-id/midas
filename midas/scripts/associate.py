@@ -62,7 +62,8 @@ def split_domain(site):
 
 
 def domain(company_or_site):
-    """ Return the domain part of an Alexa Top1M site or a
+    """
+    Return the domain part of an Alexa Top1M site or a
     :class:`crawlcrunch.model.db.Company` instance.
     """
     if isinstance(company_or_site, str_type):          # This should be an
