@@ -8,7 +8,8 @@ from midas.compat import urlopen
 
 
 class CrunchBaseFetchable(object):
-    """ A mixin that sums up the general way to fetch data from
+    """ 
+    A mixin that sums up the general way to fetch data from
     crunchbase.
     """
     TO_REPLACE = set(['\x00', '\x03', '\x0b', '\x0e',
