@@ -18,6 +18,7 @@ from midas.pig_schema import COMPANY_PARSER
 from midas.pig_schema import SITE_COUNT_PARSER
 
 from midas.tools import count_by_key
+from midas.tools import identity
 
 from midas.scripts import MDCommand
 from midas.scripts import StoreSingleFileOrDirectoryAction
@@ -115,9 +116,7 @@ class AssociationTree(dict):
             for r in branch.query(constraint):
                 yield r
 
-    def map(self, iterable, extract_func=None):
-        if extract_func is None:
-            extract_func = lambda a: a
+    def map(self, iterable, extract_func=identity):
         result = dict()
         for item in iterable:
             leafs = self.associate(extract_func(item))
