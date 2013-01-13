@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-""" As we need to pickle and unpickle the instances of these classes they 
+""" 
+As we need to pickle and unpickle the instances of these classes they
 have to go in their own module.
 """
 
@@ -21,4 +22,3 @@ class MeanRankInRangeAtDate(object):
         mean = ts[self.date_lower:self.date_upper].median()
         return (not numpy.isnan(mean)  
                 and (self.rank_lower <= mean <= self.rank_upper))
-
