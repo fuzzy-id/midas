@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-""" This module fills the gap between Python 2.6 upwards to Python 3
-since version 3.2.
+""" 
+This module fills the gap between Python 2.6 upwards to Python 3 since
+version 3.2.
 """
 
 import sys
