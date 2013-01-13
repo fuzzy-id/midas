@@ -13,7 +13,7 @@ PARSER = make_parser_from_schema(
     '(site: chararray, ranking: bag{(tstamp: chararray, rank: int)})'
     )
 
-class GenerateSamples(MDCommand):
+class GenerateNegativeSamples(MDCommand):
     """ 
     This script ideally creates one sample for each company with an
     associated sites that has restrictions stored in the
@@ -23,7 +23,7 @@ class GenerateSamples(MDCommand):
     /data/sites_wo_company/part-*
 
     DATA=/data/sites_wo_company/part-*
-    split_size=$(( $(cat ${DATA} | wc -l) / 10 + 1))
+    split_size=$(( $(cat ${DATA} | wc -l) / 10 + 1 ))
     cat ${DATA} | split -l ${split_size} - splitted_
 
     This will generate files with the naming scheme `splitted_aa`,
