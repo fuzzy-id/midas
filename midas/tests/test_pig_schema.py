@@ -4,8 +4,6 @@ from __future__ import print_function
 import datetime
 import collections
 
-import mock
-
 from midas.compat import unittest
 
 
