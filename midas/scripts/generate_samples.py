@@ -1,20 +1,16 @@
 # -*- coding: utf-8 -*-
-import collections
+
 import shelve
 import random
-import sys
 
 import pandas
 
 from midas.scripts import MDCommand
-from midas.pig_schema import make_parser
-from midas.pig_schema import make_serializer
-from midas.pig_schema import pig_schema_to_py_struct
+from midas.pig_schema import make_parser_from_schema
 
-PARSER = make_parser(
-    pig_schema_to_py_struct(
-        '(site:chararray, ranking: bag{(tstamp:chararray, rank:int)})'
-        )
+
+PARSER = make_parser_from_schema(
+    '(site:chararray, ranking: bag{(tstamp:chararray, rank:int)})'
     )
 
 class GenerateSamples(MDCommand):
