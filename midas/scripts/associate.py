@@ -89,15 +89,15 @@ class AssociationTree(dict):
 
     def associate(self, key):
         if key is None:
-            if len(self.leafs) > 0:  # definite relation
+            if len(self.leafs) > 0:  # Definite relation
                 return self.leafs
-            elif len(self) == 1:  # relation could be further down
+            elif len(self) == 1:     # Relation could be further down
                 return next(iter(self.values())).associate(None)
-            else:  # No definite relation!
+            else:                    # No definite relation!
                 return None
         else:
             head, tail = self._filled_split(key)
-            if head in self:  # propagate
+            if head in self:         # Propagate
                 return self[head].associate(tail)
             return self.associate(None)
 
