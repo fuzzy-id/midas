@@ -111,5 +111,4 @@ class MDCommand(object):
 
     @property
     def stdin(self):
-        for line in self._in:
-            yield line
+        return self._in
