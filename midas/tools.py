@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-""" This module provides common functions which are usually needed in
+"""
+This module provides common functions which are usually needed in
 all other submodules or interactively.
 """
 
