@@ -46,7 +46,7 @@ class Associate(MDCommand):
         for sc in imap(SITE_COUNT_PARSER, self.args.site_count):
             tree.grow(sc, domain(sc.site))
 
-        companies = ( COMPANY_PARSER(c) for c in self.args.companies )
+        companies = imap(COMPANY_PARSER, self.args.companies)
                       
         s2c = tree.map(companies, lambda c: domain(c.hp))
         cnt = count_by_key(s
