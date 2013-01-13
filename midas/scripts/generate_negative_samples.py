@@ -5,7 +5,7 @@ import shelve
 from midas.scripts import MDCommand
 
 
-class GenerateNegativeSamples(MDCommand):
+class GeneratePositiveSamples(MDCommand):
     """
     Extract sites and tstamps from restrictions shelf.
     """
