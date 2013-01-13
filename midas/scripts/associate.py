@@ -72,7 +72,7 @@ def domain(company_or_site):
         return company_or_site.split('/', 1)[0].lower()  # Alexa Top1M site
     else:
         raise TypeError(
-            "cannot extract domain part: {0}".format(type(company_or_site))
+            "Cannot extract domain part: {0}".format(type(company_or_site))
             )
 
 
