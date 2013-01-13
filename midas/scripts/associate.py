@@ -13,20 +13,13 @@ from midas.compat import d_iteritems
 from midas.compat import d_itervalues
 from midas.compat import urlparse
 
-from midas.pig_schema import pig_schema_to_py_struct
-from midas.pig_schema import make_parser
+from midas.pig_schema import COMPANY_PARSER
+from midas.pig_schema import SITE_COUNT_PARSER
 
 from midas.tools import count_by_key
 
 import midas.scripts
 
-SITE_COUNT_SCHEMA = pig_schema_to_py_struct('(site: chararray, count: int)')
-COMPANY_SCHEMA = pig_schema_to_py_struct(
-    '(permalink: chararray, hp: chararray, code: chararray, tstamp: chararray)'
-    )
-
-SITE_COUNT_PARSER = make_parser(SITE_COUNT_SCHEMA)
-COMPANY_PARSER = make_parser(COMPANY_SCHEMA)
 
 class Associate(midas.scripts.MDCommand):
     """ 

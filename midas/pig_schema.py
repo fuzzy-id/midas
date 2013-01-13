@@ -200,6 +200,9 @@ SIMPLE_SERIALIZER = {
     'int': int_serializer,
     }
 
+COMPANY_PARSER = make_parser_from_schema(
+    '(permalink: chararray, hp: chararray, code: chararray, tstamp: chararray)'
+    )
 FLATTENED_PARSER = make_parser_from_schema(
     '(id: chararray, hp: chararray, code: chararray, tstamp: date)'
     )
