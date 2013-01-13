@@ -9,45 +9,6 @@ import mock
 from midas.compat import unittest
 
 
-class InputDecoratorTests(unittest.TestCase):
-
-    def test_on_a_single_string(self):
-        from midas.pig_schema import pig_input
-        @pig_input('a: chararray')
-        def a_func(d):
-            yield d
-
-        result = list(a_func(['foo\n', 'bar\n']))
-        self.assertEqual(result, ['foo', 'bar'])
-
-
-class OutputDecoratorTests(unittest.TestCase):
-
-    def test_on_single_str(self):
-        from midas.pig_schema import pig_output
-        
-        @pig_output('a: chararray')
-        def a_func():
-            yield 'foo'
-            yield 'bar'
-
-        result = list(a_func())
-        self.assertEqual(result, ['foo', 'bar'])
-
-    def test_input_and_output_decorator(self):
-        from midas.pig_schema import pig_input
-        from midas.pig_schema import pig_output
-
-        @pig_output('(s: chararray, i: int)')
-        @pig_input('(b: bag{(s: chararray, i: int)})')
-        def a_func(row):
-            for entry in row.b:
-                yield entry
-        
-        result = list(a_func(['{(foo,8),(bar,9)}\n', '{(baz,7),(froz,6)}\n']))
-        self.assertEqual(result, ['foo\t8', 'bar\t9', 'baz\t7', 'froz\t6'])
-
-
 class PigSchemaToPyStructTests(unittest.TestCase):
 
     def _get_target(self):

@@ -6,29 +6,6 @@ import collections
 import datetime
 import functools
 
-def pig_input(schema):
-    as_struct = pig_schema_to_py_struct(schema)
-    parser = make_parser(as_struct)
-    def decorator(fn):
-        @functools.wraps(fn)
-        def iter_input(iterator, *args, **kwargs):
-            for i in iterator:
-                for result in fn(parser(i), *args, **kwargs):
-                    yield result
-        return iter_input
-    return decorator
-
-def pig_output(schema):
-    as_struct = pig_schema_to_py_struct(schema)
-    serializer = make_serializer(as_struct)
-    def decorator(fn):
-        @functools.wraps(fn)
-        def func(*args, **kwargs):
-            for i in fn(*args, **kwargs):
-                yield serializer(i)
-        return func
-    return decorator
-
 def pig_schema_to_py_struct(schema):
     if schema.startswith('('):
         # We interpret this as a Tuple
