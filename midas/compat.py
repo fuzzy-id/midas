@@ -50,11 +50,6 @@ if PY3K:  # pragma: no cover
 else:
     from StringIO import StringIO
 
-if PY26:  # pragma: no cover
-    from ordereddict import OrderedDict
-else:
-    from collections import OrderedDict
-
 if PY3K:  # pragma: no cover
     from queue import Queue
 else:

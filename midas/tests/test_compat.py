@@ -91,18 +91,6 @@ class IFilterTests(unittest.TestCase):
         self.assertNotIsInstance(result, list)
 
 
-class OrderedDictTests(unittest.TestCase):
-
-    def _get_cls(self):
-        from midas.compat import OrderedDict
-        return OrderedDict
-
-    def test_basic_behavior(self):
-        data = [('foo', 1), ('bar', 2)]
-        od = self._get_cls()(data)
-        self.assertEqual(list(od.items()), data)
-
-
 class UnittestTests(unittest.TestCase):
 
     def test_provides_assertRaisesRegex(self):
