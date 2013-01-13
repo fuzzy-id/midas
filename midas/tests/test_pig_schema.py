@@ -172,13 +172,9 @@ class SerializerTests(unittest.TestCase):
 class FunctionalTests(unittest.TestCase):
 
     def test_do_not_know_why_this_should_fail(self):
-        from midas.pig_schema import pig_schema_to_py_struct
-        from midas.pig_schema import make_parser
+        from midas.pig_schema import make_parser_from_schema
         s = '(b: bag{tuple(i: int, s: chararray)}, s: chararray)'
-        expected = (('b', [(('i', 'int'), ('s', 'chararray'))]), 
-                    ('s', 'chararray'))
-        self.assertEqual(pig_schema_to_py_struct(s), expected)
-        parser = make_parser(expected)
+        parser = make_parser_from_schema(s)
         self.assertEqual(parser('{(1,braz),(2,iale)}\tfoo\n'),
                          ([(1, 'braz'), (2, 'iale')], 'foo'))
         self.assertEqual(parser('{(3,froz),(4,ae)}\tbar\n'),
