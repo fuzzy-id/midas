@@ -18,10 +18,11 @@ from midas.pig_schema import SITE_COUNT_PARSER
 
 from midas.tools import count_by_key
 
-import midas.scripts
+from midas.scripts import MDCommand
+from midas.scripts import StoreSingleFileOrDirectoryAction
 
 
-class Associate(midas.scripts.MDCommand):
+class Associate(MDCommand):
     """ 
     Tries to associate sites from the Alexa Top 1M data-set with
     Companies from CrunchBase. The association is printed to stdout in
@@ -31,11 +32,11 @@ class Associate(midas.scripts.MDCommand):
 
     def add_argument(self):
         self.parser.add_argument(
-            'site_count', action=midas.scripts.StoreSingleFileOrDirectoryAction,
+            'site_count', action=StoreSingleFileOrDirectoryAction,
             help='The directory where the site-count data resides'
             )
         self.parser.add_argument(
-            'companies', action=midas.scripts.StoreSingleFileOrDirectoryAction,
+            'companies', action=StoreSingleFileOrDirectoryAction,
             help='The directory where the flattened and filtered crunchbase companies reside'
             )
 
