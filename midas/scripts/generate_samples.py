@@ -10,7 +10,7 @@ from midas.pig_schema import make_parser_from_schema
 
 
 PARSER = make_parser_from_schema(
-    '(site:chararray, ranking: bag{(tstamp:chararray, rank:int)})'
+    '(site: chararray, ranking: bag{(tstamp: chararray, rank: int)})'
     )
 
 class GenerateSamples(MDCommand):
