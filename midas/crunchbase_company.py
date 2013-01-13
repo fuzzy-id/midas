@@ -29,7 +29,7 @@ class CrunchBaseFetchable(object):
         response = urlopen(self.query_url())
         content = response.read()
         s = content.decode('utf-8')
-        # Some companies have control chars in theire description
+        # Some companies have control chars in their description
         # *sigh*
         s = self.replace_control_chars(s)
         return json.loads(s)
