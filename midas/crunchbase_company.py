@@ -52,7 +52,7 @@ class CompanyList(CrunchBaseFetchable):
 
     def list_local(self):
         for company_file in os.listdir(self.path):
-            company_name = company_file.split('.')[0]
+            company_name = company_file.split('.', 1)[0]
             company = self.get(company_name)
             if company.is_local():
                 yield company
