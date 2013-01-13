@@ -5,6 +5,7 @@ from __future__ import print_function
 import collections
 import datetime
 
+
 def make_parser_from_schema(schema):
     struct = pig_schema_to_py_struct(schema)
     parser = make_parser(struct)
