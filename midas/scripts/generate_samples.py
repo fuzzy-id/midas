@@ -59,3 +59,19 @@ class GenerateNegativeSamples(MDCommand):
                                 ))
                         break
         shelf.close()
+
+
+class GeneratePositiveSamples(MDCommand):
+    """
+    Extract sites and tstamps from a restrictions shelf.
+    """
+
+    def add_argument(self):
+        self.parser.add_argument(
+            'shelf', help='The file-name of the restrictions shelf.'
+            )
+
+    def run(self):
+        shelf = shelve.open(self.args.shelf)
+        for restr in shelf.values():
+            self.out('{0}\t{1:%Y-%m-%d}'.format(restr.site, restr.tstamp))
