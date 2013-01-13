@@ -14,7 +14,7 @@ import os.path
 import sys
 import textwrap
 
-import midas.compat
+from midas.compat import imap
 
 
 class CheckDirectoryAction(argparse.Action):
@@ -31,7 +31,7 @@ class StoreSingleFileOrDirectoryAction(argparse.Action):
         if os.path.isdir(value):
             files = []
             make_abs = functools.partial(os.path.join, value)
-            for path in midas.compat.imap(make_abs, os.listdir(value)):
+            for path in imap(make_abs, os.listdir(value)):
                 if os.path.isfile(path):
                     files.append(path)
         else:
