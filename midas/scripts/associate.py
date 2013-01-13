@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-""" Provides ways to associate CrunchBase data and Alexa Top1M
-sites. The main work is done via an :class:`AssociationTree` instance.
+"""
+Provides ways to associate CrunchBase data and Alexa Top1M sites. The
+main work is done via an :class:`AssociationTree` instance.
 
 The idea is to built a tree from either the domain part of
 :meth:`crawlcrunch.model.db.Company.homepage_url` or the domain part
