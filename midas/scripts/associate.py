@@ -8,9 +8,10 @@ The idea is to built a tree from either the domain part of
 of the Alexa Top1M sites . 
 """
 
-from midas.compat import str_type
 from midas.compat import d_iteritems
 from midas.compat import d_itervalues
+from midas.compat import imap
+from midas.compat import str_type
 from midas.compat import urlparse
 
 from midas.pig_schema import COMPANY_PARSER
@@ -42,13 +43,13 @@ class Associate(MDCommand):
 
     def run(self):
         tree = AssociationTree(split_domain)
-        for sc in midas.compat.imap(SITE_COUNT_PARSER, self.args.site_count):
+        for sc in imap(SITE_COUNT_PARSER, self.args.site_count):
             tree.grow(sc, domain(sc.site))
 
-        companies = ( COMPANY_PARSER(c)
-                      for c in self.args.companies)
+        companies = ( COMPANY_PARSER(c) for c in self.args.companies )
+                      
         s2c = tree.map(companies, lambda c: domain(c.hp))
-        cnt = count_by_key(s 
+        cnt = count_by_key(s
                            for l in d_itervalues(s2c) 
                            for s in l)
         for company, sites in d_iteritems(s2c):
