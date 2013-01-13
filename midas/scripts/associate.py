@@ -65,14 +65,9 @@ def domain(company_or_site):
     """
     Return the domain part of a Alexa Top1M site or a URL.
     """
-    if isinstance(company_or_site, str_type):
-        if 'http' in company_or_site:                    # A full URL
-            return urlparse(company_or_site).netloc.lower()
-        return company_or_site.split('/', 1)[0].lower()  # Alexa Top1M site
-    else:
-        raise TypeError(
-            "Cannot extract domain part: {0}".format(type(company_or_site))
-            )
+    if 'http' in company_or_site:                    # A full URL
+        return urlparse(company_or_site).netloc.lower()
+    return company_or_site.split('/', 1)[0].lower()  # Alexa Top1M site
 
 
 class AssociationTree(dict):
