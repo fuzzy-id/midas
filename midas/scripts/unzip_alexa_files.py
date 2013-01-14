@@ -37,7 +37,7 @@ class UnzipAlexaFiles(midas.scripts.MDCommand):
             tstamp = midas.serialize_tstamp(date)
             dst_fname = 'top_1m_{0}'.format(tstamp)
             dst_f = os.path.join(self.args.dst, dst_fname)
-            if os.path.isfile(dst_f):
+            if os.path.isfile(dst_f) or os.stat(zip_f).st_size == 0:
                 self.out('Skipping {0}'.format(basename))
             else:
                 with open(dst_f, 'w') as fp:

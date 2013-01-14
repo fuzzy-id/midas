@@ -46,6 +46,13 @@ class UnzipAlexaFilesTests(IntegrationTestCase):
         self.assert_in_cls_out('Skipping top-1m-2012-09-03.csv.zip\n')
         self.assert_in_cls_out('Skipping top-1m-2012-09-04.csv.zip\n')
 
+    def test_zero_sized_file_is_skipped(self):
+        first = os.path.join(self.tmpd, 'top-1m-2012-09-03.csv.zip')
+        with open(first, 'w'):
+            pass
+        self.assertEqual(self._call_cmd(self.tmpd, self.tmpd), 0)
+        self.assert_in_cls_out('Skipping top-1m-2012-09-03.csv.zip\n')
+
 
 if __name__ == '__main__':  # pragma: no cover
     from midas.compat import unittest
