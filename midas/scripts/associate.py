@@ -28,9 +28,8 @@ class Associate(MDCommand):
     """ 
     Tries to associate sites from the Alexa Top 1M data-set with
     Companies from CrunchBase. The association is printed to stdout in
-    the form 'Permalink,Site\n'.
+    the form 'Permalink[TAB]Site'.
     """
-
 
     def add_argument(self):
         self.parser.add_argument(
