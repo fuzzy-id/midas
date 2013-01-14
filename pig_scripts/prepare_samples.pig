@@ -1,7 +1,7 @@
 
 samples = LOAD '$samples' AS (site: chararray, tstamp: chararray);
-id2site = LOAD '$id2site' AS (id: int, site: chararray);
-tstamp2secs = LOAD '$tstamp2secs' AS (tstamp: chararray, secs: int);
+id2site = LOAD '$ids_to_sites' AS (id: int, site: chararray);
+tstamp2secs = LOAD '$tstamps_to_secs' AS (tstamp: chararray, secs: int);
 
 A = JOIN samples BY tstamp, tstamp2secs BY tstamp USING 'replicated';
 B = FOREACH A GENERATE samples::site AS site, tstamp2secs::secs AS secs;

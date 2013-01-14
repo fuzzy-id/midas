@@ -1,6 +1,6 @@
-sites = LOAD '$alexa_sites' AS 
+sites = LOAD '$sites' AS 
       (site: chararray, ranking: bag{(tstamp: chararray, rank: int)});
-cb = LOAD '$filtered_cb' AS
+cb = LOAD '$companies' AS
    (company: chararray, hp: chararray, code: chararray, tstamp: chararray);
 assocs = LOAD '$associations' AS
        (company: chararray, site: chararray);
