@@ -1,4 +1,4 @@
-top1m = LOAD '$input' AS
+top1m = LOAD '$alexa_files' AS
       (site:chararray, tstamp:chararray, rank:int);
 
 adult_sites = LOAD '$adult_sites' AS site: chararray;
@@ -15,4 +15,4 @@ not_adult_sites = FILTER joined BY adult_sites::site is null;
 rows = FOREACH not_adult_sites GENERATE minimized::site as site, 
                                         minimized::ranking as ranking;
 
-STORE rows INTO '$output';
+STORE rows INTO '$sites';
