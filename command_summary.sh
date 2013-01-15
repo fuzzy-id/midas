@@ -54,15 +54,17 @@ hadoop fs -mkdir "${HADOOP_INTERMEDIATE_DIR}"
 
 mkdir "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
 
-############################################################
-## Inverting the index                                    ##
-##                                                        ##
-## Dependencies:                                          ##
-##   + ALEXA_ZIP_FILES :: Top1M Alexa Files in Zip Format ##
-## Produces:                                              ##
-##   + ALEXA_FILES :: Alexa Data Indexed by their site    ##
-##                                                        ##
-############################################################
+####################################################################
+## Inverting the index                                            ##
+##                                                                ##
+## Dependencies:                                                  ##
+##   + ALEXA_ZIP_FILES :: Top1M Alexa Files in Zip Format         ##
+##   + ADULT_SITES :: A list of sites that should be filtered out ##
+##                                                                ##
+## Produces:                                                      ##
+##   + ALEXA_FILES :: Alexa Data Indexed by their site            ##
+##                                                                ##
+####################################################################
 
 md_unzip_alexa_files \
     "${ALEXA_ZIP_FILES}" \
