@@ -11,9 +11,9 @@ public class TestFlattenAndFilterCompanies {
 
     @Test public void testOnTestData() throws IOException, ParseException {
 	String[] args = {
-	    "input=../test_data/crunchbase_companies",
-	    "output=flat_and_filtered",
-	    "wrapper=env",
+	    "flatten_cmd=md_flatten_companies",
+	    "crunchbase_companies=../test_data/crunchbase_companies",
+	    "companies=companies",
 	};
 	PigTest test = new PigTest(SCRIPT, args);
 	test.assertOutput(new File("../test_data/companies.expected"));
