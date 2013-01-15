@@ -46,18 +46,27 @@ MY_SITES="sites"
 MY_SITE_COUNT="site_count"
 MY_SITES_W_COMPANY="sites_w_company"
 MY_SITES_WO_COMPANY="sites_wo_company"
+MY_SITES_WO_COMPANY_SPLITS="sites_wo_company_splitted"
 MY_TSTAMP_TO_SECS="tstamp_to_secs"
 
 mkdir -p "${INTERMEDIATE_DIR}"
 hadoop fs -mkdir "${HADOOP_INTERMEDIATE_DIR}"
 
 mkdir "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
-md_unzip_alexa_files "${ALEXA_ZIP_FILES}" "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
 
-#########################
-## Inverting the index ##
-#########################
+############################################################
+## Inverting the index                                    ##
+##                                                        ##
+## Dependencies:                                          ##
+##   + ALEXA_ZIP_FILES :: Top1M Alexa Files in Zip Format ##
+## Produces:                                              ##
+##   + ALEXA_FILES :: Alexa Data Indexed by their site    ##
+##                                                        ##
+############################################################
 
+md_unzip_alexa_files \
+    "${ALEXA_ZIP_FILES}" \
+    "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
 hadoop fs -put \
     "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}" \
     "${HADOOP_INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
@@ -70,18 +79,31 @@ pig ${PIG_OPTIONS} \
     -p sites=${HADOOP_INTERMEDIATE_DIR}/${MY_SITES} \
     "${PIG_SCRIPTS}/group_alexa_by_site.pig"
 
-###############################
-## Generating the site count ##
-###############################
+####################################################################
+## Generating the site count                                      ##
+##                                                                ##
+## Dependencies:                                                  ##
+##   + ALEXA_FILES                                                ##
+## Produces:                                                      ##
+##   + SITE_COUNT :: The number of available time points per site ##
+##                                                                ##
+####################################################################
 
 pig ${PIG_OPTIONS} \
     -p sites=${HADOOP_INTERMEDIATE_DIR}/${MY_SITES} \
     -p site_count=${HADOOP_INTERMEDIATE_DIR}/${MY_SITE_COUNT} \
     "${PIG_SCRIPTS}/count_entries_per_site.pig"
 
-###################################
-## Preparing the CrunchBase data ##
-###################################
+#######################################################################
+## Flatten and Filter the CrunchBase Data                            ##
+##                                                                   ##
+## Dependencies:                                                     ##
+##   + CRUNCHBASE_COMPANIES :: The crawled companies from CrunchBase ##
+## Produces:                                                         ##
+##   + COMPANIES :: All companies providing a HP URL with the last   ##
+##     funding event with round code A, Angels or Seed               ##
+##                                                                   ##
+#######################################################################
 
 if [[ "${FETCH_COMPANIES}" == "Y" ]]; then
     md_fetch_crunchbase_companies \
@@ -98,9 +120,16 @@ pig ${PIG_OPTIONS} \
     -p companies=${HADOOP_INTERMEDIATE_DIR}/${MY_COMPANIES} \
     ${PIG_SCRIPTS}/flatten_and_filter_companies.pig
 
-############################
-## Generating Assocations ##
-############################
+###########################################################
+## Generating Assocations                                ##
+##                                                       ##
+## Dependencies:                                         ##
+##   + COMPANIES                                         ##
+##   + SITE_COUNT                                        ##
+## Produces:                                             ##
+##   + ASSOCIATIONS :: A mapping from sites to companies ##
+##                                                       ##
+###########################################################
 
 hadoop fs -get \
     ${HADOOP_INTERMEDIATE_DIR}/${MY_COMPANIES} \
@@ -113,9 +142,18 @@ md_associate \
     ${INTERMEDIATE_DIR}/${MY_COMPANIES} \
     > ${INTERMEDIATE_DIR}/${MY_ASSOCIATIONS}
 
-#################################
-## Joining Sites and Companies ##
-#################################
+#################################################################
+## Joining Sites and Companies                                 ##
+##                                                             ##
+## Dependencies:                                               ##
+##   + ASSOCIATIONS                                            ##
+##   + SITES                                                   ##
+##   + COMPANIES                                               ##
+## Produces:                                                   ##
+##   + SITES_W_COMPANY :: Sites with an associated Company     ##
+##   + SITES_WO_COMPANY :: Sites without an associated Company ##
+##                                                             ##
+#################################################################
 
 hadoop fs -put \
     ${INTERMEDIATE_DIR}/${MY_ASSOCIATIONS} \
@@ -128,11 +166,16 @@ pig ${PIG_OPTIONS} \
     -p sites_wo_company=${HADOOP_INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY} \
     ${PIG_SCRIPTS}/split_sites_w_and_wo_companies.pig
 
-#################################
-## Generating Negative Samples ##
-#################################
-
-## Generating Restrictions
+###################################################################
+## Generating Restrictions                                       ##
+##                                                               ##
+## Dependencies:                                                 ##
+##   + SITES_W_COMPANY                                           ##
+## Produces:                                                     ##
+##   + RESTICTIONS :: A Python Shelve with constraints to select ##
+##     negative Samples                                          ##
+##                                                               ##
+###################################################################
 
 hadoop fs -get \
     ${HADOOP_INTERMEDIATE_DIR}/${MY_SITES_W_COMPANY} \
@@ -141,32 +184,59 @@ md_make_restrictions \
     ${INTERMEDIATE_DIR}/${MY_RESTRICTIONS} \
     ${INTERMEDIATE_DIR}/${MY_SITES_W_COMPANY}
 
-## Split Up Data
+#################################################################
+## Generating the Tstamp to Seconds since Epoch file           ##
+##                                                             ##
+## Dependencies:                                               ##
+##   + ALEXA_FILES                                             ##
+## Produces:                                                   ##
+##   + TSTAMP_TO_SECS :: A mapping from time-stamps to seconds ##
+##     since Epoch                                             ##
+##                                                             ##
+#################################################################
+
+md_tstamp_to_secs \
+    ${INTERMEDIATE_DIR}/${MY_ALEXA_FILES} \
+    > ${INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS}
+
+#################################################################
+## Generate Negative Samples                                   ##
+##                                                             ##
+## Dependencies:                                               ##
+##   + IDS_TO_SITES                                            ##
+##   + RESTRICTIONS                                            ##
+##   + SITES_WO_COMPANY                                        ##
+##   + TSTAMP_TO_SECS                                          ##
+##   Produces:                                                 ##
+##   + SHAPED_NEGATIVE_SAMPLES :: Negative Samples in the form ##
+##     id[TAB]secs_since_epoch                                 ##
+##                                                             ##
+#################################################################
+
+## Splitting up the Data
 
 hadoop fs -get \
     ${HADOOP_INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY} \
     ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY}
 num_lines=$( cat ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY}/* | wc -l )
 split_size=$(( ${num_lines} / ${NEGATIVE_TO_POSITIVE_SAMPLES_RATIO} + 1 ))
-cat ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY} \
+mkdir ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY_SPLITS}
+cat ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY}/* \
     | split \
       -l ${split_size} \
       - \
       ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY_SPLITS}/split_
 
+## Generate Negative Samples
+
+mkdir ${INTERMEDIATE_DIR}/${MY_NEGATIVE_SAMPLES}
 for f in ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY_SPLITS}/*; do
-    out_f=${INTERMEDIATE_DIR}/${MY_NEGATIVE_SAMPLES}/$(basename ${out_f})
+    out_f=${INTERMEDIATE_DIR}/${MY_NEGATIVE_SAMPLES}/$(basename ${f})
     shuf ${f} \
 	| md_generate_negative_samples \
 	  ${INTERMEDIATE_DIR}/${MY_RESTRICTIONS} \
 	  > ${out_f}
 done
-
-## Generating the Tstamp to Seconds since Epoch file
-
-md_tstamp_to_secs \
-    ${INTERMEDIATE_DIR}/${MY_ALEXA_FILES} \
-    > ${INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS}
 
 ## Shaping them
 
@@ -192,9 +262,17 @@ hadoop fs -get \
     ${INTERMEDIATE_DIR}/${MY_SHAPED_NEGATIVE_SAMPLES}
 
 
-###############################
-## Generate Positive Samples ##
-###############################
+#################################
+## Generate Positive Samples   ##
+##                             ##
+## Dependencies:               ##
+##   + IDS_TO_SITES            ##
+##   + RESTRICTIONS            ##
+##   + TSTAMP_TO_SECS          ##
+## Produces:                   ##
+##   + SHAPED_POSITIVE_SAMPLES ##
+##                             ##
+#################################
 
 md_generate_positive_samples \
     ${INTERMEDIATE_DIR}/${MY_RESTRICTIONS} \
