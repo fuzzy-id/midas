@@ -12,7 +12,7 @@ ADULT_SITES="/data0/adult_sites"
 IDS_TO_SITES="/data0/ids_to_sites"
 # The crawled data from CrunchBase
 CRUNCHBASE_COMPANIES="/data0/crunchbase_companies"
-INTERMEDIATE_DIR="${INTERMEDIATE_DIR:-/data0/run-midas-$(date +%F_%H-%m)}"
+INTERMEDIATE_DIR="${INTERMEDIATE_DIR:-/data0/run-midas-$(date +%F_%H-%M)}"
 PIG_SCRIPTS="${PIG_SCRIPTS:-${HOME}/src/midas/pig_scripts}"
 PIG_OPTIONS="-b -d WARN"
 #
