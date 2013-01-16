@@ -255,7 +255,8 @@ pig ${PIG_OPTIONS} \
     -p samples=${HADOOP_INTERMEDIATE_DIR}/${MY_NEGATIVE_SAMPLES} \
     -p ids_to_sites=${HADOOP_INTERMEDIATE_DIR}/${MY_IDS_TO_SITES} \
     -p tstamps_to_secs=${HADOOP_INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS} \
-    -p output=${HADOOP_INTERMEDIATE_DIR}/${MY_SHAPED_NEGATIVE_SAMPLES}
+    -p output=${HADOOP_INTERMEDIATE_DIR}/${MY_SHAPED_NEGATIVE_SAMPLES} \
+    ${PIG_SCRIPTS}/prepare_samples.pig
 
 ## Save them locally
 
@@ -289,7 +290,8 @@ pig ${PIG_OPTIONS} \
     -p samples=${HADOOP_INTERMEDIATE_DIR}/${MY_POSITIVE_SAMPLES} \
     -p ids_to_sites=${HADOOP_INTERMEDIATE_DIR}/${MY_IDS_TO_SITES} \
     -p tstamps_to_secs=${HADOOP_INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS} \
-    -p output=${HADOOP_INTERMEDIATE_DIR}/${MY_SHAPED_POSITIVE_SAMPLES}
+    -p output=${HADOOP_INTERMEDIATE_DIR}/${MY_SHAPED_POSITIVE_SAMPLES} \
+    ${PIG_SCRIPTS}/prepare_samples.pig
 
 ## Save them locally
 
