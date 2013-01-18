@@ -4,6 +4,9 @@
 # necessary tool set (i.e. Pig configuration, midas command set can be
 # found in PATH, etc.).
 #
+
+set -e
+#
 # The zipped Top 1M Alexa files as given by alexa.com
 ALEXA_ZIP_FILES="${ALEXA_ZIP_FILES:-/data1/alexa}"
 # A list of files that should be filtered out
