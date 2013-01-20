@@ -137,6 +137,13 @@ class SerializerTests(unittest.TestCase):
         self.assertEqual(serializer('foo'), 'foo')
         self.assertEqual(serializer(None), '')
 
+    def test_on_simple_boolean(self):
+        make_serializer = self._get_target()
+        serializer = make_serializer('boolean')
+        self.assertEqual(serializer(True), 'True')
+        self.assertEqual(serializer(False), 'False')
+        self.assertEqual(serializer(None), '')
+
     def test_on_simple_int(self):
         make_serializer = self._get_target()
         serializer = make_serializer('int')
