@@ -19,5 +19,18 @@ class Tests(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
+class TestToString(unittest.TestCase):
+
+    def _get_target(self):
+        from midas.scripts.verify_indicator_stream import to_string
+        return to_string
+
+    def test_on_simple_example(self):
+        example = (1, [(1292024241, bitarray.bitarray('111'))])
+        func = self._get_target()
+        self.assertEqual(func(*example), 
+                         '1\t{(1292024241,(True,True,True))}')
+
+
 if __name__ == '__main__':
     unittest.main()
