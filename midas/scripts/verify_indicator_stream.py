@@ -43,7 +43,7 @@ def to_string(site, features):
             )
         )
 
-def main():
+def main():  # pragma: no cover
     argparser = argparse.ArgumentParser()
     argparser.add_argument('num_features', type=int,
                            help='The number of features per vector')
@@ -54,5 +54,5 @@ def main():
         for site_id, features in iter_features(fp, args.num_features):
             print(to_string(site_id, features))
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

@@ -32,5 +32,5 @@ class TestToString(unittest.TestCase):
                          '1\t{(1292024241,(True,True,True))}')
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
