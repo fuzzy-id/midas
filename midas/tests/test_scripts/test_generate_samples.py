@@ -15,7 +15,7 @@ class TestGenerateNegativeSamples(MDCommandTestCase):
                                     'bar.example.com\t{(2012-09-02,3)}',
                                     '']))
         self.assertEqual(self._call_cmd(TEST_DATA_PATH['restrictions']), 0)
-        self.assert_stdout_equal('foo.example.com\t2012-09-03\n')
+        self.assert_stdout_equal('foo.example.com\t2012-09-03\tnegative\n')
 
 
 class TestGeneratePositiveSamples(MDCommandTestCase):
@@ -26,4 +26,4 @@ class TestGeneratePositiveSamples(MDCommandTestCase):
 
     def test_on_test_data(self):
         self.assertEqual(self._call_cmd(TEST_DATA_PATH['restrictions']), 0)
-        self.assert_stdout_equal('foo.example.com\t2012-09-03\n')
+        self.assert_stdout_equal('foo.example.com\t2012-09-03\tseed\n')
