@@ -198,6 +198,7 @@ def int_serializer(s):
 SIMPLE_SERIALIZER = {
     'chararray': chararray_serializer,
     'int': int_serializer,
+    'boolean': int_serializer,
     }
 
 COMPANY_PARSER = make_parser_from_schema(

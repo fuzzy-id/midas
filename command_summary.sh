@@ -243,72 +243,72 @@ for f in ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY_SPLITS}/*; do
 	  > ${out_f}
 done
 
-## Shaping them
-
-hadoop fs -put \
-    ${INTERMEDIATE_DIR}/${MY_NEGATIVE_SAMPLES} \
-    ${HADOOP_INTERMEDIATE_DIR}/${MY_NEGATIVE_SAMPLES}
-hadoop fs -put \
-    ${IDS_TO_SITES} \
-    ${HADOOP_INTERMEDIATE_DIR}/${MY_IDS_TO_SITES}
-hadoop fs -put \
-    ${INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS} \
-    ${HADOOP_INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS}
-pig ${PIG_OPTIONS} \
-    -p samples=${HADOOP_INTERMEDIATE_DIR}/${MY_NEGATIVE_SAMPLES} \
-    -p ids_to_sites=${HADOOP_INTERMEDIATE_DIR}/${MY_IDS_TO_SITES} \
-    -p tstamps_to_secs=${HADOOP_INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS} \
-    -p output=${HADOOP_INTERMEDIATE_DIR}/${MY_SHAPED_NEGATIVE_SAMPLES} \
-    ${PIG_SCRIPTS}/prepare_samples.pig
-
-## Save them locally
-
-hadoop fs -get \
-    ${HADOOP_INTERMEDIATE_DIR}/${MY_SHAPED_NEGATIVE_SAMPLES} \
-    ${INTERMEDIATE_DIR}/${MY_SHAPED_NEGATIVE_SAMPLES}
-
-
-#################################
-## Generate Positive Samples   ##
-##                             ##
-## Dependencies:               ##
-##   + IDS_TO_SITES            ##
-##   + RESTRICTIONS            ##
-##   + TSTAMP_TO_SECS          ##
-## Produces:                   ##
-##   + SHAPED_POSITIVE_SAMPLES ##
-##                             ##
-#################################
-
-md_generate_positive_samples \
-    ${INTERMEDIATE_DIR}/${MY_RESTRICTIONS} \
-    > ${INTERMEDIATE_DIR}/${MY_POSITIVE_SAMPLES}
-
-## Shaping them
-
-hadoop fs -put \
-    ${INTERMEDIATE_DIR}/${MY_POSITIVE_SAMPLES} \
-    ${HADOOP_INTERMEDIATE_DIR}/${MY_POSITIVE_SAMPLES}
-pig ${PIG_OPTIONS} \
-    -p samples=${HADOOP_INTERMEDIATE_DIR}/${MY_POSITIVE_SAMPLES} \
-    -p ids_to_sites=${HADOOP_INTERMEDIATE_DIR}/${MY_IDS_TO_SITES} \
-    -p tstamps_to_secs=${HADOOP_INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS} \
-    -p output=${HADOOP_INTERMEDIATE_DIR}/${MY_SHAPED_POSITIVE_SAMPLES} \
-    ${PIG_SCRIPTS}/prepare_samples.pig
-
-## Save them locally
-
-hadoop fs -get \
-    ${HADOOP_INTERMEDIATE_DIR}/${MY_SHAPED_POSITIVE_SAMPLES} \
-    ${INTERMEDIATE_DIR}/${MY_SHAPED_POSITIVE_SAMPLES}
-
-
-############
-## Raport ##
-############
-
-echo "Negative Samples can be found in"
-echo "${INTERMEDIATE_DIR}/${MY_SHAPED_NEGATIVE_SAMPLES}"
-echo
-echo "Positve Samples can be found in"
-echo "${INTERMEDIATE_DIR}/${MY_SHAPED_POSITIVE_SAMPLES}"
+## ## Shaping them
+## 
+## hadoop fs -put \
+##     ${INTERMEDIATE_DIR}/${MY_NEGATIVE_SAMPLES} \
+##     ${HADOOP_INTERMEDIATE_DIR}/${MY_NEGATIVE_SAMPLES}
+## hadoop fs -put \
+##     ${IDS_TO_SITES} \
+##     ${HADOOP_INTERMEDIATE_DIR}/${MY_IDS_TO_SITES}
+## hadoop fs -put \
+##     ${INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS} \
+##     ${HADOOP_INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS}
+## pig ${PIG_OPTIONS} \
+##     -p samples=${HADOOP_INTERMEDIATE_DIR}/${MY_NEGATIVE_SAMPLES} \
+##     -p ids_to_sites=${HADOOP_INTERMEDIATE_DIR}/${MY_IDS_TO_SITES} \
+##     -p tstamps_to_secs=${HADOOP_INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS} \
+##     -p output=${HADOOP_INTERMEDIATE_DIR}/${MY_SHAPED_NEGATIVE_SAMPLES} \
+##     ${PIG_SCRIPTS}/prepare_samples.pig
+## 
+## ## Save them locally
+## 
+## hadoop fs -get \
+##     ${HADOOP_INTERMEDIATE_DIR}/${MY_SHAPED_NEGATIVE_SAMPLES} \
+##     ${INTERMEDIATE_DIR}/${MY_SHAPED_NEGATIVE_SAMPLES}
+## 
+## 
+## #################################
+## ## Generate Positive Samples   ##
+## ##                             ##
+## ## Dependencies:               ##
+## ##   + IDS_TO_SITES            ##
+## ##   + RESTRICTIONS            ##
+## ##   + TSTAMP_TO_SECS          ##
+## ## Produces:                   ##
+## ##   + SHAPED_POSITIVE_SAMPLES ##
+## ##                             ##
+## #################################
+## 
+## md_generate_positive_samples \
+##     ${INTERMEDIATE_DIR}/${MY_RESTRICTIONS} \
+##     > ${INTERMEDIATE_DIR}/${MY_POSITIVE_SAMPLES}
+## 
+## ## Shaping them
+## 
+## hadoop fs -put \
+##     ${INTERMEDIATE_DIR}/${MY_POSITIVE_SAMPLES} \
+##     ${HADOOP_INTERMEDIATE_DIR}/${MY_POSITIVE_SAMPLES}
+## pig ${PIG_OPTIONS} \
+##     -p samples=${HADOOP_INTERMEDIATE_DIR}/${MY_POSITIVE_SAMPLES} \
+##     -p ids_to_sites=${HADOOP_INTERMEDIATE_DIR}/${MY_IDS_TO_SITES} \
+##     -p tstamps_to_secs=${HADOOP_INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS} \
+##     -p output=${HADOOP_INTERMEDIATE_DIR}/${MY_SHAPED_POSITIVE_SAMPLES} \
+##     ${PIG_SCRIPTS}/prepare_samples.pig
+## 
+## ## Save them locally
+## 
+## hadoop fs -get \
+##     ${HADOOP_INTERMEDIATE_DIR}/${MY_SHAPED_POSITIVE_SAMPLES} \
+##     ${INTERMEDIATE_DIR}/${MY_SHAPED_POSITIVE_SAMPLES}
+## 
+## 
+## ############
+## ## Raport ##
+## ############
+## 
+## echo "Negative Samples can be found in"
+## echo "${INTERMEDIATE_DIR}/${MY_SHAPED_NEGATIVE_SAMPLES}"
+## echo
+## echo "Positve Samples can be found in"
+## echo "${INTERMEDIATE_DIR}/${MY_SHAPED_POSITIVE_SAMPLES}"

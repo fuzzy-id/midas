@@ -55,7 +55,8 @@ class GenerateNegativeSamples(MDCommand):
                         restrictions.pop(i)
                         self.out('\t'.join(
                                 [data.site, 
-                                 restriction.tstamp.date().isoformat()]
+                                 restriction.tstamp.date().isoformat(),
+                                 'negative']
                                 ))
                         break
         shelf.close()
@@ -74,4 +75,6 @@ class GeneratePositiveSamples(MDCommand):
     def run(self):
         shelf = shelve.open(self.args.shelf)
         for restr in shelf.values():
-            self.out('{0}\t{1:%Y-%m-%d}'.format(restr.site, restr.tstamp))
+            self.out('{0}\t{1:%Y-%m-%d}\t{2}'.format(restr.site,
+                                                     restr.tstamp,
+                                                     restr.code))
