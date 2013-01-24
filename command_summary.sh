@@ -142,7 +142,7 @@ fi
 
 if ! hadoop fs -test -d "${HADOOP_INTERMEDIATE_DIR}/${MY_COMPANIES}"; then
 
-    if ! hadoop fs -test -d "${HADOOP_INTERMEDIATE_DIR}/${MY_CRUNCHBASE_COMPANIES}"; then
+    if ! hadoop fs -test -e "${HADOOP_INTERMEDIATE_DIR}/${MY_CRUNCHBASE_COMPANIES}"; then
 	if [[ ! -d "${CRUNCHBASE_COMPANIES}" || "${FETCH_COMPANIES}" == "Y" ]]; then
 	    if [[ ! -d "${CRUNCHBASE_COMPANIES}" ]]; then
 		mkdir "${CRUNCHBASE_COMPANIES}"
