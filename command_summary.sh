@@ -140,7 +140,7 @@ fi
 ##                                                                   ##
 #######################################################################
 
-if [[ "${FETCH_COMPANIES}" == "Y" ]]; then
+if [[ ! -d "${CRUNCHBASE_COMPANIES}" || "${FETCH_COMPANIES}" == "Y" ]]; then
     md_fetch_crunchbase_companies \
 	-p ${FETCH_COMPANIES_NUM_THREADS} \
 	${CRUNCHBASE_COMPANIES}
