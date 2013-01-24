@@ -91,37 +91,6 @@ class FetcherBehaviourOnErrorTests(unittest.TestCase):
         self.assertEqual(exc.call_count, 1)
 
 
-class ArgumentParserTests(unittest.TestCase):
-
-    def setUp(self):
-        self._old_err = sys.stderr
-        sys.stderr = StringIO()
-
-    def tearDown(self):
-        sys.stderr = self._old_err
-
-    def _make_one(self, *args):
-        from midas.scripts.fetch_crunchbase_companies import FetchCrunchbaseCompanies
-        effargs = ['crawlcrunch', ]
-        effargs.extend(args)
-        return FetchCrunchbaseCompanies(effargs)
-
-    def test_missing_argument(self):
-        with self.assertRaises(SystemExit):
-            self._make_one()
-
-    def test_non_existent_path(self):
-        dst = os.path.join('non', 'existent', 'path', )
-        with self.assertRaises(SystemExit) as cm:
-            self._make_one(dst)
-        e = cm.exception
-        self.assertEqual(e.code, 2)
-        err = sys.stderr.getvalue()
-        self.assertTrue(err.endswith(
-                "'non/existent/path' is not a directory\n"\
-                    .format(dst)))
-
-
 class MainLocalFilesIntegrationTests(IntegrationTestCase):
 
     def _get_target_cls(self):
