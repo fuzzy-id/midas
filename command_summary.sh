@@ -63,14 +63,13 @@ if ! hadoop fs -test -d "${HADOOP_INTERMEDIATE_DIR}"; then
 fi
 
 ####################################################################
-## Inverting the index                                            ##
+## Unzip Alexa Files and Push Date in CSV                         ##
 ##                                                                ##
 ## Dependencies:                                                  ##
 ##   + ALEXA_ZIP_FILES :: Top1M Alexa Files in Zip Format         ##
-##   + ADULT_SITES :: A list of sites that should be filtered out ##
 ##                                                                ##
 ## Produces:                                                      ##
-##   + ALEXA_FILES :: Alexa Data Indexed by their site            ##
+##   + ALEXA_FILES :: The same data, with the TSTAMP in the file  ##
 ##                                                                ##
 ####################################################################
 
@@ -86,12 +85,23 @@ if ! hadoop fs -test -d "${HADOOP_INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"; then
     hadoop fs -put \
 	"${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}" \
 	"${HADOOP_INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
+fi
+
+####################################################################
+## Inverting the index                                            ##
+##                                                                ##
+## Dependencies:                                                  ##
+##   + ALEXA_FILES                                                ##
+##   + ADULT_SITES :: A list of sites that should be filtered out ##
+##                                                                ##
+## Produces:                                                      ##
+##   + SITES :: Alexa Data Indexed by their site                  ##
+##                                                                ##
+####################################################################
+if ! hadoop fs -test -e "${HADOOP_INTERMEDIATE_DIR}/${MY_SITES}"; then
     hadoop fs -put \
 	"${ADULT_SITES}" \
 	"${HADOOP_INTERMEDIATE_DIR}/${MY_ADULT_SITES_FILE}"
-fi
-
-if ! hadoop fs -test -e "${HADOOP_INTERMEDIATE_DIR}/${MY_SITES}"; then
     pig ${PIG_OPTIONS} \
 	-p alexa_files=${HADOOP_INTERMEDIATE_DIR}/${MY_ALEXA_FILES} \
 	-p adult_sites=${HADOOP_INTERMEDIATE_DIR}/${MY_ADULT_SITES_FILE} \
