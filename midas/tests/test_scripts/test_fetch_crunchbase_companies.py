@@ -119,14 +119,12 @@ class MainLocalFilesIntegrationTests(IntegrationTestCase):
             urlopen.assert_called_with(FOO_URL)
         listing = os.listdir(self.tmpd)
         listing.sort()
-        self.assertEqual(listing, ['bar.json.gz',
-                                   'foo.json.gz'])
-        with GzipFile(os.path.join(self.tmpd,
-                                   'bar.json.gz')) as fp:
+        self.assertEqual(listing, ['bar.json',
+                                   'foo.json'])
+        with open(os.path.join(self.tmpd, 'bar.json')) as fp:
             self.assertEqual(json.loads(fp.read().decode()),
                              ['some_bar', ])
-        with GzipFile(os.path.join(self.tmpd,
-                                   'foo.json.gz')) as fp:
+        with open(os.path.join(self.tmpd, 'foo.json')) as fp:
             self.assertEqual(json.loads(fp.read().decode()), 
                              ['some_foo', ])
 

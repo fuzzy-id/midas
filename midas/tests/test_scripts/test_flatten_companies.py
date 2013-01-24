@@ -15,11 +15,11 @@ class FlattenCompaniesTests(IntegrationTestCase):
 
     def test_on_test_data(self):
         with open(os.path.join(TEST_DATA_PATH['crunchbase_companies'],
-                               'baz-bar')) as fp:
+                               'baz-bar.json')) as fp:
             self.stdin.write(fp.read())
         self.stdin.write('\n')
         with open(os.path.join(TEST_DATA_PATH['crunchbase_companies'],
-                               'foo')) as fp:
+                               'foo.json')) as fp:
             self.stdin.write(fp.read())
         self.stdin.write('\n')
         self.assertEqual(self._call_cmd(), 0)

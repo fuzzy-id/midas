@@ -3,7 +3,6 @@
 import json
 import os.path
 
-from midas.compat import GzipFile
 from midas.compat import urlopen
 
 
@@ -38,7 +37,7 @@ class CrunchBaseFetchable(object):
 class CompanyList(CrunchBaseFetchable):
 
     name='companies'
-    suffix = '.json.gz'
+    suffix = '.json'
 
     def __init__(self, path):
         self.path = path
@@ -86,7 +85,7 @@ class Company(CrunchBaseFetchable):
 
     def update(self):
         self.data = self.fetch()
-        with GzipFile(self.fname, 'wb') as fp:
+        with open(self.fname, 'w') as fp:
             fp.write(json.dumps(self.data).encode())
 
     def is_local(self):
@@ -94,8 +93,8 @@ class Company(CrunchBaseFetchable):
 
     def load(self):
         if self.data is None:
-            with GzipFile(self.fname, 'rb') as fp:
-                self.data = json.loads(fp.read().decode())
+            with open(self.fname, 'r') as fp:
+                self.data = json.loads(fp.read())
 
     def query_url(self):
         return '?'.join(('http://api.crunchbase.com/v/1/company/{0}.js',

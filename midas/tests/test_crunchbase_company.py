@@ -51,11 +51,10 @@ class CompanyTests(unittest.TestCase):
         self.assertEqual(company.data, ['fo', 'ba'])
 
     def test_loading_data_from_file(self):
-        with tempfile.NamedTemporaryFile() as fp:
-            with GzipFile(mode='wb', fileobj=fp) as zipf:
-                zipf.write(json.dumps({'foo': 'bar'}).encode())
-            fp.seek(0)
-            c = self._make_one('TestCompany', fp.name)
+        with tempfile.NamedTemporaryFile() as tmpf:
+            tmpf.write(json.dumps({'foo': 'bar'}))
+            tmpf.seek(0)
+            c = self._make_one('TestCompany', tmpf.name)
             c.load()
         self.assertEqual(c.data, {'foo': 'bar'})
 
@@ -87,3 +86,7 @@ class CompanyListTests(unittest.TestCase):
         cl = self._make_one(None)
         cl.update()
         urlopen.assert_called_once_with(COMPANIES_URL)
+
+
+if __name__ == '__main__':  # pragma: no cover
+    unittest.main()
