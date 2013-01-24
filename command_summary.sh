@@ -52,10 +52,14 @@ MY_SITES_WO_COMPANY="sites_wo_company"
 MY_SITES_WO_COMPANY_SPLITS="sites_wo_company_splitted"
 MY_TSTAMP_TO_SECS="tstamp_to_secs"
 
+set -x
+
 mkdir -p "${INTERMEDIATE_DIR}"
 hadoop fs -mkdir "${HADOOP_INTERMEDIATE_DIR}"
 
-mkdir "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
+if [ ! -d "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}" ]; then
+    mkdir "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
+fi
 
 ####################################################################
 ## Inverting the index                                            ##
@@ -78,6 +82,7 @@ hadoop fs -put \
 hadoop fs -put \
     "${ADULT_SITES}" \
     "${HADOOP_INTERMEDIATE_DIR}/${MY_ADULT_SITES_FILE}"
+env
 pig ${PIG_OPTIONS} \
     -p alexa_files=${HADOOP_INTERMEDIATE_DIR}/${MY_ALEXA_FILES} \
     -p adult_sites=${HADOOP_INTERMEDIATE_DIR}/${MY_ADULT_SITES_FILE} \
