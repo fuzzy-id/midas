@@ -152,7 +152,7 @@ if ! hadoop fs -test -d "${HADOOP_INTERMEDIATE_DIR}/${MY_COMPANIES}"; then
 		${CRUNCHBASE_COMPANIES}
 	fi
 
-	if [[ ! -f "${INTERMEDIATE_DIR}/${CRUNCHBASE_COMPANIES}" ]]; then
+	if [[ ! -f "${INTERMEDIATE_DIR}/${MY_CRUNCHBASE_COMPANIES}" ]]; then
 	    set +x
 	    for f in ${CRUNCHBASE_COMPANIES}/*.json; do
 		cat "${f}"
