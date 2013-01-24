@@ -141,6 +141,9 @@ fi
 #######################################################################
 
 if [[ ! -d "${CRUNCHBASE_COMPANIES}" || "${FETCH_COMPANIES}" == "Y" ]]; then
+    if [[ ! -d "${CRUNCHBASE_COMPANIES}" ]]; then
+	mkdir "${CRUNCHBASE_COMPANIES}"
+    fi
     md_fetch_crunchbase_companies \
 	-p ${FETCH_COMPANIES_NUM_THREADS} \
 	${CRUNCHBASE_COMPANIES}
