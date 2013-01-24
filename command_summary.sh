@@ -152,8 +152,14 @@ if ! hadoop fs -test -d "${HADOOP_INTERMEDIATE_DIR}/${MY_COMPANIES}"; then
 		${CRUNCHBASE_COMPANIES}
 	fi
 
+	if [[ ! -f "${CRUNCHBASE_COMPANIES}.concat" ]]; then
+	    for f in "${CRUNCHBASE_COMPANIES}/*.json"; do
+		cat "${f}"
+	    done > "${CRUNCHBASE_COMPANIES}.concat"
+	fi
+
 	hadoop fs -put \
-	    ${CRUNCHBASE_COMPANIES} \
+	    ${CRUNCHBASE_COMPANIES}.concat \
 	    ${HADOOP_INTERMEDIATE_DIR}/${MY_CRUNCHBASE_COMPANIES}
     fi
 
