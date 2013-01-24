@@ -17,7 +17,7 @@ IDS_TO_SITES="/data0/ids_to_sites"
 CRUNCHBASE_COMPANIES="/data0/crunchbase_companies"
 INTERMEDIATE_DIR="${INTERMEDIATE_DIR:-/data0/run-midas-$(date +%F_%H-%M)}"
 PIG_SCRIPTS="${PIG_SCRIPTS:-${HOME}/src/midas/pig_scripts}"
-PIG_OPTIONS="-b -d WARN"
+PIG_OPTIONS="-b"
 #
 # Set FETCH_COMPANIES to 'Y', when you want this script to run
 # `md_fetch_crunchbase_companies'.
@@ -99,9 +99,12 @@ fi
 ##                                                                ##
 ####################################################################
 if ! hadoop fs -test -e "${HADOOP_INTERMEDIATE_DIR}/${MY_SITES}"; then
-    hadoop fs -put \
-	"${ADULT_SITES}" \
-	"${HADOOP_INTERMEDIATE_DIR}/${MY_ADULT_SITES_FILE}"
+    if ! hadoop fs -test -e "${HADOOP_INTERMEDIATE_DIR}/${MY_ADULT_SITES_FILE}"; then
+	hadoop fs -put \
+	    "${ADULT_SITES}" \
+	    "${HADOOP_INTERMEDIATE_DIR}/${MY_ADULT_SITES_FILE}"
+    fi
+
     pig ${PIG_OPTIONS} \
 	-p alexa_files=${HADOOP_INTERMEDIATE_DIR}/${MY_ALEXA_FILES} \
 	-p adult_sites=${HADOOP_INTERMEDIATE_DIR}/${MY_ADULT_SITES_FILE} \
