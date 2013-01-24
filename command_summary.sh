@@ -140,23 +140,29 @@ fi
 ##                                                                   ##
 #######################################################################
 
-if [[ ! -d "${CRUNCHBASE_COMPANIES}" || "${FETCH_COMPANIES}" == "Y" ]]; then
-    if [[ ! -d "${CRUNCHBASE_COMPANIES}" ]]; then
-	mkdir "${CRUNCHBASE_COMPANIES}"
-    fi
-    md_fetch_crunchbase_companies \
-	-p ${FETCH_COMPANIES_NUM_THREADS} \
-	${CRUNCHBASE_COMPANIES}
-fi
+if ! hadoop fs -test -d "${HADOOP_INTERMEDIATE_DIR}/${MY_COMPANIES}"; then
 
-hadoop fs -put \
-    ${CRUNCHBASE_COMPANIES} \
-    ${HADOOP_INTERMEDIATE_DIR}/${MY_CRUNCHBASE_COMPANIES}
-pig ${PIG_OPTIONS} \
-    -p flatten_cmd=$(which md_flatten_companies) \
-    -p crunchbase_companies=${HADOOP_INTERMEDIATE_DIR}/${MY_CRUNCHBASE_COMPANIES} \
-    -p companies=${HADOOP_INTERMEDIATE_DIR}/${MY_COMPANIES} \
-    ${PIG_SCRIPTS}/flatten_and_filter_companies.pig
+    if ! hadoop fs -test -d "${HADOOP_INTERMEDIATE_DIR}/${MY_CRUNCHBASE_COMPANIES}"; then
+	if [[ ! -d "${CRUNCHBASE_COMPANIES}" || "${FETCH_COMPANIES}" == "Y" ]]; then
+	    if [[ ! -d "${CRUNCHBASE_COMPANIES}" ]]; then
+		mkdir "${CRUNCHBASE_COMPANIES}"
+	    fi
+	    md_fetch_crunchbase_companies \
+		-p ${FETCH_COMPANIES_NUM_THREADS} \
+		${CRUNCHBASE_COMPANIES}
+	fi
+
+	hadoop fs -put \
+	    ${CRUNCHBASE_COMPANIES} \
+	    ${HADOOP_INTERMEDIATE_DIR}/${MY_CRUNCHBASE_COMPANIES}
+    fi
+
+    pig ${PIG_OPTIONS} \
+	-p flatten_cmd=$(which md_flatten_companies) \
+	-p crunchbase_companies=${HADOOP_INTERMEDIATE_DIR}/${MY_CRUNCHBASE_COMPANIES} \
+	-p companies=${HADOOP_INTERMEDIATE_DIR}/${MY_COMPANIES} \
+	${PIG_SCRIPTS}/flatten_and_filter_companies.pig
+fi
 
 ###########################################################
 ## Generating Assocations                                ##
