@@ -4,14 +4,14 @@ import org.apache.pig.pigunit.PigTest;
 import org.apache.pig.tools.parameters.ParseException;
 import org.junit.Test;
 
-public class TestCountEntriesPerSite {
+public class TestGenerateSiteCount {
     private PigTest test;
-    private static final String SCRIPT = "count_entries_per_site.pig";
+    private static final String SCRIPT = "generate_site_count.pig";
 
     @Test public void testSomeProvidedData() throws IOException, ParseException {
 	String[] args = {
-	    "input=provided_by_test",
-	    "output=site_count",
+	    "sites=provided_by_test",
+	    "site_count=site_count",
 	};
 	PigTest test = new PigTest(SCRIPT, args);
 	String[] input = {
@@ -27,8 +27,8 @@ public class TestCountEntriesPerSite {
 	
     @Test public void testOnTestData() throws IOException, ParseException {
 	String[] args = {
-	    "input=../test_data/alexa_grouped_by_site/data",
-	    "output=site_count",
+	    "sites=../test_data/sites/data",
+	    "site_count=site_count",
 	};
 	PigTest test = new PigTest(SCRIPT, args);
 	test.assertOutput(new File("../test_data/site_count.expected"));
