@@ -58,11 +58,8 @@ if [ ! -d "${INTERMEDIATE_DIR}" ]; then
     mkdir "${INTERMEDIATE_DIR}"
 fi
 
-hadoop fs -test -d "${HADOOP_INTERMEDIATE_DIR}" \
-    || hadoop fs -mkdir "${HADOOP_INTERMEDIATE_DIR}"
-
-if [ ! -d "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}" ]; then
-    mkdir "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
+if ! hadoop fs -test -d "${HADOOP_INTERMEDIATE_DIR}"; then
+    hadoop fs -mkdir "${HADOOP_INTERMEDIATE_DIR}"
 fi
 
 ####################################################################
@@ -77,21 +74,30 @@ fi
 ##                                                                ##
 ####################################################################
 
-md_unzip_alexa_files \
-    "${ALEXA_ZIP_FILES}" \
-    "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
-hadoop fs -put \
-    "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}" \
-    "${HADOOP_INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
-hadoop fs -put \
-    "${ADULT_SITES}" \
-    "${HADOOP_INTERMEDIATE_DIR}/${MY_ADULT_SITES_FILE}"
-env
-pig ${PIG_OPTIONS} \
-    -p alexa_files=${HADOOP_INTERMEDIATE_DIR}/${MY_ALEXA_FILES} \
-    -p adult_sites=${HADOOP_INTERMEDIATE_DIR}/${MY_ADULT_SITES_FILE} \
-    -p sites=${HADOOP_INTERMEDIATE_DIR}/${MY_SITES} \
-    "${PIG_SCRIPTS}/group_alexa_by_site.pig"
+if ! hadoop fs -test -d "${HADOOP_INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"; then
+
+    if [ ! -d "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}" ]; then
+	mkdir "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
+    fi
+
+    md_unzip_alexa_files \
+	"${ALEXA_ZIP_FILES}" \
+	"${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
+    hadoop fs -put \
+	"${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}" \
+	"${HADOOP_INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
+    hadoop fs -put \
+	"${ADULT_SITES}" \
+	"${HADOOP_INTERMEDIATE_DIR}/${MY_ADULT_SITES_FILE}"
+fi
+
+if ! hadoop fs -test -e "${HADOOP_INTERMEDIATE_DIR}/${MY_SITES}"; then
+    pig ${PIG_OPTIONS} \
+	-p alexa_files=${HADOOP_INTERMEDIATE_DIR}/${MY_ALEXA_FILES} \
+	-p adult_sites=${HADOOP_INTERMEDIATE_DIR}/${MY_ADULT_SITES_FILE} \
+	-p sites=${HADOOP_INTERMEDIATE_DIR}/${MY_SITES} \
+	"${PIG_SCRIPTS}/group_alexa_by_site.pig"
+fi
 
 ####################################################################
 ## Generating the site count                                      ##
