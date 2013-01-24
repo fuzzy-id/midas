@@ -9,7 +9,7 @@ import mock
 from midas.compat import GzipFile
 from midas.compat import unittest
 from midas.tests import COMPANIES_URL
-from midas.tests import EXAMPLES_PATH
+from midas.tests import TEST_DATA_PATH
 from midas.tests import FOO_URL
 from midas.tests import prepare_url_open
 
@@ -67,12 +67,11 @@ class CompanyListTests(unittest.TestCase):
         return CompanyList(path)
 
     def test_local_list_when_company_files_empty(self):
-        cl = self._make_one(EXAMPLES_PATH['company_files_empty'])
+        cl = self._make_one(TEST_DATA_PATH['crunchbase_companies'])
         result = list(map(str, cl.list_local()))
         result.sort()
         expected = [ 'Company( {0} )'.format(s)
-                     for s in ('de-revolutione', 'group-laurier',
-                               'hiconversion', 'pivotshare', 'vaporstream') ]
+                     for s in ('baz-bar', 'foo') ]
         self.assertEqual(result, expected)
 
     def test_get(self):
