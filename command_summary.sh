@@ -58,9 +58,8 @@ if [ ! -d "${INTERMEDIATE_DIR}" ]; then
     mkdir "${INTERMEDIATE_DIR}"
 fi
 
-if [ hadoop fs -test -d "${HADOOP_INTERMEDIATE_DIR}" ]; then
-    hadoop fs -mkdir "${HADOOP_INTERMEDIATE_DIR}"
-fi
+hadoop fs -test -d "${HADOOP_INTERMEDIATE_DIR}" \
+    || hadoop fs -mkdir "${HADOOP_INTERMEDIATE_DIR}"
 
 if [ ! -d "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}" ]; then
     mkdir "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
