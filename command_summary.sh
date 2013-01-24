@@ -113,16 +113,18 @@ fi
 ## Generating the site count                                      ##
 ##                                                                ##
 ## Dependencies:                                                  ##
-##   + ALEXA_FILES                                                ##
+##   + SITES                                                      ##
 ## Produces:                                                      ##
 ##   + SITE_COUNT :: The number of available time points per site ##
 ##                                                                ##
 ####################################################################
 
-pig ${PIG_OPTIONS} \
-    -p sites=${HADOOP_INTERMEDIATE_DIR}/${MY_SITES} \
-    -p site_count=${HADOOP_INTERMEDIATE_DIR}/${MY_SITE_COUNT} \
-    "${PIG_SCRIPTS}/generate_site_count.pig"
+if ! hadoop fs -test -d "${HADOOP_INTERMEDIATE_DIR}/${MY_SITE_COUNT}"; then
+    pig ${PIG_OPTIONS} \
+	-p sites=${HADOOP_INTERMEDIATE_DIR}/${MY_SITES} \
+	-p site_count=${HADOOP_INTERMEDIATE_DIR}/${MY_SITE_COUNT} \
+	"${PIG_SCRIPTS}/generate_site_count.pig"
+fi
 
 #######################################################################
 ## Flatten and Filter the CrunchBase Data                            ##
