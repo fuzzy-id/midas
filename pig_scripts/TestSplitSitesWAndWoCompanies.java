@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import org.junit.Test;
 import org.junit.Ignore;
@@ -11,9 +12,10 @@ public class TestSplitSitesWAndWoCompanies {
     @Test public void testSampleData() throws IOException, ParseException {
         String[] params = {
             "associations=../test_data/associations",
-            "alexa_sites=../test_data/alexa_grouped_by_site",
-	    "filtered_cb=../test_data/companies",
-	    "output=sites_w_company",
+            "sites=../test_data/sites",
+	    "companies=../test_data/companies",
+	    "sites_w_company=sites_w_company",
+	    "sites_wo_company=sites_wo_company",
         };
 
 	PigTest test = new PigTest(SCRIPT, params);
@@ -26,7 +28,7 @@ public class TestSplitSitesWAndWoCompanies {
 	    "(bar.example.com,{(2012-12-16,2),(2012-12-15,2),(2012-12-14,2)})",
 	};
 
-	test.assertOutput(sites_w_company);
-
+	test.assertOutput("sites_w_company",
+			  new File("../test_data/sites_w_company.expected"));
     }
 }
