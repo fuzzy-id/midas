@@ -54,8 +54,13 @@ MY_TSTAMP_TO_SECS="tstamp_to_secs"
 
 set -x
 
-mkdir -p "${INTERMEDIATE_DIR}"
-hadoop fs -mkdir "${HADOOP_INTERMEDIATE_DIR}"
+if [ ! -d "${INTERMEDIATE_DIR}" ]; then
+    mkdir "${INTERMEDIATE_DIR}"
+fi
+
+if [ hadoop fs -test -d "${HADOOP_INTERMEDIATE_DIR}" ]; then
+    hadoop fs -mkdir "${HADOOP_INTERMEDIATE_DIR}"
+fi
 
 if [ ! -d "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}" ]; then
     mkdir "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
