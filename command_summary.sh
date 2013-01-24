@@ -122,7 +122,7 @@ fi
 pig ${PIG_OPTIONS} \
     -p sites=${HADOOP_INTERMEDIATE_DIR}/${MY_SITES} \
     -p site_count=${HADOOP_INTERMEDIATE_DIR}/${MY_SITE_COUNT} \
-    "${PIG_SCRIPTS}/count_entries_per_site.pig"
+    "${PIG_SCRIPTS}/generate_site_count.pig"
 
 #######################################################################
 ## Flatten and Filter the CrunchBase Data                            ##
