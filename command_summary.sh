@@ -106,7 +106,7 @@ if ! hadoop fs -test -e "${HADOOP_INTERMEDIATE_DIR}/${MY_SITES}"; then
 	-p alexa_files=${HADOOP_INTERMEDIATE_DIR}/${MY_ALEXA_FILES} \
 	-p adult_sites=${HADOOP_INTERMEDIATE_DIR}/${MY_ADULT_SITES_FILE} \
 	-p sites=${HADOOP_INTERMEDIATE_DIR}/${MY_SITES} \
-	"${PIG_SCRIPTS}/group_alexa_by_site.pig"
+	"${PIG_SCRIPTS}/alexa_files_to_sites.pig"
 fi
 
 ####################################################################
