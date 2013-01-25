@@ -20,14 +20,6 @@ public class TestSplitSitesWAndWoCompanies {
 
 	PigTest test = new PigTest(SCRIPT, params);
 	
-	String[] sites_w_company = {
-	    "(foo.example.com,{(2012-12-16,1),(2012-12-15,1),(2012-12-14,1)}),foo-example,seed,2012-12-17",
-	};
-
-	String[] remaining_sites = {
-	    "(bar.example.com,{(2012-12-16,2),(2012-12-15,2),(2012-12-14,2)})",
-	};
-
 	test.assertOutput("sites_w_company",
 			  new File("../test_data/sites_w_company.expected"));
 	test.assertOutput("sites_wo_company",
