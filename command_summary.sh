@@ -183,16 +183,18 @@ fi
 ##                                                       ##
 ###########################################################
 
-hadoop fs -get \
-    ${HADOOP_INTERMEDIATE_DIR}/${MY_COMPANIES} \
-    ${INTERMEDIATE_DIR}/${MY_COMPANIES}
-hadoop fs -get \
-    ${HADOOP_INTERMEDIATE_DIR}/${MY_SITE_COUNT} \
-    ${INTERMEDIATE_DIR}/${MY_SITE_COUNT}
-md_associate \
-    ${INTERMEDIATE_DIR}/${MY_SITE_COUNT} \
-    ${INTERMEDIATE_DIR}/${MY_COMPANIES} \
-    > ${INTERMEDIATE_DIR}/${MY_ASSOCIATIONS}
+if [ ! -e "${INTERMEDIATE_DIR}/${MY_ASSOCIATIONS}" ]; then
+    hadoop fs -get \
+	${HADOOP_INTERMEDIATE_DIR}/${MY_COMPANIES} \
+	${INTERMEDIATE_DIR}/${MY_COMPANIES}
+    hadoop fs -get \
+	${HADOOP_INTERMEDIATE_DIR}/${MY_SITE_COUNT} \
+	${INTERMEDIATE_DIR}/${MY_SITE_COUNT}
+    md_associate \
+	${INTERMEDIATE_DIR}/${MY_SITE_COUNT} \
+	${INTERMEDIATE_DIR}/${MY_COMPANIES} \
+	> ${INTERMEDIATE_DIR}/${MY_ASSOCIATIONS}
+fi
 
 #################################################################
 ## Joining Sites and Companies                                 ##
@@ -207,16 +209,18 @@ md_associate \
 ##                                                             ##
 #################################################################
 
-hadoop fs -put \
-    ${INTERMEDIATE_DIR}/${MY_ASSOCIATIONS} \
-    ${HADOOP_INTERMEDIATE_DIR}/${MY_ASSOCIATIONS}
-pig ${PIG_OPTIONS} \
-    -p sites=${HADOOP_INTERMEDIATE_DIR}/${MY_SITES} \
-    -p companies=${HADOOP_INTERMEDIATE_DIR}/${MY_COMPANIES} \
-    -p associations=${HADOOP_INTERMEDIATE_DIR}/${MY_ASSOCIATIONS} \
-    -p sites_w_company=${HADOOP_INTERMEDIATE_DIR}/${MY_SITES_W_COMPANY} \
-    -p sites_wo_company=${HADOOP_INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY} \
-    ${PIG_SCRIPTS}/split_sites_w_and_wo_companies.pig
+if ! hadoop fs -test -d ${HADOOP_INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY}; then
+    hadoop fs -put \
+	${INTERMEDIATE_DIR}/${MY_ASSOCIATIONS} \
+	${HADOOP_INTERMEDIATE_DIR}/${MY_ASSOCIATIONS}
+    pig ${PIG_OPTIONS} \
+	-p sites=${HADOOP_INTERMEDIATE_DIR}/${MY_SITES} \
+	-p companies=${HADOOP_INTERMEDIATE_DIR}/${MY_COMPANIES} \
+	-p associations=${HADOOP_INTERMEDIATE_DIR}/${MY_ASSOCIATIONS} \
+	-p sites_w_company=${HADOOP_INTERMEDIATE_DIR}/${MY_SITES_W_COMPANY} \
+	-p sites_wo_company=${HADOOP_INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY} \
+	${PIG_SCRIPTS}/split_sites_w_and_wo_companies.pig
+fi
 
 ###################################################################
 ## Generating Restrictions                                       ##
@@ -229,12 +233,14 @@ pig ${PIG_OPTIONS} \
 ##                                                               ##
 ###################################################################
 
-hadoop fs -get \
-    ${HADOOP_INTERMEDIATE_DIR}/${MY_SITES_W_COMPANY} \
-    ${INTERMEDIATE_DIR}/${MY_SITES_W_COMPANY}
-md_make_restrictions \
-    ${INTERMEDIATE_DIR}/${MY_RESTRICTIONS} \
-    ${INTERMEDIATE_DIR}/${MY_SITES_W_COMPANY}
+if [ ! -f "${INTERMEDIATE_DIR}/${MY_RESTRICTIONS}" ]; then
+    hadoop fs -get \
+	${HADOOP_INTERMEDIATE_DIR}/${MY_SITES_W_COMPANY} \
+	${INTERMEDIATE_DIR}/${MY_SITES_W_COMPANY}
+    md_make_restrictions \
+	${INTERMEDIATE_DIR}/${MY_RESTRICTIONS} \
+	${INTERMEDIATE_DIR}/${MY_SITES_W_COMPANY}
+fi
 
 #################################################################
 ## Generating the Tstamp to Seconds since Epoch file           ##
@@ -247,9 +253,11 @@ md_make_restrictions \
 ##                                                             ##
 #################################################################
 
-md_tstamp_to_secs \
-    ${INTERMEDIATE_DIR}/${MY_ALEXA_FILES} \
-    > ${INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS}
+if [ ! -f "${INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS}" ]; then
+    md_tstamp_to_secs \
+	${INTERMEDIATE_DIR}/${MY_ALEXA_FILES} \
+	> ${INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS}
+fi
 
 #################################################################
 ## Generate Negative Samples                                   ##
@@ -267,28 +275,32 @@ md_tstamp_to_secs \
 
 ## Splitting up the Data
 
-hadoop fs -get \
-    ${HADOOP_INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY} \
-    ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY}
-num_lines=$( cat ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY}/* | wc -l )
-split_size=$(( ${num_lines} / ${NEGATIVE_TO_POSITIVE_SAMPLES_RATIO} + 1 ))
-mkdir ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY_SPLITS}
-cat ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY}/* \
-    | split \
-      -l ${split_size} \
-      - \
-      ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY_SPLITS}/split_
+if [[ ! -d "${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY_SPLITS}" ]]; then
+    hadoop fs -get \
+	${HADOOP_INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY} \
+	${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY}
+    num_lines=$( cat ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY}/* | wc -l )
+    split_size=$(( ${num_lines} / ${NEGATIVE_TO_POSITIVE_SAMPLES_RATIO} + 1 ))
+    mkdir ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY_SPLITS}
+    cat ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY}/* \
+	| split \
+	-l ${split_size} \
+	- \
+	${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY_SPLITS}/split_
+fi
 
 ## Generate Negative Samples
 
-mkdir ${INTERMEDIATE_DIR}/${MY_NEGATIVE_SAMPLES}
-for f in ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY_SPLITS}/*; do
-    out_f=${INTERMEDIATE_DIR}/${MY_NEGATIVE_SAMPLES}/$(basename ${f})
-    shuf ${f} \
-	| md_generate_negative_samples \
-	  ${INTERMEDIATE_DIR}/${MY_RESTRICTIONS} \
-	  > ${out_f}
-done
+if [[ ! -d "${INTERMEDIATE_DIR}/${MY_NEGATIVE_SAMPLES}" ]]; then
+    mkdir ${INTERMEDIATE_DIR}/${MY_NEGATIVE_SAMPLES}
+    for f in ${INTERMEDIATE_DIR}/${MY_SITES_WO_COMPANY_SPLITS}/*; do
+	out_f=${INTERMEDIATE_DIR}/${MY_NEGATIVE_SAMPLES}/$(basename ${f})
+	shuf ${f} \
+	    | md_generate_negative_samples \
+	    ${INTERMEDIATE_DIR}/${MY_RESTRICTIONS} \
+	    > ${out_f}
+    done
+fi
 
 ## ## Shaping them
 ## 
