@@ -16,7 +16,6 @@ from midas.compat import unittest
 
 from midas.tests import BAR_URL
 from midas.tests import COMPANIES_URL
-from midas.tests import EXAMPLES_PATH
 from midas.tests import FOO_URL
 from midas.tests import DummyCompany
 from midas.tests import DummyCompanyList
