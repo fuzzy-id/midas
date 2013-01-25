@@ -30,5 +30,7 @@ public class TestSplitSitesWAndWoCompanies {
 
 	test.assertOutput("sites_w_company",
 			  new File("../test_data/sites_w_company.expected"));
+	test.assertOutput("sites_wo_company",
+			  new File("../test_data/sites_wo_company.expected"));
     }
 }
