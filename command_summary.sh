@@ -54,7 +54,7 @@ MY_TSTAMP_TO_SECS="tstamp_to_secs"
 
 set -x
 
-if [ ! -d "${INTERMEDIATE_DIR}" ]; then
+if [[ ! -d "${INTERMEDIATE_DIR}" ]]; then
     mkdir "${INTERMEDIATE_DIR}"
 fi
 
@@ -75,7 +75,7 @@ fi
 
 if ! hadoop fs -test -d "${HADOOP_INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"; then
 
-    if [ ! -d "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}" ]; then
+    if [[ ! -d "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}" ]]; then
 	mkdir "${INTERMEDIATE_DIR}/${MY_ALEXA_FILES}"
     fi
 
@@ -183,7 +183,7 @@ fi
 ##                                                       ##
 ###########################################################
 
-if [ ! -e "${INTERMEDIATE_DIR}/${MY_ASSOCIATIONS}" ]; then
+if [[ ! -e "${INTERMEDIATE_DIR}/${MY_ASSOCIATIONS}" ]]; then
     hadoop fs -get \
 	${HADOOP_INTERMEDIATE_DIR}/${MY_COMPANIES} \
 	${INTERMEDIATE_DIR}/${MY_COMPANIES}
@@ -233,7 +233,7 @@ fi
 ##                                                               ##
 ###################################################################
 
-if [ ! -f "${INTERMEDIATE_DIR}/${MY_RESTRICTIONS}" ]; then
+if [[ ! -f "${INTERMEDIATE_DIR}/${MY_RESTRICTIONS}" ]]; then
     hadoop fs -get \
 	${HADOOP_INTERMEDIATE_DIR}/${MY_SITES_W_COMPANY} \
 	${INTERMEDIATE_DIR}/${MY_SITES_W_COMPANY}
@@ -253,7 +253,7 @@ fi
 ##                                                             ##
 #################################################################
 
-if [ ! -f "${INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS}" ]; then
+if [[ ! -f "${INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS}" ]]; then
     md_tstamp_to_secs \
 	${INTERMEDIATE_DIR}/${MY_ALEXA_FILES} \
 	> ${INTERMEDIATE_DIR}/${MY_TSTAMP_TO_SECS}
@@ -326,23 +326,25 @@ fi
 ##     ${HADOOP_INTERMEDIATE_DIR}/${MY_SHAPED_NEGATIVE_SAMPLES} \
 ##     ${INTERMEDIATE_DIR}/${MY_SHAPED_NEGATIVE_SAMPLES}
 ## 
-## 
-## #################################
-## ## Generate Positive Samples   ##
-## ##                             ##
-## ## Dependencies:               ##
-## ##   + IDS_TO_SITES            ##
-## ##   + RESTRICTIONS            ##
-## ##   + TSTAMP_TO_SECS          ##
-## ## Produces:                   ##
-## ##   + SHAPED_POSITIVE_SAMPLES ##
-## ##                             ##
-## #################################
-## 
-## md_generate_positive_samples \
-##     ${INTERMEDIATE_DIR}/${MY_RESTRICTIONS} \
-##     > ${INTERMEDIATE_DIR}/${MY_POSITIVE_SAMPLES}
-## 
+
+#################################
+## Generate Positive Samples   ##
+##                             ##
+## Dependencies:               ##
+##   + IDS_TO_SITES            ##
+##   + RESTRICTIONS            ##
+##   + TSTAMP_TO_SECS          ##
+## Produces:                   ##
+##   + SHAPED_POSITIVE_SAMPLES ##
+##                             ##
+#################################
+
+if [[ ! -f "${INTERMEDIATE_DIR}/${MY_POSITIVE_SAMPLES}" ]]; then
+    md_generate_positive_samples \
+	${INTERMEDIATE_DIR}/${MY_RESTRICTIONS} \
+	> ${INTERMEDIATE_DIR}/${MY_POSITIVE_SAMPLES}
+fi
+
 ## ## Shaping them
 ## 
 ## hadoop fs -put \
