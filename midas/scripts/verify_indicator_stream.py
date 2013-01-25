@@ -9,6 +9,8 @@ import pprint
 
 import bitarray
 
+from midas.scripts import MDCommand
+
 FMT_u32="I"
 
 def interpret_next_bits(fp, fmt=FMT_u32):
@@ -43,16 +45,19 @@ def to_string(site, features):
             )
         )
 
-def main():  # pragma: no cover
-    argparser = argparse.ArgumentParser()
-    argparser.add_argument('num_features', type=int,
-                           help='The number of features per vector')
-    argparser.add_argument('istream', metavar='FILE', 
-                           help='The binary istream-file')
-    args = argparser.parse_args(sys.argv[1:])
-    with open(args.istream, 'rb') as fp:
-        for site_id, features in iter_features(fp, args.num_features):
-            print(to_string(site_id, features))
+class VerifyIndicatorStream(MDCommand):
+    """
+    Converts a file of `stream-alexa-indicators' to something
+    Pig-parseable.
+    """
 
-if __name__ == "__main__":  # pragma: no cover
-    main()
+    def add_argument(self):
+        self.parser.add_argument('num_features', type=int,
+                                 help='The number of features per vector')
+        self.parser.add_argument('istream', metavar='FILE', 
+                                 help='The binary istream-file')
+        
+    def run(self):
+        with open(self.args.istream, 'rb') as fp:
+            for site_id, features in iter_features(fp, self.args.num_features):
+                self.out(to_string(site_id, features))

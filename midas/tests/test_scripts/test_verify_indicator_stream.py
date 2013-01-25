@@ -5,7 +5,10 @@ import bitarray
 from midas.compat import unittest
 from midas.compat import StringIO
 
-class Tests(unittest.TestCase):
+from midas.tests import TEST_DATA_PATH
+from midas.tests.test_scripts import MDCommandTestCase
+
+class TestIterFeatures(unittest.TestCase):
 
     def get_target(self):
         from midas.scripts.verify_indicator_stream import iter_features
@@ -30,6 +33,17 @@ class TestToString(unittest.TestCase):
         func = self._get_target()
         self.assertEqual(func(*example), 
                          '1\t{(1292024241,(True,True,True))}')
+
+
+class FunctionalTests(MDCommandTestCase):
+
+    def _get_target_cls(self):
+        from midas.scripts.verify_indicator_stream import VerifyIndicatorStream
+        return VerifyIndicatorStream
+
+    def test_on_test_data(self):
+        self.assertEqual(self._call_cmd("3", TEST_DATA_PATH['indicators']), 0)
+        self.assert_stdout_equal('1\t{(1292024241,(True,True,True))}\n')
 
 
 if __name__ == '__main__':  # pragma: no cover

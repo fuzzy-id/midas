@@ -35,7 +35,7 @@ setup(name='midas',
              'md_tstamp_to_secs=midas.scripts.tstamp_to_secs:TstampToSecs.cmd',
              'md_generate_negative_samples=midas.scripts.generate_samples:GenerateNegativeSamples.cmd',
              'md_generate_positive_samples=midas.scripts.generate_samples:GeneratePositiveSamples.cmd',
-             'md_verify_indicator_stream=midas.scripts.verify_indicator_stream:main',
+             'md_verify_indicator_stream=midas.scripts.verify_indicator_stream:VerifyIndicatorStream.cmd',
              ],
         },
       )

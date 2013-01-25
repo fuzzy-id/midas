@@ -27,6 +27,7 @@ TEST_DATA_PATH = {
                                          'crunchbase_companies'),
     'sites_w_company': os.path.join(_test_data_home, 'sites_w_company'),
     'restrictions': os.path.join(_test_data_home, 'restrictions_shelf'),
+    'indicators': os.path.join(_test_data_home, 'indicators.bin'),
     }
 
 COMPANIES_URL = 'http://api.crunchbase.com/v/1/companies.js?api_key=vqrwexbhj9s2d7fbzzj9cg57'
