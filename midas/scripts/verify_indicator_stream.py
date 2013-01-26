@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import struct
+import sys
 
 import bitarray
 
@@ -49,7 +50,7 @@ class VerifyIndicatorStream(MDCommand):
     def add_argument(self):
         self.parser.add_argument('num_features', type=int,
                                  help='The number of features per vector')
-        self.parser.add_argument('istream', metavar='FILE', 
+        self.parser.add_argument('istream', metavar='FILE', nargs='?', default=sys.stdin,
                                  help='The binary istream-file')
         
     def run(self):
