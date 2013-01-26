@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import argparse
 import struct
 import sys
 
@@ -50,10 +51,10 @@ class VerifyIndicatorStream(MDCommand):
     def add_argument(self):
         self.parser.add_argument('num_features', type=int,
                                  help='The number of features per vector')
-        self.parser.add_argument('istream', metavar='FILE', nargs='?', default=sys.stdin,
+        self.parser.add_argument('istream', metavar='FILE', nargs='?', 
+                                 default=sys.stdin, type=argparse.FileType('r'),
                                  help='The binary istream-file')
         
     def run(self):
-        with open(self.args.istream, 'rb') as fp:
-            for site_id, features in iter_features(fp, self.args.num_features):
-                self.out(to_string(site_id, features))
+        for site_id, features in iter_features(self.args.istream, self.args.num_features):
+            self.out(to_string(site_id, features))
