@@ -36,6 +36,16 @@ class ExpandConfigTests(unittest.TestCase):
         expected = [('rsi', 0, 0), ('rsi', 0, 2), ('rsi', 1, 0), ('rsi', 1, 2)]
         self.assertEqual(list(result), expected)
 
+    def test_pearson_list_on_ndays_and_threshold(self):
+        func = self._get_target()
+        result = func({'pearson': {'ndays': {'start': 0,
+                                             'stop': 1},
+                                   'thresholds': {'start': 0,
+                                                  'stop': 3,
+                                                  'step': 2}}})
+        expected = [('pearson', 0, 0), ('pearson', 0, 2)]
+        self.assertEqual(list(result), expected)
+
 
 class GenerateNamesTests(unittest.TestCase):
 

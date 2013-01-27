@@ -11,7 +11,7 @@ from midas.scripts import MDCommand
 from midas.scripts.verify_indicator_stream import iter_features
 from midas.scripts.verify_indicator_stream import to_string
 
-FILTERS = set(['rsi', 'ols-slope', 'spearman', 'pearson' 'rank'])
+FILTERS = set(['rsi', 'ols-slope', 'spearman', 'pearson', 'rank'])
 
 def expand_config(conf):
     for filter_ in FILTERS:
