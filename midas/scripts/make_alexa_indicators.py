@@ -4,6 +4,7 @@ import argparse
 import itertools
 import subprocess
 
+import numpy
 import yaml
 
 from midas.compat import d_iteritems
@@ -21,13 +22,13 @@ def expand_config(conf):
         ndays = args['ndays']
         thresholds = args['thresholds']
         if isinstance(ndays, dict):
-            ndays = xrange(ndays['start'], 
-                           ndays['stop'], 
-                           ndays.get('step', 1))
+            ndays = numpy.arange(ndays['start'], 
+                                 ndays['stop'], 
+                                 ndays.get('step', 1))
         if isinstance(thresholds, dict):
-            thresholds = xrange(thresholds['start'], 
-                                thresholds['stop'], 
-                                thresholds.get('step', 1))
+            thresholds = numpy.arange(thresholds['start'], 
+                                      thresholds['stop'], 
+                                      thresholds.get('step', 1))
         for days, threshold in itertools.product(ndays, thresholds):
             yield (filter_, days, threshold)
             
