@@ -45,7 +45,7 @@ class:\t{0}.
                                 for t in expand_config(conf)))
 
 def call_stream_alexa_indicators(conf):
-    cmd = [conf['exec'], ]
+    cmd = [conf['exec'], '--dbpivot']
     num_features = 0
     for args in expand_config(conf):
         cmd.append(','.join(map(str, args)))
