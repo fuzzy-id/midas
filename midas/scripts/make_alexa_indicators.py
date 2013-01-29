@@ -63,16 +63,19 @@ class MakeAlexaIndicators(MDCommand):
     """
 
     def add_argument(self):
-        self.parser.add_argument('names_file', type=argparse.FileType('w'),
+        self.parser.add_argument('names_file',
                                  help="The `.names' file that shall be written")
-        self.parser.add_argument('indicators_file', type=argparse.FileType('w'),
+        self.parser.add_argument('indicators_file',
                                  help="The indicators file that shall be written")
-        self.parser.add_argument('yaml_file', type=argparse.FileType(),
+        self.parser.add_argument('yaml_file',
                                  help='Parameters-file to run `stream-alexa-indicators`')
 
     def run(self):
-        conf = yaml.safe_load(self.args.yaml_file)
-        for site_id, features in call_stream_alexa_indicators(conf):
-            self.args.indicators_file.write(to_string(site_id, features))
-            self.args.indicators_file.write('\n')
-        self.args.names_file.write(generate_names(conf))
+        with open(self.args.yaml_file) as fp:
+            conf = yaml.safe_load(fp.read())
+        with open(self.args.indicators_file, 'w') as fp:
+            for site_id, features in call_stream_alexa_indicators(conf):
+                fp.write(to_string(site_id, features))
+                fp.write('\n')
+        with open(self.args.names_file, 'w') as fp:
+            fp.write(generate_names(conf))
