@@ -40,7 +40,7 @@ class MakeSampleRestrictionShelve(MDCommand):
             )
 
     def run(self):
-        shelf = shelve.open(self.args.shelf)
+        shelf = shelve.open(self.args.shelf, protocol=2)
         for i in self.args.sites_w_company:
             field = SITES_W_COMPANY_PARSER(i)
             fund_date, mean_rank = get_median_rank_at_funding_date(field)
