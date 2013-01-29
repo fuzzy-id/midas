@@ -17,8 +17,7 @@ from midas.compat import d_iteritems
 from midas.scripts import CheckDirectoryAction
 from midas.scripts import MDCommand
 from midas.scripts import StoreSingleFileOrDirectoryAction
-from midas.scripts.verify_indicator_stream import iter_features
-from midas.scripts.verify_indicator_stream import to_string
+
 
 FILTERS = set(['rsi', 'ols-slope', 'spearman', 'pearson', 'rank'])
 
