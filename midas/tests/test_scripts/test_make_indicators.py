@@ -20,7 +20,7 @@ CONF = {'exec': 'non_existent',
                                'stop': 2}}}
 
 
-class TestIterFeatures(unittest.TestCase):
+class IterFeaturesTests(unittest.TestCase):
 
     def get_target(self):
         from midas.scripts.make_indicators import iter_features
@@ -36,7 +36,7 @@ class TestIterFeatures(unittest.TestCase):
         self.assertEqual(result, expected)
 
 
-class TestToString(unittest.TestCase):
+class ToStringTests(unittest.TestCase):
 
     def _get_target(self):
         from midas.scripts.make_indicators import to_string
@@ -49,7 +49,7 @@ class TestToString(unittest.TestCase):
                          '1\t{(1292024241,(True,True,True))}')
 
 
-class FunctionalTests(MDCommandTestCase):
+class VerifyIndicatorStreamTests(MDCommandTestCase):
 
     def _get_target_cls(self):
         from midas.scripts.make_indicators import VerifyIndicatorStream
