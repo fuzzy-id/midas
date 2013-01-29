@@ -43,7 +43,7 @@ class GenerateNegativeSamples(MDCommand):
 
     def run(self):
         shelf = shelve.open(self.args.shelf, protocol=2)
-        restrictions = shelf.items()
+        restrictions = list(shelf.items())
         random.shuffle(restrictions)
         for line in self._in:
             if len(restrictions) > 0:
