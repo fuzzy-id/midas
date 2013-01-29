@@ -8,7 +8,9 @@ import mock
 import yaml
 
 from midas.compat import unittest
+from midas.tests import TEST_DATA_PATH
 from midas.tests.test_scripts import IntegrationTestCase
+from midas.tests.test_scripts import MDCommandTestCase
 
 CONF = {'exec': 'non_existent',
         'rsi': {'ndays': {'start': 0,
@@ -17,10 +19,49 @@ CONF = {'exec': 'non_existent',
                 'thresholds': {'start': 0,
                                'stop': 2}}}
 
+
+class TestIterFeatures(unittest.TestCase):
+
+    def get_target(self):
+        from midas.scripts.make_indicators import iter_features
+        return iter_features
+
+    def test_simple_example(self):
+        buf = BytesIO(b'\x01\x00\x00\x00\xb1\xb9\x02M\x07\x00\x00\x00\x00')
+        func = self.get_target()
+        result = list(func(buf, 3))
+        expected = [(1, [(1292024241, bitarray.bitarray('111'))])]
+        self.assertEqual(result, expected)
+
+
+class TestToString(unittest.TestCase):
+
+    def _get_target(self):
+        from midas.scripts.make_indicators import to_string
+        return to_string
+
+    def test_on_simple_example(self):
+        example = (1, [(1292024241, bitarray.bitarray('111'))])
+        func = self._get_target()
+        self.assertEqual(func(*example), 
+                         '1\t{(1292024241,(True,True,True))}')
+
+
+class FunctionalTests(MDCommandTestCase):
+
+    def _get_target_cls(self):
+        from midas.scripts.make_indicators import VerifyIndicatorStream
+        return VerifyIndicatorStream
+
+    def test_on_test_data(self):
+        self.assertEqual(self._call_cmd("3", TEST_DATA_PATH['indicators']), 0)
+        self.assert_stdout_equal('1\t{(1292024241,(True,True,True))}\n')
+
+
 class ExpandConfigTests(unittest.TestCase):
 
     def _get_target(self):
-        from midas.scripts.make_alexa_indicators import expand_config
+        from midas.scripts.make_indicators import expand_config
         return expand_config
 
     def test_start_stop_step_on_ndays_and_threshold(self):
@@ -50,7 +91,7 @@ class ExpandConfigTests(unittest.TestCase):
 class GenerateNamesTests(unittest.TestCase):
 
     def _get_target(self):
-        from midas.scripts.make_alexa_indicators import generate_names
+        from midas.scripts.make_indicators import generate_names
         return generate_names
 
     def test_some(self):
@@ -72,7 +113,7 @@ rsi_2_1:\tTrue, False.
 class CallStreamAlexaIndicatorsTests(unittest.TestCase):
 
     def _get_target(self):
-        from midas.scripts.make_alexa_indicators import call_stream_alexa_indicators
+        from midas.scripts.make_indicators import call_stream_alexa_indicators
         return call_stream_alexa_indicators
 
     @mock.patch("subprocess.Popen")
@@ -88,7 +129,7 @@ class CallStreamAlexaIndicatorsTests(unittest.TestCase):
 class IntegrationTests(IntegrationTestCase):
 
     def _get_target_cls(self):
-        from midas.scripts.make_alexa_indicators import MakeAlexaIndicators
+        from midas.scripts.make_indicators import MakeAlexaIndicators
         return MakeAlexaIndicators
 
     @mock.patch("subprocess.Popen")
