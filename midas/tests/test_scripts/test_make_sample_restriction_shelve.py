@@ -20,9 +20,9 @@ class Tests(IntegrationTestCase):
             self._call_cmd(shelf, TEST_DATA_PATH['sites_w_company']),
             0
             )
-        d = shelve.open(shelf)
+        d = shelve.open(shelf, protocol=2)
         self.assertEqual(len(d), 1)
-        self.assertTrue(d.has_key('foo'))
+        self.assertIn('foo', d)
         restr = d['foo']
         self.assertEqual(restr.site, 'foo.example.com')
         self.assertEqual(restr.code, 'seed')

@@ -121,10 +121,10 @@ class MainLocalFilesIntegrationTests(IntegrationTestCase):
         self.assertEqual(listing, ['bar.json',
                                    'foo.json'])
         with open(os.path.join(self.tmpd, 'bar.json')) as fp:
-            self.assertEqual(json.loads(fp.read().decode()),
+            self.assertEqual(json.loads(fp.read()),
                              ['some_bar', ])
         with open(os.path.join(self.tmpd, 'foo.json')) as fp:
-            self.assertEqual(json.loads(fp.read().decode()), 
+            self.assertEqual(json.loads(fp.read()), 
                              ['some_foo', ])
 
 

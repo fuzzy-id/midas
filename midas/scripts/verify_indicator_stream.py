@@ -17,7 +17,7 @@ def interpret_next_bits(fp, fmt=FMT_u32):
     return struct.unpack(fmt, buf)[0]
 
 def iter_features(fp, num_features):
-    bitarraysize = (num_features + 7) / 8
+    bitarraysize = int((num_features + 7) / 8)
     while True:
         site_id = interpret_next_bits(fp)
         if not site_id:
@@ -52,7 +52,7 @@ class VerifyIndicatorStream(MDCommand):
         self.parser.add_argument('num_features', type=int,
                                  help='The number of features per vector')
         self.parser.add_argument('istream', metavar='FILE', nargs='?', 
-                                 default=sys.stdin, type=argparse.FileType('r'),
+                                 default=sys.stdin, type=argparse.FileType('rb'),
                                  help='The binary istream-file')
         
     def run(self):

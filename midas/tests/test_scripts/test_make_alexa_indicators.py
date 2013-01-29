@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import io
 import os.path
 
 import bitarray
 import mock
 import yaml
 
-from midas.compat import StringIO
 from midas.compat import unittest
 from midas.tests.test_scripts import IntegrationTestCase
 
@@ -77,7 +77,7 @@ class CallStreamAlexaIndicatorsTests(unittest.TestCase):
 
     @mock.patch("subprocess.Popen")
     def test_mocked_popen(self, Popen):
-        Popen().stdout = StringIO(b'\x01\x00\x00\x00\xb1\xb9\x02M\x07\x00\x00\x00\x00')
+        Popen().stdout = io.BytesIO(b'\x01\x00\x00\x00\xb1\xb9\x02M\x07\x00\x00\x00\x00')
         Popen().poll.return_value = 0
         func = self._get_target()
         result = list(func(CONF))
@@ -93,7 +93,7 @@ class IntegrationTests(IntegrationTestCase):
 
     @mock.patch("subprocess.Popen")
     def test_mocked_popen(self, Popen):
-        Popen().stdout = StringIO(b'\x01\x00\x00\x00\xb1\xb9\x02M\x07\x00\x00\x00\x00')
+        Popen().stdout = io.BytesIO(b'\x01\x00\x00\x00\xb1\xb9\x02M\x07\x00\x00\x00\x00')
         Popen().poll.return_value = 0
         names_f = os.path.join(self.tmpd, 'indicators.names')
         indicators_f = os.path.join(self.tmpd, 'indicators')

@@ -42,7 +42,7 @@ class GenerateNegativeSamples(MDCommand):
             )
 
     def run(self):
-        shelf = shelve.open(self.args.shelf)
+        shelf = shelve.open(self.args.shelf, protocol=2)
         restrictions = shelf.items()
         random.shuffle(restrictions)
         for line in self._in:
@@ -73,7 +73,7 @@ class GeneratePositiveSamples(MDCommand):
             )
 
     def run(self):
-        shelf = shelve.open(self.args.shelf)
+        shelf = shelve.open(self.args.shelf, protocol=2)
         for restr in shelf.values():
             self.out('{0}\t{1:%Y-%m-%d}\t{2}'.format(restr.site,
                                                      restr.tstamp,

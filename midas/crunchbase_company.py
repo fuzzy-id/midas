@@ -86,7 +86,7 @@ class Company(CrunchBaseFetchable):
     def update(self):
         self.data = self.fetch()
         with open(self.fname, 'w') as fp:
-            fp.write(json.dumps(self.data).encode())
+            fp.write(json.dumps(self.data))
 
     def is_local(self):
         return os.path.isfile(self.fname)

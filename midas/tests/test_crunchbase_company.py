@@ -51,7 +51,7 @@ class CompanyTests(unittest.TestCase):
         self.assertEqual(company.data, ['fo', 'ba'])
 
     def test_loading_data_from_file(self):
-        with tempfile.NamedTemporaryFile() as tmpf:
+        with tempfile.NamedTemporaryFile(mode='w+') as tmpf:
             tmpf.write(json.dumps({'foo': 'bar'}))
             tmpf.seek(0)
             c = self._make_one('TestCompany', tmpf.name)
