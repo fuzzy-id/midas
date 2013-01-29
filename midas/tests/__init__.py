@@ -26,7 +26,7 @@ TEST_DATA_PATH = {
     'crunchbase_companies': os.path.join(_test_data_home, 
                                          'crunchbase_companies'),
     'sites_w_company': os.path.join(_test_data_home, 'sites_w_company'),
-    'restrictions': os.path.join(_test_data_home, 'restrictions_shelf'),
+    'restrictions': os.path.join(_test_data_home, 'restrictions'),
     'indicators': os.path.join(_test_data_home, 'indicators.bin'),
     }
 
@@ -34,10 +34,6 @@ COMPANIES_URL = 'http://api.crunchbase.com/v/1/companies.js?api_key=vqrwexbhj9s2
 FOO_URL = 'http://api.crunchbase.com/v/1/company/foo.js?api_key=vqrwexbhj9s2d7fbzzj9cg57'
 BAR_URL = 'http://api.crunchbase.com/v/1/company/bar.js?api_key=vqrwexbhj9s2d7fbzzj9cg57'
 
-def DummyCompanyList(path=None):
-    from midas.crunchbase_crawler import CompanyList
-    dcl = mock.Mock(spec=CompanyList)
-    return dcl
 
 def DummyCompany(name='dummy_company'):
     from midas.crunchbase_company import Company

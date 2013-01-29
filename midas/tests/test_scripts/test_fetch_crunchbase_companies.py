@@ -18,7 +18,6 @@ from midas.tests import BAR_URL
 from midas.tests import COMPANIES_URL
 from midas.tests import FOO_URL
 from midas.tests import DummyCompany
-from midas.tests import DummyCompanyList
 from midas.tests import prepare_url_open
 from midas.tests.test_scripts import IntegrationTestCase
 
