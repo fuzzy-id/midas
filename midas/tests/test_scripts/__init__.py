@@ -31,11 +31,6 @@ class MDCommandTestCase(unittest.TestCase):
         buf.seek(0)
         return buf.getvalue()
 
-    def assert_cls_out_startswith(self, s):
-        out = self._get_value(self.out)
-        self.assertTrue(out.startswith(s), 
-                        '"{0!r}" does not start with {1!r}'.format(out, s))
-
     def assert_in_cls_out(self, s):
         out = self._get_value(self.out)
         self.assertIn(s, out)
