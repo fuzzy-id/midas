@@ -20,14 +20,16 @@ _test_data_home = os.path.join(_here, '..', '..', 'test_data')
 TEST_DATA_PATH = {
     'alexa_zip_files': os.path.join(_test_data_home, 'alexa_zip_files'),
     'alexa_files': os.path.join(_test_data_home, 'alexa_files'),
-    'site_count': os.path.join(_test_data_home, 'site_count'),
-    'crunchbase': os.path.join(_test_data_home, 'crunchbase'),
     'companies': os.path.join(_test_data_home, 'companies'),
+    'crunchbase': os.path.join(_test_data_home, 'crunchbase'),
     'crunchbase_companies': os.path.join(_test_data_home, 
                                          'crunchbase_companies'),
-    'sites_w_company': os.path.join(_test_data_home, 'sites_w_company'),
-    'restrictions': os.path.join(_test_data_home, 'restrictions'),
+    'ids_to_sites': os.path.join(_test_data_home, 'ids_to_sites'),
     'indicators': os.path.join(_test_data_home, 'indicators.bin'),
+    'restrictions': os.path.join(_test_data_home, 'restrictions'),
+    'samples': os.path.join(_test_data_home, 'samples'),
+    'site_count': os.path.join(_test_data_home, 'site_count'),
+    'sites_w_company': os.path.join(_test_data_home, 'sites_w_company'),
     }
 
 COMPANIES_URL = 'http://api.crunchbase.com/v/1/companies.js?api_key=vqrwexbhj9s2d7fbzzj9cg57'
