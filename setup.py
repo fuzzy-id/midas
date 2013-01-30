@@ -38,7 +38,7 @@ setup(name='midas',
              'md_generate_negative_samples=midas.scripts.generate_samples:GenerateNegativeSamples.cmd',
              'md_generate_positive_samples=midas.scripts.generate_samples:GeneratePositiveSamples.cmd',
              'md_indicator_stream_as_text=midas.scripts.make_indicators:VerifyIndicatorStream.cmd',
-             'md_make_indicators=midas.scripts.make_indicators:MakeAlexaIndicators.cmd',
+             'md_create_features=midas.scripts.make_indicators:CreateFeatures.cmd',
              ],
         },
       )
