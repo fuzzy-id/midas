@@ -4,6 +4,7 @@ This module fills the gap between Python 2.6 upwards to Python 3 since
 version 3.2.
 """
 
+import csv
 import sys
 
 #: True if the current interpreter is of version 2.6
@@ -79,6 +80,17 @@ else:
 
 if not PY3K:
     unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
+
+if PY3K:
+    def csv_file_reader(fname, *args, **kwargs):
+        with open(fname, newline='') as fp:
+            for row in csv.reader(fp, *args, **kwargs):
+                yield row
+else:
+    def csv_file_reader(fname, *args, **kwargs):
+        with open(fname, 'rb') as fp:
+            for row in csv.reader(fp, *args, **kwargs):
+                yield row
 
 if PY26:  # pragma: no cover
     import gzip

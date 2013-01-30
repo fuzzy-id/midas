@@ -21,6 +21,7 @@ import yaml
 from midas import parse_tstamp
 from midas.compat import QueueEmpty
 from midas.compat import Queue
+from midas.compat import csv_file_reader
 from midas.compat import d_iteritems
 from midas.compat import d_itervalues
 from midas.compat import imap
@@ -124,14 +125,12 @@ class Indicator(object):
     @lazy.lazy
     def data(self):
         d = dict()
-        with open(self.fname, newline='') as fp:
-            reader = csv.reader(fp)
-            for site, bool_ in reader:
-                if bool_ == 'True':
-                    bool_ = True
-                else:
-                    bool_ = False
-                d[site] = bool_
+        for site, bool_ in csv_file_reader(self.fname):
+            if bool_ == 'True':
+                bool_ = True
+            else:
+                bool_ = False
+            d[site] = bool_
         return d
 
 
@@ -244,11 +243,9 @@ class CreateFeatures(MDCommand):
             f = self.args.ids_to_sites
         else:
             f = self.config['ids_to_sites']
-        with open(f, newline='') as fp:
-            sites_to_ids = dict(
-                (site, int(site_id))
-                for site_id, site in csv.reader(fp, delimiter='\t')
-                )
+        sites_to_ids = dict()
+        for site_id, site in csv_file_reader(f, delimiter='\t'):
+            sites_to_ids[site] = int(site_id)
         return sites_to_ids
 
     @lazy.lazy
@@ -267,11 +264,10 @@ class CreateFeatures(MDCommand):
                     files.append(path)
         samples = dict()
         for f in files:
-            with open(f, newline='') as fp:
-                for site, tstamp, code in csv.reader(fp, delimiter='\t'):
-                    tstamp = parse_tstamp(tstamp)
-                    site_id = self.sites_to_ids[site]
-                    samples[site_id] = (site, tstamp, code)
+            for site, tstamp, code in csv_file_reader(f, delimiter='\t'):
+                tstamp = parse_tstamp(tstamp)
+                site_id = self.sites_to_ids[site]
+                samples[site_id] = (site, tstamp, code)
         return samples
 
     @lazy.lazy
