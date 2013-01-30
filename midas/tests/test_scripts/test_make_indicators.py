@@ -40,6 +40,17 @@ class IterFeaturesTests(unittest.TestCase):
         expected = [(1, [(1292024241, bitarray.bitarray('111'))])]
         self.assertEqual(result, expected)
 
+    def test_a_bit_more_advanced_example(self):
+        buf = io.BytesIO(
+            b'\x01\x00\x00\x00\xb1\xb9\x02M\x07\x00\x00\x00\x00'
+            + b'\x02\x00\x00\x00\xb1\xb9\x02M\x07\x00\x00\x00\x00'
+            )
+        func = self.get_target()
+        result = list(func(buf, 3))
+        expected = [(1, [(1292024241, bitarray.bitarray('111'))]),
+                    (2, [(1292024241, bitarray.bitarray('111'))])]
+        self.assertEqual(result, expected)
+
 
 class ToStringTests(unittest.TestCase):
 
@@ -152,6 +163,7 @@ rsi_2_1:\tTrue, False.
     def test_mocked_popen(self, Popen):
         Popen().stdout = io.BytesIO(
             b'\x01\x00\x00\x00\xb1\xb9\x02M\x01\x00\x00\x00\x00'
+            + b'\x02\x00\x00\x00\xb1\xb9\x02M\x01\x00\x00\x00\x00'
             )
         Popen().poll.return_value = 0
         names_f = os.path.join(self.tmpd, 'some.names')
