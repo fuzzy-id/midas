@@ -318,7 +318,7 @@ class CreateFeatures(MDCommand):
         to_produce_q.join()
         features = dict()
         for site, tstamp, code in d_itervalues(self.ids_to_samples):
-            features[site] = [code, ]
+            features[site] = list()
             for indicator in self.indicators:
                 features[site].append(indicator.data[site])
 
@@ -326,10 +326,9 @@ class CreateFeatures(MDCommand):
         data_f = '.'.join([root, 'data'])
         names_f = '.'.join([root, 'names'])
         with csv_file_writer(data_f) as writer:
-            for site_id, features in site_id_to_indicator:
-                site, tstamp, code = self.ids_to_sample[site_id]
+            for site, tstamp, code in d_itervalues(self.ids_to_samples):
                 row = [site, code]
-                row.extend(features)
+                row.extend(features[site])
                 writer.writerow(row)
         with open(names_f, 'w') as fp:
             fp.write(self.names)
