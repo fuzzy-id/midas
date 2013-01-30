@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import copy
+import datetime
 import io
 import os.path
 
@@ -129,6 +130,23 @@ rsi_2_1:\tTrue, False.
         expected = ['rsi_0_0', 'rsi_0_2', 'rsi_1_0', 'rsi_1_2']
         self.assertEqual(list(map(str, obj.indicators)), expected)
 
+    def test_sites_to_ids(self):
+        cls = self._get_target_cls()
+        obj = cls(['cmd', self._make_conf()])
+        expected = {'baz.bar.example.com': 1,
+                    'foo.example.com': 2}
+        self.assertEqual(obj.sites_to_ids, expected)
+
+    def test_ids_to_samples(self):
+        cls = self._get_target_cls()
+        obj = cls(['cmd', self._make_conf()])
+        expected = {1: ('baz.bar.example.com', 
+                        datetime.datetime(2010, 12, 13),
+                        'negative'),
+                    2: ('foo.example.com', 
+                        datetime.datetime(2010, 12, 14),
+                        'angel')}
+        self.assertEqual(obj.ids_to_samples, expected)
 
     @mock.patch("subprocess.Popen")
     def test_mocked_popen(self, Popen):

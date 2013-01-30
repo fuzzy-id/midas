@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import csv
 import datetime
 import functools
 import itertools
@@ -157,6 +158,7 @@ class IndicatorUpdater(threading.Thread):
                             break
                         last_indicator = bool_[0]
                 indicator.update(data)
+                self.to_produce_q.task_done()
             except QueueEmpty:
                 break
             except:
@@ -241,7 +243,7 @@ class CreateFeatures(MDCommand):
         if self.args.ids_to_sites:
             f = self.args.ids_to_sites
         else:
-            f = self.args.config['ids_to_sites']
+            f = self.config['ids_to_sites']
         with open(f, newline='') as fp:
             sites_to_ids = dict(
                 (site, int(site_id))
@@ -261,14 +263,14 @@ class CreateFeatures(MDCommand):
             files = []
             make_abs = functools.partial(os.path.join, directory)
             for path in imap(make_abs, os.listdir(directory)):
-                if os.path.isfile(directory):
+                if os.path.isfile(path):
                     files.append(path)
         samples = dict()
         for f in files:
             with open(f, newline='') as fp:
                 for site, tstamp, code in csv.reader(fp, delimiter='\t'):
                     tstamp = parse_tstamp(tstamp)
-                    site_id = sites_to_ids[site]
+                    site_id = self.sites_to_ids[site]
                     samples[site_id] = (site, tstamp, code)
         return samples
 
@@ -323,7 +325,7 @@ class CreateFeatures(MDCommand):
         for site, tstamp, code in d_itervalues(self.ids_to_samples):
             features[site] = [code, ]
             for indicator in self.indicators:
-                features[site].append(indicator[site])
+                features[site].append(indicator.data[site])
 
         root, _ = os.path.splitext(self.args.config)
         data_f = '.'.join([root, 'data'])
