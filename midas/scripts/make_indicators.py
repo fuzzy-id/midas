@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-import csv
 import datetime
 import functools
 import itertools
@@ -22,6 +21,7 @@ from midas import parse_tstamp
 from midas.compat import QueueEmpty
 from midas.compat import Queue
 from midas.compat import csv_file_reader
+from midas.compat import csv_file_writer
 from midas.compat import d_iteritems
 from midas.compat import d_itervalues
 from midas.compat import imap
@@ -116,8 +116,7 @@ class Indicator(object):
 
     def update(self, indicators):
         self._cache = dict()
-        with open(self.fname, 'w', newline='') as fp:
-            writer = csv.writer(fp)
+        with csv_file_writer(self.fname) as writer:
             for site, indicator in indicators:
                 writer.writerow([site, indicator])
                 self._cache[site] = indicator
@@ -326,8 +325,7 @@ class CreateFeatures(MDCommand):
         root, _ = os.path.splitext(self.args.config)
         data_f = '.'.join([root, 'data'])
         names_f = '.'.join([root, 'names'])
-        with open(data_f, 'w', newline='') as fp:
-            writer = csv.writer(fp)
+        with csv_file_writer(data_f) as writer:
             for site_id, features in site_id_to_indicator:
                 site, tstamp, code = self.ids_to_sample[site_id]
                 row = [site, code]

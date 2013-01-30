@@ -4,6 +4,7 @@ This module fills the gap between Python 2.6 upwards to Python 3 since
 version 3.2.
 """
 
+import contextlib
 import csv
 import sys
 
@@ -86,11 +87,22 @@ if PY3K:
         with open(fname, newline='') as fp:
             for row in csv.reader(fp, *args, **kwargs):
                 yield row
+
+    @contextlib.contextmanager
+    def csv_file_writer(fname, *args, **kwargs):
+        with open(fname, 'w', newline='') as fp:
+            yield csv.writer(fp, *args, **kwargs)
+
 else:
     def csv_file_reader(fname, *args, **kwargs):
         with open(fname, 'rb') as fp:
             for row in csv.reader(fp, *args, **kwargs):
                 yield row
+
+    @contextlib.contextmanager
+    def csv_file_writer(fname, *args, **kwargs):
+        with open(fname, 'wb') as fp:
+            yield csv.writer(fp, *args, **kwargs)
 
 if PY26:  # pragma: no cover
     import gzip
