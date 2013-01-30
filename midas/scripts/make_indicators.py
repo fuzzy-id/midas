@@ -2,7 +2,11 @@
 
 import argparse
 import datetime
+import functools
 import itertools
+import os
+import os.path
+import operator
 import queue
 import threading
 import struct
@@ -17,6 +21,7 @@ import yaml
 from midas import parse_tstamp
 from midas.compat import d_iteritems
 from midas.compat import d_itervalues
+from midas.compat import imap
 from midas.scripts import CheckDirectoryAction
 from midas.scripts import MDCommand
 from midas.scripts import StoreSingleFileOrDirectoryAction
@@ -131,27 +136,32 @@ class Indicator(object):
 class IndicatorUpdater(threading.Thread):
 
     def __init__(self, ids_to_samples, to_produce_q, caller):
+        threading.Thread.__init__(self)
         self.ids_to_samples = ids_to_samples
         self.to_produce_q = to_produce_q
         self.caller = caller
+        self.failed = False
 
     def run(self):
         while True:
             try:
                 indicator = self.to_produce_q.get(block=False)
+                data = list()
+                for site_id, features in self.caller.call(indicator):
+                    site, tstamp, code = self.ids_to_samples[site_id]
+                    for secs, bool_ in features:
+                        feat_tstamp = datetime.datetime.fromtimestamp(secs)
+                        if tstamp < feat_tstamp:
+                            data.append(site, last_indicator)
+                            break
+                        last_indicator = bool_[0]
+                indicator.update(data)
             except queue.Empty:
                 break
-            data = list()
-            for site_id, features in self.caller.call(indicator):
-                site, tstamp, code = self.ids_to_samples[site_id]
-                for secs, bool_ in features:
-                    feat_tstamp = datetime.datetime.fromtimestamp(secs)
-                    if tstamp < feat_tstamp:
-                        data.append(site, last_indicator)
-                        break
-                    last_indicator = bool_[0]
-            indicator.update(data)
-            self.to_produce_q.task_done()
+            except:
+                self.failed = True
+                self.to_produce_q.task_done()
+                raise
 
 class StreamAlexaIndicatorsCaller(object):
 
@@ -170,7 +180,7 @@ class StreamAlexaIndicatorsCaller(object):
                 'Subprocess did not succeed: {0}'.format(subp.returncode)
                 )
 
-class MakeAlexaIndicators(MDCommand):
+class CreateFeatures(MDCommand):
     """
     Run `stream-alexa-indicators`.
 
@@ -191,22 +201,27 @@ class MakeAlexaIndicators(MDCommand):
             help="How many threads shall work in parallel"
             )
         self.parser.add_argument(
-            '--indicators_cache', type=CheckDirectoryAction,
+            '--indicators_cache',
             help=" ".join(["The directory where indicator files",
-                           "should be cached. The default is the",
-                           "dirname of the `config'-file."])
+                           "should be cached."])
             )
         self.parser.add_argument(
             '--ids_to_sites',
             help="File providing the mapping site_id <-> site"
             )
         self.parser.add_argument(
-            '--samples', type=StoreSingleFileOrDirectoryAction,
+            '--samples',
             help="Directory containing the samples"
             )
         self.parser.add_argument(
             'config',
             help='YAML-file containing the wanted features')
+
+    @lazy.lazy
+    def num_threads(self):
+        if self.args.num_threads:
+            return self.args.num_threads
+        return self.config['num_threads']
 
     @lazy.lazy
     def config(self):
@@ -236,15 +251,24 @@ class MakeAlexaIndicators(MDCommand):
     @lazy.lazy
     def ids_to_samples(self):
         if self.args.samples:
-            f = self.args.samples
+            directory = self.args.samples
         else:
-            f = self.args.config['samples']
-        with open(f, newline='') as fp:
-            samples = dict()
-            for site, tstamp, code in csv.reader(fp, delimiter='\t'):
-                tstamp = parse_tstamp(tstamp)
-                site_id = sites_to_ids[site]
-                samples[site_id] = (site, tstamp, code)
+            directory = self.config['samples']
+        if os.path.isfile(directory):
+            files = [directory, ]
+        else:
+            files = []
+            make_abs = functools.partial(os.path.join, directory)
+            for path in imap(make_abs, os.listdir(directory)):
+                if os.path.isfile(directory):
+                    files.append(path)
+        samples = dict()
+        for f in files:
+            with open(f, newline='') as fp:
+                for site, tstamp, code in csv.reader(fp, delimiter='\t'):
+                    tstamp = parse_tstamp(tstamp)
+                    site_id = sites_to_ids[site]
+                    samples[site_id] = (site, tstamp, code)
         return samples
 
     @lazy.lazy
@@ -274,22 +298,26 @@ class MakeAlexaIndicators(MDCommand):
                 indicators.append(Indicator(filter_, 
                                             days,
                                             threshold, 
-                                            self.cache_dir))
+                                            self.indicators_cache))
         return indicators
 
     def run(self):
         to_produce_q = queue.Queue()
         for i in self.indicators:
-            if not i.produced():
+            if not i.produced:
                 to_produce_q.put(i)
+        threads = []
         for _ in range(min(self.num_threads, to_produce_q.qsize())):
-            t = GetIndicator(self.indicators_cache,
-                             self.ids_to_samples, 
-                             to_produce_q,
-                             StreamAlexaIndicatorsCaller(self.cache_dir))
-            t.daemon = True
+            t = IndicatorUpdater(self.ids_to_samples, 
+                                 to_produce_q,
+                                 StreamAlexaIndicatorsCaller(self.indicators_cache))
             t.start()
-        indicators_q.join()
+            threads.append(t)
+        for t in threads:
+            t.join()
+        if any(imap(operator.attrgetter('failed'), threads)):
+            raise Exception('At least one thread died!')
+        to_produce_q.join()
         features = dict()
         for site, tstamp, code in d_itervalues(self.ids_to_samples):
             features[site] = [code, ]
@@ -313,7 +341,7 @@ class MakeAlexaIndicators(MDCommand):
     def names(self):
         s = NAMES_TPL.format(
             ', '.join(self.classes),
-            '\n'.join('{0}_{1}_{2}:\tTrue, False.'.format(str(i))
+            '\n'.join('{0}:\tTrue, False.'.format(str(i))
                       for i in self.indicators)
             )
         return s
