@@ -152,9 +152,9 @@ class IndicatorUpdater(threading.Thread):
                     for secs, bool_ in features:
                         feat_tstamp = datetime.datetime.fromtimestamp(secs)
                         if tstamp < feat_tstamp:
-                            data.append(site, last_indicator)
                             break
                         last_indicator = bool_[0]
+                    data.append((site, last_indicator))
                 indicator.update(data)
                 self.to_produce_q.task_done()
             except QueueEmpty:
