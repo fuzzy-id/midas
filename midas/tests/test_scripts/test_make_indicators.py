@@ -115,16 +115,20 @@ rsi_2_1:\tTrue, False.
 class CallStreamAlexaIndicatorsTests(unittest.TestCase):
 
     def _get_target(self):
-        from midas.scripts.make_indicators import call_stream_alexa_indicators
-        return call_stream_alexa_indicators
+        from midas.scripts.make_indicators import StreamAlexaIndicatorsCaller
+        return StreamAlexaIndicatorsCaller
 
     @mock.patch("subprocess.Popen")
     def test_mocked_popen(self, Popen):
-        Popen().stdout = io.BytesIO(b'\x01\x00\x00\x00\xb1\xb9\x02M\x07\x00\x00\x00\x00')
+        Popen().stdout = io.BytesIO(
+            b'\x01\x00\x00\x00\xb1\xb9\x02M\x01\x00\x00\x00\x00'
+            )
         Popen().poll.return_value = 0
-        func = self._get_target()
-        result = list(func(CONF))
-        expected = [(1, [(1292024241, bitarray.bitarray('1110'))])]
+        dummy_indicator = mock.MagicMock()
+        cls = self._get_target()
+        obj = cls('non_existent_cmd')
+        result = list(obj.call(dummy_indicator))
+        expected = [(1, [(1292024241, bitarray.bitarray('1'))])]
         self.assertEqual(result, expected)
 
 
