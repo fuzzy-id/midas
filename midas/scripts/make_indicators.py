@@ -93,12 +93,14 @@ class Indicator(object):
         self.threshold = threshold
         self.cache_dir = cache_dir
 
+    def __str__(self):
+        return '{0}_{1}_{2}'.format(self.name, 
+                                    self.ndays,
+                                    self.threshold)
+
     @lazy.lazy
     def fname(self):
-        return os.path.join(self.cache_dir, 
-                            '_'.join(map(str, [self.name,
-                                               self.ndays,
-                                               self.threshold])))
+        return os.path.join(self.cache_dir, str(self))
 
     @property
     def produced(self):
@@ -116,7 +118,7 @@ class Indicator(object):
     def data(self):
         d = dict()
         with open(self.fname, newline='') as fp:
-            reader = csv.reader(fp):
+            reader = csv.reader(fp)
             for site, bool_ in reader:
                 if bool_ == 'True':
                     bool_ = True
@@ -311,9 +313,7 @@ class MakeAlexaIndicators(MDCommand):
     def names(self):
         s = NAMES_TPL.format(
             ', '.join(self.classes),
-            '\n'.join('{0}_{1}_{2}:\tTrue, False.'.format(i.name,
-                                                          i.ndays,
-                                                          i.threshold)
-                      for t in self.indicators)
+            '\n'.join('{0}_{1}_{2}:\tTrue, False.'.format(str(i))
+                      for i in self.indicators)
             )
         return s
