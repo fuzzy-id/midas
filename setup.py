@@ -8,6 +8,7 @@ from setuptools import setup
 PY_VERSION = sys.version_info[:2]
 
 INSTALL_REQUIRES = ['bitarray',
+                    'lazy',
                     'pyyaml']
 
 TESTS_REQUIRE = ['mock']
