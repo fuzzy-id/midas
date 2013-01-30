@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import datetime
 import itertools
 import queue
 import threading
@@ -90,36 +91,76 @@ class VerifyIndicatorStream(MDCommand):
             for site_id, features in iter_features(fp, self.args.num_features):
                 self.out(to_string(site_id, features))
 
-class GetIndicator(threading.Thread):
 
-    def __init__(self, cache_path, ids_to_samples, indicators_q, features_q):
-        self.cache_path = cache_path
+class Indicator(object):
+
+    def __init__(self, name, ndays, threshold, cache_dir):
+        self.name = name
+        self.ndays = ndays
+        self.threshold = threshold
+        self.cache_dir = cache_dir
+        self._cache = None
+
+    @property
+    def fname(self):
+        return os.path.join(self.cache_dir, 
+                            '_'.join(map(str, [self.name,
+                                               self.ndays,
+                                               self.threshold])))
+
+    @property
+    def produced(self):
+        return os.path.isfile(self.fname)
+
+    def update(self, indicators):
+        self._cache = dict()
+        with open(self.fname, 'w', newline='') as fp:
+            writer = csv.writer(fp)
+            for site, indicator in indicators:
+                writer.writerow([site, indicator])
+                self._cache[site] = indicator
+            
+    @property    
+    def data(self):
+        if self._cache is None:
+            self._cache = dict()
+            with open(self.fname, newline='') as fp:
+                reader = csv.reader(fp):
+                for site, bool_ in reader:
+                    if bool_ == 'True':
+                        bool_ = True
+                    else:
+                        bool_ = False
+                    self._cache[site] = bool_
+        return self._cache
+
+
+class IndicatorUpdater(threading.Thread):
+
+    def __init__(self, ids_to_samples, to_produce_q):
         self.ids_to_samples = ids_to_samples
-        self.indicators_q = indicators_q
-        self.features_q = features_q
+        self.to_produce_q = to_produce_q
 
     def run(self):
         while True:
             try:
-                feature = self.indicators_q.get(block=False)
+                indicator = self.to_produce_q.get(block=False)
             except queue.Empty:
                 break
-            feature_name = '_'.join(feature)
-            feature_file = os.path.join(self.cache_path, feature_name)
-            site_id_to_indicator = dict()
-            if os.path.isfile(feature_file):
-                with open(feature_file, newline='') as fp:
-                    reader = csv.reader(fp)
-                    for site_id, indicator in reader:
-                        site_id = int(site_id)
-                        if indicator == 'True':
-                            indicator = True
-                        else:
-                            indicator = False
+            data = list()
+            for site_id, features in make_indicator(indicator):
+                site, tstamp, code = self.ids_to_samples[site_id]
+                for secs, bool_ in features:
+                    feat_tstamp = datetime.datetime.fromtimestamp(secs)
+                    if tstamp < feat_tstamp:
+                        data.append(site, last_indicator)
+                        break
+                    last_indicator = bool_[0]
+            indicator.update(data)
+            self.to_produce_q.task_done()
 
-
-def call_stream_alexa_indicators(conf):
-    cmd = [conf['exec'], '--dbpivot']
+def make_indicator(indicator):
+    cmd = [, '--dbpivot']
     num_features = 0
     for args in expand_config(conf):
         cmd.append(','.join(map(str, args)))
