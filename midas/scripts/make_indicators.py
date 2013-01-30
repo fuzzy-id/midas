@@ -193,7 +193,7 @@ class CreateFeatures(MDCommand):
 
     def add_argument(self):
         self.parser.add_argument(
-            '--exec',
+            '--executable',
             help="The path to the `stream-alexa-indicators' command"
             )
         self.parser.add_argument(
@@ -231,9 +231,9 @@ class CreateFeatures(MDCommand):
 
     @lazy.lazy
     def cmd_path(self):
-        if self.args.exec:
-            return self.args.exec
-        return self.config['exec']
+        if self.args.executable:
+            return self.args.executable
+        return self.config['executable']
 
     @lazy.lazy
     def sites_to_ids(self):
