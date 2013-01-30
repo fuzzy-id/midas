@@ -14,7 +14,7 @@ from midas.tests import TEST_DATA_PATH
 from midas.tests.test_scripts import IntegrationTestCase
 from midas.tests.test_scripts import MDCommandTestCase
 
-CONF = {'exec': 'non_existent',
+CONF = {'executable': 'non_existent',
         'num_threads': 1,
         'ids_to_sites': TEST_DATA_PATH['ids_to_sites'],
         'samples': TEST_DATA_PATH['samples'],
