@@ -52,8 +52,10 @@ else:
 
 if PY3K:  # pragma: no cover
     from queue import Queue
+    from queue import Empty as QueueEmpty
 else:
     from Queue import Queue
+    from Queue import Empty as QueueEmpty
 
 if PY3K:  # pragma: no cover
     from urllib.parse import urlparse

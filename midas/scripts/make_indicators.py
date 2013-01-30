@@ -7,7 +7,6 @@ import itertools
 import os
 import os.path
 import operator
-import queue
 import threading
 import struct
 import subprocess
@@ -19,6 +18,8 @@ import numpy
 import yaml
 
 from midas import parse_tstamp
+from midas.compat import QueueEmpty
+from midas.compat import Queue
 from midas.compat import d_iteritems
 from midas.compat import d_itervalues
 from midas.compat import imap
@@ -156,7 +157,7 @@ class IndicatorUpdater(threading.Thread):
                             break
                         last_indicator = bool_[0]
                 indicator.update(data)
-            except queue.Empty:
+            except QueueEmpty:
                 break
             except:
                 self.failed = True
@@ -302,7 +303,7 @@ class CreateFeatures(MDCommand):
         return indicators
 
     def run(self):
-        to_produce_q = queue.Queue()
+        to_produce_q = Queue()
         for i in self.indicators:
             if not i.produced:
                 to_produce_q.put(i)
