@@ -172,10 +172,13 @@ rsi_2_1:\tTrue, False.
         conf['rsi'] = {'ndays': [0, ],
                        'thresholds': [0, ]}
         self.assertEqual(self._call_cmd(self._make_conf(conf)), 0)
-        with open(indicators_f) as fp:
-            self.assertEqual(fp.read(), '1\t{(1292024241,(True,True,True,False))}\n')
+        with open(data_f) as fp:
+            expected = ['baz.bar.example.com,negative,True',
+                        'foo.example.com,angel,True']
+            for result, expect in zip(fp, expected):
+                self.assertEqual(result.rstrip(), expect)
         with open(names_f) as fp:
-            self.assertTrue(fp.read().startswith('\nclass'))
+            self.assertTrue(fp.read().startswith('class'))
 
 
 if __name__ == '__main__':  # pragma: no cover
