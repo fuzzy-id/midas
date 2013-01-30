@@ -168,7 +168,10 @@ rsi_2_1:\tTrue, False.
         Popen().poll.return_value = 0
         names_f = os.path.join(self.tmpd, 'some.names')
         data_f = os.path.join(self.tmpd, 'some.data')
-        self.assertEqual(self._call_cmd(self._make_conf()), 0)
+        conf = copy.copy(CONF)
+        conf['rsi'] = {'ndays': [0, ],
+                       'thresholds': [0, ]}
+        self.assertEqual(self._call_cmd(self._make_conf(conf)), 0)
         with open(indicators_f) as fp:
             self.assertEqual(fp.read(), '1\t{(1292024241,(True,True,True,False))}\n')
         with open(names_f) as fp:
