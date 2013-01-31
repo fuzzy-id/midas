@@ -90,6 +90,7 @@ class CallStreamAlexaIndicatorsTests(unittest.TestCase):
             )
         Popen().wait.return_value = 0
         dummy_indicator = mock.MagicMock()
+        dummy_indicator.threshold = 0
         cls = self._get_target()
         obj = cls('non_existent_cmd')
         result = list(obj.call(dummy_indicator))
@@ -120,17 +121,17 @@ class CreateFeaturesTests(IntegrationTestCase):
 
 site:\tlabel.
 class:\tseed, angel, a, negative.
-rsi_0_0:\tTrue, False.
-rsi_0_1:\tTrue, False.
-rsi_2_0:\tTrue, False.
-rsi_2_1:\tTrue, False.
+rsi_0_0.00:\tTrue, False.
+rsi_0_1.00:\tTrue, False.
+rsi_2_0.00:\tTrue, False.
+rsi_2_1.00:\tTrue, False.
 """
         self.assertEqual(obj.names, expected)
 
     def test_indicators_start_stop_step_on_ndays_and_threshold(self):
         cls = self._get_target_cls()
         obj = cls(['cmd', self._make_conf(), ])
-        expected = ['rsi_0_0', 'rsi_0_1', 'rsi_2_0', 'rsi_2_1']
+        expected = ['rsi_0_0.00', 'rsi_0_1.00', 'rsi_2_0.00', 'rsi_2_1.00']
         self.assertEqual(list(map(str, obj.indicators)), expected)
 
     def test_list_on_ndays_and_threshold(self):
@@ -139,7 +140,7 @@ rsi_2_1:\tTrue, False.
         conf['rsi'] = {'ndays': [0, 1],
                        'thresholds': [0, 2]}
         obj = cls(['cmd', self._make_conf(conf)])
-        expected = ['rsi_0_0', 'rsi_0_2', 'rsi_1_0', 'rsi_1_2']
+        expected = ['rsi_0_0.00', 'rsi_0_2.00', 'rsi_1_0.00', 'rsi_1_2.00']
         self.assertEqual(list(map(str, obj.indicators)), expected)
 
     def test_sites_to_ids(self):
@@ -173,7 +174,7 @@ rsi_2_1:\tTrue, False.
         conf['rsi'] = {'ndays': [0, ],
                        'thresholds': [0, ]}
         self.assertEqual(self._call_cmd(self._make_conf(conf)), 0)
-        Popen.assert_called_with(['non_existent', '--dbpivot', 'rsi,0,0'], 
+        Popen.assert_called_with(['non_existent', '--dbpivot', 'rsi,0,0.00'], 
                                  stdout=subprocess.PIPE)
         with open(data_f) as fp:
             expected = ['baz.bar.example.com,negative,True',

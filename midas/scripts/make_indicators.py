@@ -103,9 +103,9 @@ class Indicator(object):
         self.cache_dir = cache_dir
 
     def __str__(self):
-        return '{0}_{1}_{2}'.format(self.name, 
-                                    self.ndays,
-                                    self.threshold)
+        return '{0}_{1}_{2:.2f}'.format(self.name, 
+                                        self.ndays,
+                                        self.threshold)
 
     @lazy.lazy
     def fname(self):
@@ -177,7 +177,7 @@ class StreamAlexaIndicatorsCaller(object):
     def call(self, indicator):
         args = [self.cmd, ]
         args.extend(self.arguments)
-        args.append('{i.name},{i.ndays},{i.threshold}'.format(i=indicator))
+        args.append('{i.name},{i.ndays},{i.threshold:.2f}'.format(i=indicator))
         subp = subprocess.Popen(args, stdout=subprocess.PIPE)
         for features in iter_features(subp.stdout, self.num_features):
             yield features
