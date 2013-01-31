@@ -173,11 +173,10 @@ class StreamAlexaIndicatorsCaller(object):
         self.num_features = num_features
 
     def call(self, indicator):
-        args = copy.copy(self.arguments)
+        args = [self.cmd, ]
+        args.extend(self.arguments)
         args.append('{i.name},{i.ndays},{i.threshold}'.format(i=indicator))
-        subp = subprocess.Popen(args, 
-                                executable=self.cmd, 
-                                stdout=subprocess.PIPE)
+        subp = subprocess.Popen(args, stdout=subprocess.PIPE)
         for features in iter_features(subp.stdout, self.num_features):
             yield features
         if subp.poll() != 0:  # pragma: no cover
