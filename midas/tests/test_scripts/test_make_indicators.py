@@ -4,6 +4,7 @@ import copy
 import datetime
 import io
 import os.path
+import subprocess
 
 import bitarray
 import mock
@@ -172,6 +173,9 @@ rsi_2_1:\tTrue, False.
         conf['rsi'] = {'ndays': [0, ],
                        'thresholds': [0, ]}
         self.assertEqual(self._call_cmd(self._make_conf(conf)), 0)
+        Popen.assert_called_with(['--dbpivot', 'rsi,0,0'], 
+                                 executable='non_existent', 
+                                 stdout=subprocess.PIPE)
         with open(data_f) as fp:
             expected = ['baz.bar.example.com,negative,True',
                         'foo.example.com,angel,True']

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import copy
 import datetime
 import functools
 import itertools
@@ -172,8 +173,11 @@ class StreamAlexaIndicatorsCaller(object):
         self.num_features = num_features
 
     def call(self, indicator):
-        cmd = [self.cmd, ] + self.arguments + [ str(indicator) ]
-        subp = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+        args = copy.copy(self.arguments)
+        args.append('{i.name},{i.ndays},{i.threshold}'.format(i=indicator))
+        subp = subprocess.Popen(args, 
+                                executable=self.cmd, 
+                                stdout=subprocess.PIPE)
         for features in iter_features(subp.stdout, self.num_features):
             yield features
         if subp.poll() != 0:  # pragma: no cover
@@ -308,7 +312,7 @@ class CreateFeatures(MDCommand):
         for _ in range(min(self.num_threads, to_produce_q.qsize())):
             t = IndicatorUpdater(self.ids_to_samples, 
                                  to_produce_q,
-                                 StreamAlexaIndicatorsCaller(self.indicators_cache))
+                                 StreamAlexaIndicatorsCaller(self.cmd_path))
             t.start()
             threads.append(t)
         for t in threads:
