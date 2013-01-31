@@ -88,7 +88,7 @@ class CallStreamAlexaIndicatorsTests(unittest.TestCase):
         Popen().stdout = io.BytesIO(
             b'\x01\x00\x00\x00\xb1\xb9\x02M\x01\x00\x00\x00\x00'
             )
-        Popen().poll.return_value = 0
+        Popen().wait.return_value = 0
         dummy_indicator = mock.MagicMock()
         cls = self._get_target()
         obj = cls('non_existent_cmd')
@@ -166,7 +166,7 @@ rsi_2_1:\tTrue, False.
             b'\x01\x00\x00\x00\xb1\xb9\x02M\x01\x00\x00\x00\x00'
             + b'\x02\x00\x00\x00\xb1\xb9\x02M\x01\x00\x00\x00\x00'
             )
-        Popen().poll.return_value = 0
+        Popen().wait.return_value = 0
         names_f = os.path.join(self.tmpd, 'some.names')
         data_f = os.path.join(self.tmpd, 'some.data')
         conf = copy.copy(CONF)

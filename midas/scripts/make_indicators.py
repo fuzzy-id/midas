@@ -181,7 +181,7 @@ class StreamAlexaIndicatorsCaller(object):
         subp = subprocess.Popen(args, stdout=subprocess.PIPE)
         for features in iter_features(subp.stdout, self.num_features):
             yield features
-        if subp.poll() != 0:  # pragma: no cover
+        if subp.wait() != 0:  # pragma: no cover
             raise Exception(
                 'Subprocess did not succeed: {0}'.format(subp.returncode)
                 )
