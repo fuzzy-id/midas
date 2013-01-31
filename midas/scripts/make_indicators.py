@@ -149,6 +149,8 @@ class IndicatorUpdater(threading.Thread):
                 indicator = self.to_produce_q.get(block=False)
                 data = list()
                 for site_id, features in self.caller.call(indicator):
+                    if site_id not in self.ids_to_samples:
+                        continue
                     site, tstamp, code = self.ids_to_samples[site_id]
                     for secs, bool_ in features:
                         feat_tstamp = datetime.datetime.fromtimestamp(secs)
