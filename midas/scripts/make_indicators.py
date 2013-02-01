@@ -325,7 +325,14 @@ class CreateFeatures(MDCommand):
         for site, tstamp, code in d_itervalues(self.ids_to_samples):
             features[site] = list()
             for indicator in self.indicators:
-                features[site].append(indicator.data[site])
+                try:
+                    feature = indicator.data[site]
+                except KeyError:
+                    self.out(
+                        'Could not find {0} in indicators stream'.format(site)
+                        )
+                else:
+                    features[site].append(feature)
 
         root, _ = os.path.splitext(self.args.config)
         data_f = '.'.join([root, 'data'])
