@@ -339,9 +339,10 @@ class CreateFeatures(MDCommand):
         names_f = '.'.join([root, 'names'])
         with csv_file_writer(data_f) as writer:
             for site, tstamp, code in d_itervalues(self.ids_to_samples):
-                row = [site, code]
-                row.extend(features[site])
-                writer.writerow(row)
+                if len(features[site]) == len(self.indicators):
+                    row = [site, code]
+                    row.extend(features[site])
+                    writer.writerow(row)
         with open(names_f, 'w') as fp:
             fp.write(self.names)
 
