@@ -134,6 +134,15 @@ rsi_2_1.00:\tTrue, False.
         expected = ['rsi_0_0.00', 'rsi_0_1.00', 'rsi_2_0.00', 'rsi_2_1.00']
         self.assertEqual(list(map(str, obj.indicators)), expected)
 
+    def test_rank_feature(self):
+        cls = self._get_target_cls()
+        conf = copy.copy(CONF)
+        del conf['rsi']
+        conf['rank'] = {'thresholds': [10, 20]}
+        obj = cls(['cmd', self._make_conf(conf)])
+        expected = ['rank_10', 'rank_20']
+        self.assertEqual(list(map(str, obj.indicators)), expected)
+
     def test_list_on_ndays_and_threshold(self):
         cls = self._get_target_cls()
         conf = copy.copy(CONF)
@@ -162,7 +171,7 @@ rsi_2_1.00:\tTrue, False.
         self.assertEqual(obj.ids_to_samples, expected)
 
     @mock.patch("subprocess.Popen")
-    def test_mocked_popen(self, Popen):
+    def test_rsi_with_mocked_popen(self, Popen):
         Popen().stdout = io.BytesIO(
             b'\x01\x00\x00\x00\xb1\xb9\x02M\x01\x00\x00\x00\x00'
             + b'\x02\x00\x00\x00\xb1\xb9\x02M\x01\x00\x00\x00\x00'
@@ -175,6 +184,29 @@ rsi_2_1.00:\tTrue, False.
                        'thresholds': [0, ]}
         self.assertEqual(self._call_cmd(self._make_conf(conf)), 0)
         Popen.assert_called_with(['non_existent', '--dbpivot', 'rsi,0,0.00'], 
+                                 stdout=subprocess.PIPE)
+        with open(data_f) as fp:
+            expected = ['baz.bar.example.com,negative,True',
+                        'foo.example.com,angel,True']
+            for result, expect in zip(fp, expected):
+                self.assertEqual(result.rstrip(), expect)
+        with open(names_f) as fp:
+            self.assertTrue(fp.read().startswith('class'))
+
+    @mock.patch("subprocess.Popen")
+    def test_rsi_with_mocked_popen(self, Popen):
+        Popen().stdout = io.BytesIO(
+            b'\x01\x00\x00\x00\xb1\xb9\x02M\x01\x00\x00\x00\x00'
+            + b'\x02\x00\x00\x00\xb1\xb9\x02M\x01\x00\x00\x00\x00'
+            )
+        Popen().wait.return_value = 0
+        names_f = os.path.join(self.tmpd, 'some.names')
+        data_f = os.path.join(self.tmpd, 'some.data')
+        conf = copy.copy(CONF)
+        del conf['rsi']
+        conf['rank'] = {'thresholds': [10, ]}
+        self.assertEqual(self._call_cmd(self._make_conf(conf)), 0)
+        Popen.assert_called_with(['non_existent', '--dbpivot', 'rank,10'], 
                                  stdout=subprocess.PIPE)
         with open(data_f) as fp:
             expected = ['baz.bar.example.com,negative,True',

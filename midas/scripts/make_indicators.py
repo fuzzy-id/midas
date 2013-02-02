@@ -103,9 +103,18 @@ class Indicator(object):
         self.cache_dir = cache_dir
 
     def __str__(self):
+        if self.name == 'rank':
+            return '{0}_{1}'.format(self.name, self.threshold)
         return '{0}_{1}_{2:.2f}'.format(self.name, 
                                         self.ndays,
                                         self.threshold)
+
+    @lazy.lazy
+    def cmd_argument(self):
+        if self.name == 'rank':
+            return '{i.name},{i.threshold}'.format(i=self)
+        return '{i.name},{i.ndays},{i.threshold:.2f}'.format(i=self)
+
 
     @lazy.lazy
     def fname(self):
@@ -177,7 +186,7 @@ class StreamAlexaIndicatorsCaller(object):
     def call(self, indicator):
         args = [self.cmd, ]
         args.extend(self.arguments)
-        args.append('{i.name},{i.ndays},{i.threshold:.2f}'.format(i=indicator))
+        args.append(indicator.cmd_argument)
         subp = subprocess.Popen(args, stdout=subprocess.PIPE)
         for features in iter_features(subp.stdout, self.num_features):
             yield features
@@ -287,12 +296,15 @@ class CreateFeatures(MDCommand):
             if not filter_ in self.config:
                 continue
             args = self.config[filter_]
-            ndays = args['ndays']
+            if filter_ != 'rank':
+                ndays = args['ndays']
+                if isinstance(ndays, dict):
+                    ndays = numpy.arange(ndays['start'], 
+                                         ndays['stop'], 
+                                         ndays.get('step', 1))
+            else:
+                ndays = [None, ]
             thresholds = args['thresholds']
-            if isinstance(ndays, dict):
-                ndays = numpy.arange(ndays['start'], 
-                                     ndays['stop'], 
-                                     ndays.get('step', 1))
             if isinstance(thresholds, dict):
                 thresholds = numpy.arange(thresholds['start'], 
                                           thresholds['stop'], 
