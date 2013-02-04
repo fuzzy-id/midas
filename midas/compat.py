@@ -53,6 +53,11 @@ else:
     from StringIO import StringIO
 
 if PY3K:  # pragma: no cover
+    comp_input = input
+else:
+    comp_input = raw_input
+
+if PY3K:  # pragma: no cover
     from queue import Queue
     from queue import Empty as QueueEmpty
 else:
