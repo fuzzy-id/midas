@@ -161,7 +161,7 @@ rsi_2_1.00:\tTrue, False.
 
     def test_ids_to_samples(self):
         cls = self._get_target_cls()
-        obj = cls(['cmd', self._make_conf()])
+        obj = cls(['cmd', '-q', self._make_conf()])
         expected = {1: ('baz.bar.example.com', 
                         datetime.datetime(2010, 12, 13),
                         'negative'),
@@ -182,7 +182,7 @@ rsi_2_1.00:\tTrue, False.
         conf = copy.copy(CONF)
         conf['rsi'] = {'ndays': [0, ],
                        'thresholds': [0, ]}
-        self.assertEqual(self._call_cmd(self._make_conf(conf)), 0)
+        self.assertEqual(self._call_cmd('-y', self._make_conf(conf)), 0)
         Popen.assert_called_with(['non_existent', '--dbpivot', 'rsi,0,0.00'], 
                                  stdout=subprocess.PIPE)
         with open(data_f) as fp:
@@ -205,7 +205,7 @@ rsi_2_1.00:\tTrue, False.
         conf = copy.copy(CONF)
         del conf['rsi']
         conf['rank'] = {'thresholds': [10, ]}
-        self.assertEqual(self._call_cmd(self._make_conf(conf)), 0)
+        self.assertEqual(self._call_cmd('-y', self._make_conf(conf)), 0)
         Popen.assert_called_with(['non_existent', '--dbpivot', 'rank,10'], 
                                  stdout=subprocess.PIPE)
         with open(data_f) as fp:

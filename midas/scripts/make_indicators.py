@@ -318,9 +318,13 @@ class CreateFeatures(MDCommand):
 
     def run(self):
         to_produce_q = Queue()
+        self.out('Generating the following indicators:')
         for i in self.indicators:
             if not i.produced:
                 to_produce_q.put(i)
+                self.out(str(i))
+        if not self.query_user_permission('Proceed?'):
+            raise SystemExit('Canceled due to user interaction')
         threads = []
         for _ in range(min(self.num_threads, to_produce_q.qsize())):
             t = IndicatorUpdater(self.ids_to_samples, 
