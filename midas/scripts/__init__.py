@@ -91,8 +91,11 @@ class MDCommand(object):
                 formatter_class=argparse.RawDescriptionHelpFormatter,
                 description=textwrap.dedent(self.__doc__)
                 )
-            parser.add_argument('-q', '--quiet', action='store_true',
-                                help='Suppress status messages')
+            group = parser.add_mutually_exclusive_group()
+            group.add_argument('-q', '--quiet', action='store_true',
+                               help='Suppress status messages')
+            group.add_argument('-y', '--always_yes', action='store_true',
+                               help='Always give permission')
             self._parser = parser
             self.add_argument()
         return self._parser
@@ -112,3 +115,13 @@ class MDCommand(object):
     @property
     def stdin(self):
         return self._in
+
+    def query_user_permission(self, question, prompt='[Yes/no]'):
+        permissive = { '': True,
+                       'y': True,
+                       'yes': True }
+        if self.args.always_yes:
+            return True
+        self.out(question, newline='')
+        answer = comp_input(prompt).lower()
+        return permissive.get(answer, False)
