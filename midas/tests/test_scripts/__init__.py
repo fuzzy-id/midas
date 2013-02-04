@@ -19,12 +19,25 @@ class MDCommandTestCase(unittest.TestCase):
         self.stdin.seek(0)
         cls._in = self.stdin
 
-    def _call_cmd(self, *args):
+    def _get_and_initialize_cls(self):
         cls = self._get_target_cls()
         self.prepare_stdout(cls)
         self.prepare_stdin(cls)
-        effargs = [cls.__name__]
+        return cls
+
+    def _make_effargs(self, *args):
+        effargs = ["md_command"]
         effargs.extend(args)
+        return effargs
+
+    def make_object(self, *args):
+        cls = self._get_and_initialize_cls()
+        effargs = self._make_effargs(*args)
+        return cls(effargs)
+
+    def _call_cmd(self, *args):
+        cls = self._get_and_initialize_cls()
+        effargs = self._make_effargs(*args)
         return cls.cmd(effargs)
 
     def _get_value(self, buf):
