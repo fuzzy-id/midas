@@ -15,6 +15,7 @@ import sys
 import textwrap
 
 from midas.compat import imap
+from midas.compat import comp_input
 
 
 class CheckDirectoryAction(argparse.Action):
@@ -108,9 +109,9 @@ class MDCommand(object):
         """
         pass
 
-    def out(self, msg):
+    def out(self, msg, **kwargs):
         if not self.args.quiet:
-            print(msg, file=self._out)
+            print(msg, file=self._out, **kwargs)
 
     @property
     def stdin(self):
@@ -122,6 +123,6 @@ class MDCommand(object):
                        'yes': True }
         if self.args.always_yes:
             return True
-        self.out(question, newline='')
+        self.out(question, end='')
         answer = comp_input(prompt).lower()
         return permissive.get(answer, False)

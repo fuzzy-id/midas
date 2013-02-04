@@ -32,3 +32,13 @@ class MDCommandArgumentsTests(MDCommandTestCase):
             error.assert_called_once_with(
                 'argument -y/--always_yes: not allowed with argument -q/--quiet'
             )
+
+    def test_query_user_permission(self):
+        obj = self.make_object()
+        with mock.patch('midas.scripts.comp_input') as comp_input:
+            comp_input.return_value = 'Y'
+            self.assertTrue(obj.query_user_permission('dummy query'))
+            self.assert_in_cls_out('dummy query')
+            comp_input.return_value = 'n'
+            self.assertFalse(obj.query_user_permission('dummy query'))
+            self.assert_in_cls_out('dummy query')
