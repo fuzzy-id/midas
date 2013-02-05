@@ -200,11 +200,13 @@ class StreamAlexaIndicatorsCaller(object):
 
 class CreateFeatures(MDCommand):
     """
-    Run `stream-alexa-indicators`.
+    Generate features via `stream-alexa-indicators'. Collect all
+    features and write them to a file suitable for further processing
+    with C5.0.
 
-    The arguments can either be given via the YAML config file or the
-    command-line. If an argument is provided in both ways the
-    command-line takes precedence.
+    The options in the `Feature Generation' group can either be given
+    via the YAML config file or the command-line. If an argument is
+    provided in both ways the command-line takes precedence.
     """
 
     classes=['seed', 'angel', 'a', 'negative']
@@ -216,42 +218,47 @@ class CreateFeatures(MDCommand):
 
 
     def add_argument(self):
-        self.parser.add_argument(
+        group = self.parser.add_argument_group('Feature Generation')
+        group.add_argument(
             '--executable',
             help="The path to the `stream-alexa-indicators' command"
             )
-        self.parser.add_argument(
+        group.add_argument(
             '--num_threads', type=int,
             help="How many threads shall work in parallel"
             )
-        self.parser.add_argument(
+        group.add_argument(
             '--indicators_cache',
             help=" ".join(["The directory where indicator files",
                            "should be cached."])
             )
-        self.parser.add_argument(
+        group.add_argument(
             '--ids_to_sites',
             help="File providing the mapping site_id <-> site"
             )
-        self.parser.add_argument(
+        group.add_argument(
             '--samples',
             help="Directory containing the samples"
+            )
+        self.parser.add_argument(
+            '--weka', action='store_true',
+            help="Collect features in an ARFF file suitable for WEKA"
             )
         self.parser.add_argument(
             'config',
             help='YAML-file containing the wanted features')
 
     @lazy.lazy
-    def num_threads(self):
-        if self.args.num_threads:
-            return self.args.num_threads
-        return self.config['num_threads']
-
-    @lazy.lazy
     def config(self):
         with open(self.args.config) as fp:
             config = yaml.safe_load(fp.read())
         return config
+
+    @lazy.lazy
+    def num_threads(self):
+        if self.args.num_threads:
+            return self.args.num_threads
+        return self.config['num_threads']
 
     @lazy.lazy
     def cmd_path(self):
@@ -326,6 +333,26 @@ class CreateFeatures(MDCommand):
         return indicators
 
     def run(self):
+        self.generate_missing_indicators()
+
+        root, _ = os.path.splitext(self.args.config)
+        data_f = '.'.join([root, 'data'])
+        with csv_file_writer(data_f) as writer:
+            writer.writerows(self._iter_rows())
+
+        names_f = '.'.join([root, 'names'])
+        with open(names_f, 'w') as fp:
+            fp.write(self.names)
+
+    def _iter_rows(self):
+        for site, tstamp, code in d_itervalues(self.ids_to_samples):
+            row = [site, code]
+            for indicator in self.indicators:
+                feature = indicator.data.get(site, '?')
+                row.append(feature)
+            yield row
+        
+    def generate_missing_indicators(self):
         to_produce_q = Queue()
         self.out('Generating the following indicators:')
         for i in self.indicators:
@@ -334,6 +361,7 @@ class CreateFeatures(MDCommand):
                 self.out(str(i))
         if not self.query_user_permission('Proceed?'):
             raise SystemExit('Canceled due to user interaction')
+
         threads = []
         for _ in range(min(self.num_threads, to_produce_q.qsize())):
             t = IndicatorUpdater(self.ids_to_samples, 
@@ -346,30 +374,6 @@ class CreateFeatures(MDCommand):
         if any(imap(operator.attrgetter('failed'), threads)):
             raise Exception('At least one thread died!')
         to_produce_q.join()
-        features = dict()
-        for site, tstamp, code in d_itervalues(self.ids_to_samples):
-            features[site] = list()
-            for indicator in self.indicators:
-                try:
-                    feature = indicator.data[site]
-                except KeyError:
-                    self.out(
-                        'Could not find {0} in indicators stream'.format(site)
-                        )
-                else:
-                    features[site].append(feature)
-
-        root, _ = os.path.splitext(self.args.config)
-        data_f = '.'.join([root, 'data'])
-        names_f = '.'.join([root, 'names'])
-        with csv_file_writer(data_f) as writer:
-            for site, tstamp, code in d_itervalues(self.ids_to_samples):
-                if len(features[site]) == len(self.indicators):
-                    row = [site, code]
-                    row.extend(features[site])
-                    writer.writerow(row)
-        with open(names_f, 'w') as fp:
-            fp.write(self.names)
 
     @lazy.lazy
     def names(self):
