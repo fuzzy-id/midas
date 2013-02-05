@@ -7,7 +7,8 @@ from setuptools import setup
 
 PY_VERSION = sys.version_info[:2]
 
-INSTALL_REQUIRES = ['bitarray',
+INSTALL_REQUIRES = ['arff',
+                    'bitarray',
                     'lazy',
                     'pyyaml']
 

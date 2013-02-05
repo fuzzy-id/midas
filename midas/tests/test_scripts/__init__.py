@@ -44,6 +44,10 @@ class MDCommandTestCase(unittest.TestCase):
         buf.seek(0)
         return buf.getvalue()
 
+    def assert_call_succeeds(self, *args):
+        ret_val = self._call_cmd(*args)
+        self.assertEqual(ret_val, 0)
+
     def assert_in_cls_out(self, s):
         out = self._get_value(self.out)
         self.assertIn(s, out)

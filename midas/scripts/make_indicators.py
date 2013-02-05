@@ -12,6 +12,7 @@ import struct
 import subprocess
 import sys
 
+import arff
 import bitarray
 import lazy
 import numpy
@@ -334,7 +335,20 @@ class CreateFeatures(MDCommand):
 
     def run(self):
         self.generate_missing_indicators()
+        if self.args.weka:
+            self.produce_features_weka()
+        else:
+            self.produce_features_see5()
 
+    def produce_features_weka(self):
+        root, _ = os.path.splitext(self.args.config)
+        arff_f = '.'.join([root, 'arff'])
+        relation = os.path.basename(root)
+        names = [ 'site', 'code' ]
+        names.extend(imap(str, self.indicators))
+        arff.dump(arff_f, self._iter_rows(), relation=root, names=names)
+
+    def produce_features_see5(self):
         root, _ = os.path.splitext(self.args.config)
         data_f = '.'.join([root, 'data'])
         with csv_file_writer(data_f) as writer:

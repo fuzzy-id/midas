@@ -6,6 +6,7 @@ import io
 import os.path
 import subprocess
 
+import arff
 import bitarray
 import mock
 import yaml
@@ -194,7 +195,7 @@ rsi_2_1.00:\tTrue, False.
             self.assertTrue(fp.read().startswith('class'))
 
     @mock.patch("subprocess.Popen")
-    def test_rsi_with_mocked_popen(self, Popen):
+    def test_rank_with_mocked_popen(self, Popen):
         Popen().stdout = io.BytesIO(
             b'\x01\x00\x00\x00\xb1\xb9\x02M\x01\x00\x00\x00\x00'
             + b'\x02\x00\x00\x00\xb1\xb9\x02M\x01\x00\x00\x00\x00'
@@ -215,6 +216,26 @@ rsi_2_1.00:\tTrue, False.
                 self.assertEqual(result.rstrip(), expect)
         with open(names_f) as fp:
             self.assertTrue(fp.read().startswith('class'))
+
+    @mock.patch("subprocess.Popen")
+    def test_rsi_for_weka_with_mocked_popen(self, Popen):
+        Popen().stdout = io.BytesIO(
+            b'\x01\x00\x00\x00\xb1\xb9\x02M\x01\x00\x00\x00\x00'
+            + b'\x02\x00\x00\x00\xb1\xb9\x02M\x01\x00\x00\x00\x00'
+            )
+        Popen().wait.return_value = 0
+        arff_f = os.path.join(self.tmpd, 'some.arff')
+        conf = copy.copy(CONF)
+        conf['rsi'] = {'ndays': [0, ],
+                       'thresholds': [0, ]}
+        self.assert_call_succeeds('-y', '--weka', self._make_conf(conf))
+        Popen.assert_called_with(['non_existent', '--dbpivot', 'rsi,0,0.00'], 
+                                 stdout=subprocess.PIPE)
+        expected = [('baz.bar.example.com', 'negative', 'True'),
+                    ('foo.example.com', 'angel', 'True')]
+        result = [ tuple(row) for row in arff.load(arff_f) ]
+        self.assertEqual(result, expected)
+        
 
 
 if __name__ == '__main__':  # pragma: no cover
