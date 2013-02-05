@@ -4,6 +4,7 @@ import argparse
 import datetime
 import functools
 import itertools
+import logging
 import os.path
 import operator
 import threading
@@ -26,6 +27,9 @@ from midas.compat import d_itervalues
 from midas.compat import imap
 from midas.scripts import MDCommand
 
+FORMAT = "%(asctime)s: %(message)s"
+logging.basicConfig(format=FORMAT)
+logger = logging.getLogger(__name__)
 
 FILTERS = set(['rsi', 'ols-slope', 'spearman', 'pearson', 'rank'])
 
@@ -122,6 +126,7 @@ class Indicator(object):
 
     def update(self, indicators):
         self._cache = dict()
+        logger.info('Generated {0!s}'.format(self))
         with csv_file_writer(self.fname) as writer:
             for site, indicator in indicators:
                 writer.writerow([site, indicator])
@@ -152,6 +157,9 @@ class IndicatorUpdater(threading.Thread):
         while True:
             try:
                 indicator = self.to_produce_q.get(block=False)
+            except QueueEmpty:
+                break
+            try:
                 data = list()
                 for site_id, features in self.caller.call(indicator):
                     if site_id not in self.ids_to_samples:
@@ -164,13 +172,12 @@ class IndicatorUpdater(threading.Thread):
                         last_indicator = bool_[0]
                     data.append((site, last_indicator))
                 indicator.update(data)
-                self.to_produce_q.task_done()
-            except QueueEmpty:
-                break
             except:
                 self.failed = True
-                self.to_produce_q.task_done()
                 raise
+            finally:
+                self.to_produce_q.task_done()
+
 
 class StreamAlexaIndicatorsCaller(object):
 
@@ -201,6 +208,12 @@ class CreateFeatures(MDCommand):
     """
 
     classes=['seed', 'angel', 'a', 'negative']
+
+    def __init__(self, *args, **kwargs):
+        MDCommand.__init__(self, *args, **kwargs)
+        if self.args.quiet:
+            logger.setLevel(logging.ERROR)
+
 
     def add_argument(self):
         self.parser.add_argument(
