@@ -28,7 +28,7 @@ from midas.compat import imap
 from midas.scripts import MDCommand
 
 FORMAT = "%(asctime)s: %(message)s"
-logging.basicConfig(format=FORMAT)
+logging.basicConfig(format=FORMAT, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 FILTERS = set(['rsi', 'ols-slope', 'spearman', 'pearson', 'rank'])
