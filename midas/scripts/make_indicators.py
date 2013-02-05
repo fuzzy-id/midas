@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-import copy
 import datetime
 import functools
 import itertools
-import os
 import os.path
 import operator
 import threading
@@ -26,9 +24,7 @@ from midas.compat import csv_file_writer
 from midas.compat import d_iteritems
 from midas.compat import d_itervalues
 from midas.compat import imap
-from midas.scripts import CheckDirectoryAction
 from midas.scripts import MDCommand
-from midas.scripts import StoreSingleFileOrDirectoryAction
 
 
 FILTERS = set(['rsi', 'ols-slope', 'spearman', 'pearson', 'rank'])
