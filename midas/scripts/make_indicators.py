@@ -365,7 +365,10 @@ class CreateFeatures(MDCommand):
         for site, tstamp, code in d_itervalues(self.ids_to_samples):
             row = [site, self.code_to_cls[code], ]
             for indicator in self.indicators:
-                feature = indicator.data.get(site, '?')
+                try:
+                    feature = indicator.data[site]
+                except KeyError:
+                    break
                 row.append(feature)
             yield row
         
