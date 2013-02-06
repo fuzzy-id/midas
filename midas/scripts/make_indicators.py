@@ -370,7 +370,8 @@ class CreateFeatures(MDCommand):
                 except KeyError:
                     break
                 row.append(feature)
-            yield row
+            else:
+                yield row
         
     def generate_missing_indicators(self):
         to_produce_q = Queue()
