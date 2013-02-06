@@ -121,7 +121,7 @@ class CreateFeaturesTests(IntegrationTestCase):
         expected = """class.
 
 site:\tlabel.
-class:\tnegative, positive.
+class:\tFalse, True.
 rsi_0_0.00:\tTrue, False.
 rsi_0_1.00:\tTrue, False.
 rsi_2_0.00:\tTrue, False.
@@ -187,8 +187,8 @@ rsi_2_1.00:\tTrue, False.
         Popen.assert_called_with(['non_existent', '--dbpivot', 'rsi,0,0.00'], 
                                  stdout=subprocess.PIPE)
         with open(data_f) as fp:
-            expected = ['baz.bar.example.com,negative,True',
-                        'foo.example.com,positive,True']
+            expected = ['baz.bar.example.com,False,True',
+                        'foo.example.com,True,True']
             for result, expect in zip(fp, expected):
                 self.assertEqual(result.rstrip(), expect)
         with open(names_f) as fp:
@@ -210,8 +210,8 @@ rsi_2_1.00:\tTrue, False.
         Popen.assert_called_with(['non_existent', '--dbpivot', 'rank,10'], 
                                  stdout=subprocess.PIPE)
         with open(data_f) as fp:
-            expected = ['baz.bar.example.com,negative,True',
-                        'foo.example.com,positive,True']
+            expected = ['baz.bar.example.com,False,True',
+                        'foo.example.com,True,True']
             for result, expect in zip(fp, expected):
                 self.assertEqual(result.rstrip(), expect)
         with open(names_f) as fp:
@@ -231,8 +231,8 @@ rsi_2_1.00:\tTrue, False.
         self.assert_call_succeeds('-y', '--weka', self._make_conf(conf))
         Popen.assert_called_with(['non_existent', '--dbpivot', 'rsi,0,0.00'], 
                                  stdout=subprocess.PIPE)
-        expected = [('baz.bar.example.com', 'negative', 'True'),
-                    ('foo.example.com', 'positive', 'True')]
+        expected = [('baz.bar.example.com', 'False', 'True'),
+                    ('foo.example.com', 'True', 'True')]
         result = [ tuple(row) for row in arff.load(arff_f) ]
         self.assertEqual(result, expected)
         

@@ -211,10 +211,10 @@ class CreateFeatures(MDCommand):
     provided in both ways the command-line takes precedence.
     """
 
-    code_to_cls = {'seed': 'positive',
-                   'angel': 'positive',
-                   'a': 'positive',
-                   'negative': 'negative'}
+    code_to_cls = {'seed': True,
+                   'angel': True,
+                   'a': True,
+                   'negative': False}
 
     def __init__(self, *args, **kwargs):
         MDCommand.__init__(self, *args, **kwargs)
@@ -398,7 +398,9 @@ class CreateFeatures(MDCommand):
 
     @lazy.lazy
     def names(self):
-        classes = ', '.join(sorted(set(d_itervalues(self.code_to_cls))))
+        classes = ', '.join(
+            imap(str, sorted(set(d_itervalues(self.code_to_cls))))
+            )
         attributes = '\n'.join('{0}:\tTrue, False.'.format(str(i))
                                for i in self.indicators)
         s = NAMES_TPL.format(classes, attributes)
