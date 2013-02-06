@@ -121,7 +121,7 @@ class CreateFeaturesTests(IntegrationTestCase):
         expected = """class.
 
 site:\tlabel.
-class:\tseed, angel, a, negative.
+class:\tnegative, positive.
 rsi_0_0.00:\tTrue, False.
 rsi_0_1.00:\tTrue, False.
 rsi_2_0.00:\tTrue, False.
@@ -188,7 +188,7 @@ rsi_2_1.00:\tTrue, False.
                                  stdout=subprocess.PIPE)
         with open(data_f) as fp:
             expected = ['baz.bar.example.com,negative,True',
-                        'foo.example.com,angel,True']
+                        'foo.example.com,positive,True']
             for result, expect in zip(fp, expected):
                 self.assertEqual(result.rstrip(), expect)
         with open(names_f) as fp:
@@ -211,7 +211,7 @@ rsi_2_1.00:\tTrue, False.
                                  stdout=subprocess.PIPE)
         with open(data_f) as fp:
             expected = ['baz.bar.example.com,negative,True',
-                        'foo.example.com,angel,True']
+                        'foo.example.com,positive,True']
             for result, expect in zip(fp, expected):
                 self.assertEqual(result.rstrip(), expect)
         with open(names_f) as fp:
@@ -232,7 +232,7 @@ rsi_2_1.00:\tTrue, False.
         Popen.assert_called_with(['non_existent', '--dbpivot', 'rsi,0,0.00'], 
                                  stdout=subprocess.PIPE)
         expected = [('baz.bar.example.com', 'negative', 'True'),
-                    ('foo.example.com', 'angel', 'True')]
+                    ('foo.example.com', 'positive', 'True')]
         result = [ tuple(row) for row in arff.load(arff_f) ]
         self.assertEqual(result, expected)
         

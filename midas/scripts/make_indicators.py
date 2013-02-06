@@ -199,6 +199,7 @@ class StreamAlexaIndicatorsCaller(object):
                 'Subprocess did not succeed: {0}'.format(subp.returncode)
                 )
 
+
 class CreateFeatures(MDCommand):
     """
     Generate features via `stream-alexa-indicators'. Collect all
@@ -210,13 +211,15 @@ class CreateFeatures(MDCommand):
     provided in both ways the command-line takes precedence.
     """
 
-    classes=['seed', 'angel', 'a', 'negative']
+    code_to_cls = {'seed': 'positive',
+                   'angel': 'positive',
+                   'a': 'positive',
+                   'negative': 'negative'}
 
     def __init__(self, *args, **kwargs):
         MDCommand.__init__(self, *args, **kwargs)
         if self.args.quiet:
             logger.setLevel(logging.ERROR)
-
 
     def add_argument(self):
         group = self.parser.add_argument_group('Feature Generation')
@@ -360,7 +363,7 @@ class CreateFeatures(MDCommand):
 
     def _iter_rows(self):
         for site, tstamp, code in d_itervalues(self.ids_to_samples):
-            row = [site, code]
+            row = [site, self.code_to_cls[code], ]
             for indicator in self.indicators:
                 feature = indicator.data.get(site, '?')
                 row.append(feature)
@@ -391,9 +394,8 @@ class CreateFeatures(MDCommand):
 
     @lazy.lazy
     def names(self):
-        s = NAMES_TPL.format(
-            ', '.join(self.classes),
-            '\n'.join('{0}:\tTrue, False.'.format(str(i))
-                      for i in self.indicators)
-            )
+        classes = ', '.join(sorted(set(d_itervalues(self.code_to_cls))))
+        attributes = '\n'.join('{0}:\tTrue, False.'.format(str(i))
+                               for i in self.indicators)
+        s = NAMES_TPL.format(classes, attributes)
         return s
