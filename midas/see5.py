@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import subprocess
 
 def get_classified_table(see5_output, 
@@ -63,6 +65,20 @@ def get_precision_recall_tables(filestem, costs, c5_args,
                                 positive_cls='True', negative_cls='False'):
     for cost in costs:
         write_costs_file(filestem, [(negative_cls, positive_cls, cost), ])
-        args = c5_args + ['-f', filestem, ]
+        args = list(c5_args) + ['-f', filestem, ]
         output = call_c5(args)
-        yield get_classified_table(output)
+        yield cost, get_classified_table(output)
+
+def main():
+    args = [('-X', '10'),
+            ('-X', '10', '-b'),
+            ('-X', '10', '-r'),
+            ('-X', '10', '-r', '-b')
+            ]
+    costs = list(range(15))
+    results = dict()
+    for arg in args:
+        results[arg] = dict()
+        for cost, tbl in get_precision_recall_tables('all', costs, arg):
+            results[arg][cost] = tbl
+    return results
