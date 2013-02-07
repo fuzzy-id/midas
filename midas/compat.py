@@ -87,7 +87,7 @@ else:
 if not PY3K:
     unittest.TestCase.assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
 
-if PY3K:
+if PY3K:  # pragma: no cover
     def csv_file_reader(fname, *args, **kwargs):
         with open(fname, newline='') as fp:
             for row in csv.reader(fp, *args, **kwargs):
