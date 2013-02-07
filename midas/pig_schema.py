@@ -96,7 +96,7 @@ def make_tuple_parser(schema, tuple_start, delimiter, tuple_end):
             parser.append(make_bag_parser(typ))
         elif typ in SIMPLE_PARSER:
             parser.append(SIMPLE_PARSER[typ])
-        else:
+        else:  # pragma: no cover
             raise TypeError("Cannot make parser for '{0}'".format(typ))
     cls = collections.namedtuple('Tuple', ' '.join(names))
     def tuple_parser(s, end):
@@ -177,7 +177,7 @@ def make_tuple_serializer(schema, start, delimiter, end):
             serializer.append(SIMPLE_SERIALIZER[typ])
         elif isinstance(typ, tuple):
             serializer.append(make_tuple_serializer(typ, '(', ',', ')'))
-        else:
+        else:  # pragma: no cover
             raise TypeError("Cannot serialize '{0}'".format(typ))
     def tuple_serializer(t):
         fields = ( s(getattr(t, n))
