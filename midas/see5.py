@@ -90,6 +90,9 @@ def calculate_recall_precision(confusion_matrix,
     tp = confusion_matrix[pos_cls][pos_cls]
     fp = confusion_matrix[neg_cls][pos_cls]
     fn = confusion_matrix[pos_cls][neg_cls]
-    precision = tp / (tp + fp)
+    try:
+        precision = tp / (tp + fp)
+    except ZeroDivisionError:
+        precision = 0
     recall = tp / (tp + fn)
     return (recall, precision)
