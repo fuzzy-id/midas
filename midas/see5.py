@@ -2,48 +2,43 @@
 
 from __future__ import print_function
 
+import collections
+import string
 import subprocess
 
 def get_classified_table(see5_output, 
-                         first_line_identifier='<-classified as'):
+                         table_head_identifier='<-classified as'):
     lines = see5_output.split('\n')
     for i, l in enumerate(lines):
-        if first_line_identifier in l:
-            break
-    else:
+        if table_head_identifier in l:
+            tbl_head = i
+    try:
+        # Counting the number of drawn lines
+        cls_cnt = len(lines[tbl_head+1].split())
+    except NameError:
         raise ValueError(
-            "'{0}' not found in '{1}'".format(first_line_identifier,
+            "'{0}' not found in '{1}'".format(table_head_identifier,
                                               see5_output)
             )
-    table = [ l.split() for l in lines[i:i+4] ]
-    result = dict()
-    fst = table[2][-1]
-    snd = table[3][-1]
-    fst_col_start = lines[i].find('(a)') + 2
-    snd_col_start = lines[i].find('(b)') + 2
-    result[fst] = dict()
-    result[snd] = dict()
 
-    if lines[i+2][fst_col_start] != ' ':
-        result[fst][fst] = int(table[2][0])
-    else:
-        result[fst][fst] = 0
+    tbl_start = tbl_head + 2
+    tbl_foot = tbl_start + cls_cnt
+    table = [ l for l in lines[tbl_start:tbl_foot] ]
 
-    if lines[i+2][snd_col_start] != ' ':
-        result[fst][snd] = int(table[2][1])
-    else:
-        result[fst][snd] = 0
+    result = collections.defaultdict(dict)
+    classes = [ row.rsplit(' ', 1)[-1] for row in table ]
+    col_ends = [ lines[tbl_head].find('({0})'.format(c)) + 3
+                   for c in string.ascii_lowercase[:cls_cnt] ]
 
-    if lines[i+3][fst_col_start] != ' ':
-        result[snd][fst] = int(table[3][0])
-    else:
-        result[snd][fst] = 0
-
-    if lines[i+3][snd_col_start] != ' ':
-        result[snd][snd] = int(table[3][1])
-    else:
-        result[snd][snd] = 0
-
+    for row_cls, row in zip(classes, table):
+        col_start = 0
+        for col_end, col_cls in zip(col_ends, classes):
+            field = row[col_start:col_end].strip()
+            if field == '':
+                result[row_cls][col_cls] = 0
+            else:
+                result[row_cls][col_cls] = int(field)
+            col_start = col_end
     return result
     
 def write_costs_file(filestem, costs):
