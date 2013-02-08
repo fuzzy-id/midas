@@ -70,7 +70,7 @@ def main():
             ('-X', '10', '-r'),
             ('-X', '10', '-r', '-b')
             ]
-    costs = list(range(15))
+    costs = list(range(25))
     results = dict()
     for arg in args:
         results[arg] = dict()
