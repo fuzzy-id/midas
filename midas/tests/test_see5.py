@@ -2,11 +2,11 @@
 
 from midas.compat import unittest
 
-class GetClassifiedTableTests(unittest.TestCase):
+class GetConfusionMatrixTests(unittest.TestCase):
 
     def _get_target(self):
-        from midas.see5 import get_classified_table
-        return get_classified_table
+        from midas.see5 import get_confusion_matrix
+        return get_confusion_matrix
 
     def test_on_simple_table(self):
         s = '\n'.join(
@@ -74,4 +74,19 @@ class GetClassifiedTableTests(unittest.TestCase):
         expected = {'False': {'False': 1458, 'True': 719},
                     'True': {'False': 132, 'True': 88}}
         result = self._get_target()(s)
+        self.assertEqual(result, expected)
+
+
+class CalculateRecallPrecisionTests(unittest.TestCase):
+
+    def _get_target(self):
+        from midas.see5 import calculate_recall_precision
+        return calculate_recall_precision
+
+    def test_simple(self):
+        func = self._get_target()
+        confusion_matrix = {'False': {'False': 1458, 'True': 5},
+                            'True': {'False': 1, 'True': 10}}
+        expected = ((10 / (10 + 1.0)), (10 / (10 + 5.0)))
+        result = func(confusion_matrix)
         self.assertEqual(result, expected)

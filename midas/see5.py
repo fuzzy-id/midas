@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import division
 from __future__ import print_function
 
 import collections
 import string
 import subprocess
 
-def get_classified_table(see5_output, 
+def get_confusion_matrix(see5_output, 
                          table_head_identifier='<-classified as'):
+    """
+    Parses the output of `c5.0' into a nested dictionary. The first
+    level of the result is the actual class. The second level its
+    classification.
+    """
     lines = see5_output.split('\n')
     for i, l in enumerate(lines):
         if table_head_identifier in l:
@@ -77,3 +83,13 @@ def main():
         for cost, tbl in get_precision_recall_tables('all', costs, arg):
             results[arg][cost] = tbl
     return results
+
+def calculate_recall_precision(confusion_matrix, 
+                               pos_cls='True', 
+                               neg_cls='False'):
+    tp = confusion_matrix[pos_cls][pos_cls]
+    fp = confusion_matrix[neg_cls][pos_cls]
+    fn = confusion_matrix[pos_cls][neg_cls]
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    return (recall, precision)
