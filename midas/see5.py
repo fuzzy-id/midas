@@ -68,7 +68,7 @@ def get_precision_recall_tables(filestem, costs, c5_args,
         write_costs_file(filestem, [(negative_cls, positive_cls, cost), ])
         args = list(c5_args) + ['-f', filestem, ]
         output = call_c5(args)
-        yield cost, get_classified_table(output)
+        yield cost, get_confusion_matrix(output)
 
 def main():
     args = [('-X', '10'),
@@ -76,7 +76,7 @@ def main():
             ('-X', '10', '-r'),
             ('-X', '10', '-r', '-b')
             ]
-    costs = list(range(25))
+    costs = list(range(35))
     results = dict()
     for arg in args:
         results[arg] = dict()
