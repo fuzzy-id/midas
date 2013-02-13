@@ -7,6 +7,7 @@ import collections
 import string
 import subprocess
 
+
 def get_confusion_matrix(see5_output, 
                          table_head_identifier='<-classified as'):
     """
@@ -96,3 +97,13 @@ def calculate_recall_precision(confusion_matrix,
         precision = 0
     recall = tp / (tp + fn)
     return (recall, precision)
+
+def calculate_tpr(confusion_matrix, pos_cls='True', neg_cls='False'):
+    tp = confusion_matrix[pos_cls][pos_cls]
+    fn = confusion_matrix[pos_cls][neg_cls]
+    return tp / (tp + fn)
+
+def calculate_fpr(confusion_matrix, pos_cls='True', neg_cls='False'):
+    fp = confusion_matrix[neg_cls][pos_cls]
+    tn = confusion_matrix[neg_cls][neg_cls]
+    return fp / (fp + tn)
