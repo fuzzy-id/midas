@@ -7,6 +7,10 @@ import matplotlib.dates
 import matplotlib.pyplot as plt
 
 from midas.compat import imap
+from midas.compat import str_type
+from midas.see5 import calculate_recall_precision
+from midas.see5 import calculate_tpr
+from midas.see5 import calculate_fpr
 from midas.tools import iter_files_content
 from midas.pig_schema import FLATTENED_PARSER
 
@@ -124,3 +128,46 @@ def calculate_and_make_rank_before_funding_plot(ts, frs, start_d, end_d, keys=('
             
     data = median_rank_before_funding(ts, frs, start_d, end_d)
     return make_rank_before_funding_plot(data, title, keys, **kwargs)
+
+def make_recall_precision_plot(results):
+    """
+    ``results`` should be the result of `midas.see5.main`
+    """
+    fig = plt.figure()
+    ax = fig.add_subplot('111')
+    ax.set_ylabel('Precision')
+    ax.set_xlabel('Recall')
+    for args, per_cost_result in results.items():
+        xs = []
+        ys = []
+        for x, y in map(calculate_recall_precision, per_cost_result.values()):
+            xs.append(x)
+            ys.append(y)
+        if not isinstance(args, str_type):
+            args = ' '.join(args)
+        plt.plot(xs, ys, 'o', label=args)
+    plt.legend(loc='best')
+    plt.grid(True)
+    return fig
+
+def make_tpr_fpr_plot(results):
+    """
+    ``results`` should be the result of `midas.see5.main`
+    """
+    fig = plt.figure()
+    ax = fig.add_subplot('111')
+    ax.set_ylabel('True Positive Rate')
+    ax.set_xlabel('False Positive Rate')
+    for args, per_cost_result in results.items():
+        xs = []
+        ys = []
+        for confusion_matrix in per_cost_result.values():
+            xs.append(calculate_fpr(confusion_matrix))
+            ys.append(calculate_tpr(confusion_matrix))
+        if not isinstance(args, str_type):
+            args = ' '.join(args)
+        plt.plot(xs, ys, 'o', label=args)
+    plt.legend(loc='best')
+    plt.grid(True)
+    plt.plot([0.0, 0.5, 1.0], [0.0, 0.5, 1.0], 'k')
+    return fig
