@@ -19,6 +19,22 @@ from midas.tools import iter_files_content
 from midas.pig_schema import FLATTENED_PARSER
 from midas.pig_schema import SITES_W_COMPANY_PARSER
 
+
+def iter_sites_w_company(directory_or_file):
+    contents = iter_files_content(directory_or_file)
+    for swc in imap(SITES_W_COMPANY_PARSER, contents):
+        ranks = map(operator.attrgetter('rank'), swc.ranking)
+        index=pandas.DatetimeIndex(map(operator.attrgetter('tstamp'),
+                                       swc.ranking))
+        ts = pandas.Series(ranks, index=index)
+        tstamp = pandas.Timestamp(swc.tstamp)
+        yield (swc.site, ts, swc.company, swc.code, tstamp)
+
+
+##################################
+## Funding Rounds per date Plot ##
+##################################
+
 def make_fr_per_date_plot(companies, plot_file=None):
     contents = iter_files_content(companies)
     d = collections.defaultdict(list)
@@ -57,29 +73,27 @@ def make_fr_per_date_plot(companies, plot_file=None):
         plt.savefig(plot_file)
     return fig
 
+#########################################
+## Available Days Before Funding Round ##
+#########################################
+
 def get_available_days_before_fr(ts, fr):
     site, date, code = fr
     date = pandas.Timestamp(date)
     ts_site = ts[site].dropna()
     return code, (ts_site.index[0] - date).days
 
-def make_available_days_before_funding_rounds_plot(sites_w_companies,
+def make_available_days_before_funding_rounds_plot(sites_w_company,
                                                    plot_file=None):
-    contents = iter_files_content(sites_w_companies)
     collected = collections.defaultdict(list)
-    for site_w_company in imap(SITES_W_COMPANY_PARSER, contents):
-        ts = pandas.Series(
-            map(operator.attrgetter('rank'), site_w_company.ranking),
-            index=pandas.DatetimeIndex(map(operator.attrgetter('tstamp'),
-                                           site_w_company.ranking))
-            ).dropna()
-        date = pandas.Timestamp(site_w_company.tstamp)
-        available_days = (ts.index[0] - date).days
+    for site, ts, company, code, tstamp in sites_w_company:
+        ts = ts.dropna()
+        available_days = (ts.index[0] - tstamp).days
         if available_days > 365:
             available_days = 400
         elif available_days < 0:
             available_days = -40
-        collected[site_w_company.code].append(available_days)
+        collected[code].append(available_days)
     fig = plt.figure()
     ax = fig.add_subplot('111')
     res = ax.hist(collected.values(), 
@@ -95,32 +109,32 @@ def make_available_days_before_funding_rounds_plot(sites_w_companies,
         plt.savefig(plot_file)
     return fig
 
-def get_median_rank(ts, fr, start, end):
-    site, date, code = fr
-    ts_site = ts[site][(date + start):(date + end)].dropna()
-    return code, ts_site.median()
+#########################################
+## Median of Rank before Funding Round ##
+#########################################
 
-def median_rank_before_funding(ts, frs, start_days, end_days):
-    data = collections.defaultdict(list)
-    start = datetime.timedelta(days=start_days)
-    end = datetime.timedelta(days=end_days)
-    for fr in frs:
-        site, date, code = fr
-        code, rank = get_median_rank(ts, fr, start, end)
-        if rank > 0:  # Filter out NaN's
-            data[code].append(rank)
-    return data
+def median_rank_of_ts_in_period(ts, start_date, offset):
+    period = ts[start_date:(start_date + offset)].dropna()
+    return period.median()
 
-def make_rank_before_funding_plot(data, title, keys=('seed', 'angel', 'a'), **kwargs):
-    arr = [ numpy.array(data[key]) for key in keys ]
+def make_rank_before_funding_plot(sites_w_company, 
+                                  plot_file=None):
+    start = pandas.DateOffset(days=125)
+    offset = pandas.DateOffset(days=10)
+    collected = collections.defaultdict(list)
+    for site, ts, company, code, tstamp in sites_w_company:
+        median = median_rank_of_ts_in_period(ts, tstamp - start, offset)
+        collected[code].append(median)
     fig = plt.figure()
     ax = fig.add_subplot('111')
-    res = ax.hist(arr, label=['Seed', 'Angel', 'A'], **kwargs)
-    plt.legend(loc='best')
-    plt.grid(True)
-    plt.title(title)
-    plt.xlabel('Rank')
-    plt.ylabel('Number of Funding Rounds')
+    res = ax.hist(collected.values(),
+                  label=map(string.capitalize, collected.keys()))
+    ax.legend(loc='best')
+    ax.grid(True)
+    ax.set_xlabel('Rank')
+    ax.set_ylabel('Number of Funding Rounds')
+    if plot_file:
+        plt.savefig(plot_file)
     return fig
 
 def calculate_and_make_rank_before_funding_plot(ts, frs, start_d, end_d, keys=('seed', 'angel', 'a'), **kwargs):
@@ -146,6 +160,10 @@ def calculate_and_make_rank_before_funding_plot(ts, frs, start_d, end_d, keys=('
             
     data = median_rank_before_funding(ts, frs, start_d, end_d)
     return make_rank_before_funding_plot(data, title, keys, **kwargs)
+
+###########################
+## Recall Precision Plot ##
+###########################
 
 def make_recall_precision_plot(results):
     """
