@@ -14,9 +14,8 @@ from midas.see5 import calculate_fpr
 from midas.tools import iter_files_content
 from midas.pig_schema import FLATTENED_PARSER
 
-def make_fr_per_date_plot(site_count_files,
-                          plot_file=None):
-    contents = iter_files_content(site_count_files)
+def make_fr_per_date_plot(companies, plot_file=None):
+    contents = iter_files_content(companies)
     d = collections.defaultdict(list)
     min_date = datetime.date(2011, 3, 1)
     months = set()
