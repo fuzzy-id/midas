@@ -71,31 +71,13 @@ def get_precision_recall_tables(filestem, costs, c5_args,
         output = call_c5(args)
         yield cost, get_confusion_matrix(output)
 
-def main():
-    args = [('-X', '10'),
-            ('-X', '10', '-b'),
-            ('-X', '10', '-r'),
-            ('-X', '10', '-r', '-b')
-            ]
-    costs = list(range(35))
-    results = dict()
-    for arg in args:
-        results[arg] = dict()
-        for cost, tbl in get_precision_recall_tables('all', costs, arg):
-            results[arg][cost] = tbl
-    return results
-
 def calculate_recall_precision(confusion_matrix, 
                                pos_cls='True', 
                                neg_cls='False'):
     tp = confusion_matrix[pos_cls][pos_cls]
     fp = confusion_matrix[neg_cls][pos_cls]
-    fn = confusion_matrix[pos_cls][neg_cls]
-    try:
-        precision = tp / (tp + fp)
-    except ZeroDivisionError:
-        precision = 0
-    recall = tp / (tp + fn)
+    precision = tp / (tp + fp)
+    recall = calculate_tpr(confusion_matrix, pos_cls, neg_cls)
     return (recall, precision)
 
 def calculate_tpr(confusion_matrix, pos_cls='True', neg_cls='False'):
@@ -107,3 +89,20 @@ def calculate_fpr(confusion_matrix, pos_cls='True', neg_cls='False'):
     fp = confusion_matrix[neg_cls][pos_cls]
     tn = confusion_matrix[neg_cls][neg_cls]
     return fp / (fp + tn)
+
+def main():
+    args = [('-X', '10'),
+            ('-X', '10', '-b'),
+            ('-X', '10', '-r'),
+            ('-X', '10', '-r', '-b'),
+            ('-w', '-X', '10'),
+            ('-w', '-X', '10', '-b'),
+            ('-w', '-X', '10', '-r'),
+            ('-w', '-X', '10', '-r', '-b')]
+    costs = list(range(40))
+    results = dict()
+    for arg in args:
+        results[arg] = dict()
+        for cost, tbl in get_precision_recall_tables('all', costs, arg):
+            results[arg][cost] = tbl
+    return results
