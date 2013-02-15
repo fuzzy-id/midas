@@ -24,7 +24,7 @@ def iter_sites_w_company(directory_or_file):
     contents = iter_files_content(directory_or_file)
     for swc in imap(SITES_W_COMPANY_PARSER, contents):
         ranks = map(operator.attrgetter('rank'), swc.ranking)
-        index=pandas.DatetimeIndex(map(operator.attrgetter('tstamp'),
+        index = pandas.DatetimeIndex(map(operator.attrgetter('tstamp'),
                                        swc.ranking))
         ts = pandas.Series(ranks, index=index)
         tstamp = pandas.Timestamp(swc.tstamp)
