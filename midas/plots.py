@@ -2,9 +2,13 @@
 
 import collections
 import datetime
-import numpy
+import string
+
 import matplotlib.dates
 import matplotlib.pyplot as plt
+import numpy
+import operator
+import pandas
 
 from midas.compat import imap
 from midas.compat import str_type
@@ -13,6 +17,7 @@ from midas.see5 import calculate_tpr
 from midas.see5 import calculate_fpr
 from midas.tools import iter_files_content
 from midas.pig_schema import FLATTENED_PARSER
+from midas.pig_schema import SITES_W_COMPANY_PARSER
 
 def make_fr_per_date_plot(companies, plot_file=None):
     contents = iter_files_content(companies)
@@ -58,23 +63,37 @@ def get_available_days_before_fr(ts, fr):
     ts_site = ts[site].dropna()
     return code, (ts_site.index[0] - date).days
 
-def make_available_days_before_funding_rounds_plot(data):
-    arr = [numpy.array(data[key]) for key in ('seed', 'angel', 'a')]
+def make_available_days_before_funding_rounds_plot(sites_w_companies,
+                                                   plot_file=None):
+    contents = iter_files_content(sites_w_companies)
+    collected = collections.defaultdict(list)
+    for site_w_company in imap(SITES_W_COMPANY_PARSER, contents):
+        ts = pandas.Series(
+            map(operator.attrgetter('rank'), site_w_company.ranking),
+            index=pandas.DatetimeIndex(map(operator.attrgetter('tstamp'),
+                                           site_w_company.ranking))
+            ).dropna()
+        date = pandas.Timestamp(site_w_company.tstamp)
+        available_days = (ts.index[0] - date).days
+        if available_days > 365:
+            available_days = 400
+        elif available_days < 0:
+            available_days = -40
+        collected[site_w_company.code].append(available_days)
     fig = plt.figure()
     ax = fig.add_subplot('111')
-    res = ax.hist(arr, bins=20, histtype='bar', label=['Seed', 'Angel', 'A'])
-
-    plt.ylim((0, 400))
-    ax.annotate(' 1205', xy=(29, 390), xycoords='data', 
-                xytext=(10, -20), textcoords='offset points', 
-                arrowprops=dict(facecolor='blue'),
-                horizontalalignment='left', verticalalignment='top')
-    ax.legend()
-    plt.title('Available Days before Funding Round')
-    plt.ylabel('Number of Funding Rounds')
-    plt.xlabel('Number of Days')
-    plt.grid(True)
-    plt.savefig('av_days_bef_fr.png')
+    res = ax.hist(collected.values(), 
+                  bins=10, 
+                  histtype='bar', 
+                  label=map(string.capitalize, collected.keys()),
+                  log=True)
+    ax.legend(loc='best')
+    ax.set_ylabel('Number of Funding Rounds')
+    ax.set_xlabel('Number of Days')
+    ax.grid(which='both')
+    if plot_file:
+        plt.savefig(plot_file)
+    return fig
 
 def get_median_rank(ts, fr, start, end):
     site, date, code = fr
