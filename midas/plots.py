@@ -117,14 +117,26 @@ def median_rank_of_ts_in_period(ts, start_date, offset):
     period = ts[start_date:(start_date + offset)].dropna()
     return period.median()
 
-def make_rank_before_funding_plot(sites_w_company, 
-                                  plot_file=None):
-    start = pandas.DateOffset(days=125)
-    offset = pandas.DateOffset(days=10)
+def make_rank_before_funding_plot_data(sites_w_company, start,
+                                       offset=pandas.DateOffset(days=10)):
     collected = collections.defaultdict(list)
     for site, ts, company, code, tstamp in sites_w_company:
-        median = median_rank_of_ts_in_period(ts, tstamp - start, offset)
+        try:
+            median = median_rank_of_ts_in_period(ts, tstamp - start, offset)
+        except KeyError:
+            continue
+        if numpy.isnan(median):
+            continue
         collected[code].append(median)
+    return collected
+
+def make_rank_before_funding_plot(sites_w_company,
+                                  start,
+                                  offset=pandas.DateOffset(days=10),
+                                  plot_file=None):
+    collected = make_rank_before_funding_plot_data(sites_w_company, 
+                                                   start,
+                                                   offset)
     fig = plt.figure()
     ax = fig.add_subplot('111')
     res = ax.hist(collected.values(),
