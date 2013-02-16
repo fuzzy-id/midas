@@ -71,7 +71,7 @@ def make_fr_per_date_plot(companies, plot_file=None):
     ax.set_ylabel('Number of Funding Rounds')
     ax.grid(True, axis='y')
     if plot_file:
-        plt.savefig(plot_file)
+        fig.savefig(plot_file)
     return fig
 
 #########################################
@@ -107,7 +107,7 @@ def make_available_days_before_funding_rounds_plot(sites_w_company,
     ax.set_xlabel('Number of Days')
     ax.grid(which='both')
     if plot_file:
-        plt.savefig(plot_file)
+        fig.savefig(plot_file)
     return fig
 
 #########################################
@@ -208,7 +208,7 @@ def make_recall_precision_plot(results):
     plt.grid(True)
     return fig
 
-def make_tpr_fpr_plot(results):
+def make_tpr_fpr_plot(results, plot_file=None):
     """
     ``results`` should be the result of `midas.see5.main`
     """
@@ -224,8 +224,10 @@ def make_tpr_fpr_plot(results):
             ys.append(calculate_tpr(confusion_matrix))
         if not isinstance(args, str_type):
             args = ' '.join(args)
-        plt.plot(xs, ys, 'o', label=args)
-    plt.legend(loc='best')
-    plt.grid(True)
-    plt.plot([0.0, 0.5, 1.0], [0.0, 0.5, 1.0], 'k')
+        ax.plot(xs, ys, 'o', label=args)
+    ax.legend(loc='best')
+    ax.grid(True)
+    ax.plot([0.0, 0.5, 1.0], [0.0, 0.5, 1.0], 'k')
+    if plot_file:
+        fig.savefig(plot_file)
     return fig
