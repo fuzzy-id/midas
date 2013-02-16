@@ -37,6 +37,10 @@ def run_c5_and_save_output_threaded_per_cost(filestem='all',
         for t in threads:
             t.join()
             
+def write_costs_file(filestem, costs):
+    with open('{0}.costs'.format(filestem), 'w') as fp:
+        fp.writelines('{0}, {1}: {2}'.format(*c) for c in costs)
+
 def run_c5_and_save_output(filestem, args, prefix):
     all_args = list(args) + ['-f', filestem, ]
     output = call_c5(all_args)
@@ -63,7 +67,9 @@ def iter_c5_parameters_and_output(path_pattern):
         yield parameters, output
 
 def c5_parse_parameters(fname):
-    pass
+    _, args = fname.split('_costs_')
+    args, _ = os.path.splitext(args)
+    return args.split('_')
 
 def get_confusion_matrix(see5_output, 
                          table_head_identifier='<-classified as'):
@@ -105,10 +111,6 @@ def get_confusion_matrix(see5_output,
             col_start = col_end
     return result
     
-def write_costs_file(filestem, costs):
-    with open('{0}.costs'.format(filestem), 'w') as fp:
-        fp.writelines('{0}, {1}: {2}'.format(*c) for c in costs)
-
 def calculate_recall_precision(confusion_matrix, 
                                pos_cls='True', 
                                neg_cls='False'):
