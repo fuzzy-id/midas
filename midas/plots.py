@@ -113,23 +113,6 @@ def make_available_days_before_funding_rounds_plot(sites_w_company,
 ## Median of Rank before Funding Round ##
 #########################################
 
-def median_rank_of_ts_in_period(ts, start_date, offset):
-    period = ts[start_date:(start_date + offset)].dropna()
-    return period.median()
-
-def make_rank_before_funding_plot_data(sites_w_company, start,
-                                       offset=pandas.DateOffset(days=10)):
-    collected = collections.defaultdict(list)
-    for site, ts, company, code, tstamp in sites_w_company:
-        try:
-            median = median_rank_of_ts_in_period(ts, tstamp - start, offset)
-        except KeyError:
-            continue
-        if numpy.isnan(median):
-            continue
-        collected[code].append(median)
-    return collected
-
 def make_rank_before_funding_plot(sites_w_company,
                                   start,
                                   offset=pandas.DateOffset(days=10),
@@ -145,33 +128,47 @@ def make_rank_before_funding_plot(sites_w_company,
     ax.grid(True)
     ax.set_xlabel('Rank')
     ax.set_ylabel('Number of Funding Rounds')
+    ax.set_title(make_rank_before_funding_plot_title(start, offset))
     if plot_file:
         plt.savefig(plot_file)
     return fig
 
-def calculate_and_make_rank_before_funding_plot(ts, frs, start_d, end_d, keys=('seed', 'angel', 'a'), **kwargs):
-    if 0 < start_d < end_d:
-        first = start_d
-        snd = '{} days after'.format(end_d)
-    elif start_d < end_d < 0:
-        first = start_d * -1
-        snd = '{} days before'.format(end_d * -1)
-    elif start_d < 0 < end_d:
-        first = '{} days before'.format(start_d * -1)
-        snd = '{} days after'.format(end_d)
-    elif 0 == start_d < end_d:
-        first = 'Fund Raise'
-        snd = '{} days after'.format(end_d)
-    elif start_d < end_d == 0:
-        first = '{} days before'.format(start_d * -1)
-        snd = ''
-    else:
-        raise ValueError('start_d must be smaller then end_d')
+def make_rank_before_funding_plot_data(sites_w_company, start,
+                                       offset=pandas.DateOffset(days=10)):
+    collected = collections.defaultdict(list)
+    for site, ts, company, code, tstamp in sites_w_company:
+        try:
+            median = median_rank_of_ts_in_period(ts, tstamp - start, offset)
+        except KeyError:
+            continue
+        if numpy.isnan(median):
+            continue
+        collected[code].append(median)
+    return collected
 
+def median_rank_of_ts_in_period(ts, start_date, offset):
+    period = ts[start_date:(start_date + offset)].dropna()
+    return period.median()
+
+def make_rank_before_funding_plot_title(start, offset):
+    end = start + offset
+    if 0 < start < end:
+        first = start
+        snd = '{} days after'.format(end)
+    elif start < end < 0:
+        first = start * -1
+        snd = '{} days before'.format(end * -1)
+    elif start < 0 < end:
+        first = '{} days before'.format(start * -1)
+        snd = '{} days after'.format(end)
+    elif 0 == start < end:
+        first = 'Fund Raise'
+        snd = '{} days after'.format(end)
+    elif start < end == 0:
+        first = '{} days before'.format(start * -1)
+        snd = ''
     title = 'Median of Rank from {} to {} Fund Raise'.format(first, snd)    
-            
-    data = median_rank_before_funding(ts, frs, start_d, end_d)
-    return make_rank_before_funding_plot(data, title, keys, **kwargs)
+    return title
 
 ###########################
 ## Recall Precision Plot ##
