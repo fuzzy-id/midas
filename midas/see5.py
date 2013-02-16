@@ -27,11 +27,12 @@ def run_c5_and_save_output_threaded_per_cost(filestem='all',
                                              negative_cls='False'):
     for cost in irange(costs_start, costs_end, costs_step):
         write_costs_file(filestem, [(negative_cls, positive_cls, cost), ])
-        prefix = 'c5_result_costs_{0}'.format(cost)
         threads = []
         for arg in C5_ARGS:
-            t = threading.Thread(target=run_c5_and_save_output, 
-                                 args=(filestem, arg, prefix))
+            fname = 'c5_{0}_result_{1}_{2}'\
+                .format(filestem, cost, '_'.join(args))
+            t = threading.Thread(target=run_c5_and_get_output, 
+                                 args=(arg, fname))
             t.start()
             threads.append(t)
         for t in threads:
@@ -41,12 +42,12 @@ def write_costs_file(filestem, costs):
     with open('{0}.costs'.format(filestem), 'w') as fp:
         fp.writelines('{0}, {1}: {2}'.format(*c) for c in costs)
 
-def run_c5_and_save_output(filestem, args, prefix):
-    all_args = list(args) + ['-f', filestem, ]
-    output = call_c5(all_args)
-    fname = '{0}_{1}_{2}.out'.format(prefix, filestem, '_'.join(args))
-    with open(fname, 'w') as fp:
-        fp.writelines(output)
+def run_c5_and_get_output(args, save_to=None):
+    output = call_c5(args)
+    if save_to:
+        with open(save_to, 'w') as fp:
+            fp.writelines(output)
+    return output
 
 def call_c5(args, executable='c5.0'):
     cmd = [executable, ]
@@ -61,14 +62,13 @@ def call_c5(args, executable='c5.0'):
 
 def iter_c5_parameters_and_output(path_pattern):
     for fname in glob.glob(path_pattern):
-        parameters = c5_parse_parameters(fname)
+        args = c5_parse_args(fname)
         with open(fname) as fp:
             output = fp.readlines()
-        yield parameters, output
+        yield args, output
 
-def c5_parse_parameters(fname):
-    _, args = fname.split('_costs_')
-    args, _ = os.path.splitext(args)
+def c5_parse_args(fname):
+    _, args = fname.split('_result_')
     return args.split('_')
 
 def get_confusion_matrix(see5_output, 
