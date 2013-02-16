@@ -19,25 +19,25 @@ C5_ARGS = [('-X', '10'),
            ('-w', '-X', '10', '-r'),
            ('-w', '-X', '10', '-r', '-b')]
 
-def run_c5_and_save_output(filestem='all',
-                           costs_start=0,
-                           costs_end=40,
-                           costs_step=1,
-                           positive_cls='True', 
-                           negative_cls='False'):
+def run_c5_and_save_output_threaded_per_cost(filestem='all',
+                                             costs_start=0,
+                                             costs_end=40,
+                                             costs_step=1,
+                                             positive_cls='True', 
+                                             negative_cls='False'):
     for cost in irange(costs_start, costs_end, costs_step):
         write_costs_file(filestem, [(negative_cls, positive_cls, cost), ])
         prefix = 'c5_result_costs_{0}'.format(cost)
         threads = []
         for arg in C5_ARGS:
-            t = threading.Thread(target=produce_output, 
+            t = threading.Thread(target=run_c5_and_save_output, 
                                  args=(filestem, arg, prefix))
             t.start()
             threads.append(t)
         for t in threads:
             t.join()
             
-def produce_output(filestem, args, prefix):
+def run_c5_and_save_output(filestem, args, prefix):
     all_args = list(args) + ['-f', filestem, ]
     output = call_c5(all_args)
     fname = '{0}_{1}_{2}.out'.format(prefix, filestem, '_'.join(args))
@@ -54,6 +54,16 @@ def call_c5(args, executable='c5.0'):
     assert proc.returncode == 0
     assert err == ''
     return out
+
+def iter_c5_parameters_and_output(path_pattern):
+    for fname in glob.glob(path_pattern):
+        parameters = c5_parse_parameters(fname)
+        with open(fname) as fp:
+            output = fp.readlines()
+        yield parameters, output
+
+def c5_parse_parameters(fname):
+    pass
 
 def get_confusion_matrix(see5_output, 
                          table_head_identifier='<-classified as'):
