@@ -47,6 +47,11 @@ if PY3K:  # pragma: no cover
 else:
     from itertools import ifilter
 
+if PY3K:
+    irange = range
+else:
+    irange = xrange
+
 if PY3K:  # pragma: no cover
     from io import StringIO
 else:
