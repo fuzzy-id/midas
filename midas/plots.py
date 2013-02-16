@@ -187,7 +187,7 @@ def make_rank_before_funding_plot_title(before_days, offset_days):
 ## Recall Precision Plot ##
 ###########################
 
-def make_recall_precision_plot(results):
+def make_recall_precision_plot(results, plot_file=None):
     """
     ``results`` should be the result of `midas.see5.main`
     """
@@ -198,15 +198,18 @@ def make_recall_precision_plot(results):
     for args, per_cost_result in results.items():
         xs = []
         ys = []
-        for x, y in map(calculate_recall_precision, per_cost_result.values()):
-            xs.append(x)
-            ys.append(y)
+        for cm in per_cost_result.values():
+            try:
+                x, y = calculate_recall_precision(cm)
+                xs.append(x)
+                ys.append(y)
+            except ZeroDivisionError:
+                continue
         if not isinstance(args, str_type):
             args = ' '.join(args)
         ax.plot(xs, ys, 'o', label=args)
     ax.legend(loc='best')
     ax.grid(True)
-    ax.plot([0.0, 0.5, 1.0], [0.0, 0.5, 1.0], 'k')
     if plot_file:
         fig.savefig(plot_file)
     return fig
