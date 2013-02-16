@@ -4,6 +4,7 @@ from __future__ import division
 from __future__ import print_function
 
 import collections
+import glob
 import string
 import subprocess
 import threading
@@ -14,10 +15,10 @@ C5_ARGS = [('-X', '10'),
            ('-X', '10', '-b'),
            ('-X', '10', '-r'),
            ('-X', '10', '-r', '-b'),
-           ('-w', '-X', '10'),
-           ('-w', '-X', '10', '-b'),
-           ('-w', '-X', '10', '-r'),
-           ('-w', '-X', '10', '-r', '-b')]
+           ('-X', '10', '-w'),
+           ('-X', '10', '-w', '-b'),
+           ('-X', '10', '-w', '-r'),
+           ('-X', '10', '-w', '-r', '-b')]
 
 def run_c5_and_save_output_threaded_per_cost(filestem='all',
                                              costs_start=0,
