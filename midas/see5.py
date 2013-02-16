@@ -20,7 +20,8 @@ C5_ARGS = [('-X', '10'),
            ('-X', '10', '-w', '-r'),
            ('-X', '10', '-w', '-r', '-b')]
 
-def run_c5_and_save_output_threaded_per_cost(filestem='all',
+def run_c5_and_save_output_threaded_per_cost(dst_directory,
+                                             filestem='all',
                                              costs_start=0,
                                              costs_end=40,
                                              costs_step=1,
@@ -30,8 +31,9 @@ def run_c5_and_save_output_threaded_per_cost(filestem='all',
         write_costs_file(filestem, [(negative_cls, positive_cls, cost), ])
         threads = []
         for arg in C5_ARGS:
-            fname = 'c5_{0}_result_{1}_{2}'\
-                .format(filestem, cost, '_'.join(arg))
+            fname = os.path.join(dst_directory, 
+                                 'c5_{0}_result_{1}_{2}'\
+                                     .format(filestem, cost, '_'.join(arg)))
             arg_w_fstem = ['-f', filestem, ]
             arg_w_fstem.extend(arg)
             t = threading.Thread(target=run_c5_and_get_output, 
