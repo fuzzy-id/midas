@@ -8,6 +8,7 @@ import string
 import subprocess
 import threading
 
+from midas.compat import irange
 
 C5_ARGS = [('-X', '10'),
            ('-X', '10', '-b'),
@@ -18,19 +19,13 @@ C5_ARGS = [('-X', '10'),
            ('-w', '-X', '10', '-r'),
            ('-w', '-X', '10', '-r', '-b')]
 
-def main():
-    costs = list(range(40))
-    results = dict()
-    for arg in C5_ARGS:
-        results[arg] = dict()
-        for cost, tbl in get_precision_recall_tables('all', costs, arg):
-            results[arg][cost] = tbl
-    return results
-
-def gather_c5_output(filestem='all', 
-                     positive_cls='True', 
-                     negative_cls='False'):
-    for cost in range(40):
+def run_c5_and_save_output(filestem='all',
+                           costs_start=0,
+                           costs_end=40,
+                           costs_step=1,
+                           positive_cls='True', 
+                           negative_cls='False'):
+    for cost in irange(costs_start, costs_end, costs_step):
         write_costs_file(filestem, [(negative_cls, positive_cls, cost), ])
         prefix = 'c5_result_costs_{0}'.format(cost)
         threads = []
@@ -59,14 +54,6 @@ def call_c5(args, executable='c5.0'):
     assert proc.returncode == 0
     assert err == ''
     return out
-
-def get_precision_recall_tables(filestem, costs, c5_args,
-                                positive_cls='True', negative_cls='False'):
-    for cost in costs:
-        write_costs_file(filestem, [(negative_cls, positive_cls, cost), ])
-        args = list(c5_args) + ['-f', filestem, ]
-        output = call_c5(args)
-        yield cost, get_confusion_matrix(output)
 
 def get_confusion_matrix(see5_output, 
                          table_head_identifier='<-classified as'):
