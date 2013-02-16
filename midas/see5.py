@@ -66,31 +66,39 @@ def call_c5(args, executable='c5.0'):
     assert err == ''
     return out
 
+def c5_get_confusion_matrix_from_output(c5_args_and_output):
+    result = collections.defaultdict(dict)
+    for args, output in c5_args_and_output:
+        cost = args[0]
+        args_key = tuple(args[1:])
+        cm = c5_get_confusion_matrix(output)
+        result[args_key][cost] = cm
+    return result
+
 def iter_c5_args_and_output(path_pattern):
     for fname in glob.glob(path_pattern):
         args = c5_parse_args(fname)
         with open(fname) as fp:
-            output = fp.readlines()
+            output = [ l.rstrip() for l in fp.readlines() ]
         yield args, output
 
 def c5_parse_args(fname):
     _, args = fname.split('_result_')
     return args.split('_')
 
-def get_confusion_matrix(see5_output, 
-                         table_head_identifier='<-classified as'):
+def c5_get_confusion_matrix(see5_output, 
+                            table_head_identifier='<-classified as'):
     """
     Parses the output of `c5.0' into a nested dictionary. The first
     level of the result is the actual class. The second level its
     classification.
     """
-    lines = see5_output.split('\n')
-    for i, l in enumerate(lines):
+    for i, l in enumerate(see5_output):
         if table_head_identifier in l:
             tbl_head = i
     try:
         # Counting the number of drawn lines
-        cls_cnt = len(lines[tbl_head+1].split())
+        cls_cnt = len(see5_output[tbl_head+1].split())
     except NameError:
         raise ValueError(
             "'{0}' not found in '{1}'".format(table_head_identifier,
@@ -99,11 +107,11 @@ def get_confusion_matrix(see5_output,
 
     tbl_start = tbl_head + 2
     tbl_foot = tbl_start + cls_cnt
-    table = [ l for l in lines[tbl_start:tbl_foot] ]
+    table = [ l for l in see5_output[tbl_start:tbl_foot] ]
 
     result = collections.defaultdict(dict)
     classes = [ row.rsplit(' ', 1)[-1] for row in table ]
-    col_ends = [ lines[tbl_head].find('({0})'.format(c)) + 3
+    col_ends = [ see5_output[tbl_head].find('({0})'.format(c)) + 3
                    for c in string.ascii_lowercase[:cls_cnt] ]
 
     for row_cls, row in zip(classes, table):
