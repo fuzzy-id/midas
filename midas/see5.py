@@ -48,6 +48,17 @@ def produce_output(filestem, args):
     with open(fname, 'w') as fp:
         fp.writelines(output)
 
+def call_c5(args, executable='c5.0'):
+    cmd = [executable, ]
+    cmd.extend(args)
+    proc = subprocess.Popen(cmd,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
+    out, err = proc.communicate()
+    assert proc.returncode == 0
+    assert err == ''
+    return out
+
 def get_precision_recall_tables(filestem, costs, c5_args,
                                 positive_cls='True', negative_cls='False'):
     for cost in costs:
@@ -99,17 +110,6 @@ def get_confusion_matrix(see5_output,
 def write_costs_file(filestem, costs):
     with open('{0}.costs'.format(filestem), 'w') as fp:
         fp.writelines('{0}, {1}: {2}'.format(*c) for c in costs)
-
-def call_c5(args, executable='c5.0'):
-    cmd = [executable, ]
-    cmd.extend(args)
-    proc = subprocess.Popen(cmd,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
-    out, err = proc.communicate()
-    assert proc.returncode == 0
-    assert err == ''
-    return out
 
 def calculate_recall_precision(confusion_matrix, 
                                pos_cls='True', 
