@@ -30,9 +30,11 @@ def run_c5_and_save_output_threaded_per_cost(filestem='all',
         threads = []
         for arg in C5_ARGS:
             fname = 'c5_{0}_result_{1}_{2}'\
-                .format(filestem, cost, '_'.join(args))
+                .format(filestem, cost, '_'.join(arg))
+            arg_w_fstem = ['-f', filestem, ]
+            arg_w_fstem.extend(arg)
             t = threading.Thread(target=run_c5_and_get_output, 
-                                 args=(arg, fname))
+                                 args=(arg_w_fstem, fname))
             t.start()
             threads.append(t)
         for t in threads:
