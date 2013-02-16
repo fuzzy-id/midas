@@ -62,7 +62,7 @@ def call_c5(args, executable='c5.0'):
     assert err == ''
     return out
 
-def iter_c5_parameters_and_output(path_pattern):
+def iter_c5_args_and_output(path_pattern):
     for fname in glob.glob(path_pattern):
         args = c5_parse_args(fname)
         with open(fname) as fp:
