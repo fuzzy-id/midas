@@ -172,8 +172,8 @@ def make_rank_before_funding_plot_title(before_days, offset_days):
         first = before_days
         snd = '{} days before'.format(end_days)
     elif end_days < 0 < before_days:
-        first = before_days
-        snd = '{0} days after'.format(end_days)
+        first = '{0} days before'.format(before_days)
+        snd = '{0} days after'.format(-1*end_days)
     elif end_days < 0 == before_days:
         first = 'Fund Raise'
         snd = '{} days after'.format(end_days * -1)
