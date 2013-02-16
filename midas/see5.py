@@ -32,19 +32,20 @@ def gather_c5_output(filestem='all',
                      negative_cls='False'):
     for cost in range(40):
         write_costs_file(filestem, [(negative_cls, positive_cls, cost), ])
+        prefix = 'c5_result_costs_{0}'.format(cost)
         threads = []
         for arg in C5_ARGS:
             t = threading.Thread(target=produce_output, 
-                                 args=(filestem, arg))
+                                 args=(filestem, arg, prefix))
             t.start()
             threads.append(t)
         for t in threads:
             t.join()
             
-def produce_output(filestem, args):
+def produce_output(filestem, args, prefix):
     all_args = list(args) + ['-f', filestem, ]
     output = call_c5(all_args)
-    fname = 'c5_out_{0}_{1}.out'.format(filestem, '_'.join(args))
+    fname = '{0}_{1}_{2}.out'.format(prefix, filestem, '_'.join(args))
     with open(fname, 'w') as fp:
         fp.writelines(output)
 
