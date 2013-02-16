@@ -203,9 +203,12 @@ def make_recall_precision_plot(results):
             ys.append(y)
         if not isinstance(args, str_type):
             args = ' '.join(args)
-        plt.plot(xs, ys, 'o', label=args)
-    plt.legend(loc='best')
-    plt.grid(True)
+        ax.plot(xs, ys, 'o', label=args)
+    ax.legend(loc='best')
+    ax.grid(True)
+    ax.plot([0.0, 0.5, 1.0], [0.0, 0.5, 1.0], 'k')
+    if plot_file:
+        fig.savefig(plot_file)
     return fig
 
 def make_tpr_fpr_plot(results, plot_file=None):
