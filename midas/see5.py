@@ -6,6 +6,7 @@ from __future__ import print_function
 import collections
 import string
 import subprocess
+import threading
 
 
 C5_ARGS = [('-X', '10'),
@@ -35,6 +36,7 @@ def gather_c5_output(filestem='all',
         for arg in C5_ARGS:
             t = threading.Thread(target=produce_output, 
                                  args=(filestem, arg))
+            t.start()
             threads.append(t)
         for t in threads:
             t.join()
