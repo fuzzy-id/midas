@@ -2,6 +2,7 @@
 
 import collections
 import datetime
+import os.path
 import string
 
 import matplotlib.dates
@@ -114,27 +115,40 @@ def make_available_days_before_funding_rounds_plot(sites_w_company,
 #########################################
 
 def make_rank_before_funding_plot(sites_w_company,
-                                  start,
-                                  offset=pandas.DateOffset(days=10),
+                                  before_days,
+                                  offset_days=10,
                                   plot_file=None):
     collected = make_rank_before_funding_plot_data(sites_w_company, 
-                                                   start,
-                                                   offset)
+                                                   before_days,
+                                                   offset_days)
     fig = plt.figure()
     ax = fig.add_subplot('111')
     res = ax.hist(collected.values(),
+                  bins=9,
                   label=map(string.capitalize, collected.keys()))
     ax.legend(loc='best')
     ax.grid(True)
     ax.set_xlabel('Rank')
     ax.set_ylabel('Number of Funding Rounds')
-    ax.set_title(make_rank_before_funding_plot_title(start, offset))
+    ax.set_title(make_rank_before_funding_plot_title(before_days, 
+                                                     offset_days))
     if plot_file:
-        plt.savefig(plot_file)
+        fig.savefig(plot_file)
     return fig
 
-def make_rank_before_funding_plot_data(sites_w_company, start,
-                                       offset=pandas.DateOffset(days=10)):
+def make_rank_before_funding_plot_fname(directory,
+                                        before_days, 
+                                        days_offset=10,
+                                        prefix='rank_before_funding_plot'):
+    return os.path.join(directory, 
+                        '{0}_-_before_days_{1}_-_days_offset_{2}.png'\
+                            .format(prefix, before_days, days_offset))
+                                    
+
+def make_rank_before_funding_plot_data(sites_w_company, before_days,
+                                       days_offset=10):
+    offset = pandas.DateOffset(days=days_offset)
+    start = pandas.DateOffset(days=before_days)
     collected = collections.defaultdict(list)
     for site, ts, company, code, tstamp in sites_w_company:
         try:
@@ -150,22 +164,21 @@ def median_rank_of_ts_in_period(ts, start_date, offset):
     period = ts[start_date:(start_date + offset)].dropna()
     return period.median()
 
-def make_rank_before_funding_plot_title(start, offset):
-    end = start + offset
-    if 0 < start < end:
-        first = start
-        snd = '{} days after'.format(end)
-    elif start < end < 0:
-        first = start * -1
-        snd = '{} days before'.format(end * -1)
-    elif start < 0 < end:
-        first = '{} days before'.format(start * -1)
-        snd = '{} days after'.format(end)
-    elif 0 == start < end:
+def make_rank_before_funding_plot_title(before_days, offset_days):
+    end_days = before_days - offset_days
+    if 0 > offset_days:
+        raise ValueError('offset_days must greater than zero')
+    elif 0 < end_days < before_days:
+        first = before_days
+        snd = '{} days before'.format(end_days)
+    elif end_days < 0 < before_days:
+        first = before_days
+        snd = '{0} days after'.format(end_days)
+    elif end_days < 0 == before_days:
         first = 'Fund Raise'
-        snd = '{} days after'.format(end)
-    elif start < end == 0:
-        first = '{} days before'.format(start * -1)
+        snd = '{} days after'.format(end_days * -1)
+    elif end_days == 0 < before_days:
+        first = '{} days before'.format(before_days)
         snd = ''
     title = 'Median of Rank from {} to {} Fund Raise'.format(first, snd)    
     return title
