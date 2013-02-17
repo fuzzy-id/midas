@@ -10,6 +10,8 @@ import string
 import subprocess
 import threading
 
+import numpy
+
 from midas.compat import irange
 
 C5_ARGS = [('-X', '10'),
@@ -128,11 +130,18 @@ def c5_get_confusion_matrix(see5_output,
 def calculate_recall_precision(confusion_matrix, 
                                pos_cls='True', 
                                neg_cls='False'):
-    tp = confusion_matrix[pos_cls][pos_cls]
-    fp = confusion_matrix[neg_cls][pos_cls]
-    precision = tp / (tp + fp)
+    precision = calculate_precision(confusion_matrix, pos_cls, neg_cls)
     recall = calculate_tpr(confusion_matrix, pos_cls, neg_cls)
     return (recall, precision)
+
+def calculate_precision(confusion_matrix, pos_cls='True', neg_cls='False'):
+    tp = confusion_matrix[pos_cls][pos_cls]
+    fp = confusion_matrix[neg_cls][pos_cls]
+    try:
+        precision = tp / (tp + fp)
+    except ZeroDivisionError:
+        precision = numpy.nan
+    return precision
 
 def calculate_tpr(confusion_matrix, pos_cls='True', neg_cls='False'):
     tp = confusion_matrix[pos_cls][pos_cls]

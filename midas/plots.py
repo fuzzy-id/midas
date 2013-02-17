@@ -199,12 +199,11 @@ def make_recall_precision_plot(results, plot_file=None):
         xs = []
         ys = []
         for cm in per_cost_result.values():
-            try:
-                x, y = calculate_recall_precision(cm)
-                xs.append(x)
-                ys.append(y)
-            except ZeroDivisionError:
+            x, y = calculate_recall_precision(cm)
+            if numpy.isnan(y):
                 continue
+            xs.append(x)
+            ys.append(y)
         if not isinstance(args, str_type):
             args = ' '.join(args)
         ax.plot(xs, ys, 'o', label=args)
@@ -233,7 +232,7 @@ def make_tpr_fpr_plot(results, plot_file=None):
         ax.plot(xs, ys, 'o', label=args)
     ax.legend(loc='best')
     ax.grid(True)
-    ax.plot([0.0, 0.5, 1.0], [0.0, 0.5, 1.0], 'k')
+    ax.plot([0.0, 0.5, 1.0], [0.0, 0.5, 1.0], ':k')
     if plot_file:
         fig.savefig(plot_file)
     return fig
