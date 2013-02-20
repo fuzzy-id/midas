@@ -84,8 +84,7 @@ def get_available_days_before_fr(ts, fr):
     ts_site = ts[site].dropna()
     return code, (ts_site.index[0] - date).days
 
-def make_available_days_before_funding_rounds_plot(sites_w_company,
-                                                   plot_file=None):
+def make_available_days_before_funding_rounds_plot_data(sites_w_company):
     collected = collections.defaultdict(list)
     for site, ts, company, code, tstamp in sites_w_company:
         ts = ts.dropna()
@@ -95,12 +94,19 @@ def make_available_days_before_funding_rounds_plot(sites_w_company,
         elif available_days < 0:
             available_days = -40
         collected[code].append(available_days)
+    return collected
+
+def make_available_days_before_funding_rounds_plot(sites_w_company,
+                                                   plot_file=None):
+    data = make_available_days_before_funding_rounds_plot_data(
+        sites_w_company
+        )
     fig = plt.figure()
     ax = fig.add_subplot('111')
-    res = ax.hist(collected.values(), 
+    res = ax.hist(data.values(), 
                   bins=10, 
                   histtype='bar', 
-                  label=map(string.capitalize, collected.keys()),
+                  label=map(string.capitalize, data.keys()),
                   log=True)
     ax.legend(loc='best')
     ax.set_ylabel('Number of Funding Rounds')
