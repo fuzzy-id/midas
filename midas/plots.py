@@ -52,7 +52,7 @@ def make_fr_per_date_plot(companies, plot_file=None):
     right_border = datetime.date(right_border.year, right_border.month, 1)
     months.append(right_border)
 
-    fig = plt.figure()
+    fig = plt.figure(figsize=(4*1.4, 3*1.4))
     ax = fig.add_subplot(111)
     ax.hist(d.values(), label=map(str.title, d.keys()),
             bins=matplotlib.dates.date2num(months))
@@ -119,6 +119,27 @@ def make_available_days_before_funding_rounds_plot(sites_w_company,
 #########################################
 ## Median of Rank before Funding Round ##
 #########################################
+
+def make_final_rank_before_funding_plot(sites_w_company):
+    before_days = [5, 95, 215]
+    offset_days = 10
+    data = [ make_rank_before_funding_plot_data(sites_w_company, 
+                                                days, 
+                                                offset_days)
+             for days in before_days ]
+    fig = plt.figure()
+    axes = [ fig.add_subplot(len(before_days), 1, i)
+             for i in range(1, len(before_days) + 1) ]
+    bins = range(0, 1000001, 100000)
+    for ax, d, days in zip(axes, data, before_days):
+        ax.hist(d.values(), bins=bins, label=map(string.capitalize, d.keys()))
+        ax.legend(loc='best')
+        ax.grid(True)
+        title = make_rank_before_funding_plot_title(days, offset_days)
+        ax.set_title(title, fontsize='medium')
+    axes[1].set_ylabel('Number of Funding Rounds', fontsize='x-large')
+    axes[2].set_xlabel('Rank', fontsize='x-large')
+    return fig
 
 def make_rank_before_funding_plot(sites_w_company,
                                   before_days,
