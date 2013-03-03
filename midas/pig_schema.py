@@ -212,8 +212,8 @@ SITE_COUNT_PARSER = make_parser_from_schema(
     )
 SITES_W_COMPANY_PARSER = make_parser_from_schema(
     ','.join(['(site: chararray',
-              'ranking: bag{(tstamp: chararray, rank: int)}',
+              'ranking: bag{(tstamp: date, rank: int)}',
               'company: chararray',
               'code: chararray',
-              'tstamp: chararray)'])
+              'tstamp: date)'])
     )
