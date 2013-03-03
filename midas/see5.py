@@ -101,7 +101,7 @@ def c5_get_confusion_matrix(see5_output,
     try:
         # Counting the number of drawn lines
         cls_cnt = len(see5_output[tbl_head+1].split())
-    except NameError:
+    except UnboundLocalError:
         raise ValueError(
             "'{0}' not found in '{1}'".format(table_head_identifier,
                                               see5_output)
