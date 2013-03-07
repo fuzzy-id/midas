@@ -2,22 +2,18 @@
 
 This is a collection of scripts used to correlate rankings of the one
 million most visited sites per day (Alexa Top1M files) and information
-from CrunchBase [fn:1]. The final goal is to make a prediction whether
+from CrunchBase. The final goal is to make a prediction whether
 an enterprise will receive a funding of the type ~angel~, ~seed~ or
-~a~ soon.
+~a~ with a lead time of 90 days.
 
-The several scripts are written to run under Hadoop.
+The code in this repository covers two steps:
+1) Fetching the data from CrunchBase, pre-processing the whole data
+   set (including the Alexa sites) and generate samples.
+2) Use the samples to generate a set of features and run C5.0 in order
+   to build classifiers from these.
 
-Further documentation is provided in the ~doc~ folder via Sphinx.
+The first step is summarized entirely in the shell script
+~commands_sample_generation.sh~.
 
-The code is tested to run on Python 2.6, 2.7 and 3.2.
-
-If you intend to work with the tools I provide here, please contact me
-so that I can provide further information. As for now, I am too lazy
-to document properly how to use this stuff. :)
-
-* Footnotes
-
-[fn:1] To fetch the data from CrunchBase another, separate package
-  should be used. It can be found on
-  [[https://github.com/fuzzy-id/crawlcrunch]].
+For the second step a program is needed which is not publicly
+available.
